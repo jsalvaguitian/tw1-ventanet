@@ -68,6 +68,7 @@ sudo docker start mysql-container
 
 # Continuar probando el proyecto
 mvn clean jetty:run
+```
 
 ## 2. Thymeleaf
 * [Documentacion](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html)
