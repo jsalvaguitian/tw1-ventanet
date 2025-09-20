@@ -239,3 +239,5 @@ mvn clean install
 * npm --> npm install -g npm
 
 *_Proyecto modificado en base a: [Spring MVC hello world example (Maven and Thymeleaf)](https://mkyong.com/spring-mvc/spring-mvc-hello-world-example/) _*
+
+## Fin Tecnologías:
