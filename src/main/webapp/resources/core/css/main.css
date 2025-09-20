@@ -1,4 +1,4 @@
-body {
+/*body {
   padding-top: 5rem;
 }
 .starter-template {
@@ -16,4 +16,78 @@ h2{
 
 .navbar-brand{
     margin:0 2rem;
+}*/
+
+/*GENERAL*/
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/*NAVBAR*/
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.nav-link {
+  font-size: 1.1rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+  color: #0d6efd; /* azul Bootstrap */
+}
+
+/*HERO*/
+header.bg-light {
+  background: url('../img/hero.jpg') center center/cover no-repeat;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+
+header h1 {
+  font-weight: 700;
+}
+
+header p {
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+}
+
+/*PRODUCTOS */
+#productos h2 {
+  font-weight: 600;
+  color: #222;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/*FOOTER*/
+footer {
+  font-size: 0.95rem;
+}
+
+footer a {
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+footer a:hover {
+  color: #0d6efd;
 }
