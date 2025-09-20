@@ -1,6 +1,6 @@
 Proyecto base Taller Web I (Maven and Thymeleaf)
 ===============================
-
+hola
 ## Preparación del ambiente de desarrollo
 Antes de comenzar a trabajar con el proyecto, debemos instalar y configurar algunas herramientas:
 
