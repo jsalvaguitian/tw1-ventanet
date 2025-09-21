@@ -4,32 +4,99 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <title>Taller Web I</title>
+  <title>Ventanet - Taller Web I</title>
 
   <!-- Boostrap core css -->
   <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
 
   <!-- custom style -->
   <link rel="stylesheet" th:href="@{/css/main.css}"/>
-
 </head>
 
 <body>
-
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-  <a class="navbar-brand" href="#">UNLAM</a>
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="#">Ventanet</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" 
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#productos">Productos</a></li>
+        <li class="nav-item"><a class="nav-link" href="login.html">Ingreso</a></li>
+        <li class="nav-item"><a class="nav-link" href="nuevo-usuario.html">Registro</a></li>
+      </ul>
+    </div>
+  </div>
 </nav>
 
-<main role="main" class="container">
-  <div class = "container">
-    <h1>Bienvenidos a Taller Web 1</h1>
-
-    <a href="login.html" class="btn btn-lg btn-primary btn-block">Volver</a>
+<!-- HERO -->
+<header class="bg-light text-dark text-center py-5 mt-5">
+  <div class="container">
+    <h1 class="display-4">Aberturas de calidad para tu hogar</h1>
+    <p class="lead">Ventanas corredizas, oscilobatientes, paños fijos y más.</p>
+    <a href="#productos" class="btn btn-primary btn-lg">Ver productos</a>
   </div>
+</header>
+
+<!-- PRODUCTOS -->
+<main role="main" class="container my-5">
+  <section id="productos">
+    <h2 class="text-center mb-4">Nuestros Productos</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <img src="img/corredizas.jpg" class="card-img-top" alt="Ventana Corrediza">
+          <div class="card-body text-center">
+            <h5 class="card-title">Ventana Corrediza</h5>
+            <p class="card-text">Optimiza espacios con máxima luminosidad.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <img src="img/oscilobatiente.jpg" class="card-img-top" alt="Ventana Oscilobatiente">
+          <div class="card-body text-center">
+            <h5 class="card-title">Oscilobatiente</h5>
+            <p class="card-text">Ventilación controlada y segura.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <img src="img/panofijo.jpg" class="card-img-top" alt="Paño Fijo">
+          <div class="card-body text-center">
+            <h5 class="card-title">Paño Fijo</h5>
+            <p class="card-text">Diseño minimalista y elegante.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
-<!-- /.container -->
+
+<!-- FOOTER -->
+<footer class="bg-dark text-light py-4">
+  <div class="container text-center">
+    <p class="mb-1"><strong>Ventanet</strong> © 2025</p>
+    <p class="mb-1">📍 Dirección: Calle Falsa 123, Ciudad</p>
+    <p class="mb-1">📧 info@ventanet.com.ar | 📞 +54 9 11 1234-5678</p>
+    <div class="mb-2">
+      <a href="login.html" class="text-light me-3">Ingreso</a>|
+      <a href="nuevo-usuario.html" class="text-light ms-3">Registro</a>
+    </div>
+    <div>
+      <a href="#" class="text-light me-2">Instagram</a>|
+      <a href="#" class="text-light mx-2">Facebook</a>|
+      <a href="#" class="text-light ms-2">LinkedIn</a>
+    </div>
+  </div>
+</footer>
 
 <!-- Boostrap core js -->
-<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 </body>
 </html>
