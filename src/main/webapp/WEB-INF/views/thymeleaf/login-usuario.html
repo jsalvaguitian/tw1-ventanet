@@ -33,14 +33,14 @@
             <div class="login-box">
                 <h2>Ingresa a tu cuenta</h2>
                 <form th:action="@{/login-user}" method="post"  th:object="${usuarioDto}">
-                    <label for="useroemail">Usuario o email</label>
-                    <input th:field = "*{userOrEmail}" type="text" id="emailOuser" name="emailOuser" placeholder="Ingresá tu usuario o email" required />
+                    <label for="email">Usuario o email</label>
+                    <input th:field = "*{email}" type="text" id="email" name="email" placeholder="Ingresá tu email"  />
                     
-                    <small class="error" th:if="${error_email_user !=null}" th:text="${error_email_user}"></small>
+                    <small class="error" th:if="${error_email !=null}" th:text="${error_email}"></small>
 
                     <label for="password">Contraseña</label>
                     <div class="password-wrapper">
-                        <input th:field ="*{contrasenia}" type="password" id="password" name="password" placeholder="Ingresá tu contraseña" required />
+                        <input th:field ="*{contrasenia}" type="password" id="password" name="password" placeholder="Ingresá tu contraseña"  />
 
                         <button type="button" class="toggle-password" aria-label="Mostrar contraseña">
                             <span class="material-symbols-outlined">visibility</span>
@@ -53,7 +53,7 @@
                     <a th:href="@{/forgot-password}" class="forgot">¿Te olvidaste tu contraseña?</a>
                     <button type="submit" class="btn">Ingresar</button>
 
-                    <small class="error" th:if="${error_coincidencia != null}" th:text="${error_coincidencia}">La combinación de usuario y contraseña no
+                    <small class="error" th:if="${error_coincidencia!= null}" th:text="${error_coincidencia}">La combinación de usuario y contraseña no
                         coinciden.</small>
                 </form>
 
@@ -67,7 +67,7 @@
 
     <!-- Toggle password -->
     <script th:inline="javascript">
-        document.querySelectorAll('.toggle-password').forEach(btn => {
+        document.querySelectorAll('.toggle-pasror_coincidenciasword').forEach(btn => {
             btn.addEventListener('click', () => {
                 const input = btn.closest('.password-wrapper').querySelector('input');
                 const icon = btn.querySelector('.material-symbols-outlined');
