@@ -20,7 +20,13 @@ public class UsuarioDto {
         return contrasenia;
     }
 
-    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setContrasenia(String contrasenia) {
+        this.contrasenia = contrasenia;
+    }
 
 
 }
