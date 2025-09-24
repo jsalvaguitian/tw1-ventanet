@@ -1,6 +1,8 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.excepcion.ContraseniaInvalida;
+import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.servicios.ServicioLogin;
 import com.tallerwebi.presentacion.dto.DatosLogin;
@@ -21,7 +23,7 @@ public class ControladorLogin {
     private ServicioLogin servicioLogin;
 
     @Autowired
-    public ControladorLogin(ServicioLogin servicioLogin){
+    public ControladorLogin(ServicioLogin servicioLogin) {
         this.servicioLogin = servicioLogin;
     }
 
@@ -48,14 +50,31 @@ public class ControladorLogin {
     }
 
     @RequestMapping(path = "/registrarme", method = RequestMethod.POST)
-    public ModelAndView registrarme(@ModelAttribute("usuario") Usuario usuario) {
-        ModelMap model = new ModelMap();
-        try{
+    public ModelAndView registrarme(@ModelAttribute("usuario") Usuario usuario, HttpServletRequest request) {
+        // request confirmar password
+        String confirmarPassword = request.getParameter("confirmarPassword");
+        // Comparar contrasenias
+        if (!usuario.getPassword().equals(confirmarPassword)) {
+            ModelMap model = new ModelMap();
+            model.put("error", "Las contraseñas no coinciden");
+            return new ModelAndView("nuevo-usuario", model);
+        }
+        try {
             servicioLogin.registrar(usuario);
-        } catch (UsuarioExistente e){
+        } catch (UsuarioExistente e) {
+            ModelMap model = new ModelMap();
             model.put("error", "El usuario ya existe");
             return new ModelAndView("nuevo-usuario", model);
-        } catch (Exception e){
+        } catch (ContraseniaInvalida e) {
+            ModelMap model = new ModelMap();
+            model.put("error", "La contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula y 1 símbolo.");
+            return new ModelAndView("nuevo-usuario", model);
+        } catch (EmailInvalido e) {
+            ModelMap model = new ModelMap();
+            model.put("error", "Email invalido");
+            return new ModelAndView("nuevo-usuario", model);
+        } catch (Exception e) {
+            ModelMap model = new ModelMap();
             model.put("error", "Error al registrar el nuevo usuario");
             return new ModelAndView("nuevo-usuario", model);
         }
@@ -79,4 +98,3 @@ public class ControladorLogin {
         return new ModelAndView("redirect:/login");
     }
 }
-

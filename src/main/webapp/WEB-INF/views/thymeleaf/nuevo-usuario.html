@@ -16,8 +16,22 @@
 
 <body>
 
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-  <a class="navbar-brand" href="#">UNLAM</a>
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="#">Ventanet</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" 
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="login.html">Ingreso</a></li>
+        <li class="nav-item"><a class="nav-link" href="nuevo-usuario.html">Registro</a></li>
+      </ul>
+    </div>
+  </div>
 </nav>
 
 <main role="main" class="container">
@@ -25,13 +39,21 @@
   <div class = "container">
     <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
       <form action="#" th:action="@{/registrarme}" method="POST" th:object="${usuario}">
-        <h3 class="form-signin-heading">Nuevo Usuario</h3>
-        <hr class="colorgraph"><br>
+        <h3 class="form-signin-heading" id="titulo">Crea una cuenta</h3>
+        <hr class="colorgraph">
+        <div class="">
+        <!-- nombre -->
+        <input th:field="*{nombre}"  id="nombre" class="form-control row m-2" placeholder="Nombre completo" required/>
+        <!-- mial -->
+        <input th:field="*{email}" id="email" class="form-control row m-2" placeholder="Correo electronico" required/>
+        <!-- Contrasenia -->
+        <input th:field="*{password}" type="password" id="password" class="form-control row m-2" placeholder="Contraseña" required/>
+        <input type="password"  name="confirmarPassword" id="confirmarPassword" class="form-control row m-2" placeholder="Confirmar contraseña" required/>
+        <!-- boton registro -->
+        <button id="btn-registrarme" class="btn btn-lg btn-primary btn-block row m-2" Type="Submit">Registrarme</button>
 
-        <input th:field="*{email}" id="email" class="form-control" required/>
-        <input th:field="*{password}" type="password" id="password" class="form-control" required/>
-
-        <button id="btn-registrarme" class="btn btn-lg btn-primary btn-block" Type="Submit">Registrarme</button>
+        <p>Ya tenes cuenta? <a th:href="@{/login}">Ingresar</a></p>
+        </div>
         <p th:if="${error != null}" class="alert alert-danger" th:text="'Error ' + ${error}">
         </p>
       </form>
