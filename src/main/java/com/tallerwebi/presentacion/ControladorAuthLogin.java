@@ -17,7 +17,6 @@ import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class ControladorAuthLogin {
@@ -92,14 +91,15 @@ public class ControladorAuthLogin {
         
     }
 
+    @GetMapping("/logout")
+    public String logOut(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return "redirect:/login-user";
+    }
+
     private boolean emailTieneFormatoValido(String emailIngresado) {
         return emailIngresado.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     }
 
-    /*Lo hice momentaneamente para probar.*/
-    @GetMapping("/home-user")
-    public String getMethodName() {
-        return "home";
-    }
 
 }

@@ -5,11 +5,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.query.criteria.internal.expression.SearchedCaseExpression.WhenClause;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
@@ -139,6 +142,22 @@ public class ControladorLoginUsuarioTest {
     public void dadoUnMailInexisteCuandoElUsuarioSeLogueeEntoncesElLoginFalle() throws UsuarioInexistenteException{
         
         doThrow(UsuarioInexistenteException.class).when(servicioUsuarioI).autenticar("belen@gmail.com", "hola");
+    }
+
+    @Test
+    public void queSePuedaCerrarSesionYRedirigirAlLogin(){
+
+        //preparacion
+        String redireccionEsperada = "redirect:/login-user";
+        when(requestMock.getSession()).thenReturn(sessionMock); //simular sesion activa
+
+        //ejecucion
+        String vistaObtenida = controladorLogin.logOut(requestMock);
+
+        //validacion
+        verify(sessionMock, times(1)).invalidate(); //Verificamos que se invoco 1 vez el metodo invalidate para matar la sesion
+        assertThat(vistaObtenida, equalTo(redireccionEsperada));
+        
     }
 
 

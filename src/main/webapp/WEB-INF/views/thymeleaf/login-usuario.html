@@ -17,10 +17,6 @@
     <header class="site-header">
         <div class="header-inner">
             <a th:href="@{/}" class="logo">
-                <svg width="36" height="36" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="32" cy="32" r="30" fill="#6a42f4" />
-                    <text x="32" y="38" font-family="Arial" font-size="20" text-anchor="middle" fill="#fff">IO</text>
-                </svg>
                 <span class="brand">VENTANET</span>
             </a>
         </div>
@@ -67,7 +63,7 @@
 
     <!-- Toggle password -->
     <script th:inline="javascript">
-        document.querySelectorAll('.toggle-pasror_coincidenciasword').forEach(btn => {
+        document.querySelectorAll('.toggle-password').forEach(btn => {
             btn.addEventListener('click', () => {
                 const input = btn.closest('.password-wrapper').querySelector('input');
                 const icon = btn.querySelector('.material-symbols-outlined');
