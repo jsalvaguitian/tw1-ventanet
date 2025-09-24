@@ -5,7 +5,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class PasswordUtil {
     private static final BCryptPasswordEncoder codificador = new BCryptPasswordEncoder();
 
-    public static boolean verificar(String contraseniaIngresadoLogin, String contraseniaHasheadaBD){
+    public static boolean verificar(String contraseniaIngresadoLogin, String contraseniaHasheadaBD) {
         return codificador.matches(contraseniaIngresadoLogin, contraseniaHasheadaBD);
+    }
+
+    public static String hashear(String password) {
+        return codificador.encode(password);
     }
 }

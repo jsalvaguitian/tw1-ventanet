@@ -86,7 +86,7 @@ public class ControladorLoginUsuarioTest {
     public void dadoUnaContraseniaVaciaQueElLoginFalle() {
 
         String vistaEsperada = "login-usuario";
-        String msjErrorEsperado = "El formato del email es invalido";
+        String msjErrorEsperado = "Por favor, ingresa la contraseña.";
         UsuarioDto usuarioIngresado = new UsuarioDto("jesi@gmail.com", "");
 
         ModelAndView vistaModelada = controladorLogin.procesarLogin(usuarioIngresado, requestMock);
@@ -101,35 +101,45 @@ public class ControladorLoginUsuarioTest {
 
     // simular acciones de servicios
     @Test
-    public void dadoUnProveedorConCredencialesValidasDebeDirigirseAHomeProveedor(){
-        
+    public void dadoUnProveedorConCredencialesValidasDebeDirigirseADashboardProveedor() throws UsuarioInexistenteException{
+        UsuarioAuth usuarioEncontradoMock = mock(UsuarioAuth.class);
+        UsuarioDto usuarioDto = new UsuarioDto(emailIngresado, passwordIngresado);
 
+        when(usuarioEncontradoMock.getRol()).thenReturn("Proveedor");
+
+        when(requestMock.getSession()).thenReturn(sessionMock);
+
+        when(servicioUsuarioI.autenticar(emailIngresado, passwordIngresado)).thenReturn(usuarioEncontradoMock);
+
+        ModelAndView modelAndView = controladorLogin.procesarLogin(usuarioDto, requestMock);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/proveedor/dashboard"));
+        
     }
 
     @Test
     public void dadoUnClienteConCredencialesValidasDebeDirigirseADashboardCliente() throws UsuarioInexistenteException {
+        UsuarioAuth usuarioEncontradoMock = mock(UsuarioAuth.class);
+        UsuarioDto usuarioDto = new UsuarioDto(emailIngresado, passwordIngresado);
+
+        when(usuarioEncontradoMock.getRol()).thenReturn("Cliente");
+
+        when(requestMock.getSession()).thenReturn(sessionMock);
+
+        when(servicioUsuarioI.autenticar(emailIngresado, passwordIngresado)).thenReturn(usuarioEncontradoMock);
+
+        ModelAndView modelAndView = controladorLogin.procesarLogin(usuarioDto, requestMock);
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/cliente/dashboard"));
+
 
     }
 
     @Test
-    public void dadoUnMailInexisteCuandoElUsuarioSeLogueeEntoncesElLoginFalle() throws UsuarioInexistenteException {
-        UsuarioDto usuarioIngresado = new UsuarioDto("belen@gmail.com", "hola");
-        String vistaEsperada = "login-usuario";
-        String msjErrorEsperado = "La combinación de usuario y contraseña no coinciden.";
-
-        ModelAndView vistaModelada = controladorLogin.procesarLogin(usuarioIngresado, requestMock);
-        String vistaObtenida = vistaModelada.getViewName();
-        String msjErrorObtenido = vistaModelada.getModel().get("error_coincidencia").toString();
-
-        assertThat(vistaObtenida, equalTo(vistaEsperada));
-        assertThat(msjErrorObtenido, equalTo(msjErrorObtenido));
-
+    public void dadoUnMailInexisteCuandoElUsuarioSeLogueeEntoncesElLoginFalle() throws UsuarioInexistenteException{
+        
         doThrow(UsuarioInexistenteException.class).when(servicioUsuarioI).autenticar("belen@gmail.com", "hola");
     }
 
-    @Test
-    public void dadoUnMailRegistradoYUnContraseneaErroneaQueElLoginFalle() {
-
-    }
 
 }

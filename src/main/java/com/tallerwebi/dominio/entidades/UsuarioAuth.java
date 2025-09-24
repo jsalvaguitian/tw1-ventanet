@@ -23,7 +23,7 @@ public abstract class UsuarioAuth {
     public UsuarioAuth(String email, String contrasenia) {
         this.email = email;
         this.contrasenia = contrasenia;
-        this.rol = this.getClass().getName();
+        this.rol = this.getClass().getSimpleName();
     }
 
     

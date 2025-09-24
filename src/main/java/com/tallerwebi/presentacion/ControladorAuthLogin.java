@@ -37,17 +37,17 @@ public class ControladorAuthLogin {
     }
 
     @PostMapping("/login-user")
-    public ModelAndView procesarLogin(@ModelAttribute("usuarioDto") UsuarioDto usuarioDto,
+    public ModelAndView procesarLogin(@ModelAttribute("usuarioDto") UsuarioDto usuarioIngresado,
             HttpServletRequest request) {
 
         ModelMap datosMapeados = new ModelMap();
-        String emailIngresado = usuarioDto.getEmail();
-        String contraseniaIngresada = usuarioDto.getContrasenia();
+        String emailIngresado = usuarioIngresado.getEmail();
+        String contraseniaIngresada = usuarioIngresado.getContrasenia();
 
         if (emailIngresado == null || emailIngresado.isBlank()) {
             datosMapeados.put("error_email", "Por favor, ingresa el email.");
 
-        }else if(!emailTieneFormatoValido(emailIngresado)){
+        } else if (!emailTieneFormatoValido(emailIngresado)) {
             datosMapeados.put("error_email", "El formato del email es invalido");
         }
 
@@ -55,87 +55,51 @@ public class ControladorAuthLogin {
             datosMapeados.put("error_password", "Por favor, ingresa la contraseña.");
         }
 
-        if(!usuarioDto.getEmail().isBlank() && !usuarioDto.getContrasenia().isBlank() && emailTieneFormatoValido(emailIngresado)){
-            return new ModelAndView("redirect:/home-user");
-        }else{
-            datosMapeados.put("usuarioDto", usuarioDto);
-            return new ModelAndView("login-usuario", datosMapeados);
-        }
+        if (!usuarioIngresado.getEmail().isBlank() && !usuarioIngresado.getContrasenia().isBlank()
+                && emailTieneFormatoValido(emailIngresado)) {
+            try {
 
+                UsuarioAuth encontradoBd = servicioUsuarioI.autenticar(emailIngresado, contraseniaIngresada);
+                String rolEncotrado = encontradoBd.getRol();
+
+                HttpSession session = request.getSession();
+                UsuarioSesionDto usuarioSesion = new UsuarioSesionDto(encontradoBd.getId(), encontradoBd.getEmail(), encontradoBd.getRol());
+                session.setAttribute("usuarioLogueado", usuarioSesion);
+
+                //se podria hacer un dashboard dinamico y tener fragmentos y asi no hacer un switch o ifes
+                if (rolEncotrado.equalsIgnoreCase("PROVEEDOR")) {
+                    return new ModelAndView("redirect:/proveedor/dashboard");
+                
+                } else if (rolEncotrado.equalsIgnoreCase("CLIENTE")) {
+                    return new ModelAndView("redirect:/cliente/dashboard"); 
+
+                } /*else if (rolEncotrado.equalsIgnoreCase("FABRICANTE")) {
+                    return new ModelAndView("redirect:/admin/dashboard");
+
+                } else if (rolEncotrado.equalsIgnoreCase("ADMIN")) {
+                    return new ModelAndView("redirect:/admin/dashboard");
+                }*/
+
+            } catch (UsuarioInexistenteException e) {
+                datosMapeados.put("error_coincidencia", "El usuario no se encuentra registrado.");
+                datosMapeados.put("usuarioDto", usuarioIngresado);
+                return new ModelAndView("login-usuario", datosMapeados);
+            }
+
+        } 
+        datosMapeados.put("usuarioDto", usuarioIngresado);
+        return new ModelAndView("login-usuario", datosMapeados);
+        
     }
 
     private boolean emailTieneFormatoValido(String emailIngresado) {
         return emailIngresado.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     }
 
+    /*Lo hice momentaneamente para probar.*/
     @GetMapping("/home-user")
     public String getMethodName() {
         return "home";
     }
-
-    /*
-     * @PostMapping("/login-user")
-     * public ModelAndView procesarLogin(@ModelAttribute("usuarioDto") UsuarioDto
-     * usuarioDto, HttpServletRequest request) {
-     * 
-     * ModelMap datosAMostrar = new ModelMap();
-     * String emailIngresado = usuarioDto.getEmail();
-     * String contraseniaIngresada = usuarioDto.getContrasenia();
-     * 
-     * // Validaciones básicas antes de llamar al servicio
-     * if (emailIngresado.isBlank()) datosAMostrar.put("error_email",
-     * "Ingresá tu email.");
-     * if (contraseniaIngresada.isBlank()) datosAMostrar.put("error_password",
-     * "Ingresá la contraseña");
-     * if (!emailIngresado.isBlank() && !emailTieneUnFormatoValido(emailIngresado))
-     * datosAMostrar.put("error_email", "El formato del email es inválido");
-     * 
-     * // Si hay errores, retornamos la vista de login
-     * if (!datosAMostrar.isEmpty()) {
-     * datosAMostrar.put("usuarioDto", usuarioDto);
-     * return new ModelAndView("login-usuario", datosAMostrar);
-     * }
-     * 
-     * // Intentamos autenticar
-     * try {
-     * UsuarioAuth encontradoBd = servicioUsuarioI.autenticar(emailIngresado,
-     * contraseniaIngresada);
-     * 
-     * // Por seguridad, chequeamos null aunque el servicio lance excepción
-     * if (encontradoBd == null) {
-     * datosAMostrar.put("error_coincidencia", "Usuario o contraseña incorrectos.");
-     * datosAMostrar.put("usuarioDto", usuarioDto);
-     * return new ModelAndView("login-usuario", datosAMostrar);
-     * }
-     * 
-     * // Crear objeto de sesión
-     * HttpSession sesion = request.getSession();
-     * UsuarioSesionDto usuarioSesion = new UsuarioSesionDto(
-     * encontradoBd.getId(),
-     * encontradoBd.getEmail(),
-     * encontradoBd.getRol()
-     * );
-     * sesion.setAttribute("usuarioLogueado", usuarioSesion);
-     * 
-     * // Redireccionar según rol
-     * if ("Proveedor".equalsIgnoreCase(encontradoBd.getRol())) {
-     * return new ModelAndView("redirect:/proveedor/dashboard");
-     * } else {
-     * return new ModelAndView("redirect:/cliente/dashboard");
-     * }
-     * 
-     * } catch (UsuarioInexistenteException e) {
-     * datosAMostrar.put("error_coincidencia",
-     * "El usuario no se encuentra registrado.");
-     * datosAMostrar.put("usuarioDto", usuarioDto);
-     * return new ModelAndView("login-usuario", datosAMostrar);
-     * }
-     * }
-     * 
-     * // Método auxiliar para validar formato de email
-     * private boolean emailTieneUnFormatoValido(String email) {
-     * return email != null && email.matches("^[\\w-.]+@[\\w-]+\\.[a-z]{2,}$");
-     * }
-     */
 
 }
