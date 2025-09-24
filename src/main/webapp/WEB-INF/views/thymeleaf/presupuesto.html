@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitar Presupuesto - Ventanet</title>
+  <link th:href="@{/css/main.css}" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" th:href="@{/}">Ventanet</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" th:href="@{/#productos}">Productos</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/login}">Ingreso</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/registro}">Registro</a></li>
+          <li class="nav-item"><a class="nav-link active" th:href="@{/presupuesto}">Presupuesto</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- SELECCION DE ATRIBUTOS -->
+<main class="container my-5">
+  <h2 class="text-center mb-4">Solicitud de Presupuesto</h2>
+
+  <form id="formPresupuesto" onsubmit="return enviarSolicitud(event)" class="row g-4">
+
+    <!-- 1. Tipo de ventana -->
+    <div class="col-md-6">
+      <label for="tipoVentana" class="form-label">Tipo de ventana</label>
+      <select class="form-select" id="tipoVentana" required onchange="mostrarImagen()">
+        <option value="">Seleccione...</option>
+        <option value="op1.jpg">Corrediza</option>
+        <option value="op3.png">Oscilobatiente</option>
+        <option value="op2.jpg">Paño fijo</option>
+        <option value="op4.png">Abatible</option>
+        <option value="op5.png">Plegable</option>
+      </select>
+    </div>
+    <div class="col-md-6 d-flex justify-content-center align-items-center">
+      <img id="imagenVentana" th:src="@{/img/}" alt="Vista previa" class="img-fluid rounded shadow" style="max-height:200px; display:none;">
+    </div>
+
+    <!-- 2. Medidas -->
+    <div class="col-md-6">
+      <label for="ancho" class="form-label">Ancho (m)</label>
+      <select class="form-select" id="ancho" required>
+        <option value="">Seleccione...</option>
+      </select>
+    </div>
+    <div class="col-md-6">
+      <label for="alto" class="form-label">Alto (m)</label>
+      <select class="form-select" id="alto" required>
+        <option value="">Seleccione...</option>
+      </select>
+    </div>
+
+    <!-- 3. Material -->
+    <div class="col-md-6">
+      <label for="material" class="form-label">Material de perfil</label>
+      <select class="form-select" id="material" required>
+        <option value="">Seleccione...</option>
+        <option value="aluminio">Aluminio</option>
+        <option value="pvc">PVC</option>
+        <option value="madera">Madera</option>
+      </select>
+    </div>
+
+    <!-- 4. Vidrio -->
+    <div class="col-md-6">
+      <label for="vidrio" class="form-label">Tipo de vidrio</label>
+      <select class="form-select" id="vidrio" required>
+        <option value="">Seleccione...</option>
+        <option value="simple">Simple (flotado)</option>
+        <option value="dvh">Doble (DVH)</option>
+        <option value="laminado">Laminado</option>
+        <option value="templado">Templado</option>
+      </select>
+    </div>
+
+    <!-- 5. Color -->
+    <div class="col-md-6">
+      <label for="color" class="form-label">Color</label>
+      <select class="form-select" id="color" required>
+        <option value="">Seleccione...</option>
+        <option value="blanco">Blanco</option>
+        <option value="gris">Gris</option>
+        <option value="marron">Marrón</option>
+        <option value="negro">Negro</option>
+      </select>
+    </div>
+
+    <!-- 6. Opciones extra -->
+    <div class="col-md-6 d-flex flex-column">
+      <label class="form-label">Opciones adicionales</label>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="premarco">
+        <label class="form-check-label" for="premarco">Con premarco</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="barrotillos">
+        <label class="form-check-label" for="barrotillos">Con barrotillos</label>
+      </div>
+    </div>
+
+    <!-- 7. Boton -->
+    <div class="col-12 text-center mt-4">
+      <button type="submit" class="btn btn-primary px-5 py-2">Solicitar presupuesto</button>
+    </div>
+  </form>
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-dark text-light py-5">
+  <div class="container text-center">
+    <p>2025 © Ventanet - Todos los derechos reservados.</p>
+  </div>
+</footer>
+
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>
