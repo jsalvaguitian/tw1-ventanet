@@ -60,7 +60,11 @@ public class ControladorProducto implements ServletContextAware {
         try {
             List<Producto> productos = this.servicioProducto.obtener();
             modelo.put("productos", productos);
-            modelo.put("exito", "Hay productos.");
+            if(productos.isEmpty()) {
+                modelo.put("exito", "No hay Productos");
+            } else {
+                modelo.put("exito", "Hay productos.");
+            }
         } catch (NoHayProductoExistente e) {
             modelo.put("productos", new ArrayList<>());
             modelo.put("error", "no hay productos");
