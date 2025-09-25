@@ -50,7 +50,7 @@ public class ControladorClienteTest {
         when(requestMock.getSession()).thenReturn(sessionMock);
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(null);
         ModelAndView modelAndView = controladorCliente.irDashboard(requestMock);
-        assertThat(modelAndView.getViewName(), equalTo("redirect:/login-user"));
+        assertThat(modelAndView.getViewName(), equalTo("redirect:/login"));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class ControladorClienteTest {
         uSesionDto.setUsername("proveedor@unlam.edu.ar");
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
         ModelAndView modelAndView = controladorCliente.irDashboard(requestMock);
-        assertThat(modelAndView.getViewName(), equalTo("redirect:/login-user"));
+        assertThat(modelAndView.getViewName(), equalTo("redirect:/login"));
     }
 
     @Test
@@ -84,6 +84,6 @@ public class ControladorClienteTest {
         uSesionDto.setUsername("cliente@unlam.edu.ar");
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
         ModelAndView modelAndView = controladorCliente.irDashboard(requestMock);
-        assertThat(modelAndView.getViewName(), equalTo("redirect:/login-user"));
+        assertThat(modelAndView.getViewName(), equalTo("redirect:/login"));
     }
 }
