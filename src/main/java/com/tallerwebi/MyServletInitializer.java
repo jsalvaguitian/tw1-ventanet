@@ -4,7 +4,9 @@ import com.tallerwebi.config.DatabaseInitializationConfig;
 import com.tallerwebi.config.HibernateConfig;
 import com.tallerwebi.config.SpringWebConfig;
 
-import org.springframework.lang.NonNull;
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletRegistration;
+
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class MyServletInitializer
@@ -25,5 +27,19 @@ public class MyServletInitializer
     @Override
     protected String[] getServletMappings() {
         return new String[]{"/"};
+    }
+
+    @Override
+    protected void customizeRegistration(ServletRegistration.Dynamic registration) {
+        // Configura el soporte para archivos (multipart)
+        String tempDir = System.getProperty("java.io.tmpdir");
+        long maxFileSize = 10485760L; // 10 MB
+        long maxRequestSize = 10485760L; // 10 MB
+        int fileSizeThreshold = 0;
+
+        MultipartConfigElement multipartConfigElement =
+            new MultipartConfigElement(tempDir, maxFileSize, maxRequestSize, fileSizeThreshold);
+
+        registration.setMultipartConfig(multipartConfigElement);
     }
 }

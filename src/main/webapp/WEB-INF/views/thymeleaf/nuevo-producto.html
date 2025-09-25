@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Taller Web I</title>
+
+  <!-- Bootstrap core css -->
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+
+  <!-- custom style -->
+  <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+
+<body>
+  <main role="main" class="container">
+
+    <div class="form-card">
+      <form action="#" th:action="@{/producto/crear}" method="POST" th:object="${producto}"
+        enctype="multipart/form-data">
+        <h3>Nuevo Producto</h3>
+
+                <!-- Nombre -->
+        <div class="mb-3">
+          <label for="nombre" class="form-label">Nombre</label>
+          <input th:field="*{nombre}" id="nombre" class="form-control" required />
+        </div>
+
+        <!-- Precio -->
+        <div class="mb-3">
+          <label for="precio" class="form-label">Precio</label>
+          <input th:field="*{precio}" id="precio" type="number" step="0.01" min="0" class="form-control" required />
+        </div>
+
+        <!-- Descripción -->
+        <div class="mb-3">
+          <label for="descripcion" class="form-label">Descripción</label>
+          <textarea th:field="*{descripcion}" id="descripcion" class="form-control" rows="3"></textarea>
+        </div>
+
+        <!-- Imagen (archivo) -->
+        <div class="mb-3">
+          <label for="imagenFile" class="form-label">Imagen del Producto</label>
+          <input id="imagenFile" name="imagenFile" type="file" class="form-control" accept="image/*" />
+        </div>
+
+        <!-- Stock -->
+        <div class="mb-3">
+          <label for="stock" class="form-label">Stock</label>
+          <input th:field="*{stock}" id="stock" type="number" min="0" class="form-control" required />
+        </div>
+
+        <!-- Tipo de Producto -->
+        <div class="mb-3">
+          <label for="tipo_producto_id" class="form-label">Tipo de Producto</label>
+          <select th:field="*{tipoProductoId}" id="tipo_producto_id" class="form-select">
+            <option value="0">Seleccione...</option>
+            <option value="1">Ventanas</option>
+            <option value="2">Puertas</option>
+            <!-- <option th:each="tipo : ${tiposProducto}" th:value="${tipo.id}" th:text="${tipo.nombre}"></option> -->
+          </select>
+        </div>
+
+        <!-- Marca -->
+        <div class="mb-3">
+          <label for="marca_id" class="form-label">Marca</label>
+          <select th:field="*{marcaId}" id="marca_id" class="form-select">
+            <option value="0">Seleccione...</option>
+            <option value="1">Ventanet</option>
+            <!-- <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option> -->
+          </select>
+        </div>
+
+        <!-- Proveedor -->
+        <div class="mb-3">
+          <label for="proveedor_id" class="form-label">Proveedor</label>
+          <select th:field="*{proveedorId}" id="proveedor_id" class="form-select">
+            <option value="0">Seleccione...</option>
+            <option value="1">Proveedor 1</option>
+            <!-- <option th:each="proveedor : ${proveedores}" th:value="${proveedor.id}" th:text="${proveedor.nombre}"></option> -->
+          </select>
+        </div>
+
+        <!-- Presentación -->
+        <div class="mb-3">
+          <label for="presentacion_id" class="form-label">Presentación</label>
+          <select th:field="*{presentacionId}" id="presentacion_id" class="form-select">
+            <option value="0">Seleccione...</option>
+            <option value="1">MT2</option>
+            <option value="2">Kilo</option>
+            <option value="3">Gramo</option>
+            <option value="4">Unidad</option>
+            <!-- <option th:each="pres : ${presentaciones}" th:value="${pres.id}" th:text="${pres.nombre}"></option> -->
+          </select>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-between">
+          <button id="btn-crear" class="btn btn-submit" type="submit" disabled>Crear Producto</button>
+        </div>
+
+        <!-- Mensajes de error -->
+        <p th:if="${error != null}" class="alert alert-danger mt-3" th:text="'Error: ' + ${error}"></p>
+      </form>
+    </div>
+
+  </main>
+
+  <!-- Bootstrap core js -->
+  <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+
+  <!-- Producto JS -->
+  <script type="module" th:src="@{/js/producto.js}"></script>
+</body>
+</html>

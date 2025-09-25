@@ -5,8 +5,6 @@ import com.tallerwebi.dominio.excepcion.ContraseniaInvalida;
 import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioUsuario;
-import com.tallerwebi.dominio.servicios.ServicioLogin;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
