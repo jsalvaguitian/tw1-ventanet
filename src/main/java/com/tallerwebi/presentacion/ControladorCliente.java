@@ -9,35 +9,32 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.tallerwebi.dominio.servicios.ServicioProveedorI;
+import com.tallerwebi.dominio.servicios.ServicioClienteI;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
-
 @Controller
-@RequestMapping("/proveedor")
-public class ControladorProveedor {
+@RequestMapping("/cliente")
+public class ControladorCliente {
 
-    private ServicioProveedorI servicioProveedorI;
+     private final  ServicioClienteI servicioClienteI;
 
-
-    public ControladorProveedor(ServicioProveedorI servicioProveedorI) {
-        this.servicioProveedorI = servicioProveedorI;
+    public ControladorCliente(ServicioClienteI servicioClienteI) {
+        this.servicioClienteI = servicioClienteI;
     }
 
-    @GetMapping("/dashboard-proveedor")
+    @GetMapping("/dashboard")
     public ModelAndView irDashboard(HttpServletRequest request){
         ModelMap datosModelado = new ModelMap();
 
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
-        String rol_proveedor = "PROVEEDOR";
+        String rol_cliente = "CLIENTE";
 
-        if(usuarioSesion == null || !rol_proveedor.equalsIgnoreCase(usuarioSesion.getRol())){
-            return new ModelAndView("redirect:/login-user");
+        if(usuarioSesion == null || !rol_cliente.equalsIgnoreCase(usuarioSesion.getRol())){
+            return new ModelAndView("redirect:/login");
         }
 
-        datosModelado.put("mailProveedor", usuarioSesion.getUsername());
-        return new ModelAndView("dashboard-proveedor", datosModelado);
+        datosModelado.put("mailCliente", usuarioSesion.getUsername());
+        return new ModelAndView("dashboard", datosModelado);
    }
-
 
 
 }

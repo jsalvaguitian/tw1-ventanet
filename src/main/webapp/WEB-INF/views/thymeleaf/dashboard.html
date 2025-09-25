@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Ventanet</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+   <link rel="stylesheet" th:href="@{/css/dashboard.css}"/>
+</head>
+
+<body>
+    <nav class="navbar   d-md-none px-3" style="box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+
+        <span class="navbar-title">EVENT PORTAL</span>
+        <button class="hamburger btn me-2" id="menuBtn">&#9776;</button>
+        <div class="dropdown" id="dropdownMenu"
+            style="display:none;position:absolute;top:56px;left:0;width:100%;z-index:1200;">
+            <div class="desplegable   shadow p-2">
+                <a class="dropdown-item active" href="#">Dashboard</a>
+                <a class="dropdown-item" href="#">Events</a>
+                <a class="dropdown-item" href="#">Tickets</a>
+                <a class="dropdown-item" href="#">Vendors</a>
+                <a class="dropdown-item" href="#">Staff Management</a>
+                <a class="dropdown-item" href="#">Subscription Plan</a>
+                <a class="dropdown-item" href="#">Message</a>
+                <a class="dropdown-item" href="#">Finance</a>
+                <a class="dropdown-item" href="#">Dispute</a>
+            </div>
+        </div>
+    </nav>
+    <div class="sidebar" id="sidebar">
+        <h2>Venta.Net</h2>
+        <ul>
+            <li class="active">Dashboard</li>
+            <li>Events</li>
+            <li>Tickets</li>
+            <li>Vendors</li>
+            <li>Staff Management</li>
+            <li>Subscription Plan</li>
+            <li>Message</li>
+            <li>Finance</li>
+            <li>Dispute</li>
+        </ul>
+    </div>
+    <div class="main" id="mainContent">
+        <div class="header row align-items-center mb-4">
+            <div class="col-12 col-md-8 mb-2 mb-md-0">
+                <input type="text" class="form-control" placeholder="Search for event, vendor, etc">
+            </div>
+            <div class="col-12 col-md-4 d-flex align-items-center justify-content-md-end">
+                <div class="profile-section">
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop&crop=face"
+                        alt="Dr. Alisha Nicholls" class="profile-img">
+                    <div class="profile-info">
+                        <span th:text="${mailCliente}">Cliente</span>
+       
+                        <p>DERMATOLOGISTss</p>
+                    </div>
+                    <i class="fas fa-edit" style="color: white; margin-left: 10px;"></i>
+                </div>
+            </div>
+            <div class="stats">
+                <div class="stat flex-fill text-center">
+                    <span class="number" id="totalEvents">12</span><br>
+                    <span class="label">Total de Cotizaciones</span>
+                </div>
+                <div class="stat flex-fill text-center">
+                    <span class="number" id="completedEvents">10</span><br>
+                    <span class="label">Cotizaciones Completadas</span>
+                </div>
+                <div class="stat flex-fill text-center">
+                    <span class="number" id="inProcessEvents">2</span><br>
+                    <span class="label">Cotizaciones en Proceso</span>
+                </div>
+            </div>
+            <div class="filters mb-3">
+                <select id="dateFilter" class="form-select w-auto me-2">
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="last7">Last 7 Days</option>
+                    <option value="last30">Last 30 Days</option>
+                    <option value="month">This Month</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+                <button id="applyFilter" class="btn btn-primary me-2">Apply</button>
+                <button class="btn btn-primary me-2">Create Event</button>
+            </div>
+            <div>
+                <div class="events-table">
+                    <div id="eventsGrid" class="events-grid"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal para mostrar info del evento -->
+        <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="eventModalLabel">Detalle del Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="eventModalBody">
+                <!-- Aquí se mostrará la info -->
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Example event data
+            const events = [
+                { name: "Nam porttitor blandit accumsan.", location: "U.S. Bank Stadium", hours: "09:00am", date: "29.12.2018", size: "1,000" },
+                { name: "Curabitur lobortis id lorem id bibendum.", location: "1190 N 7 St, Wauwatoso", hours: "11:00pm", date: "29.12.2018", size: "300" },
+                { name: "Lorem ipsum dolor sit.", location: "Miami Beach", hours: "09:00am", date: "19.12.2018", size: "500" },
+                { name: "Vestibulum rutrum qu.", location: "Miami Beach", hours: "09:00am", date: "19.12.2018", size: "1,200" },
+                { name: "Lorem ipsum do.", location: "Los Angeles", hours: "02:00pm", date: "31.12.2018", size: "2,000" },
+                { name: "Fusce vehicula dolor arcu.", location: "Chicago", hours: "06:00pm", date: "31.12.2018", size: "1,500" },
+                { name: "Nam dapibus nis.", location: "Zilker Park, Austin", hours: "09:00am", date: "25.12.2018", size: "1,000" },
+                { name: "Lorem ipsum dolor sit amet, con.", location: "Ritz-Carlton, Laguna Niguel", hours: "09:00am", date: "25.12.2018", size: "1,000" },
+                { name: "Fusce vehicula.", location: "Ritz-Carlton, Laguna Niguel", hours: "09:00am", date: "25.12.2018", size: "1,000" }
+            ];
+            function renderGrid(data) {
+                const grid = document.getElementById('eventsGrid');
+                grid.innerHTML = '';
+                data.forEach((event, i) => {
+                    grid.innerHTML += `<div class='event-card col-12 col-sm-6 col-lg-4 mb-3'>
+            <div class='event-header'>Evento #${i + 1}</div>
+            <div class='event-body'>
+                <div><strong>Nombre:</strong> ${event.name}</div>
+                <div><strong>Ubicación:</strong> ${event.location}</div>
+                <div><strong>Hora:</strong> ${event.hours}</div>
+                <div><strong>Fecha:</strong> ${event.date}</div>
+                <div><strong>Tamaño:</strong> ${event.size}</div>
+            </div>
+            <div class='event-actions'>
+                <button class='action-btn btn btn-primary' data-index='${i}' data-bs-toggle='modal' data-bs-target='#eventModal'>Editar</button>
+            </div>
+        </div>`;
+                });
+                // Asignar evento a los botones
+                setTimeout(() => {
+                    document.querySelectorAll('.event-actions .action-btn').forEach(btn => {
+                        btn.onclick = function() {
+                            const idx = this.getAttribute('data-index');
+                            const ev = events[idx];
+                            document.getElementById('eventModalBody').innerHTML = `
+                    <div><strong>Nombre:</strong> ${ev.name}</div>
+                    <div><strong>Ubicación:</strong> ${ev.location}</div>
+                    <div><strong>Hora:</strong> ${ev.hours}</div>
+                    <div><strong>Fecha:</strong> ${ev.date}</div>
+                    <div><strong>Tamaño:</strong> ${ev.size}</div>
+                `;
+                        };
+                    });
+                }, 100);
+            }
+            renderGrid(events);
+            // Filter logic (dummy, just for UI)
+            document.getElementById('applyFilter').onclick = function () {
+                alert('Filter applied: ' + document.getElementById('dateFilter').value);
+            };
+            // Hamburguesa y menú desplegable
+            const menuBtn = document.getElementById('menuBtn');
+            const sidebar = document.getElementById('sidebar');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            function isMobile() {
+                return window.innerWidth <= 768;
+            }
+            menuBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (isMobile()) {
+                    if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {
+                        dropdownMenu.style.display = 'block';
+                    } else {
+                        dropdownMenu.style.display = 'none';
+                    }
+                } else {
+                    sidebar.classList.toggle('show');
+                }
+            });
+            // Cerrar menú al hacer click fuera en móvil
+            document.addEventListener('click', function (e) {
+                if (isMobile()) {
+                    if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                        dropdownMenu.style.display = 'none';
+                    }
+                } else {
+                    if (!sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });
+            // Ocultar menú desplegable al cambiar tamaño de pantalla
+            window.addEventListener('resize', function () {
+                if (!isMobile()) {
+                    dropdownMenu.style.display = 'none';
+                }
+            });
+        </script>
+</body>
+
+</html>
