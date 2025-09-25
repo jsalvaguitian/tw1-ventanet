@@ -116,7 +116,7 @@ public class ControladorLoginUsuarioTest {
 
         ModelAndView modelAndView = controladorLogin.procesarLogin(usuarioDto, requestMock);
 
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/proveedor/dashboard"));
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/proveedor/dashboard-proveedor"));
         
     }
 

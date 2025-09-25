@@ -67,7 +67,7 @@ public class ControladorAuthLogin {
 
                 //se podria hacer un dashboard dinamico y tener fragmentos y asi no hacer un switch o ifes
                 if (rolEncotrado.equalsIgnoreCase("PROVEEDOR")) {
-                    return new ModelAndView("redirect:/proveedor/dashboard");
+                    return new ModelAndView("redirect:/proveedor/dashboard-proveedor");
                 
                 } else if (rolEncotrado.equalsIgnoreCase("CLIENTE")) {
                     return new ModelAndView("redirect:/cliente/dashboard"); 
