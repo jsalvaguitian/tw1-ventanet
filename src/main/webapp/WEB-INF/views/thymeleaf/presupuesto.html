@@ -33,70 +33,68 @@
 <main class="container my-5">
   <h2 class="text-center mb-4">Solicitud de Presupuesto</h2>
 
-  <form id="formPresupuesto" onsubmit="return enviarSolicitud(event)" class="row g-4">
+  <!-- 🔹 Conexión al controlador -->
+  <form th:action="@{/presupuesto}" method="post" class="row g-4">
 
     <!-- 1. Tipo de ventana -->
     <div class="col-md-6">
       <label for="tipoVentana" class="form-label">Tipo de ventana</label>
-      <select class="form-select" id="tipoVentana" required onchange="mostrarImagen()">
+      <select class="form-select" id="tipoVentana" name="tipoVentana" required>
         <option value="">Seleccione...</option>
-        <option value="op1.jpg">Corrediza</option>
-        <option value="op3.png">Oscilobatiente</option>
-        <option value="op2.jpg">Paño fijo</option>
-        <option value="op4.png">Abatible</option>
-        <option value="op5.png">Plegable</option>
+        <option>Corrediza</option>
+        <option>Oscilobatiente</option>
+        <option>Paño fijo</option>
+        <option>Abatible</option>
+        <option>Plegable</option>
       </select>
     </div>
     <div class="col-md-6 d-flex justify-content-center align-items-center">
-      <img id="imagenVentana" th:src="@{/img/}" alt="Vista previa" class="img-fluid rounded shadow" style="max-height:200px; display:none;">
+      <img id="imagenVentana" th:src="@{/img/}" alt="Vista previa"
+           class="img-fluid rounded shadow" style="max-height:200px; display:none;">
     </div>
 
     <!-- 2. Medidas -->
     <div class="col-md-6">
       <label for="ancho" class="form-label">Ancho (m)</label>
-      <select class="form-select" id="ancho" required>
-        <option value="">Seleccione...</option>
-      </select>
+      <input type="number" step="0.01" class="form-control" id="ancho" name="ancho" required>
     </div>
     <div class="col-md-6">
       <label for="alto" class="form-label">Alto (m)</label>
-      <select class="form-select" id="alto" required>
-        <option value="">Seleccione...</option>
-      </select>
+      <input type="number" step="0.01" class="form-control" id="alto" name="alto" required>
     </div>
 
     <!-- 3. Material -->
     <div class="col-md-6">
       <label for="material" class="form-label">Material de perfil</label>
-      <select class="form-select" id="material" required>
+      <select class="form-select" id="material" name="material" required>
         <option value="">Seleccione...</option>
-        <option value="aluminio">Aluminio</option>
-        <option value="pvc">PVC</option>
-        <option value="madera">Madera</option>
+        <option>Aluminio</option>
+        <option>PVC</option>
+        <option>Madera</option>
       </select>
     </div>
 
     <!-- 4. Vidrio -->
     <div class="col-md-6">
       <label for="vidrio" class="form-label">Tipo de vidrio</label>
-      <select class="form-select" id="vidrio" required>
+      <select class="form-select" id="vidrio" name="vidrio" required>
         <option value="">Seleccione...</option>
-        <option value="simple">Simple (flotado)</option>
-        <option value="dvh">Doble (DVH)</option>
-        <option value="laminado">Laminado</option>
-        <option value="templado">Templado</option>
+        <option>Simple</option>
+        <option>Doble (DVH)</option>
+        <option>Laminado</option>
+        <option>Templado</option>
       </select>
     </div>
 
     <!-- 5. Color -->
     <div class="col-md-6">
       <label for="color" class="form-label">Color</label>
-      <select class="form-select" id="color" required>
+      <select class="form-select" id="color" name="color" required>
         <option value="">Seleccione...</option>
-        <option value="blanco">Blanco</option>
-        <option value="gris">Gris</option>
-        <option value="marron">Marrón</option>
-        <option value="negro">Negro</option>
+        <option>Blanco</option>
+        <option>Gris</option>
+        <option>Marrón</option>
+        <option>Negro</option>
       </select>
     </div>
 
@@ -104,16 +102,16 @@
     <div class="col-md-6 d-flex flex-column">
       <label class="form-label">Opciones adicionales</label>
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="premarco">
+        <input class="form-check-input" type="checkbox" id="premarco" name="premarco">
         <label class="form-check-label" for="premarco">Con premarco</label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="barrotillos">
+        <input class="form-check-input" type="checkbox" id="barrotillos" name="barrotillos">
         <label class="form-check-label" for="barrotillos">Con barrotillos</label>
       </div>
     </div>
 
-    <!-- 7. Boton -->
+    <!-- 7. Botón -->
     <div class="col-12 text-center mt-4">
       <button type="submit" class="btn btn-primary px-5 py-2">Solicitar presupuesto</button>
     </div>

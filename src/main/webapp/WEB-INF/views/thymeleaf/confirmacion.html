@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmación - Ventanet</title>
+  <link rel="stylesheet" th:href="@{/resources/core/css/main.css}">
+</head>
+<body>
+
+<header th:replace="fragments/header :: header"></header>
+
+<main class="container my-5 text-center">
+  <h2 th:text="${mensaje}"></h2>
+  <a class="btn btn-primary mt-3" th:href="@{/home}">Volver al inicio</a>
+</main>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+
+</body>
+</html>
