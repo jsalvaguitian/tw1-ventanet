@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class ControladorLoginTest {
@@ -28,15 +29,18 @@ public class ControladorLoginTest {
 	private ServicioLogin servicioLoginMock;
 
 	@BeforeEach
-	public void init() {
-		datosLoginMock = new DatosLogin("dami@unlam.com", "123");
-		usuarioMock = mock(Usuario.class);
-		when(usuarioMock.getEmail()).thenReturn("dami@unlam.com");
-		requestMock = mock(HttpServletRequest.class);
-		sessionMock = mock(HttpSession.class);
-		servicioLoginMock = mock(ServicioLogin.class);
-		controladorLogin = new ControladorLogin(servicioLoginMock);
-	}
+    public void init() {
+        datosLoginMock = new DatosLogin("dami@unlam.com", "123");
+        usuarioMock = mock(Usuario.class);
+        when(usuarioMock.getEmail()).thenReturn("dami@unlam.com");
+        when(usuarioMock.getPassword()).thenReturn("123");
+        requestMock = mock(HttpServletRequest.class);
+        sessionMock = mock(HttpSession.class);
+        servicioLoginMock = mock(ServicioLogin.class);
+        controladorLogin = new ControladorLogin(servicioLoginMock);
+ 
+        when(requestMock.getParameter("confirmarPassword")).thenReturn("123");
+    }
 
 	@Test
 	public void loginConUsuarioYPasswordInorrectosDeberiaLlevarALoginNuevamente() {
@@ -65,7 +69,7 @@ public class ControladorLoginTest {
 		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
 
 		// validacion
-		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/admin/dashboard-admin"));
 		verify(sessionMock, times(1)).setAttribute("ROL", usuarioEncontradoMock.getRol());
 	}
 
