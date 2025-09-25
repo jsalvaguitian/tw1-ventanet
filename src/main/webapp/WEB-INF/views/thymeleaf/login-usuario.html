@@ -29,7 +29,7 @@
             <div class="login-box">
                 <h2>Ingresa a tu cuenta</h2>
                 <form th:action="@{/login-user}" method="post"  th:object="${usuarioDto}">
-                    <label for="email">Usuario o email</label>
+                    <label for="email">Email</label>
                     <input th:field = "*{email}" type="text" id="email" name="email" placeholder="Ingresá tu email"  />
                     
                     <small class="error" th:if="${error_email !=null}" th:text="${error_email}"></small>
