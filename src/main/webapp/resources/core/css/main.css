@@ -91,3 +91,21 @@ footer a {
 footer a:hover {
   color: #0d6efd;
 }
+
+#loginbox {
+  background-color: #e9ecef;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+body, html {
+  height: 100%;
+}
+
+main.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+}

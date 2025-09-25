@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Productos</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css">
+</head>
+
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Listado de Productos</h1>
+
+        <!-- Mensajes -->
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
+
+        <!-- Tabla de productos -->
+        <table class="table table-bordered" th:if="${productos != null and !productos.isEmpty()}">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="producto : ${productos}">
+                    <td th:text="${producto.id}"></td>
+                    <td th:text="${producto.nombre}"></td>
+                    <td th:text="${producto.precio}"></td>
+                    <td th:text="${producto.stock}"></td>
+                    <td>
+                        <a th:href="@{/producto/editar/{id}(id=${producto.id})}"
+                            class="btn btn-sm btn-warning">Editar</a>
+                        <a href="#" class="btn btn-sm btn-danger"
+                            th:data-delete-url="@{/producto/eliminar/{id}(id=${producto.id})}"
+                            onclick="confirmDeletion(this); return false;">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Botón de nuevo producto -->
+        <a th:href="@{/producto/nuevo-producto}" class="btn btn-primary mt-3">Nuevo Producto</a>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        function confirmDeletion(element) {
+            Swal.fire({
+                title: "¿Está seguro?",
+                text: "Esta acción no se puede revertir.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Obtiene la URL de eliminación del atributo personalizado 'data-delete-url'
+                    const deleteUrl = element.getAttribute('data-delete-url');
+                    // Redirige al usuario a la URL de eliminación
+                    window.location.href = deleteUrl;
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>
