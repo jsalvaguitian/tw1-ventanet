@@ -6,47 +6,37 @@
 
     <title>Ventanet</title>
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
-   <link rel="stylesheet" th:href="@{/css/dashboard.css}"/>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
 </head>
 
 <body>
     <nav class="navbar   d-md-none px-3" style="box-shadow:0 2px 8px rgba(0,0,0,0.04);">
 
-        <span class="navbar-title">EVENT PORTAL</span>
+        <span class="navbar-title">Ventanet</span>
         <button class="hamburger btn me-2" id="menuBtn">&#9776;</button>
         <div class="dropdown" id="dropdownMenu"
             style="display:none;position:absolute;top:56px;left:0;width:100%;z-index:1200;">
             <div class="desplegable   shadow p-2">
                 <a class="dropdown-item active" href="#">Dashboard</a>
-                <a class="dropdown-item" href="#">Events</a>
-                <a class="dropdown-item" href="#">Tickets</a>
-                <a class="dropdown-item" href="#">Vendors</a>
-                <a class="dropdown-item" href="#">Staff Management</a>
-                <a class="dropdown-item" href="#">Subscription Plan</a>
-                <a class="dropdown-item" href="#">Message</a>
-                <a class="dropdown-item" href="#">Finance</a>
-                <a class="dropdown-item" href="#">Dispute</a>
+                <a class="dropdown-item" href="#">Reportes</a>
+                <a class="dropdown-item" href="#">Configuración</a>
+
             </div>
         </div>
     </nav>
     <div class="sidebar" id="sidebar">
-        <h2>Venta.Net</h2>
+        <h2>Ventanet</h2>
         <ul>
             <li class="active">Dashboard</li>
-            <li>Events</li>
-            <li>Tickets</li>
-            <li>Vendors</li>
-            <li>Staff Management</li>
-            <li>Subscription Plan</li>
-            <li>Message</li>
-            <li>Finance</li>
-            <li>Dispute</li>
+            <li>Reportes</li>
+            <li>Configuración</li>
+
         </ul>
     </div>
     <div class="main" id="mainContent">
         <div class="header row align-items-center mb-4">
             <div class="col-12 col-md-8 mb-2 mb-md-0">
-                <input type="text" class="form-control" placeholder="Search for event, vendor, etc">
+                <input type="text" class="form-control" placeholder="Buscar por cotización, Ubicación, Fecha, etc.">
             </div>
             <div class="col-12 col-md-4 d-flex align-items-center justify-content-md-end">
                 <div class="profile-section">
@@ -54,8 +44,8 @@
                         alt="Dr. Alisha Nicholls" class="profile-img">
                     <div class="profile-info">
                         <span th:text="${mailCliente}">Cliente</span>
-       
-                        <p>DERMATOLOGISTss</p>
+
+
                     </div>
                     <i class="fas fa-edit" style="color: white; margin-left: 10px;"></i>
                 </div>
@@ -83,8 +73,8 @@
                     <option value="month">This Month</option>
                     <option value="custom">Custom Range</option>
                 </select>
-                <button id="applyFilter" class="btn btn-primary me-2">Apply</button>
-                <button class="btn btn-primary me-2">Create Event</button>
+                <button id="applyFilter" class="btn btn-primary me-2">Aplicar</button>
+                <button class="btn btn-primary me-2">Crear Cotización</button>
             </div>
             <div>
                 <div class="events-table">
@@ -94,48 +84,51 @@
         </div>
         <!-- Modal para mostrar info del evento -->
         <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="eventModalLabel">Detalle del Evento</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body" id="eventModalBody">
-                <!-- Aquí se mostrará la info -->
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-              </div>
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="eventModalLabel">Detalle de la Cotización</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="eventModalBody">
+                        <!-- Aquí se mostrará la info -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             // Example event data
             const events = [
-                { name: "Nam porttitor blandit accumsan.", location: "U.S. Bank Stadium", hours: "09:00am", date: "29.12.2018", size: "1,000" },
-                { name: "Curabitur lobortis id lorem id bibendum.", location: "1190 N 7 St, Wauwatoso", hours: "11:00pm", date: "29.12.2018", size: "300" },
-                { name: "Lorem ipsum dolor sit.", location: "Miami Beach", hours: "09:00am", date: "19.12.2018", size: "500" },
-                { name: "Vestibulum rutrum qu.", location: "Miami Beach", hours: "09:00am", date: "19.12.2018", size: "1,200" },
-                { name: "Lorem ipsum do.", location: "Los Angeles", hours: "02:00pm", date: "31.12.2018", size: "2,000" },
-                { name: "Fusce vehicula dolor arcu.", location: "Chicago", hours: "06:00pm", date: "31.12.2018", size: "1,500" },
-                { name: "Nam dapibus nis.", location: "Zilker Park, Austin", hours: "09:00am", date: "25.12.2018", size: "1,000" },
-                { name: "Lorem ipsum dolor sit amet, con.", location: "Ritz-Carlton, Laguna Niguel", hours: "09:00am", date: "25.12.2018", size: "1,000" },
-                { name: "Fusce vehicula.", location: "Ritz-Carlton, Laguna Niguel", hours: "09:00am", date: "25.12.2018", size: "1,000" }
+                { name: "Ventana Corrediza 2 hojas", location: "CABA", hours: "10:00 am", date: "01/09/2025", cant: "2 unidades", dimension: "1.20 x 1.00m", color: "Blanco" },
+                { name: "Ventana Oscilobatiente aluminio", location: "San Justo", hours: "12:30 pm", date: "03/09/2025", cant: "1 unidad", dimension: "1.00 x 0.80m", color: "Gris" },
+                { name: "Paño Fijo DVH", location: "Morón", hours: "09:15 am", date: "05/09/2025", cant: "3 unidades", dimension: "1.50 x 1.20m", color: "Negro" },
+                { name: "Ventana corrediza PVC", location: "La Plata", hours: "11:00 am", date: "07/09/2025", cant: "4 unidades", dimension: "1.80 x 1.20m", color: "Blanco" },
+                { name: "Ventana batiente con mosquitero", location: "Lomas de Zamora", hours: "02:00 pm", date: "10/09/2025", cant: "2 unidades", dimension: "1.00 x 0.60m", color: "Gris" },
+                { name: "Ventana corrediza 3 hojas", location: "Quilmes", hours: "03:30 pm", date: "12/09/2025", cant: "1 unidad", dimension: "2.00 x 1.20m", color: "Negro" },
+                { name: "Ventana paño fijo aluminio", location: "Avellaneda", hours: "08:45am", date: "15.09.2025", size: "2 unidades", dimension: "1.20 x 0.80m", color: "Blanco" },
+                { name: "Ventana oscilobatiente PVC", location: "Lanús", hours: "10:20am", date: "18.09.2025", size: "1 unidad", dimension: "1.00 x 0.80m", color: "Gris" },
+                { name: "Ventana corrediza doble vidrio", location: "Berazategui", hours: "01:00pm", date: "20.09.2025", size: "2 unidades", dimension: "1.50 x 1.00m", color: "Negro" }
             ];
             function renderGrid(data) {
                 const grid = document.getElementById('eventsGrid');
                 grid.innerHTML = '';
                 data.forEach((event, i) => {
                     grid.innerHTML += `<div class='event-card col-12 col-sm-6 col-lg-4 mb-3'>
-            <div class='event-header'>Evento #${i + 1}</div>
+            <div class='event-header'>Cotización #${i + 1}</div>
             <div class='event-body'>
                 <div><strong>Nombre:</strong> ${event.name}</div>
+                <div><strong>Cantidad:</strong> ${event.cant}</div>
+                <div><strong>Dimensión:</strong> ${event.dimension}</div>
+                <div><strong>Color:</strong> ${event.color}</div>
                 <div><strong>Ubicación:</strong> ${event.location}</div>
                 <div><strong>Hora:</strong> ${event.hours}</div>
                 <div><strong>Fecha:</strong> ${event.date}</div>
-                <div><strong>Tamaño:</strong> ${event.size}</div>
+                
             </div>
             <div class='event-actions'>
                 <button class='action-btn btn btn-primary' data-index='${i}' data-bs-toggle='modal' data-bs-target='#eventModal'>Editar</button>
@@ -145,15 +138,18 @@
                 // Asignar evento a los botones
                 setTimeout(() => {
                     document.querySelectorAll('.event-actions .action-btn').forEach(btn => {
-                        btn.onclick = function() {
+                        btn.onclick = function () {
                             const idx = this.getAttribute('data-index');
                             const ev = events[idx];
                             document.getElementById('eventModalBody').innerHTML = `
                     <div><strong>Nombre:</strong> ${ev.name}</div>
+                    <div><strong>Cantidad:</strong> ${ev.cant}</div>
+                    <div><strong>Dimensión:</strong> ${ev.dimension}</div>
+                    <div><strong>Color:</strong> ${ev.color}</div>
                     <div><strong>Ubicación:</strong> ${ev.location}</div>
                     <div><strong>Hora:</strong> ${ev.hours}</div>
                     <div><strong>Fecha:</strong> ${ev.date}</div>
-                    <div><strong>Tamaño:</strong> ${ev.size}</div>
+                    <div><strong>Cantidad:</strong> ${ev.cant}</div>
                 `;
                         };
                     });
