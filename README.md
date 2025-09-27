@@ -1,6 +1,6 @@
 Proyecto base Taller Web I (Maven and Thymeleaf)
 ===============================
-hola
+
 ## Preparación del ambiente de desarrollo
 Antes de comenzar a trabajar con el proyecto, debemos instalar y configurar algunas herramientas:
 
@@ -47,8 +47,6 @@ Docker es una plataforma de contenedores que permite empaquetar aplicaciones con
 ```shell
 # Levantamos un BBDD con docker
 docker build -f DockerfileSQL -t mysql .
-docker run --env-file .env --name mysql-container -d -p 3306:3306 mysql
-
 # Iniciamos el proyecto
 $ mvn clean jetty:run
 # http://localhost:8080/spring
