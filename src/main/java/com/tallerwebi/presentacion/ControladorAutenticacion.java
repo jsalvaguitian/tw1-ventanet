@@ -7,6 +7,7 @@ import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.servicios.ServicioLogin;
 import com.tallerwebi.presentacion.dto.DatosLogin;
 import com.tallerwebi.presentacion.dto.UsuarioDto;
+import com.tallerwebi.presentacion.dto.UsuarioProveedorDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 public class ControladorAutenticacion {
@@ -115,7 +119,16 @@ public class ControladorAutenticacion {
     @RequestMapping(path = "/registro-proveedor", method = RequestMethod.GET)
     public ModelAndView irRegistroProveedor() {
         ModelMap model = new ModelMap();
-        model.put("usuarioProveedorDto", new UsuarioDto());
+        model.put("usuarioProveedorDto", new UsuarioProveedorDTO());
         return new ModelAndView("nuevo-proveedor", model);
     }
+
+    @PostMapping("/registro-proveedor")
+    public ModelAndView procesarRegistroProveedor(@ModelAttribute UsuarioProveedorDTO usuarioProveedorDTO) {
+        ModelMap datos = new ModelMap();
+        return new ModelAndView("nuevo-proveedor", datos);
+    }
+    
+
+
 }

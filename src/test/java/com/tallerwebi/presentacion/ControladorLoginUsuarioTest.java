@@ -134,7 +134,6 @@ public class ControladorLoginUsuarioTest {
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/cliente/dashboard"));
 
-
     }
 
     @Test

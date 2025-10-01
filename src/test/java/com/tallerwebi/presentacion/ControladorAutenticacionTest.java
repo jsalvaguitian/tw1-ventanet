@@ -132,4 +132,14 @@ public class ControladorAutenticacionTest {
 
 	}
 
+	@Test
+	public void dadoUnProveedorConCUITInvalidoQueElRegistroFalle(){
+		//Preparacion
+
+		//Ejecucion
+
+		//Validacion
+	}
+		
+
 }

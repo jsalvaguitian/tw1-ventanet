@@ -17,37 +17,44 @@
   <div class="container">
 
     <div class="col-md-6">
-        <h2 class="text-center mt-4">Registro de Proveedor</h2>
-        <form id="formProveedor" class="form-registro" th:action="@{/registrarmeProveedor}" th:object="${usuarioProveedorDto}"
-          method="POST">
-          <div class="mb-3">
-            <input th:field="*{razonSocial}" class="form-control" placeholder="Razón Social" required />
-          </div>
-          <div class="mb-3">
-            <input th:field="*{cuit}" class="form-control" placeholder="CUIT" required />
-          </div>
-          <div class="mb-3">
-            <input th:field="*{email}" type="email" class="form-control" placeholder="Correo electrónico" required />
-          </div>
-          <div class="mb-3">
-            <input th:field="*{contrasenia}" type="password" class="form-control" placeholder="Contraseña" required />
-          </div>
-          <div class="mb-3">
-            <input th:field="*{repeatContrasenia}" type="password" name="confirmarPassword" class="form-control" placeholder="Confirmar contraseña"
-              required />
-          </div>
-          <div class="mb-3">
-            <input th:field="*{rubro}" class="form-control" placeholder="Rubro" required />
-          </div>
-          <button class="btn btn-success w-100" type="submit">Registrarme como Proveedor</button>
-        </form>
+      <h2 class="text-center mt-4">Registro de Proveedor</h2>
+      <form id="formProveedor" class="form-registro" th:action="@{/registrarmeProveedor}"
+        th:object="${usuarioProveedorDto}" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+          <input th:field="*{razonSocial}" class="form-control" placeholder="Razón Social" required />
+        </div>
+        <div class="mb-3">
+          <input th:field="*{cuit}" class="form-control" placeholder="CUIT" required />
+        </div>
+        <div class="mb-3">
+          <input th:field="*{email}" type="email" class="form-control" placeholder="Correo electrónico" required />
+        </div>
+        <div class="mb-3">
+          <input th:field="*{contrasenia}" type="password" class="form-control" placeholder="Contraseña" required />
+        </div>
+        <div class="mb-3">
+          <label for="rubro" class="form-label">Rubro</label>
+          <select th:field="*{rubro}" class="form-control" id="rubro" required>
+            <option th:each="r : ${T(com.tallerwebi.dominio.enums.Rubro).values()}" th:value="${r}"
+              th:text="${r.descripcion}">
+            </option>
+          </select>
+        </div>
 
-        <p class="mt-3 text-center">
-          ¿Ya tienes cuenta? <a th:href="@{/login}">Ingresar</a>
-        </p>
 
-      </div>
+        <div class="mb-3">
+          <label class="form-label">Subir documentación (PDF, JPG, PNG)</label>
+          <input type="file" th:field="*{documento}" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required />
+        </div>
+        <button class="btn btn-success w-100" type="submit">Registrarme como Proveedor</button>
+      </form>
+
+      <p class="mt-3 text-center">
+        ¿Ya tienes cuenta? <a th:href="@{/login}">Ingresar</a>
+      </p>
+
     </div>
+  </div>
   </div>
 
   <!-- Bootstrap JS and dependencies -->
