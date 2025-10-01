@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.hibernate.query.criteria.internal.expression.SearchedCaseExpression.WhenClause;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;

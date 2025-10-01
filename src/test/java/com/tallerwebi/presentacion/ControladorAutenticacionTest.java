@@ -16,12 +16,13 @@ import javax.servlet.http.HttpSession;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class ControladorLoginTest {
+public class ControladorAutenticacionTest {
 
-	private ControladorLogin controladorLogin;
+	private ControladorAutenticacion controladorAutenticacion;
 	private Usuario usuarioMock;
 	private DatosLogin datosLoginMock;
 	private HttpServletRequest requestMock;
@@ -37,10 +38,11 @@ public class ControladorLoginTest {
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);
         servicioLoginMock = mock(ServicioLogin.class);
-        controladorLogin = new ControladorLogin(servicioLoginMock);
+        controladorAutenticacion = new ControladorAutenticacion(servicioLoginMock);
  
         when(requestMock.getParameter("confirmarPassword")).thenReturn("123");
     }
+	//## Test para ir a LOGIN
 
 	@Test
 	public void loginConUsuarioYPasswordInorrectosDeberiaLlevarALoginNuevamente() {
@@ -48,7 +50,7 @@ public class ControladorLoginTest {
 		when(servicioLoginMock.consultarUsuario(anyString(), anyString())).thenReturn(null);
 
 		// ejecucion
-		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+		ModelAndView modelAndView = controladorAutenticacion.validarLogin(datosLoginMock, requestMock);
 
 		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
@@ -66,19 +68,20 @@ public class ControladorLoginTest {
 		when(servicioLoginMock.consultarUsuario(anyString(), anyString())).thenReturn(usuarioEncontradoMock);
 
 		// ejecucion
-		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+		ModelAndView modelAndView = controladorAutenticacion.validarLogin(datosLoginMock, requestMock);
 
 		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/admin/dashboard-admin"));
 		verify(sessionMock, times(1)).setAttribute("ROL", usuarioEncontradoMock.getRol());
 	}
 
+	// ## Test para REGISTRARME COMO CLIENTE
 	@Test
 	public void registrameSiUsuarioNoExisteDeberiaCrearUsuarioYVolverAlLogin()
 			throws UsuarioExistente, ContraseniaInvalida, EmailInvalido {
 
 		// ejecucion
-		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock, requestMock);
+		ModelAndView modelAndView = controladorAutenticacion.registrarme(usuarioMock, requestMock);
 
 		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
@@ -92,7 +95,7 @@ public class ControladorLoginTest {
 		doThrow(UsuarioExistente.class).when(servicioLoginMock).registrar(usuarioMock);
 
 		// ejecucion
-		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock, requestMock);
+		ModelAndView modelAndView = controladorAutenticacion.registrarme(usuarioMock, requestMock);
 
 		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-usuario"));
@@ -106,11 +109,27 @@ public class ControladorLoginTest {
 		doThrow(RuntimeException.class).when(servicioLoginMock).registrar(usuarioMock);
 
 		// ejecucion
-		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock, requestMock);
+		ModelAndView modelAndView = controladorAutenticacion.registrarme(usuarioMock, requestMock);
 
 		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-usuario"));
 		assertThat(modelAndView.getModel().get("error").toString(),
 				equalToIgnoringCase("Error al registrar el nuevo usuario"));
 	}
+
+	// ## Test para REGISTRARME COMO PROVEEDOR
+	@Test
+	public void dadoQueUnUsuarioQuieraRegistrarseComoProveedorQueSeMuestreElFormularioDeProveedor(){
+		//Preoparacion
+		String vistaEsperada = "nuevo-proveedor";
+		//Ejecucion
+		ModelAndView modelAndView = controladorAutenticacion.irRegistroProveedor();
+		String vistaObtenida = modelAndView.getViewName();
+		
+		//Validacion
+		assertThat(vistaObtenida, equalToIgnoringCase(vistaEsperada));
+		assertTrue(modelAndView.getModel().containsKey("proveedorDto"));
+
+	}
+
 }

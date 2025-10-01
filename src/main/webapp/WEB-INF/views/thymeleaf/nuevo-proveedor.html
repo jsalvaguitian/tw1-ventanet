@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro proveedor</title>
+
+  <!-- Boostrap core css -->
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+
+  <!-- custom style -->
+  <link rel="stylesheet" th:href="@{/css/nuevo-proveedor.css}" />
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="col-md-6">
+        <h2 class="text-center mt-4">Registro de Proveedor</h2>
+        <form id="formProveedor" class="form-registro" th:action="@{/registrarmeProveedor}" th:object="${usuarioProveedorDto}"
+          method="POST">
+          <div class="mb-3">
+            <input th:field="*{razonSocial}" class="form-control" placeholder="Razón Social" required />
+          </div>
+          <div class="mb-3">
+            <input th:field="*{cuit}" class="form-control" placeholder="CUIT" required />
+          </div>
+          <div class="mb-3">
+            <input th:field="*{email}" type="email" class="form-control" placeholder="Correo electrónico" required />
+          </div>
+          <div class="mb-3">
+            <input th:field="*{contrasenia}" type="password" class="form-control" placeholder="Contraseña" required />
+          </div>
+          <div class="mb-3">
+            <input th:field="*{repeatContrasenia}" type="password" name="confirmarPassword" class="form-control" placeholder="Confirmar contraseña"
+              required />
+          </div>
+          <div class="mb-3">
+            <input th:field="*{rubro}" class="form-control" placeholder="Rubro" required />
+          </div>
+          <button class="btn btn-success w-100" type="submit">Registrarme como Proveedor</button>
+        </form>
+
+        <p class="mt-3 text-center">
+          ¿Ya tienes cuenta? <a th:href="@{/login}">Ingresar</a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+
+</html>

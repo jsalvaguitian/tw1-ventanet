@@ -6,6 +6,7 @@ import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.servicios.ServicioLogin;
 import com.tallerwebi.presentacion.dto.DatosLogin;
+import com.tallerwebi.presentacion.dto.UsuarioDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,12 +19,12 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-public class ControladorLogin {
+public class ControladorAutenticacion {
 
     private ServicioLogin servicioLogin;
 
     @Autowired
-    public ControladorLogin(ServicioLogin servicioLogin) {
+    public ControladorAutenticacion(ServicioLogin servicioLogin) {
         this.servicioLogin = servicioLogin;
     }
 
@@ -88,6 +89,7 @@ public class ControladorLogin {
         return new ModelAndView("redirect:/login");
     }
 
+    
     @RequestMapping(path = "/nuevo-usuario", method = RequestMethod.GET)
     public ModelAndView nuevoUsuario() {
         ModelMap model = new ModelMap();
@@ -108,5 +110,12 @@ public class ControladorLogin {
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public ModelAndView inicio() {
         return new ModelAndView("redirect:/home");
+    }
+
+    @RequestMapping(path = "/registro-proveedor", method = RequestMethod.GET)
+    public ModelAndView irRegistroProveedor() {
+        ModelMap model = new ModelMap();
+        model.put("usuarioProveedorDto", new UsuarioDto());
+        return new ModelAndView("nuevo-proveedor", model);
     }
 }
