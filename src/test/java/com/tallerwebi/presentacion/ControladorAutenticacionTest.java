@@ -128,7 +128,7 @@ public class ControladorAutenticacionTest {
 		
 		//Validacion
 		assertThat(vistaObtenida, equalToIgnoringCase(vistaEsperada));
-		assertTrue(modelAndView.getModel().containsKey("proveedorDto"));
+		assertTrue(modelAndView.getModel().containsKey("usuarioProveedorDto"));
 
 	}
 
