@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.entidades.UsuarioAuth;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
-import com.tallerwebi.dominio.servicios.ServicioUsuarioI;
+import com.tallerwebi.dominio.servicios.ServicioUsuarioAuthI;
 import com.tallerwebi.presentacion.dto.UsuarioDto;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class ControladorAuthLogin {
 
-    private ServicioUsuarioI servicioUsuarioI;
+    private ServicioUsuarioAuthI servicioUsuarioI;
 
     @Autowired
-    public ControladorAuthLogin(ServicioUsuarioI servicioUsuarioI) {
+    public ControladorAuthLogin(ServicioUsuarioAuthI servicioUsuarioI) {
         this.servicioUsuarioI = servicioUsuarioI;
     }
 

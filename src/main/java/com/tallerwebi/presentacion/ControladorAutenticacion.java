@@ -1,10 +1,12 @@
 package com.tallerwebi.presentacion;
 
+import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.ContraseniaInvalida;
+import com.tallerwebi.dominio.excepcion.CuitInvalido;
 import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
-import com.tallerwebi.dominio.servicios.ServicioLogin;
+import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.DatosLogin;
 import com.tallerwebi.presentacion.dto.UsuarioDto;
 import com.tallerwebi.presentacion.dto.UsuarioProveedorDTO;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,11 +29,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 public class ControladorAutenticacion {
 
-    private ServicioLogin servicioLogin;
+    private ServicioUsuario servicioUsuario;
 
     @Autowired
-    public ControladorAutenticacion(ServicioLogin servicioLogin) {
-        this.servicioLogin = servicioLogin;
+    public ControladorAutenticacion(ServicioUsuario servicioLogin) {
+        this.servicioUsuario = servicioLogin;
     }
 
     @RequestMapping("/login")
@@ -44,7 +48,7 @@ public class ControladorAutenticacion {
     public ModelAndView validarLogin(@ModelAttribute("datosLogin") DatosLogin datosLogin, HttpServletRequest request) {
         ModelMap model = new ModelMap();
 
-        Usuario usuarioBuscado = servicioLogin.consultarUsuario(datosLogin.getEmail(), datosLogin.getPassword());
+        Usuario usuarioBuscado = servicioUsuario.consultarUsuario(datosLogin.getEmail(), datosLogin.getPassword());
         if (usuarioBuscado != null) {
             request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
             if (usuarioBuscado.getRol().equals("CLIENTE")) {
@@ -72,7 +76,7 @@ public class ControladorAutenticacion {
             return new ModelAndView("nuevo-usuario", model);
         }
         try {
-            servicioLogin.registrar(usuario);
+            servicioUsuario.registrar(usuario);
         } catch (UsuarioExistente e) {
             ModelMap model = new ModelMap();
             model.put("error", "El usuario ya existe");
@@ -123,10 +127,75 @@ public class ControladorAutenticacion {
         return new ModelAndView("nuevo-proveedor", model);
     }
 
+    /*
+     * Procesar el formulario de registro de proveedor
+     * Contrasenia invalida
+     * Cuit invalido
+     * Email invalido
+     * Usuario existente
+     * Error general
+     */
+
     @PostMapping("/registro-proveedor")
     public ModelAndView procesarRegistroProveedor(@ModelAttribute UsuarioProveedorDTO usuarioProveedorDTO) {
         ModelMap datos = new ModelMap();
-        return new ModelAndView("nuevo-proveedor", datos);
+        Usuario usuarioProveedor = usuarioProveedorDTO.obtenerEntidad();
+
+
+        if (usuarioProveedor.getEmail() == null || usuarioProveedor.getEmail().isBlank()) {
+            datos.put("error_mail", "Por favor, ingresa el email.");
+
+        }else if(!emailTieneFormatoValido(usuarioProveedor.getEmail())) {
+            datos.put("error_mail", "El formato del email es invalido");
+        }
+        
+        if (usuarioProveedor.getPassword() == null || usuarioProveedor.getPassword().isBlank()) {
+            datos.put("error_pswd","la contraseña es obligatoria.");
+        }
+        
+        if (usuarioProveedor.getRazonSocial() == null || usuarioProveedor.getRazonSocial().isBlank()) {
+            datos.put("error_razon_social","La razón social es obligatoria.");
+        }
+        
+        String cuit = usuarioProveedor.getCuit();
+        if (cuit == null || cuit.toString().isBlank() || !cuit.matches("\\d{11}")) {
+            datos.put("error_cuit", "El CUIT es obligatorio y debe tener 11 dígitos.");
+        }
+
+        if(usuarioProveedorDTO.getDocumento() == null || usuarioProveedorDTO.getDocumento().isEmpty()) {
+            datos.put("error_documento", "El documento es obligatorio.");
+        }
+
+        if(!usuarioProveedor.getEmail().isBlank() && !usuarioProveedor.getPassword().isBlank() && emailTieneFormatoValido(usuarioProveedor.getEmail()) && !usuarioProveedorDTO.getDocumento().isEmpty()){
+           
+           
+            try {
+               servicioUsuario.registrarProveedor(usuarioProveedor, usuarioProveedorDTO.getDocumento());
+               return new ModelAndView("redirect:/info-registro-proveedor");
+
+            } catch (ContraseniaInvalida e) {
+                datos.put("error_pswd", e.getMessage());
+            } catch (UsuarioExistente e) {
+                datos.put("error_mail", "El usuario ya existe.");
+            
+            } catch (IOException e) {
+                datos.put("error_documento", e.getMessage());
+
+            } catch (CuitInvalido e) {
+                datos.put("error_cuit", "El CUIT es invalido.");
+            }
+            
+            catch (Exception e) {
+                datos.put("error_general", "Error al registrar el nuevo proveedor.");
+            }
+        }
+        
+        datos.put("usuarioProveedorDto", usuarioProveedorDTO);
+        return new ModelAndView("registro_proveedor", datos);
+    }
+
+    private boolean emailTieneFormatoValido(String email) {
+                return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
     }
     
 

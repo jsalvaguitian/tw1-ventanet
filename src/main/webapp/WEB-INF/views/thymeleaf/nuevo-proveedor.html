@@ -18,19 +18,27 @@
 
     <div class="col-md-6">
       <h2 class="text-center mt-4">Registro de Proveedor</h2>
-      <form id="formProveedor" class="form-registro" th:action="@{/registrarmeProveedor}"
+      <form id="formProveedor" class="form-registro" th:action="@{/registro-proveedor}"
         th:object="${usuarioProveedorDto}" method="POST" enctype="multipart/form-data">
         <div class="mb-3">
           <input th:field="*{razonSocial}" class="form-control" placeholder="Razón Social" required />
+          <small class="error" th:if="${error_razon_social !=null}" th:text="${error_razon_social}"></small>
+
         </div>
         <div class="mb-3">
           <input th:field="*{cuit}" class="form-control" placeholder="CUIT" required />
+          <small class="error" th:if="${error_cuit !=null}" th:text="${error_cuit}"></small>
+
         </div>
         <div class="mb-3">
           <input th:field="*{email}" type="email" class="form-control" placeholder="Correo electrónico" required />
+          <small class="error" th:if="${error_mail !=null}" th:text="${error_mail}"></small>
+
         </div>
         <div class="mb-3">
           <input th:field="*{contrasenia}" type="password" class="form-control" placeholder="Contraseña" required />
+          <small class="error" th:if="${error_pswd != null}" th:text="${error_pswd}"></small>
+
         </div>
         <div class="mb-3">
           <label for="rubro" class="form-label">Rubro</label>
@@ -45,6 +53,8 @@
         <div class="mb-3">
           <label class="form-label">Subir documentación (PDF, JPG, PNG)</label>
           <input type="file" th:field="*{documento}" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required />
+          <small class="error" th:if="${error_documento !=null}" th:text="${error_documento}"></small>
+
         </div>
         <button class="btn btn-success w-100" type="submit">Registrarme como Proveedor</button>
       </form>

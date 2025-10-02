@@ -2,7 +2,8 @@ package com.tallerwebi.presentacion.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.tallerwebi.dominio.entidades.Proveedor;
+import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.enums.Rol;
 import com.tallerwebi.dominio.enums.Rubro;
 
 public class UsuarioProveedorDTO {
@@ -11,7 +12,7 @@ public class UsuarioProveedorDTO {
 
     //datos del proveedor
     private String razonSocial;
-    private Integer cuit;
+    private String cuit;
     private Rubro rubro;
     
     private MultipartFile documento;
@@ -40,11 +41,11 @@ public class UsuarioProveedorDTO {
         this.razonSocial = razonSocial;
     }
 
-    public Integer getCuit() {
+    public String getCuit() {
         return cuit;
     }
 
-    public void setCuit(Integer cuit) {
+    public void setCuit(String cuit) {
         this.cuit = cuit;
     }
 
@@ -65,14 +66,17 @@ public class UsuarioProveedorDTO {
     }
 
     //Obtener la entidad Proveedor a partir del DTO
-    public Proveedor obtenerEntidad() {
+    public Usuario obtenerEntidad() {
 
-        Proveedor proveedor = new Proveedor();
+        Usuario proveedor = new Usuario();
+        
+        proveedor.setRolUsuario(Rol.PROVEEDOR);
+
         proveedor.setRazonSocial(this.razonSocial);
         proveedor.setCuit(this.cuit);
         proveedor.setRubro(this.rubro);
 
-        //falta path documentacion
+        //se seteara el path documentacion en el servicio
         return proveedor;  
     }
 

@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.entidades.UsuarioAuth;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
-import com.tallerwebi.dominio.servicios.ServicioUsuarioI;
+import com.tallerwebi.dominio.servicios.ServicioUsuarioAuthI;
 import com.tallerwebi.presentacion.dto.UsuarioDto;
 
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
@@ -26,7 +26,7 @@ import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 public class ControladorLoginUsuarioTest {
 
     private ControladorAuthLogin controladorLogin;
-    private ServicioUsuarioI servicioUsuarioI;
+    private ServicioUsuarioAuthI servicioUsuarioI;
     private final String emailIngresado = "jesi@mail.com";
     private final String passwordIngresado = "Jesica12!";
     private HttpServletRequest requestMock;
@@ -34,7 +34,7 @@ public class ControladorLoginUsuarioTest {
 
     @BeforeEach
     public void init() {
-        servicioUsuarioI = mock(ServicioUsuarioI.class);
+        servicioUsuarioI = mock(ServicioUsuarioAuthI.class);
         controladorLogin = new ControladorAuthLogin(servicioUsuarioI);
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);
