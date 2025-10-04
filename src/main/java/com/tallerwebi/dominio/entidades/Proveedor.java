@@ -4,31 +4,32 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import com.tallerwebi.dominio.enums.EstadoProveedor;
 import com.tallerwebi.dominio.enums.Rubro;
-
-
-public class Proveedor extends UsuarioAuth{
+@Entity
+@DiscriminatorValue("PROVEEDOR")
+public class Proveedor extends Usuario{
+    
     private String razonSocial;        // Nombre legal de la empresa
-    private Integer cuit;               // Identificador fiscal
+    private String cuit;               // Identificador fiscal
+    
+    @Enumerated(EnumType.STRING)
     private Rubro rubro;              
-    private String sitioWeb;           
-    private String estado;             // Activo, Inactivo, Suspendido
-    //private Double dolarReferencia;    // Último valor de dólar usado para precios
+    private String sitioWeb; 
+    
+    @Enumerated(EnumType.STRING)
+    private EstadoProveedor estado;             // Activo, Inactivo, Suspendido
 
-
-    /* Crearse la clase Producto
-     private List<Producto> productos;       // Productos ofrecidos por el proveedor */
-    private List<Cotizacion> cotizaciones;  // Cotizaciones realizadas por el proveedor
-
-
-    public Proveedor(String email, String contrasenia){
-        super(email,contrasenia);
-        this.cotizaciones = new ArrayList<>();
-    }
-
+    private String documento;        // Ruta del documento legal del proveedor
 
     public Proveedor() {
-        //TODO Auto-generated constructor stub
+        super();
+        this.estado = EstadoProveedor.PENDIENTE;
     }
 
 
@@ -42,12 +43,12 @@ public class Proveedor extends UsuarioAuth{
     }
 
 
-    public Integer getCuit() {
+    public String getCuit() {
         return cuit;
     }
 
 
-    public void setCuit(Integer cuit) {
+    public void setCuit(String cuit) {
         this.cuit = cuit;
     }
 
@@ -72,29 +73,37 @@ public class Proveedor extends UsuarioAuth{
     }
 
 
-    public String getEstado() {
+    public EstadoProveedor getEstado() {
         return estado;
     }
 
 
-    public void setEstado(String estado) {
+    public void setEstado(EstadoProveedor estado) {
         this.estado = estado;
     }
 
 
-    public List<Cotizacion> getCotizaciones() {
-        return cotizaciones;
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
     }
 
 
-    public void setCotizaciones(List<Cotizacion> cotizaciones) {
-        this.cotizaciones = cotizaciones;
-    }
-
-    
-
+        
+    /* Crearse la clase Producto
+     private List<Producto> productos;       // Productos ofrecidos por el proveedor */
+    //private List<Cotizacion> cotizaciones;  // Cotizaciones realizadas por el proveedor
 
 
+    /*public Proveedor(String email, String contrasenia){
+        super(email,contrasenia);
+        this.cotizaciones = new ArrayList<>();
+    }*/
+
+    //private Double dolarReferencia;    // Último valor de dólar usado para precios
     
 
     

@@ -17,7 +17,7 @@ import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
+/*
 @Controller
 public class ControladorAuthLogin {
 
@@ -77,7 +77,7 @@ public class ControladorAuthLogin {
 
                 } else if (rolEncotrado.equalsIgnoreCase("ADMIN")) {
                     return new ModelAndView("redirect:/admin/dashboard");
-                }*/
+                }*//* 
 
             } catch (UsuarioInexistenteException e) {
                 datosMapeados.put("error_coincidencia", "El usuario no se encuentra registrado.");
@@ -102,4 +102,4 @@ public class ControladorAuthLogin {
     }
 
 
-}
+}*/

@@ -9,8 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import com.tallerwebi.dominio.entidades.UsuarioAuth;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
-import com.tallerwebi.dominio.servicios.ServicioUsuarioAuthImpl;
-
+/* 
 public class ServicioUsuarioTest {
 
     private ServicioUsuarioAuthImpl servicioUsuarioImpl;
@@ -47,10 +46,5 @@ public class ServicioUsuarioTest {
 
     }
 
-
-
-
-
-
-
 }
+*/

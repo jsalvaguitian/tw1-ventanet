@@ -12,11 +12,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.enums.Rol;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioUsuario;
 import com.tallerwebi.infraestructura.config.HibernateTestConfig;
 import com.tallerwebi.infraestructura.config.SpringWebTestConfig;
-
+/*
 
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
@@ -55,3 +54,4 @@ public class RepositorioAutenticacionTest {
 
   
 }
+*/

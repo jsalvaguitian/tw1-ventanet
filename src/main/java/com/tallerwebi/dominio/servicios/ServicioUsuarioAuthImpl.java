@@ -5,9 +5,8 @@ import org.springframework.stereotype.Service;
 import com.tallerwebi.dominio.entidades.UsuarioAuth;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.utils.PasswordUtil;
-import com.tallerwebi.infraestructura.RepositorioUsuarioAuthImpl;
 
-
+/*
 @Service
 public class ServicioUsuarioAuthImpl implements ServicioUsuarioAuthI {
 
@@ -29,3 +28,4 @@ public class ServicioUsuarioAuthImpl implements ServicioUsuarioAuthI {
     }
 
 }
+*/

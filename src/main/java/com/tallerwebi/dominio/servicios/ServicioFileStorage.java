@@ -10,45 +10,81 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 public class ServicioFileStorage {
 
-    private final String UPLOAD_DIR = "src/main/webapp/uploads/";
-    private final long MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB te permito por ahora
+    private final Path UPLOAD_DIR = Paths.get(System.getProperty("user.dir"),
+            "src", "main", "webapp", "resources", "core", "uploads");
+    private final long MAX_FILE_SIZE; // 3 MB
 
-    public String guardarArchivo(MultipartFile documento) throws IOException {
-        // tambien valido aqui si esta vacio
-        if (documento.isEmpty())
-            throw new IOException("El documento es obligatorio");
-
-        // validacion del tamanio
-        if (documento.getSize() > MAX_FILE_SIZE) {
-            throw new IOException("El documento debe ser menor a 3MB");
-        }
-
-        // validacion del tipo de archivo (no queremos .exe jaja)
-        String nombreArchivo = documento.getOriginalFilename();
-
-        if (nombreArchivo == null || !(nombreArchivo.endsWith(".pdf") || nombreArchivo.endsWith(".jpg")
-                || nombreArchivo.endsWith(".png") || nombreArchivo.endsWith(".jpeg")))
-            throw new IOException("Solo se aceptan archivos pdf, jpg, png, jpeg");
-
-        String contentType = documento.getContentType();
-        if (contentType == null || !(contentType.equals("application/pdf") || contentType.equals("image/jpeg")
-                || contentType.equals("image/png"))) {
-            throw new IOException("Tipo de archivo no permitido");
-        }
-
-        // creo la carpeta si no existe
-        Files.createDirectories(Paths.get(UPLOAD_DIR));
-
-        // creo un nombre unico para evitar sobreescrituras
-        String nombreUnico = UUID.randomUUID() + "_" + nombreArchivo;
-        Path destinoDocu = Paths.get(UPLOAD_DIR + nombreUnico);
-
-        Files.copy(documento.getInputStream(), destinoDocu, StandardCopyOption.REPLACE_EXISTING);
-
-        return "/uploads/" + nombreUnico; // retorno el path relativo para guardarlo en la BD
+    public ServicioFileStorage() {
+        this.MAX_FILE_SIZE = 3 * 1024 * 1024;
     }
 
+    public ServicioFileStorage(long maxFileSize) {
+        this.MAX_FILE_SIZE = maxFileSize;
+    }
+
+    // 🔹 Método genérico para guardar cualquier tipo de archivo
+    private String guardarArchivoGenerico(MultipartFile archivo,
+                                          List<String> extensionesValidas,
+                                          List<String> tiposMimeValidos,
+                                          String subcarpeta) throws IOException {
+
+        if (archivo.isEmpty())
+            throw new IOException("El archivo es obligatorio.");
+
+        if (archivo.getSize() > MAX_FILE_SIZE)
+            throw new IOException("El archivo debe ser menor a " + (MAX_FILE_SIZE / (1024 * 1024)) + " MB");
+
+        String nombreArchivo = archivo.getOriginalFilename();
+        if (nombreArchivo == null)
+            throw new IOException("El archivo no tiene nombre.");
+
+        // Verificar extensión
+        boolean extensionValida = extensionesValidas.stream().anyMatch(nombreArchivo::endsWith);
+        if (!extensionValida)
+            throw new IOException("Extensión no permitida.");
+
+        // Verificar content type
+        String contentType = archivo.getContentType();
+        boolean tipoValido = contentType != null && tiposMimeValidos.contains(contentType);
+        if (!tipoValido)
+            throw new IOException("Tipo de archivo no permitido: " + contentType);
+
+        // Crear carpeta destino si no existe (ej: /uploads/afip o /uploads/varios)
+        Path carpetaDestino = UPLOAD_DIR.resolve(subcarpeta);
+        if (!Files.exists(carpetaDestino))
+            Files.createDirectories(carpetaDestino);
+
+        // Generar nombre único y guardar archivo
+        String nombreUnico = UUID.randomUUID() + "_" + nombreArchivo;
+        Path destino = carpetaDestino.resolve(nombreUnico);
+        Files.copy(archivo.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+
+        // Ruta relativa para guardar en BD
+        return "/resources/core/uploads/" + subcarpeta + "/" + nombreUnico;
+    }
+
+    public String guardarArchivoImgOPdf(MultipartFile archivo) throws IOException {
+        return guardarArchivoGenerico(archivo,
+                List.of(".pdf", ".jpg", ".jpeg", ".png"),
+                List.of("application/pdf", "image/jpeg", "image/png"),
+                "afip");
+    }
+
+    public String guardarArchivoDocumento(MultipartFile archivo) throws IOException {
+        return guardarArchivoGenerico(archivo,
+                List.of(".pdf", ".xls", ".xlsx", ".csv", ".ods"),
+                List.of(
+                        "application/pdf",
+                        "application/vnd.ms-excel",
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        "text/csv",
+                        "application/vnd.oasis.opendocument.spreadsheet"
+                ),
+                "varios");
+    }
 }
