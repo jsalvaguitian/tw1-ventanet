@@ -21,12 +21,12 @@ public class MyServletInitializer
     // controller, view resolver, handler mapping
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{SpringWebConfig.class, HibernateConfig.class, DatabaseInitializationConfig.class};
+        return new Class[] { SpringWebConfig.class, HibernateConfig.class, DatabaseInitializationConfig.class };
     }
 
     @Override
     protected String[] getServletMappings() {
-        return new String[]{"/"};
+        return new String[] { "/" };
     }
 
     @Override
@@ -37,9 +37,13 @@ public class MyServletInitializer
         long maxRequestSize = 10485760L; // 10 MB
         int fileSizeThreshold = 0;
 
-        MultipartConfigElement multipartConfigElement =
-            new MultipartConfigElement(tempDir, maxFileSize, maxRequestSize, fileSizeThreshold);
+        MultipartConfigElement multipartConfigElement = new MultipartConfigElement(tempDir, maxFileSize, maxRequestSize,
+                fileSizeThreshold);
 
         registration.setMultipartConfig(multipartConfigElement);
+
+        // Deshabilita la reescritura de URL para mantener las sesiones basadas en cookies
+        registration.setInitParameter("disableUrlRewriting", "true");
+
     }
 }

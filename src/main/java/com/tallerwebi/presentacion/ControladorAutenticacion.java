@@ -1,15 +1,18 @@
 package com.tallerwebi.presentacion;
 
+import com.tallerwebi.dominio.entidades.Cliente;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.ContraseniaInvalida;
 import com.tallerwebi.dominio.excepcion.CuitInvalido;
 import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.DatosLogin;
 
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
+import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 import net.bytebuddy.asm.Advice.Return;
 
@@ -33,8 +36,8 @@ public class ControladorAutenticacion {
     private ServicioUsuario servicioUsuario;
 
     @Autowired
-    public ControladorAutenticacion(ServicioUsuario servicioLogin) {
-        this.servicioUsuario = servicioLogin;
+    public ControladorAutenticacion(ServicioUsuario servicioUsuario) {
+        this.servicioUsuario = servicioUsuario;
     }
 
     @RequestMapping("/login")
@@ -48,26 +51,53 @@ public class ControladorAutenticacion {
     @RequestMapping(path = "/validar-login", method = RequestMethod.POST)
     public ModelAndView validarLogin(@ModelAttribute("datosLogin") DatosLogin datosLogin, HttpServletRequest request) {
         ModelMap model = new ModelMap();
+        String emailIngresado = datosLogin.getEmail();
+        String contraseniaIngresada = datosLogin.getPassword();
 
-        Usuario usuarioBuscado = servicioUsuario.consultarUsuario(datosLogin.getEmail(), datosLogin.getPassword());
-        if (usuarioBuscado != null) {
-            request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
-            if (usuarioBuscado.getRol().equals("CLIENTE")) {
-                return new ModelAndView("redirect:/dashboard");
-            } else if (usuarioBuscado.getRol().equals("PROVEEDOR")) {
-                return new ModelAndView("redirect:/proveedor/dashboard-proveedor");
-            } else if (usuarioBuscado.getRol().equals("ADMIN")) {
-                return new ModelAndView("redirect:/admin/dashboard-admin");
+        if (emailIngresado == null || emailIngresado.isBlank()) {
+            model.put("error_email", "Por favor, ingresa el email.");
+
+        } else if (!emailTieneFormatoValido(emailIngresado)) {
+            model.put("error_email", "El formato del email es invalido");
+        }
+
+        if (contraseniaIngresada == null || contraseniaIngresada.isBlank()) {
+            model.put("error_password", "Por favor, ingresa la contraseña.");
+        }
+
+        if (!emailIngresado.isBlank() && !contraseniaIngresada.isBlank() && emailTieneFormatoValido(emailIngresado)) {
+
+            try {
+                Usuario usuarioBuscado = servicioUsuario.consultarUsuario(datosLogin.getEmail(),
+                        datosLogin.getPassword());
+                String rol = usuarioBuscado.getRol();
+                UsuarioSesionDto usuarioSesion = new UsuarioSesionDto(usuarioBuscado.getId(), usuarioBuscado.getEmail(),
+                        rol);
+                request.getSession().setAttribute("usuarioLogueado", usuarioSesion);
+
+                if (rol.equalsIgnoreCase("CLIENTE")) {
+                    return new ModelAndView("redirect:/dashboard");
+
+                } else if (rol.equalsIgnoreCase("PROVEEDOR")) {
+                    return new ModelAndView("redirect:/proveedor/dashboard-proveedor");
+
+                } else if (rol.equalsIgnoreCase("ADMIN")) {
+                    return new ModelAndView("redirect:/admin/dashboard-admin");
+                }
+
+            } catch (UsuarioInexistenteException e) {
+                model.put("error", "Usuario o clave incorrecta");
+                model.put("datosLogin", datosLogin);
+                return new ModelAndView("login", model);
             }
 
-        } else {
-            model.put("error", "Usuario o clave incorrecta");
         }
+        model.put("datosLogin", datosLogin);
         return new ModelAndView("login", model);
     }
 
     @RequestMapping(path = "/registrarme", method = RequestMethod.POST)
-    public ModelAndView registrarme(@ModelAttribute("usuario") Usuario usuario, HttpServletRequest request) {
+    public ModelAndView registrarme(@ModelAttribute("usuario") Cliente usuario, HttpServletRequest request) {
         // request confirmar password
         String confirmarPassword = request.getParameter("confirmarPassword");
         // Comparar contrasenias
@@ -77,7 +107,13 @@ public class ControladorAutenticacion {
             return new ModelAndView("nuevo-usuario", model);
         }
         try {
-            servicioUsuario.registrar(usuario);
+            // guardar a cliente
+            Cliente cliente = new Cliente();
+            cliente.setEmail(usuario.getEmail());
+            cliente.setPassword(usuario.getPassword());
+            cliente.setNombre(usuario.getNombre());
+
+            servicioUsuario.registrar(cliente);
         } catch (UsuarioExistente e) {
             ModelMap model = new ModelMap();
             model.put("error", "El usuario ya existe");
@@ -93,6 +129,8 @@ public class ControladorAutenticacion {
         } catch (Exception e) {
             ModelMap model = new ModelMap();
             model.put("error", "Error al registrar el nuevo usuario");
+            model.put("usuario", usuario);
+
             return new ModelAndView("nuevo-usuario", model);
         }
         return new ModelAndView("redirect:/login");
@@ -101,7 +139,7 @@ public class ControladorAutenticacion {
     @RequestMapping(path = "/nuevo-usuario", method = RequestMethod.GET)
     public ModelAndView nuevoUsuario() {
         ModelMap model = new ModelMap();
-        // model.put("usuario", new Usuario());
+        model.put("usuario", new Cliente());
         return new ModelAndView("nuevo-usuario", model);
     }
 
@@ -179,14 +217,14 @@ public class ControladorAutenticacion {
                         "El formato de la contraseña es inválido. Debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula y 1 símbolo.");
 
             } catch (CuitInvalido e) {
-                
+
                 datos.put("error_cuit", "El CUIT es inválido");
             } catch (UsuarioExistente e) {
-                
+
                 datos.put("error_ya_existe", "El email o CUIT ya se encuentran registrados");
             } catch (IOException e) {
                 datos.put("error_documento", "Error al guardar el documento. Intente nuevamente.");
-            } 
+            }
         }
 
         datos.put("usuarioProveedorDTO", usuarioProvDto);
@@ -213,4 +251,6 @@ public class ControladorAutenticacion {
     private boolean esUnNumeroCuit(String cuit) {
         return cuit != null && !cuit.isBlank() && cuit.length() == 11 && cuit.matches("\\d+");
     }
+
+    
 }

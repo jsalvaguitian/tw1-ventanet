@@ -6,6 +6,7 @@ import com.tallerwebi.dominio.excepcion.ContraseniaInvalida;
 import com.tallerwebi.dominio.excepcion.CuitInvalido;
 import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioProveedor;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioUsuario;
 import com.tallerwebi.dominio.utils.PasswordUtil;
@@ -33,12 +34,17 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
     }
 
     @Override
-    public Usuario consultarUsuario(String email, String password) {
-        return repositorioUsuario.buscarUsuario(email, password);
+    public Usuario consultarUsuario(String email, String password) throws UsuarioInexistenteException {
+        Usuario encontrado = repositorioUsuario.buscarPorMail(email);
+        if (encontrado != null && PasswordUtil.verificar(password, encontrado.getPassword())) {
+            return encontrado;
+        }
+        throw new UsuarioInexistenteException();
     }
 
     @Override
     public void registrar(Usuario usuario) throws UsuarioExistente, ContraseniaInvalida, EmailInvalido {
+        String contraseniaHasheada = "";
         Usuario usuarioEncontrado = repositorioUsuario.buscarPorMail(usuario.getEmail());
         if (usuarioEncontrado != null) {
             throw new UsuarioExistente();
@@ -58,6 +64,9 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
             // + 1 o mas caracteres + periodo + de 2 a 5 mayusculas o minusculas
             throw new EmailInvalido("Correo electronico invalido");
         }
+        //hashear contrasenia antes de guardar
+        contraseniaHasheada = PasswordUtil.hashear(usuario.getPassword());
+        usuario.setPassword(contraseniaHasheada);
         repositorioUsuario.guardar(usuario);
     }
 

@@ -27,7 +27,6 @@ public class ServicioFileStorage {
         this.MAX_FILE_SIZE = maxFileSize;
     }
 
-    // 🔹 Método genérico para guardar cualquier tipo de archivo
     private String guardarArchivoGenerico(MultipartFile archivo,
                                           List<String> extensionesValidas,
                                           List<String> tiposMimeValidos,

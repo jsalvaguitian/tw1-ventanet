@@ -10,10 +10,11 @@ import com.tallerwebi.dominio.excepcion.ContraseniaInvalida;
 import com.tallerwebi.dominio.excepcion.CuitInvalido;
 import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 
 public interface ServicioUsuario {
 
-    Usuario consultarUsuario(String email, String password);
+    Usuario consultarUsuario(String email, String password) throws UsuarioInexistenteException;
 
     void registrar(Usuario usuario) throws UsuarioExistente, ContraseniaInvalida, EmailInvalido;
 
