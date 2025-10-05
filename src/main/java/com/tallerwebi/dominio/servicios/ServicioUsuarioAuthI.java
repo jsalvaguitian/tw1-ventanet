@@ -3,7 +3,7 @@ package com.tallerwebi.dominio.servicios;
 import com.tallerwebi.dominio.entidades.UsuarioAuth;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 
-public interface ServicioUsuarioI {
+public interface ServicioUsuarioAuthI {
 
     UsuarioAuth autenticar(String emailIngresado, String contraseniaIngresada) throws UsuarioInexistenteException;
 

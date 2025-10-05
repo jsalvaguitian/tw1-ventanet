@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro proveedor</title>
+
+    <!-- Boostrap core css -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+
+    <!-- custom style -->
+    <link rel="stylesheet" th:href="@{/css/nuevo-proveedor.css}" />
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="col-md-6">
+            <h2 class="text-center mt-4">Registro de Proveedor</h2>
+            <form id="formProveedor" class="form-registro" th:action="@{/registro-proveedor}"
+                th:object="${usuarioProveedorDTO}" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <input th:field="*{razonSocial}" class="form-control" placeholder="Razón Social" />
+                    <small class="error" th:if="${error_razon_social !=null}" th:text="${error_razon_social}"></small>
+
+                </div>
+                <div class="mb-3">
+                    <input th:field="*{cuit}" class="form-control" placeholder="CUIT" />
+                    <small class="error" th:if="${error_cuit !=null}" th:text="${error_cuit}"></small>
+
+                </div>
+                <div class="mb-3">
+                    <input th:field="*{email}" type="text" class="form-control" placeholder="Correo electrónico" />
+                    <small class="error" th:if="${error_email !=null}" th:text="${error_email}"></small>
+
+                </div>
+                <div class="mb-3">
+                    <input th:field="*{password}" type="password" class="form-control" placeholder="Contraseña" />
+                    <small class="error" th:if="${error_password != null}" th:text="${error_password}"></small>
+                </div>
+                <div class="mb-3">
+                    <label for="rubro" class="form-label">Rubro</label>
+                    <select th:field="*{rubro}" class="form-control" id="rubro">
+                        <option value="" selected>Seleccione un rubro</option>
+                        <option th:each="r : ${T(com.tallerwebi.dominio.enums.Rubro).values()}" th:value="${r}"
+                            th:text="${r.descripcion}">
+                        </option>
+                    </select>
+                    <small class="error_rubro" th:if="${error_rubro !=null}" th:text="${error_rubro}"></small>
+
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Subir documentación (PDF, JPG, PNG)</label>
+                    <input type="file" th:field="*{documento}" class="form-control" accept=".pdf,.jpg,.jpeg,.png"/>
+                    <small class="error" th:if="${error_documento !=null}" th:text="${error_documento}"></small>
+                </div>
+
+                <button class="btn btn-success w-100" type="submit">Registrarme como Proveedor</button>
+            </form>
+            <p class="mt-3 text-center">
+                ¿Ya tienes cuenta? <a th:href="@{/login}">Ingresar</a>
+            </p>
+            <small class="error" th:if="${error_ya_existe != null}" th:text="${error_ya_existe}"></small>
+            <div class="error" th:if="${error != null}" th:text="${error}"> </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+
+</html>
