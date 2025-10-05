@@ -19,6 +19,7 @@ import net.bytebuddy.asm.Advice.Return;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -156,6 +157,12 @@ public class ControladorAutenticacion {
     @RequestMapping(path = "/", method = RequestMethod.GET)
     public ModelAndView inicio() {
         return new ModelAndView("redirect:/home");
+    }
+
+    @GetMapping("/logout")
+    public String logOut(HttpServletRequest request) {
+        request.getSession().invalidate();
+        return "redirect:/login";
     }
 
     @RequestMapping(path = "/info-registro-proveedor", method = RequestMethod.GET)

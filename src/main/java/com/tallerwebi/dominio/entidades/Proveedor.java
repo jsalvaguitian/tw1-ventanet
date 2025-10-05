@@ -11,6 +11,8 @@ import javax.persistence.Enumerated;
 
 import com.tallerwebi.dominio.enums.EstadoProveedor;
 import com.tallerwebi.dominio.enums.Rubro;
+
+
 @Entity
 @DiscriminatorValue("PROVEEDOR")
 public class Proveedor extends Usuario{
