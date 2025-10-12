@@ -64,7 +64,7 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
             // + 1 o mas caracteres + periodo + de 2 a 5 mayusculas o minusculas
             throw new EmailInvalido("Correo electronico invalido");
         }
-        //hashear contrasenia antes de guardar
+        // hashear contrasenia antes de guardar
         contraseniaHasheada = PasswordUtil.hashear(usuario.getPassword());
         usuario.setPassword(contraseniaHasheada);
         repositorioUsuario.guardar(usuario);
@@ -74,26 +74,28 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
      * 
      */
     @Override
-    public void registrarProveedor(Proveedor proveedor,MultipartFile documento) throws UsuarioExistente, CuitInvalido, ContraseniaInvalida, IOException{
-        
-        if(!validarCuit(proveedor.getCuit())){
+    public void registrarProveedor(Proveedor proveedor, MultipartFile documento)
+            throws UsuarioExistente, CuitInvalido, ContraseniaInvalida, IOException {
+
+        if (!validarCuit(proveedor.getCuit())) {
             throw new CuitInvalido();
         }
-        
-        if(repositorioUsuario.buscarPorMail(proveedor.getEmail()) != null){
+
+        if (repositorioUsuario.buscarPorMail(proveedor.getEmail()) != null) {
             throw new UsuarioExistente();
         }
 
-        if(repositorioProveedor.buscarProveedorPorCuit(proveedor.getCuit()) != null){
+        if (repositorioProveedor.buscarProveedorPorCuit(proveedor.getCuit()) != null) {
             throw new UsuarioExistente();
         }
 
-        if(!validarContrasenia(proveedor.getPassword())){
-            throw new ContraseniaInvalida("La contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula y 1 símbolo.");
+        if (!validarContrasenia(proveedor.getPassword())) {
+            throw new ContraseniaInvalida(
+                    "La contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula y 1 símbolo.");
         }
 
-        //Guardar documento del proveedor en el servidor
-        if(!documento.isEmpty() || documento != null){
+        // Guardar documento del proveedor en el servidor
+        if (!documento.isEmpty() || documento != null) {
             String path = fileStorageService.guardarArchivoImgOPdf(documento);
             proveedor.setDocumento(path);
         }
@@ -103,8 +105,8 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
         repositorioUsuario.guardar(proveedor);
     }
 
-    private boolean validarContrasenia(String password){
-        if(password.length() >= 8 &&
+    private boolean validarContrasenia(String password) {
+        if (password.length() >= 8 &&
                 password.matches(".*[A-Z].*") && // que tenga 1 mayuscula
                 password.matches(".*[a-z].*") && // que tenga 1 minuscula
                 password.matches(".*[^a-zA-Z0-9].*")) // que tenga 1 simbolo
@@ -116,9 +118,9 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
         if (cuit == null || !cuit.matches("\\d{11}")) {
             return false;
         }
-        int[] multiplicadores = {5, 4, 3, 2, 7, 6, 5, 4, 3, 2};
+        int[] multiplicadores = { 5, 4, 3, 2, 7, 6, 5, 4, 3, 2 };
         int suma = 0;
-        for (int i=0; i<10; i++) {
+        for (int i = 0; i < 10; i++) {
             int digito = Character.getNumericValue(cuit.charAt(i));
             suma += digito * multiplicadores[i];
         }
@@ -129,13 +131,22 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
         if (digitoVerificador == 11) {
             digitoVerificador = 0;
         } else if (digitoVerificador == 10) {
-            digitoVerificador = 9;  // En algunos casos, el dígito verificador puede ser 9
+            digitoVerificador = 9; // En algunos casos, el dígito verificador puede ser 9
         }
 
         int ultimoDigito = Character.getNumericValue(cuit.charAt(10));
         return digitoVerificador == ultimoDigito;
-    
+
     }
 
+    @Override
+    public Usuario buscarPorMail(String email) throws UsuarioInexistenteException {
+        Usuario usuarioEncontrado = repositorioUsuario.buscarPorMail(email);
+        if (usuarioEncontrado == null) {
+            throw new UsuarioInexistenteException();
+        }
+
+        return usuarioEncontrado;
+    }
 
 }
