@@ -1,9 +1,11 @@
 package com.tallerwebi.presentacion.dto;
 
+import javax.persistence.criteria.CriteriaBuilder.In;
+
 public class UsuarioDto {
     private String email;
     private String contrasenia;
-    
+
     public UsuarioDto() {
     }
 

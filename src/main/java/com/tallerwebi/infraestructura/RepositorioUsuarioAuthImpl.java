@@ -9,7 +9,7 @@ import com.tallerwebi.dominio.entidades.Cliente;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.UsuarioAuth;
 import com.tallerwebi.dominio.utils.PasswordUtil;
-
+/*
 public class RepositorioUsuarioAuthImpl {
 
     private Map<Long, UsuarioAuth> usuariosDB;
@@ -70,3 +70,4 @@ public class RepositorioUsuarioAuthImpl {
     
 
 }
+*/

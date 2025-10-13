@@ -31,7 +31,7 @@ public class ControladorProveedor {
         String rol_proveedor = "PROVEEDOR";
 
         if(usuarioSesion == null || !rol_proveedor.equalsIgnoreCase(usuarioSesion.getRol())){
-            return new ModelAndView("redirect:/login-user");
+            return new ModelAndView("redirect:/login");
         }
 
         datosModelado.put("mailProveedor", usuarioSesion.getUsername());
