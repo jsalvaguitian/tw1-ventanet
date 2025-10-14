@@ -13,6 +13,8 @@ import com.tallerwebi.dominio.entidades.ResetearPasswordToken;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioTokenRecuperarPassword;
 
+import antlr.Token;
+
 @Service
 @Transactional
 public class ServicioRecuperarPasswordImpl implements ServicioRecuperarPassword {
@@ -38,6 +40,7 @@ public class ServicioRecuperarPasswordImpl implements ServicioRecuperarPassword 
     }
 
     @Override
+    @Transactional
     public void enviarEmailDeRecuperacion(Usuario usuario, HttpServletRequest request) {
         ResetearPasswordToken token = generarToken(usuario);
         repositorioTokenRecuperarPassword.guardar(token);
@@ -45,7 +48,7 @@ public class ServicioRecuperarPasswordImpl implements ServicioRecuperarPassword 
         String url = request.getScheme() + "://" +
                 request.getServerName() + ":" +
                 request.getServerPort() +
-                request.getContextPath() + "/cambiar-contrasenia?token=" + token.getToken();
+                request.getContextPath() + "/cambiar-password?token=" + token.getToken();
 
         String asunto = "Recuperacion de contrasenia";
         String cuerpo = "Hola " + usuario.getNombre() +
@@ -55,6 +58,12 @@ public class ServicioRecuperarPasswordImpl implements ServicioRecuperarPassword 
 
         servicioEmail.enviarEmail(usuario.getEmail(), asunto, cuerpo);
 
+    }
+
+    @Override
+    public ResetearPasswordToken buscarPorToken(String token) {
+        ResetearPasswordToken tokenEncontrado = repositorioTokenRecuperarPassword.buscarPorToken(token);
+        return tokenEncontrado;
     }
 
 }
