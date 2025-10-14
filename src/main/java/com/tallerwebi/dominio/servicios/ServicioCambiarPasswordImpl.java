@@ -29,7 +29,6 @@ public class ServicioCambiarPasswordImpl implements ServicioCambiarPassword {
     @Transactional
     public boolean cambiarPassword(String nuevaPassword, String token) {
         ResetearPasswordToken resetToken = repositorioTokenRecuperarPassword.buscarPorToken(token);
-        System.out.println("DEBUG >> resetToken= " + token);
         if (resetToken == null || resetToken.isUsado()) {
             return false;
         }

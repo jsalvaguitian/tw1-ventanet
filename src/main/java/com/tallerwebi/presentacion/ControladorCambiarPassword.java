@@ -39,23 +39,43 @@ public class ControladorCambiarPassword {
 
     @PostMapping("/cambiar-password")
     public ModelAndView cambiarPassword(@RequestParam(name = "password") String nuevaPassword,
-            @RequestParam("token") String token) {
+            @RequestParam("token") String token, @RequestParam(name = "repetirPassword") String repetirPassword) {
         ModelMap modelMap = new ModelMap();
-        System.out.println("DEBUGG >> token en el controlador = " + token);
+
         if (nuevaPassword.isEmpty() || nuevaPassword.isBlank()) {
             modelMap.put("password_vacio", "Debe ingresar una contraseña");
-        } else {
-            try {
-                boolean operacion_exitosa = servicioCambiarPassword.cambiarPassword(nuevaPassword, token);
-                if (operacion_exitosa) {
-                    modelMap.put("exito", "La contraña se ha reestablecido");
-                } else {
-                    modelMap.put("error", "A ocurrido un error");
-                }
-            } catch (Exception e) {
-            }
+            modelMap.put("token", token);
+            return new ModelAndView("cambiar-password", modelMap);
         }
-
-        return new ModelAndView("recuperar-password", modelMap);
+        if (repetirPassword.isEmpty() || repetirPassword.isBlank()) {
+            modelMap.put("password_vacio", "Debe repetir la contraseña");
+            modelMap.put("token", token);
+            return new ModelAndView("cambiar-password", modelMap);
+        }
+        if (!repetirPassword.equals(nuevaPassword)) {
+            modelMap.put("password_no_coincide", "Las contraseñas no coinciden");
+            modelMap.put("token", token);
+            return new ModelAndView("cambiar-password", modelMap);
+        }
+        // Validar Contrasenia
+        if (nuevaPassword.length() < 8 ||
+                !nuevaPassword.matches(".*[A-Z].*") || // que tenga 1 mayuscula
+                !nuevaPassword.matches(".*[a-z].*") || // que tenga 1 minuscula
+                !nuevaPassword.matches(".*[^a-zA-Z0-9].*")) { // que tenga 1 simbolo
+            modelMap.put("error",
+                    "La contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula y 1 símbolo.");
+            modelMap.put("token", token);
+            return new ModelAndView("cambiar-password", modelMap);
+        }
+        try {
+            boolean operacion_exitosa = servicioCambiarPassword.cambiarPassword(nuevaPassword, token);
+            if (operacion_exitosa) {
+                modelMap.put("exito", "La contraña se ha reestablecido");
+            } else {
+                modelMap.put("error", "A ocurrido un error");
+            }
+        } catch (Exception e) {
+        }
+        return new ModelAndView("redirect:/login", modelMap);
     }
 }

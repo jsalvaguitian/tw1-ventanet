@@ -37,23 +37,34 @@ public class ControladorRecuperarPassword {
     public ModelAndView recuperarPassword(HttpServletRequest httpServletRequest,
             @RequestParam(name = "email") String email) {
         ModelMap modelMap = new ModelMap();
+
         if (email.isEmpty() || email.isBlank()) {
             modelMap.put("email_vacio", "Debe ingresar un email");
-        } else {
-            try {
-                Usuario usuario = servicioUsuario.buscarPorMail(email);
-                if (usuario == null) {
-                    modelMap.put("usuario_no_existe", "El email ingresado no esta registrado");
-                } else if (usuario.getEmail() == null || usuario.getEmail().isBlank()) {
-                    modelMap.put("error", "El usuario no tiene un email valido");
-                }
-                servicioRecuperarPassword.enviarEmailDeRecuperacion(usuario, httpServletRequest);
-                modelMap.put("operacion_exitosa", "Se a enviado un codigo de recuperacion");
-            } catch (UsuarioInexistenteException exception) {
+            return new ModelAndView("recuperar-password", modelMap);
+        }
+        try {
+            Usuario usuario = servicioUsuario.buscarPorMail(email);
+            if (usuario == null) {
                 modelMap.put("usuario_no_existe", "El email ingresado no esta registrado");
+                return new ModelAndView("recuperar-password", modelMap);
             }
 
+            if (usuario.getEmail() == null || usuario.getEmail().isBlank()) {
+                modelMap.put("error", "El usuario no tiene un email valido");
+                return new ModelAndView("recuperar-password", modelMap);
+            }
+
+            servicioRecuperarPassword.enviarEmailDeRecuperacion(usuario, httpServletRequest);
+            modelMap.put("operacion_exitosa", "Se a enviado un codigo de recuperacion");
+            return new ModelAndView("recuperar-password", modelMap);
+
+        } catch (UsuarioInexistenteException exception) {
+            modelMap.put("usuario_no_existe", "El email ingresado no esta registrado");
+            return new ModelAndView("recuperar-password", modelMap);
+        } catch (Exception e) {
+            modelMap.put("error", "A ocurrido un error al procesar la solicitud");
+            return new ModelAndView("recuperar-password", modelMap);
         }
-        return new ModelAndView("recuperar-password", modelMap);
+
     }
 }

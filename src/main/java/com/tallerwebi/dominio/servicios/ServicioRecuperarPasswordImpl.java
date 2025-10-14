@@ -13,8 +13,6 @@ import com.tallerwebi.dominio.entidades.ResetearPasswordToken;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioTokenRecuperarPassword;
 
-import antlr.Token;
-
 @Service
 @Transactional
 public class ServicioRecuperarPasswordImpl implements ServicioRecuperarPassword {
