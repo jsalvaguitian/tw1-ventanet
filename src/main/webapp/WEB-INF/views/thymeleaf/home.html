@@ -14,31 +14,31 @@
 </head>
 
 <body>
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="#">Ventanet</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
-            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" 
-            aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="#productos">Productos</a></li>
-        <li class="nav-item"><a class="nav-link" th:href="@{/login}">Ingreso</a></li>
-        <li class="nav-item"><a class="nav-link" href="nuevo-usuario.html">Registro</a></li>
-      </ul>
+<!-- HEADER -->
+<header class="site-header">
+    <div class="header-inner">
+        <a th:href="@{/}" class="logo">
+            <span class="brand">VENTANET</span>
+        </a>
+        <nav class="ms-auto">
+            <ul class="nav">
+                <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/login}">Ingreso</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/nuevo-usuario}">Registro</a></li>
+            </ul>
+        </nav>
     </div>
-  </div>
-</nav>
+</header>
+
 
 <!-- HERO -->
-<header class="bg-light text-dark text-center py-5 mt-5">
+<header class="bg-light text-dark text-center py-5 hero-section">
   <div class="container">
-    <h1 class="display-4">Aberturas de calidad para tu hogar</h1>
-    <p class="lead">Ventanas corredizas, oscilobatientes, paños fijos y más.</p>
-    <a th:href="@{/producto/listado}" class="btn btn-primary btn-lg">Ver productos</a>
+    <h1 class="display-4">Aberturas de Calidad</h1>
+    <div class="hero-content">
+      <p class="lead">Presupuestos optimizados para tus productos</p>
+      <a href="presupuesto.html" class="btn btn-primary btn-lg">Cotizar Presupuesto</a>
+    </div>
   </div>
 </header>
 
@@ -49,7 +49,7 @@
     <div class="row g-4">
       <div class="col-md-4">
         <div class="card h-100 shadow-sm">
-          <img th:src="@{/images/op1.jpg}" class="card-img-top" alt="Ventana Corrediza">
+          <img th:src="@{/img/corrediza.jpg}" class="card-img-top" alt="Ventana Corrediza">
           <div class="card-body text-center">
             <h5 class="card-title">Ventana Corrediza</h5>
             <p class="card-text">Optimiza espacios con máxima luminosidad.</p>
@@ -58,7 +58,7 @@
       </div>
       <div class="col-md-4">
         <div class="card h-100 shadow-sm">
-          <img th:src="@{/resources/core/img/oscilobatiente.jpg}" class="card-img-top" alt="Ventana Oscilobatiente">
+          <img th:src="@{/img/oscilobatiente.jpg}" class="card-img-top" alt="Ventana Oscilobatiente">
           <div class="card-body text-center">
             <h5 class="card-title">Oscilobatiente</h5>
             <p class="card-text">Ventilación controlada y segura.</p>
@@ -67,7 +67,7 @@
       </div>
       <div class="col-md-4">
         <div class="card h-100 shadow-sm">
-          <img th:src="@{/resources/core/img/panofijo.jpg}" class="card-img-top" alt="Paño Fijo">
+          <img th:src="@{/img/fijo.jpg}" class="card-img-top" alt="Paño Fijo">
           <div class="card-body text-center">
             <h5 class="card-title">Paño Fijo</h5>
             <p class="card-text">Diseño minimalista y elegante.</p>
@@ -78,20 +78,104 @@
   </section>
 </main>
 
-<!-- FOOTER -->
-<footer class="bg-dark text-light py-4">
-  <div class="container text-center">
-    <p class="mb-1"><strong>Ventanet</strong> © 2025</p>
-    <p class="mb-1">📍 Dirección: Calle Falsa 123, Ciudad</p>
-    <p class="mb-1">📧 info@ventanet.com.ar | 📞 +54 9 11 1234-5678</p>
-    <div class="mb-2">
-      <a href="login.html" class="text-light me-3">Ingreso</a>|
-      <a href="nuevo-usuario.html" class="text-light ms-3">Registro</a>
+<!-- STRIP FABRICANDO -->
+<section class="fabricando text-center py-4">
+    <h3>Fabricando desde 2025 <br> Innovación al servicio de la construcción.</h3>
+</section>
+
+
+<!-- SOCIOS -->
+<section class="py-5 text-center">
+  <h3 class="fw-bold mb-4">Socios de calidad</h3>
+  <div class="container d-flex justify-content-around flex-wrap">
+    <img th:src="@{/img/logo1.png}" alt="Socio 1" class="m-3" style="max-height: 120px;">
+    <img th:src="@{/img/logo2.png}" alt="Socio 2" class="m-3" style="max-height: 120px;">
+    <img th:src="@{/img/logo3.png}" alt="Socio 3" class="m-3" style="max-height: 120px;">
+    <img th:src="@{/img/logo4.png}" alt="Socio 4" class="m-3" style="max-height: 120px;">
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto" class="contacto bg-dark text-light py-5">
+  <div class="container">
+    <h2 class="text-center mb-4">Contacto</h2>
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-4 mb-md-0">
+        <p>Escribinos y nos pondremos en contacto contigo lo antes posible.</p>
+      </div>
+      <div class="col-md-6">
+        <form>
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" placeholder="Tu nombre">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Tu email">
+          </div>
+          <div class="mb-3">
+            <label for="asunto" class="form-label">Asunto</label>
+            <input type="text" class="form-control" id="asunto" placeholder="Asunto">
+          </div>
+          <div class="mb-3">
+            <label for="mensaje" class="form-label">Mensaje</label>
+            <textarea class="form-control" id="mensaje" rows="4" placeholder="Escribe tu mensaje"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+      </div>
     </div>
-    <div>
-      <a href="#" class="text-light me-2">Instagram</a>|
-      <a href="#" class="text-light mx-2">Facebook</a>|
-      <a href="#" class="text-light ms-2">LinkedIn</a>
+  </div>
+</section>
+
+<!-- MAPA -->
+<section id="mapa" class="mt-5 mb-0">
+  <div class="container">
+    <h2 class="text-center">Nuestra Ubicación</h2>
+    <div class="map-responsive">
+      <iframe
+        src="https://www.google.com/maps?q=-34.6705192,-58.5628158&hl=es;z=15&output=embed"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer py-5">
+  <div class="container">
+    <div class="row text-center text-md-start">
+      
+      <!-- Columna Izquierda: Redes sociales -->
+	<div class="col-md-4">
+        <p class="mb-1">2025 © Ventanet</p>
+        <p class="mb-1">
+          <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
+          <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
+        </p>
+      </div>
+
+      <!-- Columna Medio: Navegación -->
+      <div class="col-md-4 mb-4 mb-md-0">
+        <ul class="list-unstyled">
+          <li><a href="#productos" class="footer-link">Productos</a></li>
+          <li><a href="login.html" class="footer-link">Ingreso</a></li>
+          <li><a href="nuevo-usuario.html" class="footer-link">Registro</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna Derecha: Datos Empresa -->
+     <div class="col-md-4 mb-4 mb-md-0">
+        <h5 class="mb-3">Seguinos en:</h5>
+        <div class="d-flex justify-content-center justify-content-md-start gap-3">
+          <a href="https://facebook.com"><img th:src="@{/img/rrss1.png}" alt="Facebook" width="30"></a>
+          <a href="https://instagram.com"><img th:src="@{/img/rrss2.png}" alt="Instagram" width="30"></a>
+          <a href="https://linkedin.com"><img th:src="@{/img/rrss3.png}" alt="Linkedin" width="30"></a>
+        </div>
+      </div>
     </div>
   </div>
 </footer>
