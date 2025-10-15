@@ -43,3 +43,28 @@ INSERT INTO Proveedor (
 ) VALUES (
     3, 'Gómez Servicios S.A.', '30123456789', null , 'https://www.gomezservicios.com', 'PENDIENTE', null
 );
+
+
+
+INSERT INTO
+    Marca(id, nombre)
+VALUES
+    (1, 'Marca A'),
+    (2, 'Marca B'),
+    (3, 'Marca C');
+
+INSERT INTO
+    Presentacion(id, descripcion, unidadMedida, cantidad)
+VALUES
+    (1, 'Kilogramo', 'kg', 1.0),
+    (2, 'Litro', 'litros', 0.5),
+    (3, 'Unidad', 'unidades', 10.0);
+
+INSERT INTO
+    TipoProducto(id, nombre)
+VALUES
+    (1, 'Puerta'),
+    (2, 'Ventana'),
+    (3, 'Techo');
+    
+

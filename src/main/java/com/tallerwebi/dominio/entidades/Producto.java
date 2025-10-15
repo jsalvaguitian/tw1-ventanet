@@ -1,16 +1,40 @@
 package com.tallerwebi.dominio.entidades;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class Producto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column(nullable = false, length = 155)
     private String nombre;
     private double precio;
     private String descripcion;
     private String imagenUrl;
     private int stock;
-    private Integer tipoProductoId;
-    private Integer marcaId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tipo_producto_id", nullable = false)
+    private TipoProducto tipoProducto;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "marca_id", nullable = false)
+    private Marca marca;
+
     private Integer proveedorId;
-    private Integer presentacionId;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "presentacion_id", nullable = false)
+    private Presentacion presentacion;
 
     public void setId(long id) {
         this.id = id;
@@ -31,17 +55,17 @@ public class Producto {
     public void setStock(int stock) {
         this.stock = stock;
     }
-    public void setTipoProductoId(Integer tipoProductoId) {
-        this.tipoProductoId = tipoProductoId;
+    public void setTipoProducto(TipoProducto tipoProducto) {
+        this.tipoProducto = tipoProducto;
     }
-    public void setMarcaId(Integer marcaId) {
-        this.marcaId = marcaId;
+    public void setMarca(Marca marca) {
+        this.marca = marca;
     }
     public void setProveedorId(Integer proveedorId) {
         this.proveedorId = proveedorId;
     }
-    public void setPresentacionId(Integer presentacionId) {
-        this.presentacionId = presentacionId;
+    public void setPresentacion(Presentacion presentacion) {
+        this.presentacion = presentacion;
     }
     public long getId() {
         return id;
@@ -61,18 +85,16 @@ public class Producto {
     public int getStock() {
         return stock;
     }
-    public Integer getTipoProductoId() {
-        return tipoProductoId;
+    public TipoProducto getTipoProducto() {
+        return tipoProducto;
     }
-    public Integer getMarcaId() {
-        return marcaId;
+    public Marca getMarca() {
+        return marca;
     }
     public Integer getProveedorId() {
         return proveedorId;
     }
-    public Integer getPresentacionId() {
-        return presentacionId;
-    }
-
-    
+    public Presentacion getPresentacion() {
+        return presentacion;
+    }    
 }
