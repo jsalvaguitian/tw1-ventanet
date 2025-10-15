@@ -18,6 +18,9 @@ public interface ServicioUsuario {
 
     void registrar(Usuario usuario) throws UsuarioExistente, ContraseniaInvalida, EmailInvalido;
 
-    void registrarProveedor(Proveedor proveedor, MultipartFile documento) throws UsuarioExistente, ContraseniaInvalida, CuitInvalido, IOException;
+    void registrarProveedor(Proveedor proveedor, MultipartFile documento)
+            throws UsuarioExistente, ContraseniaInvalida, CuitInvalido, IOException;
+
+    Usuario buscarPorMail(String email) throws UsuarioInexistenteException;
 
 }
