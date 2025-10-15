@@ -71,7 +71,7 @@ public class ServicioRecuperarPasswordTest {
 
         // Veo que envie el mail
         verify(servicioEmailMock).enviarEmail(contains("test@gmail.com"), contains("Recuperacion de contrasenia"),
-                contains("localhost:8080/app/cambiar-contrasenia?token="));
+                contains("localhost:8080/app/cambiar-password?token="));
 
     }
 }
