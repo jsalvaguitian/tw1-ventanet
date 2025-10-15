@@ -45,6 +45,7 @@ INSERT INTO Proveedor (
 );
 
 
+
 INSERT INTO
     Marca(id, nombre)
 VALUES
@@ -66,3 +67,4 @@ VALUES
     (2, 'Ventana'),
     (3, 'Techo');
     
+

@@ -1,13 +1,10 @@
-package com.tallerwebi.config;
+package com.tallerwebi.infraestructura.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -18,9 +15,8 @@ import org.thymeleaf.templatemode.TemplateMode;
 
 @EnableWebMvc
 @Configuration
-@PropertySource("classpath:email.properties")
-@ComponentScan({ "com.tallerwebi.presentacion", "com.tallerwebi.dominio", "com.tallerwebi.infraestructura" })
-public class SpringWebConfig implements WebMvcConfigurer {
+@ComponentScan({"com.tallerwebi.presentacion", "com.tallerwebi.dominio", "com.tallerwebi.infraestructura"})
+public class SpringWebTestConfig implements WebMvcConfigurer {
 
     // Spring + Thymeleaf need this
     @Autowired
@@ -28,11 +24,8 @@ public class SpringWebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/img/**").addResourceLocations("/resources/core/img/");
         registry.addResourceHandler("/css/**").addResourceLocations("/resources/core/css/");
         registry.addResourceHandler("/js/**").addResourceLocations("/resources/core/js/");
-        registry.addResourceHandler("/uploads/**").addResourceLocations("/resources/core/uploads/");
-
         registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/");
     }
 
@@ -70,7 +63,6 @@ public class SpringWebConfig implements WebMvcConfigurer {
         templateEngine.setEnableSpringELCompiler(true);
         return templateEngine;
     }
-
     // Spring + Thymeleaf
     // Configure Thymeleaf View Resolver
     @Bean
@@ -78,11 +70,6 @@ public class SpringWebConfig implements WebMvcConfigurer {
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
         viewResolver.setTemplateEngine(templateEngine());
         return viewResolver;
-    }
-
-    @Bean
-    public MultipartResolver multipartResolver() {
-        return new StandardServletMultipartResolver();
     }
 
 }

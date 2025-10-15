@@ -1,21 +1,45 @@
 package com.tallerwebi.dominio.entidades;
 
+import java.time.LocalDate;
+
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+
+import com.tallerwebi.dominio.enums.EstadoProveedor;
+import com.tallerwebi.dominio.enums.Rubro;
+
 
 @Entity
-public class Usuario {
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "rol")
+public abstract class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
+    private String apellido;
+    private String username;
     private String email;
     private String password;
+    private String telefono;
+    private String direccion;
+    private LocalDate fechaCreacion;
+
+    @Column(name = "rol", insertable = false, updatable = false) // solo de lectura
     private String rol;
+
     private Boolean activo = false;
+
+ 
 
     public String getNombre() {
         return nombre;
@@ -72,4 +96,6 @@ public class Usuario {
     public void activar() {
         activo = true;
     }
+
+   
 }

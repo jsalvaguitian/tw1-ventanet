@@ -14,6 +14,7 @@ import com.tallerwebi.dominio.utils.PasswordUtil;
 /*
  * Aclaracion: Testeando RepositorioFake Sin Hibernate ORM. Luego se borrara
  */
+/* 
 public class RepositorioUsuarioAuthImplTest {
 
     RepositorioUsuarioAuthImpl repo;
@@ -55,4 +56,4 @@ public class RepositorioUsuarioAuthImplTest {
 
 
 
-}
+}*/

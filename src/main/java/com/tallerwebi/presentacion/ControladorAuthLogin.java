@@ -10,21 +10,21 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.entidades.UsuarioAuth;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
-import com.tallerwebi.dominio.servicios.ServicioUsuarioI;
+import com.tallerwebi.dominio.servicios.ServicioUsuarioAuthI;
 import com.tallerwebi.presentacion.dto.UsuarioDto;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
+/*
 @Controller
 public class ControladorAuthLogin {
 
-    private ServicioUsuarioI servicioUsuarioI;
+    private ServicioUsuarioAuthI servicioUsuarioI;
 
     @Autowired
-    public ControladorAuthLogin(ServicioUsuarioI servicioUsuarioI) {
+    public ControladorAuthLogin(ServicioUsuarioAuthI servicioUsuarioI) {
         this.servicioUsuarioI = servicioUsuarioI;
     }
 
@@ -77,7 +77,7 @@ public class ControladorAuthLogin {
 
                 } else if (rolEncotrado.equalsIgnoreCase("ADMIN")) {
                     return new ModelAndView("redirect:/admin/dashboard");
-                }*/
+                }*//* 
 
             } catch (UsuarioInexistenteException e) {
                 datosMapeados.put("error_coincidencia", "El usuario no se encuentra registrado.");
@@ -102,4 +102,4 @@ public class ControladorAuthLogin {
     }
 
 
-}
+}*/

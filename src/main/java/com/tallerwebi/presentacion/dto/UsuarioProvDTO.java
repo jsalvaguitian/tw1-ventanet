@@ -1,0 +1,70 @@
+package com.tallerwebi.presentacion.dto;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.tallerwebi.dominio.entidades.Proveedor;
+import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.enums.Rubro;
+
+public class UsuarioProvDTO {
+    private String email;
+    private String password;
+    private String cuit;
+    private String razonSocial;
+    private Rubro rubro;
+
+    private MultipartFile documento;
+    
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public String getCuit() {
+        return cuit;
+    }
+    public void setCuit(String cuit) {
+        this.cuit = cuit;
+    }
+    public String getRazonSocial() {
+        return razonSocial;
+    }
+    public void setRazonSocial(String razonSocial) {
+        this.razonSocial = razonSocial;
+    }
+
+    public Rubro getRubro() {
+        return rubro;
+    }
+    public void setRubro(Rubro rubro) {
+        this.rubro = rubro;
+    }
+
+    public MultipartFile getDocumento() {
+        return documento;
+    }
+    public void setDocumento(MultipartFile documento) {
+        this.documento = documento;
+    }
+
+    public Proveedor obtenerEntidad() {
+        Proveedor proveedor = new Proveedor();
+        proveedor.setEmail(this.email);
+        proveedor.setPassword(this.password);;
+        proveedor.setCuit(this.cuit);
+        proveedor.setRazonSocial(this.razonSocial);
+        proveedor.setRubro(this.rubro);
+        return proveedor;
+    }
+    
+}

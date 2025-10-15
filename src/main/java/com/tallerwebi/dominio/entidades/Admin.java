@@ -4,9 +4,9 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("CLIENTE")
-public class Cliente extends Usuario{
+@DiscriminatorValue("ADMIN")
+public class Admin extends Usuario{
 
-    public Cliente() {}
+    public Admin() {}
 
 }
