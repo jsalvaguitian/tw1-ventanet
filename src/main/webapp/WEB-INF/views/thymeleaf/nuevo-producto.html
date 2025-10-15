@@ -55,21 +55,18 @@
         <!-- Tipo de Producto -->
         <div class="mb-3">
           <label for="tipo_producto_id" class="form-label">Tipo de Producto</label>
-          <select th:field="*{tipoProductoId}" id="tipo_producto_id" class="form-select">
-            <option value="0">Seleccione...</option>
-            <option value="1">Ventanas</option>
-            <option value="2">Puertas</option>
-            <!-- <option th:each="tipo : ${tiposProducto}" th:value="${tipo.id}" th:text="${tipo.nombre}"></option> -->
+          <select th:field="*{tipoProducto.id}" id="tipo_producto_id" class="form-select">
+            <option value="">Seleccione...</option>v           
+            <option th:each="tipo : ${tiposProducto}" th:value="${tipo.id}" th:text="${tipo.nombre}"></option>
           </select>
         </div>
 
         <!-- Marca -->
         <div class="mb-3">
           <label for="marca_id" class="form-label">Marca</label>
-          <select th:field="*{marcaId}" id="marca_id" class="form-select">
-            <option value="0">Seleccione...</option>
-            <option value="1">Ventanet</option>
-            <!-- <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option> -->
+          <select th:field="*{marca.id}" id="marca_id" class="form-select">
+            <option value="">Seleccione...</option>            
+            <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option>
           </select>
         </div>
 
@@ -86,13 +83,13 @@
         <!-- Presentación -->
         <div class="mb-3">
           <label for="presentacion_id" class="form-label">Presentación</label>
-          <select th:field="*{presentacionId}" id="presentacion_id" class="form-select">
-            <option value="0">Seleccione...</option>
-            <option value="1">MT2</option>
+          <select th:field="*{presentacion.id}" id="presentacion_id" class="form-select">
+            <option value="">Seleccione...</option>
+            <!-- <option value="1">MT2</option>
             <option value="2">Kilo</option>
             <option value="3">Gramo</option>
-            <option value="4">Unidad</option>
-            <!-- <option th:each="pres : ${presentaciones}" th:value="${pres.id}" th:text="${pres.nombre}"></option> -->
+            <option value="4">Unidad</option> -->
+             <option th:each="pres : ${presentaciones}" th:value="${pres.id}" th:text="${pres.descripcion}"></option>
           </select>
         </div>
 

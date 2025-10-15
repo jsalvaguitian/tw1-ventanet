@@ -11,7 +11,6 @@ import javax.servlet.ServletContext;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,19 +25,27 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
+import com.tallerwebi.dominio.servicios.ServicioMarca;
+import com.tallerwebi.dominio.servicios.ServicioPresentacion;
 import com.tallerwebi.dominio.servicios.ServicioProducto;
-import com.tallerwebi.presentacion.dto.ProductoDTO;
+import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
 
 @Controller
 @RequestMapping("/producto")
 public class ControladorProducto implements ServletContextAware {
-    private List<ProductoDTO> productos;
     private ServicioProducto servicioProducto;
     private ServletContext servletContext;
+    private final ServicioTipoProducto servicioTipoProducto;
+    private final ServicioMarca servicioMarca;    
+    private final ServicioPresentacion servicioPresentacion;
 
-    public ControladorProducto(ServicioProducto servicioProducto) {
-        this.productos = new ArrayList<>();
+    public ControladorProducto(ServicioProducto servicioProducto,ServicioTipoProducto servicioTipoProducto, 
+    ServicioMarca servicioMarca, ServicioPresentacion servicioPresentacion) {
+        new ArrayList<>();
         this.servicioProducto = servicioProducto;
+        this.servicioMarca = servicioMarca;
+        this.servicioTipoProducto = servicioTipoProducto;
+        this.servicioPresentacion = servicioPresentacion;
     }
 
     public void setServletContext(ServletContext servletContext) {
@@ -49,6 +56,9 @@ public class ControladorProducto implements ServletContextAware {
     public ModelAndView nuevoProducto() {
         ModelMap model = new ModelMap();
         model.put("producto", new Producto());
+        model.put("tiposProducto", servicioTipoProducto.obtener());
+        model.put("marcas", servicioMarca.obtener());
+        model.put("presentaciones", servicioPresentacion.obtener());
         return new ModelAndView("nuevo-producto", model);
     }
 
@@ -104,10 +114,15 @@ public class ControladorProducto implements ServletContextAware {
 
     @RequestMapping("/editar/{id}")
     public ModelAndView mostrarFormularioEditarProducto(@PathVariable Long id) {
-        ModelAndView mav = new ModelAndView("editar-producto");
+        
         Producto producto = servicioProducto.obtenerPorId(id);
-        mav.addObject("producto", producto);
-        return mav;
+        ModelMap model = new ModelMap();
+        model.put("producto", producto);
+        model.put("tiposProducto", servicioTipoProducto.obtener());
+        model.put("marcas", servicioMarca.obtener());
+        model.put("presentaciones", servicioPresentacion.obtener());
+
+        return new ModelAndView("editar-producto", model);
     }
 
     @PostMapping("/editar/{id}")
@@ -130,7 +145,7 @@ public class ControladorProducto implements ServletContextAware {
                 // Guardar la ruta en el producto
                 producto.setImagenUrl("/resources/core/uploads/" + imagenFile.getOriginalFilename());
             }
-            producto.setId(id); // aseguramos que edite el producto correcto
+            //producto.setId(id); // aseguramos que edite el producto correcto
             servicioProducto.actualizar(producto);
             redirectAttributes.addFlashAttribute("exito", "Producto actualizado correctamente");
             model.put("exito", "Producto editado correctamente");

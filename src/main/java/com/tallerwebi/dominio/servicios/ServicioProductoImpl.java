@@ -3,7 +3,6 @@ package com.tallerwebi.dominio.servicios;
 import java.util.List;
 
 import javax.transaction.Transactional;
-
 import org.springframework.stereotype.Service;
 
 import com.tallerwebi.dominio.entidades.Producto;
@@ -14,7 +13,7 @@ import com.tallerwebi.infraestructura.RepositorioProductoImpl;
 @Service("servicioProducto")
 @Transactional
 public class ServicioProductoImpl implements ServicioProducto {
-    private final RepositorioProductoImpl  productoRepository;
+    private final RepositorioProductoImpl  productoRepository;    
 
     public ServicioProductoImpl(RepositorioProductoImpl productoRepository) {
         this.productoRepository = productoRepository;
@@ -27,11 +26,12 @@ public class ServicioProductoImpl implements ServicioProducto {
 
     @Override
     public void crearProducto(Producto producto)throws ProductoExistente {
-        Producto productoEncontrado = productoRepository.obtenerPorNombreMarcaYProveedor(producto.getNombre(), producto.getMarcaId(), producto.getProveedorId());
+        Producto productoEncontrado = productoRepository.obtenerPorNombreMarcaYProveedor(producto.getNombre(), producto.getMarca().getId(), producto.getProveedorId());
+                
         if(productoEncontrado != null){
             throw new ProductoExistente();
         }
-        this.productoRepository.guardar(producto);
+        this.productoRepository.guardar(producto);        
     }
 
     @Override
@@ -45,10 +45,7 @@ public class ServicioProductoImpl implements ServicioProducto {
 
      @Override
     public void actualizar(Producto producto) {
-        Producto productoObt = productoRepository.obtener(producto.getId());
-        if (productoObt == null) {
-            throw new NoHayProductoExistente();
-        }
+        
         productoRepository.actualizar(producto);
     }
 
