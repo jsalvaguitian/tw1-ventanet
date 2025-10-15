@@ -18,12 +18,12 @@ body {
 }
 
 .nav-link:hover {
-  color: #0d6efd;
+  color: #0d6efd; /* azul Bootstrap */
 }
 
 /* HERO */
 .hero-section {
-  background: url("/core/img/hero1.jpg") center center/cover no-repeat;
+  background: url("hero1.jpg") center center/cover no-repeat;
   color: #000;
   text-shadow: 0 2px 4px rgba(0,0,0,0.6);
   min-height: 100vh; /* full screen */
@@ -46,7 +46,7 @@ body {
 }
 
 .hero-content {
-  margin-top: 40px;
+  margin-top: 40px; /* baja el bloque debajo del título */
 }
 
 .hero-section p {
@@ -89,7 +89,7 @@ body {
 /* STRIPS */
 .strip,
 .contacto {
-  background-color: #212529;
+  background-color: #212529; /* mismo color que bg-dark de Bootstrap */
   color: #fff;
 }
 
@@ -98,7 +98,7 @@ body {
 .contacto label,
 .contacto input,
 .contacto textarea {
-  color: #fff; 
+  color: #fff; /* asegurar que el texto sea visible */
 }
 
 .strip-dark {
@@ -151,7 +151,7 @@ body {
 
 .contacto input,
 .contacto textarea {
-  background-color: #343a40;
+  background-color: #343a40; /* fondo ligeramente más claro para inputs */
   border: 1px solid #495057;
   color: #fff;
 }
@@ -187,7 +187,7 @@ body {
 
 #mapa iframe {
   width: 100%;
-  height: 300px;
+  height: 300px; /* la mitad de antes */
   border: none;
   display: block;
 }
@@ -196,44 +196,50 @@ body {
   margin-bottom: 10px;
 }
 
+
 /* STRIP FABRICA */
 .fabricando {
-  position: relative;
-  color: #fff;
-  text-align: center;
-  overflow: hidden;
-  min-height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 20px;
-  background: url("/core/img/separador.jpg") center center/cover no-repeat;
+    position: relative;
+    color: #fff;
+    text-align: center;
+    overflow: hidden;
+    min-height: 300px;   /* altura mínima, ajusta como quieras */
+    display: flex;
+    align-items: center;  /* centra verticalmente el contenido */
+    justify-content: center;
+    padding: 0 20px;     /* padding lateral */
 }
 
 .fabricando::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5); /* overlay oscuro */
-  z-index: 1;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5); /* overlay oscuro */
+    z-index: 1;
 }
 
 .fabricando > * {
-  position: relative;
-  z-index: 2; 
+    position: relative;
+    z-index: 2;  /* asegura que el texto quede sobre el overlay */
 }
 
 .fabricando h3 {
-  position: relative;
-  z-index: 2;
+    position: relative;               /* para que quede por encima del overlay */
+    z-index: 2;
 }
+
+/* Imagen de fondo */
+.fabricando {
+    background: url("separador.jpg") center center/cover no-repeat;
+}
+
 
 /* FOOTER */
 footer {
-  background-color: #222;
+  background-color: #222; /* gris oscuro */
   color: #fff;
   padding: 20px 40px;
 }
@@ -274,11 +280,10 @@ footer {
 }
 
 .footer-col ul li a:hover {
-  color: #1e90ff;
+  color: #1e90ff; /* azul de la paleta */
   text-decoration: underline;
 }
 
-<<<<<<< HEAD
 /* redes sociales */
 .footer-social img {
   width: 28px;
@@ -299,28 +304,29 @@ footer {
   color: #aaa;
 }
 
+
 /* LOGIN */
 .login-text {
-  color: #333;
-  text-align: center;
-  margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .btn-register {
-  background-color: #333; 
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  text-decoration: none;
-  display: inline-block;
-  transition: all 0.2s ease-in-out;
+    background-color: #333;  /* gris oscuro */
+    color: #fff;             /* texto blanco */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease-in-out;
 }
 
 .btn-register:hover {
-  background-color: #0d6efd;
-  text-decoration: underline;
-  color: #fff;
+    background-color: #0d6efd; /* azul Bootstrap */
+    text-decoration: underline;
+    color: #fff;
 }
 
 /* RESPONSIVE */
@@ -346,7 +352,7 @@ footer {
 .map-responsive {
   position: relative;
   overflow: hidden;
-  padding-bottom: 27.5%;
+  padding-bottom: 27.5%; /* relación 16:9 */
   height: 0;
 }
 
@@ -357,22 +363,3 @@ footer {
   width: 100%;
   height: 100%;
 }
-=======
-#loginbox {
-  background-color: #e9ecef;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-body, html {
-  height: 100%;
-}
-
-main.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100%;
-}
->>>>>>> Dev
