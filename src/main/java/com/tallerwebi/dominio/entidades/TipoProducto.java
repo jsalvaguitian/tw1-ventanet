@@ -1,12 +1,6 @@
 package com.tallerwebi.dominio.entidades;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
-import com.tallerwebi.dominio.enums.Rubro;
+import javax.persistence.*;
 
 @Entity
 public class TipoProducto {
@@ -15,43 +9,31 @@ public class TipoProducto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    @Column(nullable = false, length = 100)
     private String nombre;
 
-    @ManyToOne
-    private Rubro rubro;
-
+    // 🔹 Constructor vacío obligatorio para JPA
     public TipoProducto() {
     }
 
-    public TipoProducto(String nombre, Rubro rubro) {
+    public TipoProducto(String nombre) {
         this.nombre = nombre;
-        this.rubro = rubro;
     }
 
+    // 🔹 Getters y Setters
     public Long getId() {
         return id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public Rubro getRubro() {
-        return rubro;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
-    public void setRubro(Rubro rubro) {
-        this.rubro = rubro;
-    }
-
-    
 }

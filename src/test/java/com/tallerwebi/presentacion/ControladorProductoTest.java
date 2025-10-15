@@ -4,10 +4,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.tallerwebi.dominio.entidades.Marca;
+import com.tallerwebi.dominio.entidades.Presentacion;
 import com.tallerwebi.dominio.entidades.Producto;
+import com.tallerwebi.dominio.entidades.TipoProducto;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
+import com.tallerwebi.dominio.servicios.ServicioMarca;
+import com.tallerwebi.dominio.servicios.ServicioPresentacion;
 import com.tallerwebi.dominio.servicios.ServicioProducto;
+import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,11 +29,17 @@ import java.util.List;
 public class ControladorProductoTest {
     private ControladorProducto controladorProductos;
     private ServicioProducto servicioProducto;
+    private  ServicioTipoProducto servicioTipoProducto;
+    private  ServicioMarca servicioMarca;    
+    private  ServicioPresentacion servicioPresentacion;
 
     @BeforeEach
     public void init(){
         this.servicioProducto =  mock(ServicioProducto.class);
-        this.controladorProductos = new ControladorProducto(this.servicioProducto);
+        this.servicioTipoProducto = mock(ServicioTipoProducto.class);
+        this.servicioMarca = mock(ServicioMarca.class);
+        this.servicioPresentacion = mock(ServicioPresentacion.class);
+        this.controladorProductos = new ControladorProducto(this.servicioProducto, this.servicioTipoProducto, this.servicioMarca, this.servicioPresentacion);
     }
 
     @Test
@@ -70,13 +83,23 @@ public class ControladorProductoTest {
 @Test
 public void cuandoGuardoProductoValidoRedirigeAListadoConExito() throws ProductoExistente {
     Producto producto = new Producto();
+    TipoProducto tipoProducto = new TipoProducto();
+    tipoProducto.setId(1L);
+    
+    Presentacion presentacion = new Presentacion();
+    presentacion.setId(1L);
+    
+
+    Marca marca = new Marca();
+    marca.setId(1L);
+
     producto.setNombre("Ventana doble vidrio");
-    producto.setPrecio(1200.50);
-    producto.setMarcaId(1);
+    producto.setPrecio(1200.50);    
     producto.setProveedorId(1);
     producto.setStock(10);
-    producto.setPresentacionId(1);
-    producto.setTipoProductoId(1);
+    producto.setPresentacion(presentacion);
+    producto.setTipoProducto(tipoProducto);
+    producto.setMarca(marca);
 
     // Configuramos el mock
     doNothing().when(servicioProducto).crearProducto(any(Producto.class));

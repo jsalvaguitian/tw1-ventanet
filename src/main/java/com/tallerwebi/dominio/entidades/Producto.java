@@ -3,12 +3,14 @@ package com.tallerwebi.dominio.entidades;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -17,24 +19,32 @@ public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column(nullable = false, length = 155)
     private String nombre;
     private double precio;
     private String descripcion;
     private String imagenUrl;
     private int stock;
-    private Integer tipoProductoId;
-    private Integer marcaId;
-    private Integer proveedorId;
-    private Integer presentacionId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tipo_producto_id", nullable = false)
     private TipoProducto tipoProducto;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "marca_id", nullable = false)
+    private Marca marca;
+
+    private Integer proveedorId;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "presentacion_id", nullable = false)
+    private Presentacion presentacion;
+
+    
 
     @Embedded //es para agrupar las dimensiones para mas orden igualmente seran campos de Producto
     private Dimensiones dimensiones;
-
-    @ManyToOne
-    private Marca marca;
 
     private String modelo;
 
@@ -44,12 +54,6 @@ public class Producto {
     @OneToMany(mappedBy = "producto")
     private Set<ProductoProveedor> proveedores = new LinkedHashSet<>();
 
-    /* 
-    private Boolean disponible;
-
-        @OneToMany(mappedBy = "producto")
-    private List<DetalleCotizacion> detalleCotizacion; 
-    */
 
     private Boolean aceptaEnvio;
 
@@ -76,21 +80,18 @@ public class Producto {
     public void setStock(int stock) {
         this.stock = stock;
     }
-
-    public void setTipoProductoId(Integer tipoProductoId) {
-        this.tipoProductoId = tipoProductoId;
+    public void setTipoProducto(TipoProducto tipoProducto) {
+        this.tipoProducto = tipoProducto;
     }
-
-    public void setMarcaId(Integer marcaId) {
-        this.marcaId = marcaId;
+    public void setMarca(Marca marca) {
+        this.marca = marca;
     }
 
     public void setProveedorId(Integer proveedorId) {
         this.proveedorId = proveedorId;
     }
-
-    public void setPresentacionId(Integer presentacionId) {
-        this.presentacionId = presentacionId;
+    public void setPresentacion(Presentacion presentacion) {
+        this.presentacion = presentacion;
     }
 
     public long getId() {
@@ -116,48 +117,17 @@ public class Producto {
     public int getStock() {
         return stock;
     }
-
-    public Integer getTipoProductoId() {
-        return tipoProductoId;
+    public TipoProducto getTipoProducto() {
+        return tipoProducto;
     }
-
-    public Integer getMarcaId() {
-        return marcaId;
+    public Marca getMarca() {
+        return marca;
     }
 
     public Integer getProveedorId() {
         return proveedorId;
     }
-
-    public Integer getPresentacionId() {
-        return presentacionId;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Producto other = (Producto) obj;
-        if (nombre == null) {
-            if (other.nombre != null)
-                return false;
-        } else if (!nombre.equals(other.nombre))
-            return false;
-        return true;
-    }
-
-    
-
+    public Presentacion getPresentacion() {
+        return presentacion;
+    }    
 }

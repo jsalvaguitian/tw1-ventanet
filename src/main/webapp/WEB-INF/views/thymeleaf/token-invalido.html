@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/recuperarPassword.css}"/>
+    <title>Token Invalido</title>
+</head>
+<body>
+     <!-- NAVBAR -->
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="#">Ventanet</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" 
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#productos">Productos</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/login}">Ingreso</a></li>
+        <li class="nav-item"><a class="nav-link" href="nuevo-usuario.html">Registro</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<main>
+<div class="invalido border border-light-subtle p-4">
+    <div class="p-3 border border-warning">
+        <h1 class="mt-2 mb-1 text-center fs-5">Token Invalido</h1>
+        <p class="mb-3 text-center fs-5">Lo sentimos! Este enlace a expirado o ya a sido utilizado</p>
+    </div>
+    
+</div>
+</main>
+</body>
+</html>

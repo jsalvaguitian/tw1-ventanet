@@ -21,6 +21,8 @@
         <playwright.version>1.36.0</playwright.version>
         <hsqldb.version>2.3.2</hsqldb.version>
         <springsecurity.version>5.4.0</springsecurity.version>
+
+         <javamail.version>1.6.2</javamail.version>
     </properties>
 
     <dependencies>
@@ -114,6 +116,13 @@
             <version>${playwright.version}</version>
             <scope>test</scope>
         </dependency>
+        <!--Dependencia para Java mail-->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>${javamail.version}</version>
+        </dependency>
+
 
         <!--Dependencia para encriptar las contrasenias-->
         <dependency>

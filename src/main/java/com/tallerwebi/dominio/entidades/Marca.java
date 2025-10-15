@@ -1,9 +1,6 @@
 package com.tallerwebi.dominio.entidades;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Marca {
@@ -11,6 +8,8 @@ public class Marca {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, length = 100)
     private String nombre;
 
     public Marca() {
@@ -35,10 +34,4 @@ public class Marca {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
-    
-    
-
-    
-
 }
