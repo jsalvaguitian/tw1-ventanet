@@ -1,0 +1,136 @@
+body {
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* === HEADER === */
+    header {
+      height: 60px;
+      background-color: #343a40;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 1px solid #444;
+      z-index: 1000;
+    }
+
+    header .navbar-brand {
+      color: white;
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+
+    header .navbar-brand:hover {
+      color: #f8f9fa;
+    }
+
+    header .nav-item .nav-link {
+      color: white;
+      position: relative;
+    }
+
+    header .badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      font-size: 0.6rem;
+      background: red;
+    }
+
+    header .dropdown-menu {
+      min-width: 180px;
+    }
+
+    /* === LAYOUT === */
+    .main-container {
+      display: flex;
+      flex: 1;
+    }
+
+    /* === SIDEBAR === */
+    #sidebar {
+      width: 240px;
+      min-height: 100vh;
+      background-color: #f8f9fa;
+      transition: width 0.3s;
+      border-right: 1px solid #ddd;
+    }
+
+    #sidebar.collapsed {
+      width: 70px;
+    }
+
+    #sidebar .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      font-size: 15px;
+      margin-left: 6px;
+    }
+
+    #sidebar.collapsed .nav-link span {
+      display: none;
+    }
+
+    #sidebar .toggle-btn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      color: #333;
+      border: none;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    /* === MAIN CONTENT === */
+    main {
+      flex-grow: 1;
+      padding: 20px;
+      background-color: #f4f6f9;
+    }
+
+    /* Estilo badge notificaciones */
+    header .badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      font-size: 0.6rem;
+      background: red;
+      color: white;
+    }
+
+    /* Estilo dropdown de notificaciones */
+    .dropdown-menu li {
+      font-size: 0.9rem;
+    }
+
+    .dropdown-item i {
+      font-size: 1.2rem;
+      margin-top: 3px;
+    }
+
+    .dropdown-item span {
+      flex: 1;
+      font-size: 0.85rem;
+    }
+
+    .dropdown-menu {
+      padding: 0;
+      border-radius: 8px;
+    }
+
+    .dropdown-menu li.dropdown-item {
+      padding: 10px 15px;
+    }
+
+    .dropdown-menu li:hover {
+      background-color: #f8f9fa;
+    }
