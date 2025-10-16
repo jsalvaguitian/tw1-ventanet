@@ -1,7 +1,10 @@
 package com.tallerwebi.dominio.servicios;
 
-import com.tallerwebi.dominio.entidades.Proveedor;
+import java.util.List;
 
+import com.tallerwebi.dominio.entidades.Proveedor;
+ 
 public interface ServicioProveedorI {
-    Proveedor obtenerPorIdUsuario(Long idUsuario);
+    List<Proveedor> obtenerTodosLosProveedoresActivos();
+    Proveedor obtenerPorIdUsuario(Long idUsuario);    
 }

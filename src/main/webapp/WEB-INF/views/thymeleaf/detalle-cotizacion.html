@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>Ventanet</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
+</head>
+
+<body>
+    <nav class="navbar   d-md-none px-3" style="box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+
+        <span class="navbar-title">Ventanet</span>
+        <button class="hamburger btn me-2" id="menuBtn">&#9776;</button>
+        <div class="dropdown" id="dropdownMenu"
+            style="display:none;position:absolute;top:56px;left:0;width:100%;z-index:1200;">
+            <div class="desplegable   shadow p-2">
+                <a class="dropdown-item active" href="#">Dashboard</a>
+                <a class="dropdown-item" href="#">Reportes</a>
+                <a class="dropdown-item" href="#">Configuración</a>
+
+            </div>
+        </div>
+    </nav>
+    <div class="sidebar" id="sidebar">
+        <h2>Ventanet</h2>
+        <ul>
+            <li class="active">Dashboard</li>
+        </ul>
+    </div>
+    <div class="main" id="mainContent">
+        <div class="header row align-items-center mb-12">
+            <div class="col-12 col-md-12 mb-2 mb-md-0">
+                <input type="text" class="form-control" placeholder="Buscar por cotización, Ubicación, Fecha, etc.">
+            </div>
+
+            <div>
+                <div class="events-table">
+                    <div id="eventsGrid" class="events-grid"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal para mostrar info del evento -->
+        <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="eventModalLabel">Detalle de la Cotización</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="eventModalBody">
+                        <!-- Aquí se mostrará la info -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Example event data
+            const events = [
+                { name: "Ventana Corrediza 2 hojas", location: "CABA", hours: "10:00 am", date: "01/09/2025", cant: "2 unidades", dimension: "1.20 x 1.00m", color: "Blanco" },
+                { name: "Ventana Oscilobatiente aluminio", location: "San Justo", hours: "12:30 pm", date: "03/09/2025", cant: "1 unidad", dimension: "1.00 x 0.80m", color: "Gris" },
+                { name: "Paño Fijo DVH", location: "Morón", hours: "09:15 am", date: "05/09/2025", cant: "3 unidades", dimension: "1.50 x 1.20m", color: "Negro" },
+                { name: "Ventana corrediza PVC", location: "La Plata", hours: "11:00 am", date: "07/09/2025", cant: "4 unidades", dimension: "1.80 x 1.20m", color: "Blanco" },
+                { name: "Ventana batiente con mosquitero", location: "Lomas de Zamora", hours: "02:00 pm", date: "10/09/2025", cant: "2 unidades", dimension: "1.00 x 0.60m", color: "Gris" },
+                { name: "Ventana corrediza 3 hojas", location: "Quilmes", hours: "03:30 pm", date: "12/09/2025", cant: "1 unidad", dimension: "2.00 x 1.20m", color: "Negro" },
+                { name: "Ventana paño fijo aluminio", location: "Avellaneda", hours: "08:45am", date: "15.09.2025", size: "2 unidades", dimension: "1.20 x 0.80m", color: "Blanco" },
+                { name: "Ventana oscilobatiente PVC", location: "Lanús", hours: "10:20am", date: "18.09.2025", size: "1 unidad", dimension: "1.00 x 0.80m", color: "Gris" }
+                
+            ];
+            function renderGrid(data) {
+                const grid = document.getElementById('eventsGrid');
+                grid.innerHTML = '';
+                data.forEach((event, i) => {
+                    grid.innerHTML += `<div class='event-card col-12 col-sm-6 col-lg-4 mb-3'>
+            <div class='event-header'>Cotización #${i + 1}</div>
+            <div class='event-body'>
+                <div><strong>Nombre:</strong> ${event.name}</div>
+                <div><strong>Cantidad:</strong> ${event.cant}</div>
+                <div><strong>Dimensión:</strong> ${event.dimension}</div>
+                <div><strong>Color:</strong> ${event.color}</div>
+                <div><strong>Ubicación:</strong> ${event.location}</div>
+                <div><strong>Hora:</strong> ${event.hours}</div>
+                <div><strong>Fecha:</strong> ${event.date}</div>
+                
+            </div>
+            <div class='event-actions'>
+                <button class='action-btn btn btn-primary' data-index='${i}' data-bs-toggle='modal' data-bs-target='#eventModal'>Editar</button>
+            </div>
+        </div>`;
+                });
+                // Asignar evento a los botones
+                setTimeout(() => {
+                    document.querySelectorAll('.event-actions .action-btn').forEach(btn => {
+                        btn.onclick = function () {
+                            const idx = this.getAttribute('data-index');
+                            const ev = events[idx];
+                            document.getElementById('eventModalBody').innerHTML = `
+                    <div><strong>Nombre:</strong> ${ev.name}</div>
+                    <div><strong>Cantidad:</strong> ${ev.cant}</div>
+                    <div><strong>Dimensión:</strong> ${ev.dimension}</div>
+                    <div><strong>Color:</strong> ${ev.color}</div>
+                    <div><strong>Ubicación:</strong> ${ev.location}</div>
+                    <div><strong>Hora:</strong> ${ev.hours}</div>
+                    <div><strong>Fecha:</strong> ${ev.date}</div>
+                    <div><strong>Cantidad:</strong> ${ev.cant}</div>
+                `;
+                        };
+                    });
+                }, 100);
+            }
+            // Mostrar todos al cargar
+            renderGrid(events);
+
+            // Filtro por fechas solo si el usuario lo solicita
+            document.getElementById('applyFilter').onclick = function () {
+                const filter = document.getElementById('dateFilter').value;
+                let filtered = events;
+                const today = new Date();
+                function parseDate(str) {
+                    // Admite formatos dd/mm/yyyy y dd.mm.yyyy
+                    const parts = str.replace(/\./g, '/').split('/');
+                    return new Date(parts[2], parts[1] - 1, parts[0]);
+                }
+                if (filter === 'all') {
+                    filtered = events;
+                } else if (filter === 'today') {
+                    filtered = events.filter(ev => {
+                        const d = parseDate(ev.date);
+                        return d.toDateString() === today.toDateString();
+                    });
+                } else if (filter === 'yesterday') {
+                    const yesterday = new Date(today);
+                    yesterday.setDate(today.getDate() - 1);
+                    filtered = events.filter(ev => {
+                        const d = parseDate(ev.date);
+                        return d.toDateString() === yesterday.toDateString();
+                    });
+                } else if (filter === 'last7') {
+                    const weekAgo = new Date(today);
+                    weekAgo.setDate(today.getDate() - 7);
+                    filtered = events.filter(ev => {
+                        const d = parseDate(ev.date);
+                        return d >= weekAgo && d <= today;
+                    });
+                } else if (filter === 'last30') {
+                    const monthAgo = new Date(today);
+                    monthAgo.setDate(today.getDate() - 30);
+                    filtered = events.filter(ev => {
+                        const d = parseDate(ev.date);
+                        return d >= monthAgo && d <= today;
+                    });
+                } else if (filter === 'month') {
+                    filtered = events.filter(ev => {
+                        const d = parseDate(ev.date);
+                        return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
+                    });
+                } else if (filter === 'custom') {
+                    // Aquí podrías agregar inputs para fechas personalizadas y filtrar según el rango
+                    alert('Funcionalidad de rango personalizado no implementada');
+                } else {
+                    // Por defecto muestra todos
+                    filtered = events;
+                }
+                renderGrid(filtered);
+            };
+
+            // Buscador de cotizaciones
+            const searchInput = document.querySelector('.form-control[placeholder="Buscar por cotización, Ubicación, Fecha, etc."]');
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                const filtered = events.filter(ev =>
+                    (ev.name && ev.name.toLowerCase().includes(query)) ||
+                    (ev.location && ev.location.toLowerCase().includes(query)) ||
+                    (ev.dimension && ev.dimension.toLowerCase().includes(query)) ||
+                    (ev.color && ev.color.toLowerCase().includes(query)) ||
+                    (ev.cant && ev.cant.toLowerCase().includes(query)) ||
+                    (ev.date && ev.date.toLowerCase().includes(query))
+                );
+                renderGrid(filtered);
+            
+
+                // Filtro por fechas
+                document.getElementById('applyFilter').onclick = function () {
+                    const filter = document.getElementById('dateFilter').value;
+                    let filtered = events;
+                    const today = new Date();
+                    function parseDate(str) {
+                        // Admite formatos dd/mm/yyyy y dd.mm.yyyy
+                        const parts = str.replace(/\./g, '/').split('/');
+                        return new Date(parts[2], parts[1] - 1, parts[0]);
+                    }
+                    if (filter === 'today') {
+                        filtered = events.filter(ev => {
+                            const d = parseDate(ev.date);
+                            return d.toDateString() === today.toDateString();
+                        });
+                    } else if (filter === 'yesterday') {
+                        const yesterday = new Date(today);
+                        yesterday.setDate(today.getDate() - 1);
+                        filtered = events.filter(ev => {
+                            const d = parseDate(ev.date);
+                            return d.toDateString() === yesterday.toDateString();
+                        });
+                    } else if (filter === 'last7') {
+                        const weekAgo = new Date(today);
+                        weekAgo.setDate(today.getDate() - 7);
+                        filtered = events.filter(ev => {
+                            const d = parseDate(ev.date);
+                            return d >= weekAgo && d <= today;
+                        });
+                    } else if (filter === 'last30') {
+                        const monthAgo = new Date(today);
+                        monthAgo.setDate(today.getDate() - 30);
+                        filtered = events.filter(ev => {
+                            const d = parseDate(ev.date);
+                            return d >= monthAgo && d <= today;
+                        });
+                    } else if (filter === 'month') {
+                        filtered = events.filter(ev => {
+                            const d = parseDate(ev.date);
+                            return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
+                        });
+                    } else if (filter === 'custom') {
+                        // Aquí podrías agregar inputs para fechas personalizadas y filtrar según el rango
+                        alert('Funcionalidad de rango personalizado no implementada');
+                    } else {
+                        // Por defecto muestra todos
+                        filtered = events;
+                    }
+                    renderGrid(filtered);
+                };
+            });
+            // Hamburguesa y menú desplegable
+            const menuBtn = document.getElementById('menuBtn');
+            const sidebar = document.getElementById('sidebar');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            function isMobile() {
+                return window.innerWidth <= 768;
+            }
+            menuBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (isMobile()) {
+                    if (dropdownMenu.style.display === 'none' || dropdownMenu.style.display === '') {
+                        dropdownMenu.style.display = 'block';
+                    } else {
+                        dropdownMenu.style.display = 'none';
+                    }
+                } else {
+                    sidebar.classList.toggle('show');
+                }
+            });
+            // Cerrar menú al hacer click fuera en móvil
+            document.addEventListener('click', function (e) {
+                if (isMobile()) {
+                    if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+                        dropdownMenu.style.display = 'none';
+                    }
+                } else {
+                    if (!sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+                        sidebar.classList.remove('show');
+                    }
+                }
+            });
+            // Ocultar menú desplegable al cambiar tamaño de pantalla
+            window.addEventListener('resize', function () {
+                if (!isMobile()) {
+                    dropdownMenu.style.display = 'none';
+                }
+            });
+        </script>
+</body>
+
+</html>

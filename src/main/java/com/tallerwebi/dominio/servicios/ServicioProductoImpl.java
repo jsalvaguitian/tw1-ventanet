@@ -13,7 +13,7 @@ import com.tallerwebi.infraestructura.RepositorioProductoImpl;
 @Service("servicioProducto")
 @Transactional
 public class ServicioProductoImpl implements ServicioProducto {
-    private final RepositorioProductoImpl  productoRepository;    
+    private final RepositorioProductoImpl productoRepository;
 
     public ServicioProductoImpl(RepositorioProductoImpl productoRepository) {
         this.productoRepository = productoRepository;
@@ -31,7 +31,7 @@ public class ServicioProductoImpl implements ServicioProducto {
         if(productoEncontrado != null){
             throw new ProductoExistente();
         }
-        this.productoRepository.guardar(producto);        
+        this.productoRepository.guardar(producto);
     }
 
     @Override
@@ -43,9 +43,9 @@ public class ServicioProductoImpl implements ServicioProducto {
         return producto;
     }
 
-     @Override
+    @Override
     public void actualizar(Producto producto) {
-        
+
         productoRepository.actualizar(producto);
     }
 
@@ -56,6 +56,12 @@ public class ServicioProductoImpl implements ServicioProducto {
             throw new NoHayProductoExistente();
         }
         productoRepository.eliminar(id);
+    }
+
+    @Override
+    public List<Producto> buscarConFiltros(Long tipoProductoId) {
+        return productoRepository.buscarConFiltros(tipoProductoId);
+
     }
 
 }
