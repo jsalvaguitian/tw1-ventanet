@@ -30,7 +30,18 @@ public class Producto {
     @JoinColumn(name = "marca_id", nullable = false)
     private Marca marca;
 
-    private Integer proveedorId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "proveedor_id", nullable = false)
+    private Proveedor proveedor;
+
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
+    }
+
+    public Proveedor getProveedor() {
+        return proveedor;
+    }
+    //private Integer proveedorId;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "presentacion_id", nullable = false)
@@ -61,9 +72,9 @@ public class Producto {
     public void setMarca(Marca marca) {
         this.marca = marca;
     }
-    public void setProveedorId(Integer proveedorId) {
-        this.proveedorId = proveedorId;
-    }
+    // public void setProveedorId(Integer proveedorId) {
+    //     this.proveedorId = proveedorId;
+    // }
     public void setPresentacion(Presentacion presentacion) {
         this.presentacion = presentacion;
     }
@@ -91,9 +102,9 @@ public class Producto {
     public Marca getMarca() {
         return marca;
     }
-    public Integer getProveedorId() {
-        return proveedorId;
-    }
+    // public Integer getProveedorId() {
+    //     return proveedorId;
+    // }
     public Presentacion getPresentacion() {
         return presentacion;
     }    

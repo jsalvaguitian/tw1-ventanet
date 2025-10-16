@@ -59,7 +59,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         }
     }
     
-    public Producto obtenerPorNombreMarcaYProveedor(String nombre, Long marcaId, Integer proveedorId) {
+    public Producto obtenerPorNombreMarcaYProveedor(String nombre, Long marcaId, Long proveedorId) {
         var session = sessionFactory.getCurrentSession();
         var cb = session.getCriteriaBuilder();
         var query = cb.createQuery(Producto.class);
@@ -69,7 +69,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
                 cb.and(
                         cb.equal(root.get("nombre"), nombre),
                         cb.equal(root.get("marca").get("id"), marcaId),
-                        cb.equal(root.get("proveedorId"), proveedorId)));
+                        cb.equal(root.get("proveedor").get("id"), proveedorId)));
 
         return session.createQuery(query).uniqueResult();
     }

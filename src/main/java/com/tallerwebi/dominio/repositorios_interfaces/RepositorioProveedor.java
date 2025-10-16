@@ -4,5 +4,5 @@ import com.tallerwebi.dominio.entidades.Proveedor;
 
 public interface RepositorioProveedor {
     Proveedor buscarProveedorPorCuit(String cuit);
-    
+    Proveedor buscarProveedorPorIdUsuario(Long idUsuario);
 }

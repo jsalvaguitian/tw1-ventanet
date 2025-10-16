@@ -26,7 +26,7 @@ public class ServicioProductoImpl implements ServicioProducto {
 
     @Override
     public void crearProducto(Producto producto)throws ProductoExistente {
-        Producto productoEncontrado = productoRepository.obtenerPorNombreMarcaYProveedor(producto.getNombre(), producto.getMarca().getId(), producto.getProveedorId());
+        Producto productoEncontrado = productoRepository.obtenerPorNombreMarcaYProveedor(producto.getNombre(), producto.getMarca().getId(), producto.getProveedor().getId());
                 
         if(productoEncontrado != null){
             throw new ProductoExistente();
