@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 
 import com.tallerwebi.dominio.enums.EstadoProveedor;
 import com.tallerwebi.dominio.enums.Rubro;
@@ -33,8 +32,8 @@ public class Proveedor extends Usuario{
 
     private String documento;        // Ruta del documento legal del proveedor
 
-    @OneToMany(mappedBy = "proveedor")
-    private Set<ProductoProveedor> productos = new LinkedHashSet<>();
+    @ManyToMany
+    private Set<Producto> productos = new LinkedHashSet<>();
 
     private String ubicacion;
     private Double latitud;
@@ -165,29 +164,14 @@ public class Proveedor extends Usuario{
     }
 
 
-    public Set<ProductoProveedor> getProductos() {
+    public Set<Producto> getProductos() {
         return productos;
     }
 
 
-    public void setProductos(Set<ProductoProveedor> productos) {
+    public void setProductos(Set<Producto> productos) {
         this.productos = productos;
     }
-
-    
-        
-    /* Crearse la clase Producto
-     private List<Producto> productos;       // Productos ofrecidos por el proveedor */
-    //private List<Cotizacion> cotizaciones;  // Cotizaciones realizadas por el proveedor
-
-
-    /*public Proveedor(String email, String contrasenia){
-        super(email,contrasenia);
-        this.cotizaciones = new ArrayList<>();
-    }*/
-
-    //private Double dolarReferencia;    // Último valor de dólar usado para precios
-    
 
     
 }

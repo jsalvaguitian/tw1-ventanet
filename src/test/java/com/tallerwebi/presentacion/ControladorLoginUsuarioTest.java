@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.entidades.UsuarioAuth;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
-import com.tallerwebi.dominio.servicios.ServicioUsuarioAuthI;
 import com.tallerwebi.presentacion.dto.UsuarioDto;
 
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;

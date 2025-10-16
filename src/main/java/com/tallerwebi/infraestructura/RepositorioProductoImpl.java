@@ -1,6 +1,12 @@
 package com.tallerwebi.infraestructura;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.persistence.Query;
+
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -72,6 +78,36 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
                         cb.equal(root.get("proveedorId"), proveedorId)));
 
         return session.createQuery(query).uniqueResult();
+    }
+
+    public List<Producto> buscarConFiltros(Long tipoProductoId) {
+         StringBuilder hql = new StringBuilder("SELECT p FROM Producto p WHERE 1=1");
+
+        // Lista de parámetros
+        Map<String, Object> params = new HashMap<>();
+/* 
+        if (proveedorId != null) {
+            hql.append(" AND p.proveedorId = :proveedorId");
+            params.put("proveedorId", proveedorId);
+        }
+*/
+        if (tipoProductoId != null) {
+            hql.append(" AND p.tipoProducto.id = :tipoProductoId");
+            params.put("tipoProductoId", tipoProductoId);
+        }
+
+
+        // Creamos la query
+        Query query = sessionFactory.getCurrentSession()
+                .createQuery(hql.toString(), Producto.class);
+
+        // Asignamos parámetros dinámicamente
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            query.setParameter(entry.getKey(), entry.getValue());
+        }
+
+        return query.getResultList();
+
     }
 
 }

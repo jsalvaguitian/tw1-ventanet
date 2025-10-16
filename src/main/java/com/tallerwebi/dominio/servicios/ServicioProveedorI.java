@@ -2,8 +2,10 @@ package com.tallerwebi.dominio.servicios;
 
 import java.util.List;
 
+import com.tallerwebi.dominio.entidades.Proveedor;
+ 
 public interface ServicioProveedorI {
 
-    List<String> obtenerTodosLosNombresProveedores();
+    List<Proveedor> obtenerTodosLosProveedoresActivos();
 
 }

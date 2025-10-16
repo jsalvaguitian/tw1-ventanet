@@ -12,7 +12,7 @@ public class TipoProducto {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    // 🔹 Constructor vacío obligatorio para JPA
+    // Constructor vacío obligatorio para JPA
     public TipoProducto() {
     }
 
@@ -20,7 +20,7 @@ public class TipoProducto {
         this.nombre = nombre;
     }
 
-    // 🔹 Getters y Setters
+    // Getters y Setters
     public Long getId() {
         return id;
     }
