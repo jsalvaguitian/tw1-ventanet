@@ -207,8 +207,8 @@
                     <span th:text="${mailProveedor}">Proveedor</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><a class="dropdown-item" href="#">Perfil</a></li>
-                    <li><a class="dropdown-item" href="#">Configuración</a></li>
+                   <!-- <li><a class="dropdown-item" href="#">Perfil</a></li>
+                    <li><a class="dropdown-item" href="#">Configuración</a></li>-->
                     <li>
                         <hr class="dropdown-divider">
                     </li>
@@ -230,7 +230,7 @@
             <ul class="nav flex-column mt-4">
                 <!-- Dashboard -->
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a th:href="@{/dashboard-proveedor}" class="nav-link">
                         <i class="bi bi-house"></i><span>Dashboard</span>
                     </a>
                 </li>
@@ -245,45 +245,46 @@
                     <div class="collapse ps-4" id="submenuMateriales">
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a href="#" class="nav-link">Alta manual</a>
+                                <a th:href="@{/producto/nuevo-producto}" class="nav-link">Alta manual</a>
                             </li>
+                            <!--
                             <li class="nav-item">
                                 <a href="#" class="nav-link">Importar desde Excel, CSV</a>
-                            </li>
+                            </li>-->
                             <li class="nav-item">
-                                <a href="#" class="nav-link">Listado de materiales</a>
+                                <a th:href="@{/producto/listado}" class="nav-link">Listado de productos</a>
                             </li>
                         </ul>
                     </div>
                 </li>
 
-                <!-- Solicitudes de Cotización -->
+                <!-- Solicitudes de Cotización 
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="bi bi-lock"></i><span>Solicitudes de Cotiza-</span>
                     </a>
-                </li>
+                </li>-->
 
-                <!-- Actualización de Precios -->
+                <!-- Actualización de Precios
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="bi bi-clipboard-data"></i><span>Actualización de Precios</span>
                     </a>
-                </li>
+                </li>-->
 
-                <!-- Reportes -->
+                <!-- Reportes
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="bi bi-graph-up"></i><span>Reportes</span>
                     </a>
-                </li>
+                </li>-->
 
-                <!-- Configuración -->
+                <!-- Configuración 
                 <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="bi bi-gear"></i><span>Configuración</span>
                     </a>
-                </li>
+                </li>-->
             </ul>
         </aside>
 

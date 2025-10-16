@@ -13,7 +13,7 @@ import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 @Controller
-@RequestMapping("/proveedor")
+//@RequestMapping("/proveedor")
 public class ControladorProveedor {
 
     private ServicioProveedorI servicioProveedorI;

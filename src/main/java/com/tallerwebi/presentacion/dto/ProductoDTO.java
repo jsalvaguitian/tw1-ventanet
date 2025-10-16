@@ -7,10 +7,12 @@ public class ProductoDTO {
     private String descripcion;
     private String imagenUrl;
     private int stock;
-    private Integer tipoProductoId;
-    private Integer marcaId;
+    private Long tipoProductoId;
+    private Long marcaId;
     private Integer proveedorId;
     private Integer presentacionId;
+    private String tipoProducto;
+    private String marca;
     
     public ProductoDTO() {
     }   
@@ -22,10 +24,36 @@ public class ProductoDTO {
         this.descripcion = descripcion;
         this.imagenUrl = imagenUrl;
         this.stock = stock;
-        this.tipoProductoId = tipo_producto_id;
-        this.marcaId = marca_id;
+        this.tipoProductoId = (long) tipo_producto_id;
+        this.marcaId = (long) marca_id;
         this.proveedorId = proveedor_id;
         this.presentacionId = presentacion_id;
+
+    }
+
+    public ProductoDTO(String nombre, String descripcion, String imagenUrl, Long tipoProductoId, Long marcaId) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.imagenUrl = imagenUrl;
+        this.tipoProductoId = tipoProductoId;
+        this.marcaId = marcaId;
+    }
+
+    
+    public String getTipoProducto() {
+        return tipoProducto;
+    }
+
+    public void setTipoProducto(String tipoProducto) {
+        this.tipoProducto = tipoProducto;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
     }
 
     public void setId(long id) {
@@ -46,10 +74,10 @@ public class ProductoDTO {
     public void setStock(int stock) {
         this.stock = stock;
     }
-    public void setTipoProductoId(Integer tipo_producto_id) {
+    public void setTipoProductoId(Long tipo_producto_id) {
         this.tipoProductoId = tipo_producto_id;
     }
-    public void setMarcaId(Integer marca_id) {
+    public void setMarcaId(Long marca_id) {
         this.marcaId = marca_id;
     }
     public void setProveedorId(Integer proveedor_id) {
@@ -76,10 +104,10 @@ public class ProductoDTO {
     public Integer getStock() {
         return stock;
     }
-    public Integer getTipoProductoId() {
+    public Long getTipoProductoId() {
         return tipoProductoId;
     }
-    public Integer getMarcaId() {
+    public Long getMarcaId() {
         return marcaId;
     }
     public Integer getProveedorId() {
