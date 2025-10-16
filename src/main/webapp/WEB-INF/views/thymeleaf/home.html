@@ -21,11 +21,21 @@
             <span class="brand">VENTANET</span>
         </a>
         <nav class="ms-auto">
-            <ul class="nav">
-                <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/login}">Ingreso</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/nuevo-usuario}">Registro</a></li>
-            </ul>
+          <ul class="nav">
+    <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+
+    <!-- Menú desplegable -->
+    <li class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle">Registro</a>
+        <ul class="dropdown-menu">
+            <li><a th:href="@{/nuevo-usuario}" class="dropdown-item">Cliente</a></li>
+            <li><a th:href="@{/registro-proveedor}" class="dropdown-item">Proveedor</a></li>
+        </ul>
+    </li>
+
+    <li class="nav-item"><a class="nav-link" th:href="@{/login}">Ingreso</a></li>
+</ul>
+
         </nav>
     </div>
 </header>

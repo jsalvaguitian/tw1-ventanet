@@ -53,6 +53,51 @@ body {
   border-radius: 50%;
 }
 
+/* Dropdown básico */
+.nav-item.dropdown {
+  position: relative;
+}
+
+/*.nav-item .dropdown-toggle::after {
+  content: ""; ▼
+  font-size: 0.6em;
+}*/
+
+/* Menú oculto por defecto */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  list-style: none;
+  padding: 6px 0;
+  min-width: 160px;
+  z-index: 10;
+}
+
+/* Mostrar menú al pasar o hacer hover */
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+/* Estilo de los ítems */
+.dropdown-item {
+  display: block;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #333;
+  transition: background 0.2s, color 0.2s;
+}
+
+.dropdown-item:hover {
+  background: #f5f5f5;
+  color: #6a42f4; /* mismo tono violeta que usás */
+}
+
 /* NAVBAR */
 /*.navbar-brand {
   font-weight: bold;
@@ -444,13 +489,5 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-}
-
-/* REGISTRO */
-.image-box {
-  background: url('../img/register.png') no-repeat right;
-  background-size: contain;
-  width: 50%;
   height: 100%;
 }
