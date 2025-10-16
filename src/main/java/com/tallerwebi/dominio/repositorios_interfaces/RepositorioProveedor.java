@@ -9,4 +9,5 @@ public interface RepositorioProveedor {
 
     List<Proveedor> obtenerTodosLosNombresProveedoresActivos();
     
+    Proveedor buscarProveedorPorIdUsuario(Long idUsuario);
 }
