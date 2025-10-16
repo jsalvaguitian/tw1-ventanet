@@ -54,6 +54,7 @@
 
             <!-- RESULTADOS -->
             <div class="col-md-9">
+                <!--
                 <div class="input-group mb-3">
                     <input type="text" name="nombre" class="form-control" placeholder="Buscar producto..."
                         th:value="${param.nombre}">
@@ -63,8 +64,7 @@
                 <div class="row">
                     <p class="mensaje" th:if="${mensaje !=null}" th:text="${mensaje}"></p>
 
-                </div>
-
+                </div>-->
                 <div class="row" th:each="p : ${productos}">
                     <div class="col-md-12 mb-3">
                         <div class="card">

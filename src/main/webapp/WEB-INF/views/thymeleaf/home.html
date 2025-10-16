@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -7,190 +8,193 @@
   <title>Ventanet - Taller Web I</title>
 
   <!-- Boostrap core css -->
-  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
 
   <!-- custom style -->
-  <link rel="stylesheet" th:href="@{/css/main.css}"/>
+  <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 
 <body>
-<!-- HEADER -->
-<header class="site-header">
+  <!-- HEADER -->
+  <header class="site-header">
     <div class="header-inner">
-        <a th:href="@{/}" class="logo">
-            <span class="brand">VENTANET</span>
-        </a>
-        <nav class="ms-auto">
-          <ul class="nav">
-    <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+      <a th:href="@{/}" class="logo">
+        <span class="brand">VENTANET</span>
+      </a>
+      <nav class="ms-auto">
+        <ul class="nav">
+          <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
 
-    <!-- Menú desplegable -->
-    <li class="nav-item dropdown">
-        <a href="#" class="nav-link dropdown-toggle">Registro</a>
-        <ul class="dropdown-menu">
-            <li><a th:href="@{/nuevo-usuario}" class="dropdown-item">Cliente</a></li>
-            <li><a th:href="@{/registro-proveedor}" class="dropdown-item">Proveedor</a></li>
+          <!-- Menú desplegable -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="registroDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              Registro
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="registroDropdown">
+              <li><a th:href="@{/nuevo-usuario}" class="dropdown-item">Cliente</a></li>
+              <li><a th:href="@{/registro-proveedor}" class="dropdown-item">Proveedor</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/login}">Ingreso</a></li>
+          <li class="nav-item"><a class="nav-link" th:href="@{/catalogo}">Ver catalogo</a></li>
+
         </ul>
-    </li>
 
-    <li class="nav-item"><a class="nav-link" th:href="@{/login}">Ingreso</a></li>
-</ul>
-
-        </nav>
+      </nav>
     </div>
-</header>
+  </header>
 
 
-<!-- HERO -->
-<header class="bg-light text-dark text-center py-5 hero-section">
-  <div class="container">
-    <h1 class="display-4">Aberturas de Calidad</h1>
-    <div class="hero-content">
-      <p class="lead">Presupuestos optimizados para tus productos</p>
-      <a href="presupuesto.html" class="btn btn-primary btn-lg">Cotizar Presupuesto</a>
+  <!-- HERO -->
+  <header class="bg-light text-dark text-center py-5 hero-section">
+    <div class="container">
+      <h1 class="display-4">Aberturas de Calidad</h1>
+      <div class="hero-content">
+        <p class="lead">Presupuestos optimizados para tus productos</p>
+        <a href="presupuesto.html" class="btn btn-primary btn-lg">Cotizar Presupuesto</a>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
-<!-- PRODUCTOS -->
-<main role="main" class="container my-5">
-  <section id="productos">
-    <h2 class="text-center mb-4">Nuestros Productos</h2>
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-          <img th:src="@{/img/corrediza.jpg}" class="card-img-top" alt="Ventana Corrediza">
-          <div class="card-body text-center">
-            <h5 class="card-title">Ventana Corrediza</h5>
-            <p class="card-text">Optimiza espacios con máxima luminosidad.</p>
+  <!-- PRODUCTOS -->
+  <main role="main" class="container my-5">
+    <section id="productos">
+      <h2 class="text-center mb-4">Nuestros Productos</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img th:src="@{/img/corrediza.jpg}" class="card-img-top" alt="Ventana Corrediza">
+            <div class="card-body text-center">
+              <h5 class="card-title">Ventana Corrediza</h5>
+              <p class="card-text">Optimiza espacios con máxima luminosidad.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img th:src="@{/img/oscilobatiente.jpg}" class="card-img-top" alt="Ventana Oscilobatiente">
+            <div class="card-body text-center">
+              <h5 class="card-title">Oscilobatiente</h5>
+              <p class="card-text">Ventilación controlada y segura.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img th:src="@{/img/fijo.jpg}" class="card-img-top" alt="Paño Fijo">
+            <div class="card-body text-center">
+              <h5 class="card-title">Paño Fijo</h5>
+              <p class="card-text">Diseño minimalista y elegante.</p>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-          <img th:src="@{/img/oscilobatiente.jpg}" class="card-img-top" alt="Ventana Oscilobatiente">
-          <div class="card-body text-center">
-            <h5 class="card-title">Oscilobatiente</h5>
-            <p class="card-text">Ventilación controlada y segura.</p>
-          </div>
+    </section>
+  </main>
+
+  <!-- STRIP FABRICANDO -->
+  <section class="fabricando text-center py-4">
+    <h3>Fabricando desde 2025 <br> Innovación al servicio de la construcción.</h3>
+  </section>
+
+
+  <!-- SOCIOS -->
+  <section class="py-5 text-center">
+    <h3 class="fw-bold mb-4">Socios de calidad</h3>
+    <div class="container d-flex justify-content-around flex-wrap">
+      <img th:src="@{/img/logo1.png}" alt="Socio 1" class="m-3" style="max-height: 120px;">
+      <img th:src="@{/img/logo2.png}" alt="Socio 2" class="m-3" style="max-height: 120px;">
+      <img th:src="@{/img/logo3.png}" alt="Socio 3" class="m-3" style="max-height: 120px;">
+      <img th:src="@{/img/logo4.png}" alt="Socio 4" class="m-3" style="max-height: 120px;">
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section id="contacto" class="contacto bg-dark text-light py-5">
+    <div class="container">
+      <h2 class="text-center mb-4">Contacto</h2>
+      <div class="row align-items-center">
+        <div class="col-md-6 mb-4 mb-md-0">
+          <p>Escribinos y nos pondremos en contacto contigo lo antes posible.</p>
         </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm">
-          <img th:src="@{/img/fijo.jpg}" class="card-img-top" alt="Paño Fijo">
-          <div class="card-body text-center">
-            <h5 class="card-title">Paño Fijo</h5>
-            <p class="card-text">Diseño minimalista y elegante.</p>
-          </div>
+        <div class="col-md-6">
+          <form>
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombre" placeholder="Tu nombre">
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" placeholder="Tu email">
+            </div>
+            <div class="mb-3">
+              <label for="asunto" class="form-label">Asunto</label>
+              <input type="text" class="form-control" id="asunto" placeholder="Asunto">
+            </div>
+            <div class="mb-3">
+              <label for="mensaje" class="form-label">Mensaje</label>
+              <textarea class="form-control" id="mensaje" rows="4" placeholder="Escribe tu mensaje"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Enviar</button>
+          </form>
         </div>
       </div>
     </div>
   </section>
-</main>
 
-<!-- STRIP FABRICANDO -->
-<section class="fabricando text-center py-4">
-    <h3>Fabricando desde 2025 <br> Innovación al servicio de la construcción.</h3>
-</section>
-
-
-<!-- SOCIOS -->
-<section class="py-5 text-center">
-  <h3 class="fw-bold mb-4">Socios de calidad</h3>
-  <div class="container d-flex justify-content-around flex-wrap">
-    <img th:src="@{/img/logo1.png}" alt="Socio 1" class="m-3" style="max-height: 120px;">
-    <img th:src="@{/img/logo2.png}" alt="Socio 2" class="m-3" style="max-height: 120px;">
-    <img th:src="@{/img/logo3.png}" alt="Socio 3" class="m-3" style="max-height: 120px;">
-    <img th:src="@{/img/logo4.png}" alt="Socio 4" class="m-3" style="max-height: 120px;">
-  </div>
-</section>
-
-<!-- CONTACTO -->
-<section id="contacto" class="contacto bg-dark text-light py-5">
-  <div class="container">
-    <h2 class="text-center mb-4">Contacto</h2>
-    <div class="row align-items-center">
-      <div class="col-md-6 mb-4 mb-md-0">
-        <p>Escribinos y nos pondremos en contacto contigo lo antes posible.</p>
-      </div>
-      <div class="col-md-6">
-        <form>
-          <div class="mb-3">
-            <label for="nombre" class="form-label">Nombre</label>
-            <input type="text" class="form-control" id="nombre" placeholder="Tu nombre">
-          </div>
-          <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="Tu email">
-          </div>
-          <div class="mb-3">
-            <label for="asunto" class="form-label">Asunto</label>
-            <input type="text" class="form-control" id="asunto" placeholder="Asunto">
-          </div>
-          <div class="mb-3">
-            <label for="mensaje" class="form-label">Mensaje</label>
-            <textarea class="form-control" id="mensaje" rows="4" placeholder="Escribe tu mensaje"></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">Enviar</button>
-        </form>
+  <!-- MAPA -->
+  <section id="mapa" class="mt-5 mb-0">
+    <div class="container">
+      <h2 class="text-center">Nuestra Ubicación</h2>
+      <div class="map-responsive">
+        <iframe src="https://www.google.com/maps?q=-34.6705192,-58.5628158&hl=es;z=15&output=embed" style="border:0;"
+          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- MAPA -->
-<section id="mapa" class="mt-5 mb-0">
-  <div class="container">
-    <h2 class="text-center">Nuestra Ubicación</h2>
-    <div class="map-responsive">
-      <iframe
-        src="https://www.google.com/maps?q=-34.6705192,-58.5628158&hl=es;z=15&output=embed"
-        style="border:0;"
-        allowfullscreen=""
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
-    </div>
-  </div>
-</section>
+  <!-- FOOTER -->
+  <footer class="site-footer py-5">
+    <div class="container">
+      <div class="row text-center text-md-start">
 
-<!-- FOOTER -->
-<footer class="site-footer py-5">
-  <div class="container">
-    <div class="row text-center text-md-start">
-      
-      <!-- Columna Izquierda: Redes sociales -->
-	<div class="col-md-4">
-        <p class="mb-1">2025 © Ventanet</p>
-        <p class="mb-1">
-          <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
-          <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
-        </p>
-      </div>
+        <!-- Columna Izquierda: Redes sociales -->
+        <div class="col-md-4">
+          <p class="mb-1">2025 © Ventanet</p>
+          <p class="mb-1">
+            <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
+            <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
+          </p>
+        </div>
 
-      <!-- Columna Medio: Navegación -->
-      <div class="col-md-4 mb-4 mb-md-0">
-        <ul class="list-unstyled">
-          <li><a href="#productos" class="footer-link">Productos</a></li>
-          <li><a href="login.html" class="footer-link">Ingreso</a></li>
-          <li><a href="nuevo-usuario.html" class="footer-link">Registro</a></li>
-        </ul>
-      </div>
+        <!-- Columna Medio: Navegación -->
+        <div class="col-md-4 mb-4 mb-md-0">
+          <ul class="list-unstyled">
+            <li><a href="#productos" class="footer-link">Productos</a></li>
+            <li><a href="login.html" class="footer-link">Ingreso</a></li>
+            <li><a href="nuevo-usuario.html" class="footer-link">Registro</a></li>
+          </ul>
+        </div>
 
-      <!-- Columna Derecha: Datos Empresa -->
-     <div class="col-md-4 mb-4 mb-md-0">
-        <h5 class="mb-3">Seguinos en:</h5>
-        <div class="d-flex justify-content-center justify-content-md-start gap-3">
-          <a href="https://facebook.com"><img th:src="@{/img/rrss1.png}" alt="Facebook" width="30"></a>
-          <a href="https://instagram.com"><img th:src="@{/img/rrss2.png}" alt="Instagram" width="30"></a>
-          <a href="https://linkedin.com"><img th:src="@{/img/rrss3.png}" alt="Linkedin" width="30"></a>
+        <!-- Columna Derecha: Datos Empresa -->
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5 class="mb-3">Seguinos en:</h5>
+          <div class="d-flex justify-content-center justify-content-md-start gap-3">
+            <a href="https://facebook.com"><img th:src="@{/img/rrss1.png}" alt="Facebook" width="30"></a>
+            <a href="https://instagram.com"><img th:src="@{/img/rrss2.png}" alt="Instagram" width="30"></a>
+            <a href="https://linkedin.com"><img th:src="@{/img/rrss3.png}" alt="Linkedin" width="30"></a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</footer>
+  </footer>
 
-<!-- Boostrap core js -->
-<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+  <!-- Boostrap core js 
+  <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>-->
+  <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+
 </body>
+
 </html>
