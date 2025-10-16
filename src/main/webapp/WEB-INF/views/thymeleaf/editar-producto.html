@@ -11,13 +11,141 @@
   <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
 
   <!-- custom style -->
-  <link rel="stylesheet" th:href="@{/css/main.css}"/>
+   <link rel="stylesheet" th:href="@{/css/producto.css}" />
 </head>
 
 <body>
+  <header>
+    <!-- Logo -->
+    <a href="#" class="navbar-brand">Ventanet</a>
+
+    <!-- Menú derecho -->
+    <ul class="nav">
+      <!-- Campana de notificaciones con dropdown -->
+      <li class="nav-item dropdown me-3">
+        <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-bell fs-5"></i>
+          <span class="badge rounded-pill">3</span>
+        </a>
+
+        <!-- Dropdown de notificaciones -->
+        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="notificationsDropdown"
+          style="width: 470px;">
+          <li class="dropdown-item d-flex align-items-start">
+            <i class="bi bi-bell me-2 text-secondary"></i>
+            <span>Tienes 3 nuevas solicitudes de cotización pendientes</span>
+          </li>
+          <li class="dropdown-item d-flex align-items-start">
+            <i class="bi bi-bell me-2 text-secondary"></i>
+            <span>Tu cotización #145 fue aceptada</span>
+          </li>
+          <li class="dropdown-item d-flex align-items-start">
+            <i class="bi bi-bell me-2 text-secondary"></i>
+            <span>El valor del dólar se actualizó a 83,9</span>
+          </li>
+          <li class="dropdown-item d-flex align-items-start">
+            <i class="bi bi-bell me-2 text-secondary"></i>
+            <span>Error en la importación: 2 productos no se cargaron correctamente</span>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li>
+            <a class="dropdown-item text-center text-primary fw-bold" href="#">Ver todas</a>
+          </li>
+        </ul>
+      </li>
+
+      <!-- Usuario con dropdown -->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="User">
+          <span th:text="${mailProveedor}">Proveedor</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="#">Perfil</a></li>
+          <li><a class="dropdown-item" href="#">Configuración</a></li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li>
+            <form th:action="@{/logout}" method="get" class="m-0">
+              <button type="submit" class="dropdown-item">Cerrar sesión</button>
+            </form>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </header>
   <main role="main" class="container">
 
-    <div class="form-card">
+    <div class="main-container">
+      <aside id="sidebar" class="d-flex flex-column position-relative">
+      <button class="toggle-btn" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
+      <ul class="nav flex-column mt-4">
+        <!-- Dashboard -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="bi bi-house"></i><span>Dashboard</span>
+          </a>
+        </li>
+
+        <!-- Materiales con submenú -->
+        <li class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+            href="#submenuMateriales" role="button" aria-expanded="false" aria-controls="submenuMateriales">
+            <span><i class="bi bi-journal-text me-2"></i>Materiales</span>
+            <i class="bi bi-chevron-down"></i>
+          </a>
+          <div class="collapse ps-4" id="submenuMateriales">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a th:href="@{/producto/nuevo-producto}" class="nav-link">Alta manual</a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">Importar desde Excel, CSV</a>
+              </li>
+              <li class="nav-item">
+                <a th:href="@{/producto/listado}" class="nav-link">Listado de materiales</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+
+        <!-- Solicitudes de Cotización -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="bi bi-lock"></i><span>Solicitudes de Cotiza-</span>
+          </a>
+        </li>
+
+        <!-- Actualización de Precios -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="bi bi-clipboard-data"></i><span>Actualización de Precios</span>
+          </a>
+        </li>
+
+        <!-- Reportes -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="bi bi-graph-up"></i><span>Reportes</span>
+          </a>
+        </li>
+
+        <!-- Configuración -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="bi bi-gear"></i><span>Configuración</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <main>
+      <div class="form-card">
       <form action="#" th:action="@{/producto/editar/{id}(id=${producto.id})}" method="POST" th:object="${producto}"
         enctype="multipart/form-data">
         <h3>Edición de Producto</h3>
@@ -55,21 +183,18 @@
         <!-- Tipo de Producto -->
         <div class="mb-3">
           <label for="tipo_producto_id" class="form-label">Tipo de Producto</label>
-          <select th:field="*{tipoProductoId}" id="tipo_producto_id" class="form-select">
-            <option value="0">Seleccione...</option>
-            <option value="1">Ventanas</option>
-            <option value="2">Puertas</option>
-            <!-- <option th:each="tipo : ${tiposProducto}" th:value="${tipo.id}" th:text="${tipo.nombre}"></option> -->
+          <select th:field="*{tipoProducto.id}" id="tipo_producto_id" class="form-select">
+            <option value="">Seleccione...</option>v           
+            <option th:each="tipo : ${tiposProducto}" th:value="${tipo.id}" th:text="${tipo.nombre}"></option>
           </select>
         </div>
 
         <!-- Marca -->
         <div class="mb-3">
           <label for="marca_id" class="form-label">Marca</label>
-          <select th:field="*{marcaId}" id="marca_id" class="form-select">
-            <option value="0">Seleccione...</option>
-            <option value="1">Ventanet</option>
-            <!-- <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option> -->
+          <select th:field="*{marca.id}" id="marca_id" class="form-select">
+            <option value="">Seleccione...</option>            
+            <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option>
           </select>
         </div>
 
@@ -86,13 +211,9 @@
         <!-- Presentación -->
         <div class="mb-3">
           <label for="presentacion_id" class="form-label">Presentación</label>
-          <select th:field="*{presentacionId}" id="presentacion_id" class="form-select">
-            <option value="0">Seleccione...</option>
-            <option value="1">MT2</option>
-            <option value="2">Kilo</option>
-            <option value="3">Gramo</option>
-            <option value="4">Unidad</option>
-            <!-- <option th:each="pres : ${presentaciones}" th:value="${pres.id}" th:text="${pres.nombre}"></option> -->
+          <select th:field="*{presentacion.id}" id="presentacion_id" class="form-select">
+            <option value="">Seleccione...</option>            
+             <option th:each="pres : ${presentaciones}" th:value="${pres.id}" th:text="${pres.descripcion}"></option>
           </select>
         </div>
 
@@ -105,6 +226,11 @@
         <p th:if="${error != null}" class="alert alert-danger mt-3" th:text="'Error: ' + ${error}"></p>
       </form>
     </div>
+    </main>
+
+    </div>
+
+    
 
   </main>
 
@@ -113,5 +239,10 @@
 
   <!-- Producto JS -->
   <script type="module" th:src="@{/js/producto.js}"></script>
+  <script>
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("collapsed");
+    }
+  </script>
 </body>
 </html>

@@ -8,110 +8,379 @@
   <title>Taller Web I</title>
 
   <!-- Bootstrap core css -->
-  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
 
-  <!-- custom style -->
-  <link rel="stylesheet" th:href="@{/css/main.css}"/>
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" th:href="@{/css/producto.css}" />
+
+  <!-- <style>
+    body {
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* === HEADER === */
+    header {
+      height: 60px;
+      background-color: #343a40;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 1px solid #444;
+      z-index: 1000;
+    }
+
+    header .navbar-brand {
+      color: white;
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+
+    header .navbar-brand:hover {
+      color: #f8f9fa;
+    }
+
+    header .nav-item .nav-link {
+      color: white;
+      position: relative;
+    }
+
+    header .badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      font-size: 0.6rem;
+      background: red;
+    }
+
+    header .dropdown-menu {
+      min-width: 180px;
+    }
+
+    /* === LAYOUT === */
+    .main-container {
+      display: flex;
+      flex: 1;
+    }
+
+    /* === SIDEBAR === */
+    #sidebar {
+      width: 240px;
+      min-height: 100vh;
+      background-color: #f8f9fa;
+      transition: width 0.3s;
+      border-right: 1px solid #ddd;
+    }
+
+    #sidebar.collapsed {
+      width: 70px;
+    }
+
+    #sidebar .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      font-size: 15px;
+      margin-left: 6px;
+    }
+
+    #sidebar.collapsed .nav-link span {
+      display: none;
+    }
+
+    #sidebar .toggle-btn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      color: #333;
+      border: none;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    /* === MAIN CONTENT === */
+    main {
+      flex-grow: 1;
+      padding: 20px;
+      background-color: #f4f6f9;
+    }
+
+    /* Estilo badge notificaciones */
+    header .badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      font-size: 0.6rem;
+      background: red;
+      color: white;
+    }
+
+    /* Estilo dropdown de notificaciones */
+    .dropdown-menu li {
+      font-size: 0.9rem;
+    }
+
+    .dropdown-item i {
+      font-size: 1.2rem;
+      margin-top: 3px;
+    }
+
+    .dropdown-item span {
+      flex: 1;
+      font-size: 0.85rem;
+    }
+
+    .dropdown-menu {
+      padding: 0;
+      border-radius: 8px;
+    }
+
+    .dropdown-menu li.dropdown-item {
+      padding: 10px 15px;
+    }
+
+    .dropdown-menu li:hover {
+      background-color: #f8f9fa;
+    }
+  </style> -->
 </head>
 
 <body>
-  <main role="main" class="container">
 
-    <div class="form-card">
-      <form action="#" th:action="@{/producto/crear}" method="POST" th:object="${producto}"
-        enctype="multipart/form-data">
-        <h3>Nuevo Producto</h3>
+  <!-- ===== HEADER ===== -->
+  <header>
+    <!-- Logo -->
+    <a href="#" class="navbar-brand">Ventanet</a>
 
-                <!-- Nombre -->
-        <div class="mb-3">
-          <label for="nombre" class="form-label">Nombre</label>
-          <input th:field="*{nombre}" id="nombre" class="form-control" required />
-        </div>
+    <!-- Menú derecho -->
+    <ul class="nav">
+      <!-- Campana de notificaciones con dropdown -->
+      <li class="nav-item dropdown me-3">
+        <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-bell fs-5"></i>
+          <span class="badge rounded-pill">3</span>
+        </a>
 
-        <!-- Precio -->
-        <div class="mb-3">
-          <label for="precio" class="form-label">Precio</label>
-          <input th:field="*{precio}" id="precio" type="number" step="0.01" min="0" class="form-control" required />
-        </div>
+        <!-- Dropdown de notificaciones -->
+        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="notificationsDropdown"
+          style="width: 470px;">
+          <li class="dropdown-item d-flex align-items-start">
+            <i class="bi bi-bell me-2 text-secondary"></i>
+            <span>Tienes 3 nuevas solicitudes de cotización pendientes</span>
+          </li>
+          <li class="dropdown-item d-flex align-items-start">
+            <i class="bi bi-bell me-2 text-secondary"></i>
+            <span>Tu cotización #145 fue aceptada</span>
+          </li>
+          <li class="dropdown-item d-flex align-items-start">
+            <i class="bi bi-bell me-2 text-secondary"></i>
+            <span>El valor del dólar se actualizó a 83,9</span>
+          </li>
+          <li class="dropdown-item d-flex align-items-start">
+            <i class="bi bi-bell me-2 text-secondary"></i>
+            <span>Error en la importación: 2 productos no se cargaron correctamente</span>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li>
+            <a class="dropdown-item text-center text-primary fw-bold" href="#">Ver todas</a>
+          </li>
+        </ul>
+      </li>
 
-        <!-- Descripción -->
-        <div class="mb-3">
-          <label for="descripcion" class="form-label">Descripción</label>
-          <textarea th:field="*{descripcion}" id="descripcion" class="form-control" rows="3"></textarea>
-        </div>
+      <!-- Usuario con dropdown -->
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="https://via.placeholder.com/30" class="rounded-circle me-2" alt="User">
+          <span th:text="${mailProveedor}">Proveedor</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="#">Perfil</a></li>
+          <li><a class="dropdown-item" href="#">Configuración</a></li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li>
+            <form th:action="@{/logout}" method="get" class="m-0">
+              <button type="submit" class="dropdown-item">Cerrar sesión</button>
+            </form>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </header>
 
-        <!-- Imagen (archivo) -->
-        <div class="mb-3">
-          <label for="imagenFile" class="form-label">Imagen del Producto</label>
-          <input id="imagenFile" name="imagenFile" type="file" class="form-control" accept="image/*" />
-        </div>
 
-        <!-- Stock -->
-        <div class="mb-3">
-          <label for="stock" class="form-label">Stock</label>
-          <input th:field="*{stock}" id="stock" type="number" min="0" class="form-control" required />
-        </div>
+  <div class="main-container">
+    <!-- ===== SIDEBAR ===== -->
+    <aside id="sidebar" class="d-flex flex-column position-relative">
+      <button class="toggle-btn" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
+      <ul class="nav flex-column mt-4">
+        <!-- Dashboard -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="bi bi-house"></i><span>Dashboard</span>
+          </a>
+        </li>
 
-        <!-- Tipo de Producto -->
-        <div class="mb-3">
-          <label for="tipo_producto_id" class="form-label">Tipo de Producto</label>
-          <select th:field="*{tipoProductoId}" id="tipo_producto_id" class="form-select">
-            <option value="0">Seleccione...</option>
-            <option value="1">Ventanas</option>
-            <option value="2">Puertas</option>
-            <!-- <option th:each="tipo : ${tiposProducto}" th:value="${tipo.id}" th:text="${tipo.nombre}"></option> -->
-          </select>
-        </div>
+        <!-- Materiales con submenú -->
+        <li class="nav-item">
+          <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+            href="#submenuMateriales" role="button" aria-expanded="false" aria-controls="submenuMateriales">
+            <span><i class="bi bi-journal-text me-2"></i>Materiales</span>
+            <i class="bi bi-chevron-down"></i>
+          </a>
+          <div class="collapse ps-4" id="submenuMateriales">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a th:href="@{/producto/nuevo-producto}" class="nav-link">Alta manual</a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">Importar desde Excel, CSV</a>
+              </li>
+              <li class="nav-item">
+                <a th:href="@{/producto/listado}" class="nav-link">Listado de materiales</a>
+              </li>
+            </ul>
+          </div>
+        </li>
 
-        <!-- Marca -->
-        <div class="mb-3">
-          <label for="marca_id" class="form-label">Marca</label>
-          <select th:field="*{marcaId}" id="marca_id" class="form-select">
-            <option value="0">Seleccione...</option>
-            <option value="1">Ventanet</option>
-            <!-- <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option> -->
-          </select>
-        </div>
+        <!-- Solicitudes de Cotización -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="bi bi-lock"></i><span>Solicitudes de Cotiza-</span>
+          </a>
+        </li>
 
-        <!-- Proveedor -->
-        <div class="mb-3">
-          <label for="proveedor_id" class="form-label">Proveedor</label>
-          <select th:field="*{proveedorId}" id="proveedor_id" class="form-select">
-            <option value="0">Seleccione...</option>
-            <option value="1">Proveedor 1</option>
-            <!-- <option th:each="proveedor : ${proveedores}" th:value="${proveedor.id}" th:text="${proveedor.nombre}"></option> -->
-          </select>
-        </div>
+        <!-- Actualización de Precios -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="bi bi-clipboard-data"></i><span>Actualización de Precios</span>
+          </a>
+        </li>
 
-        <!-- Presentación -->
-        <div class="mb-3">
-          <label for="presentacion_id" class="form-label">Presentación</label>
-          <select th:field="*{presentacionId}" id="presentacion_id" class="form-select">
-            <option value="0">Seleccione...</option>
-            <option value="1">MT2</option>
-            <option value="2">Kilo</option>
-            <option value="3">Gramo</option>
-            <option value="4">Unidad</option>
-            <!-- <option th:each="pres : ${presentaciones}" th:value="${pres.id}" th:text="${pres.nombre}"></option> -->
-          </select>
-        </div>
+        <!-- Reportes -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="bi bi-graph-up"></i><span>Reportes</span>
+          </a>
+        </li>
 
-        <!-- Botones -->
-        <div class="d-flex justify-content-between">
-          <button id="btn-crear" class="btn btn-submit" type="submit" disabled>Crear Producto</button>
-        </div>
+        <!-- Configuración -->
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="bi bi-gear"></i><span>Configuración</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
 
-        <!-- Mensajes de error -->
-        <p th:if="${error != null}" class="alert alert-danger mt-3" th:text="'Error: ' + ${error}"></p>
-      </form>
-    </div>
 
-  </main>
+    <!-- ===== MAIN CONTENT ===== -->
+    <main>
+      <div class="form-card">
+        <form action="#" th:action="@{/producto/crear}" method="POST" th:object="${producto}"
+          enctype="multipart/form-data">
+          <h3>Nuevo Producto</h3>
 
-  <!-- Bootstrap core js -->
-  <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input th:field="*{nombre}" id="nombre" class="form-control" required />
+          </div>
 
-  <!-- Producto JS -->
+          <!-- Precio -->
+          <div class="mb-3">
+            <label for="precio" class="form-label">Precio</label>
+            <input th:field="*{precio}" id="precio" type="number" step="0.01" min="0" class="form-control" required />
+          </div>
+
+          <!-- Descripción -->
+          <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea th:field="*{descripcion}" id="descripcion" class="form-control" rows="3"></textarea>
+          </div>
+
+          <!-- Imagen (archivo) -->
+          <div class="mb-3">
+            <label for="imagenFile" class="form-label">Imagen del Producto</label>
+            <input id="imagenFile" name="imagenFile" type="file" class="form-control" accept="image/*" />
+          </div>
+
+          <!-- Stock -->
+          <div class="mb-3">
+            <label for="stock" class="form-label">Stock</label>
+            <input th:field="*{stock}" id="stock" type="number" min="0" class="form-control" required />
+          </div>
+
+          <!-- Tipo de Producto -->
+          <div class="mb-3">
+            <label for="tipo_producto_id" class="form-label">Tipo de Producto</label>
+            <select th:field="*{tipoProducto.id}" id="tipo_producto_id" class="form-select">
+              <option value="">Seleccione...</option>v
+              <option th:each="tipo : ${tiposProducto}" th:value="${tipo.id}" th:text="${tipo.nombre}"></option>
+            </select>
+          </div>
+
+          <!-- Marca -->
+          <div class="mb-3">
+            <label for="marca_id" class="form-label">Marca</label>
+            <select th:field="*{marca.id}" id="marca_id" class="form-select">
+              <option value="">Seleccione...</option>
+              <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option>
+            </select>
+          </div>
+
+          <!-- Proveedor -->
+          <div class="mb-3">
+            <label for="proveedor_id" class="form-label">Proveedor</label>
+            <select th:field="*{proveedorId}" id="proveedor_id" class="form-select">
+              <option value="0">Seleccione...</option>
+              <option value="1">Proveedor 1</option>
+              <!-- <option th:each="proveedor : ${proveedores}" th:value="${proveedor.id}" th:text="${proveedor.nombre}"></option> -->
+            </select>
+          </div>
+
+          <!-- Presentación -->
+          <div class="mb-3">
+            <label for="presentacion_id" class="form-label">Presentación</label>
+            <select th:field="*{presentacion.id}" id="presentacion_id" class="form-select">
+              <option value="">Seleccione...</option>              
+              <option th:each="pres : ${presentaciones}" th:value="${pres.id}" th:text="${pres.descripcion}"></option>
+            </select>
+          </div>
+
+          <!-- Botones -->
+          <div class="d-flex justify-content-between">
+            <button id="btn-crear" class="btn btn-submit" type="submit" disabled>Crear Producto</button>
+          </div>
+
+          <!-- Mensajes de error -->
+          <p th:if="${error != null}" class="alert alert-danger mt-3" th:text="'Error: ' + ${error}"></p>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module" th:src="@{/js/producto.js}"></script>
+  <script>
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("collapsed");
+    }
+  </script>
 </body>
+
 </html>
