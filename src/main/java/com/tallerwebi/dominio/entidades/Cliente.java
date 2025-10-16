@@ -5,8 +5,9 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("CLIENTE")
-public class Cliente extends Usuario{
+public class Cliente extends Usuario {
 
-    public Cliente() {}
+    public Cliente() {
+    }
 
 }

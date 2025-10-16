@@ -24,10 +24,11 @@ public class ControladorClienteTest {
     @BeforeEach
     public void init() {
         servicioClienteI = mock(ServicioClienteI.class);
-        controladorCliente = new ControladorCliente(servicioClienteI);
+        controladorCliente = new ControladorCliente(servicioClienteI, null);
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);
     }
+
 
     @Test
     public void queSeMuestreElDashboardDelClienteCuandoSeLoguea() {
