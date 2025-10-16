@@ -6,11 +6,9 @@ const inputPrecioNode = document.getElementById("precio");
 const inputStockNode = document.getElementById("stock");
 const inputTipoProductoIdNode = document.getElementById("tipo_producto_id");
 const inputMarcaIdNode = document.getElementById("marca_id");
-const inputProveedorIdNode = document.getElementById("proveedor_id");
+//const inputProveedorIdNode = document.getElementById("proveedor_id");
 const inputPresentacionIdNode = document.getElementById("presentacion_id");
-console.log("inputNombreNode: ", inputNombreNode);
-console.log("inputPrecioNode: ", inputPrecioNode);
-console.log("inputStockNode: ", inputStockNode);
+
 
 inputNombreNode.addEventListener("keyup", (event) => {
   const nombreValue = event.target.value;
@@ -18,9 +16,9 @@ inputNombreNode.addEventListener("keyup", (event) => {
   const stockValue = inputStockNode.value;
   const tipoProductoIdValue = inputTipoProductoIdNode.value;
   const marcaIdValue  = inputMarcaIdNode.value;
-  const proveedorIdValue  = inputProveedorIdNode.value;
+  //const proveedorIdValue  = inputProveedorIdNode.value;
   const presentacionIdValue = inputPresentacionIdNode.value;
-  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue, proveedorIdValue, presentacionIdValue);
+  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue,  presentacionIdValue);
 });
 
 inputPrecioNode.addEventListener("keyup", (event) => {
@@ -29,9 +27,9 @@ inputPrecioNode.addEventListener("keyup", (event) => {
   const stockValue = inputStockNode.value;
   const tipoProductoIdValue = inputTipoProductoIdNode.value;
   const marcaIdValue = inputMarcaIdNode.value;
-  const proveedorIdValue = inputProveedorIdNode.value;
+  //const proveedorIdValue = inputProveedorIdNode.value;
   const presentacionIdValue = inputPresentacionIdNode.value;
-  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue, proveedorIdValue, presentacionIdValue);
+  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue,  presentacionIdValue);
 });
 
 inputStockNode.addEventListener("keyup", (event) => {
@@ -40,9 +38,9 @@ inputStockNode.addEventListener("keyup", (event) => {
   const stockValue = event.target.value;
   const tipoProductoIdValue = inputTipoProductoIdNode.value;
   const marcaIdValue = inputMarcaIdNode.value;
-  const proveedorIdValue = inputProveedorIdNode.value;
+  //const proveedorIdValue = inputProveedorIdNode.value;
   const presentacionIdValue = inputPresentacionIdNode.value;
-  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue, proveedorIdValue, presentacionIdValue);
+  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue,  presentacionIdValue);
 });
 
 inputTipoProductoIdNode.addEventListener("change", (event) => {
@@ -51,9 +49,9 @@ inputTipoProductoIdNode.addEventListener("change", (event) => {
   const stockValue = inputStockNode.value;
   const tipoProductoIdValue = event.target.value;
   const marcaIdValue = inputMarcaIdNode.value;
-  const proveedorIdValue = inputProveedorIdNode.value;
+  //const proveedorIdValue = inputProveedorIdNode.value;
   const presentacionIdValue = inputPresentacionIdNode.value;
-  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue, proveedorIdValue, presentacionIdValue);
+  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue,  presentacionIdValue);
 });
 
 inputMarcaIdNode.addEventListener("change", (event) => {
@@ -62,21 +60,21 @@ inputMarcaIdNode.addEventListener("change", (event) => {
   const stockValue = inputStockNode.value;
   const tipoProductoIdValue = inputTipoProductoIdNode.value;
   const marcaIdValue = event.target.value;
-  const proveedorIdValue = inputProveedorIdNode.value;
+  //const proveedorIdValue = inputProveedorIdNode.value;
   const presentacionIdValue = inputPresentacionIdNode.value;
-  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue, proveedorIdValue, presentacionIdValue);
+  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue,  presentacionIdValue);
 });
 
-inputProveedorIdNode.addEventListener("change", (event) => {
-  const nombreValue = inputNombreNode.value;
-  const precioValue = inputPrecioNode.value;
-  const stockValue = inputStockNode.value;
-  const tipoProductoIdValue = inputTipoProductoIdNode.value;
-  const marcaIdValue = inputMarcaIdNode.value;
-  const proveedorIdValue = event.target.value;
-  const presentacionIdValue = inputPresentacionIdNode.value;
-  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue, proveedorIdValue, presentacionIdValue);
-});
+// inputProveedorIdNode.addEventListener("change", (event) => {
+//   const nombreValue = inputNombreNode.value;
+//   const precioValue = inputPrecioNode.value;
+//   const stockValue = inputStockNode.value;
+//   const tipoProductoIdValue = inputTipoProductoIdNode.value;
+//   const marcaIdValue = inputMarcaIdNode.value;
+//   const proveedorIdValue = event.target.value;
+//   const presentacionIdValue = inputPresentacionIdNode.value;
+//   btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue, proveedorIdValue, presentacionIdValue);
+// });
 
 inputPresentacionIdNode.addEventListener("change", (event) => {
   const nombreValue = inputNombreNode.value;
@@ -84,7 +82,7 @@ inputPresentacionIdNode.addEventListener("change", (event) => {
   const stockValue = inputStockNode.value;
   const tipoProductoIdValue = inputTipoProductoIdNode.value;
   const marcaIdValue = inputMarcaIdNode.value;
-  const proveedorIdValue = inputProveedorIdNode.value;
+  //const proveedorIdValue = inputProveedorIdNode.value;
   const presentacionIdValue = event.target.value;
-  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue, proveedorIdValue, presentacionIdValue);
+  btnCrearNode.disabled = !validarCamposObligatoriosDeProducto(nombreValue, precioValue, stockValue, tipoProductoIdValue, marcaIdValue,  presentacionIdValue);
 });

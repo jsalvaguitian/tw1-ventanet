@@ -7,6 +7,7 @@ import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.enums.Rubro;
 
 public class UsuarioProvDTO {
+    private Long id;
     private String email;
     private String password;
     private String cuit;
@@ -14,7 +15,17 @@ public class UsuarioProvDTO {
     private Rubro rubro;
 
     private MultipartFile documento;
+
+    public UsuarioProvDTO(Long id, String razonSocial) {
+        this.id = id;
+        this.razonSocial = razonSocial;
+    }
+
+    public UsuarioProvDTO() {
+    }
+
     
+
     public String getEmail() {
         return email;
     }
@@ -65,6 +76,14 @@ public class UsuarioProvDTO {
         proveedor.setRazonSocial(this.razonSocial);
         proveedor.setRubro(this.rubro);
         return proveedor;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
     
 }

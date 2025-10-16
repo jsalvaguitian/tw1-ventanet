@@ -76,7 +76,7 @@ public class ControladorAutenticacion {
                     return new ModelAndView("redirect:/cliente/dashboard");
 
                 } else if (rol.equalsIgnoreCase("PROVEEDOR")) {
-                    return new ModelAndView("redirect:/proveedor/dashboard-proveedor");
+                    return new ModelAndView("redirect:/dashboard-proveedor");
 
                 } else if (rol.equalsIgnoreCase("ADMIN")) {
                     return new ModelAndView("redirect:/admin/dashboard-admin");

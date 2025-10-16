@@ -10,23 +10,12 @@
 <body>
 
 <!-- HEADER -->
-<header>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand" th:href="@{/}">Ventanet</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" th:href="@{/#productos}">Productos</a></li>
-          <li class="nav-item"><a class="nav-link" th:href="@{/login}">Ingreso</a></li>
-          <li class="nav-item"><a class="nav-link" th:href="@{/registro}">Registro</a></li>
-          <li class="nav-item"><a class="nav-link active" th:href="@{/presupuesto}">Presupuesto</a></li>
-        </ul>
-      </div>
+<header class="site-header">
+    <div class="header-inner">
+        <a th:href="@{/}" class="logo">
+            <span class="brand">VENTANET</span>
+        </a>
     </div>
-  </nav>
 </header>
 
 <!-- SELECCION DE ATRIBUTOS -->
@@ -121,9 +110,38 @@
 </main>
 
 <!-- FOOTER -->
-<footer class="bg-dark text-light py-5">
-  <div class="container text-center">
-    <p>2025 © Ventanet - Todos los derechos reservados.</p>
+<footer class="site-footer py-5">
+  <div class="container">
+    <div class="row text-center text-md-start">
+      
+      <!-- Columna Izquierda: Redes sociales -->
+	<div class="col-md-4">
+        <p class="mb-1">2025 © Ventanet</p>
+        <p class="mb-1">
+          <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
+          <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
+        </p>
+      </div>
+
+      <!-- Columna Medio: Navegación -->
+      <div class="col-md-4 mb-4 mb-md-0">
+        <ul class="list-unstyled">
+          <li><a href="#productos" class="footer-link">Productos</a></li>
+          <li><a href="login.html" class="footer-link">Ingreso</a></li>
+          <li><a href="nuevo-usuario.html" class="footer-link">Registro</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna Derecha: Datos Empresa -->
+     <div class="col-md-4 mb-4 mb-md-0">
+        <h5 class="mb-3">Seguinos en:</h5>
+        <div class="d-flex justify-content-center justify-content-md-start gap-3">
+          <a href="https://facebook.com"><img th:src="@{/img/rrss1.png}" alt="Facebook" width="30"></a>
+          <a href="https://instagram.com"><img th:src="@{/img/rrss2.png}" alt="Instagram" width="30"></a>
+          <a href="https://linkedin.com"><img th:src="@{/img/rrss3.png}" alt="Linkedin" width="30"></a>
+        </div>
+      </div>
+    </div>
   </div>
 </footer>
 
