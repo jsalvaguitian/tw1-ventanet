@@ -27,7 +27,7 @@ public class ServicioProductoImpl implements ServicioProducto {
     @Override
     public void crearProducto(Producto producto) throws ProductoExistente {
         Producto productoEncontrado = productoRepository.obtenerPorNombreMarcaYProveedor(producto.getNombre(),
-                producto.getMarca().getId(), producto.getProveedorId());
+                producto.getMarca().getId(), producto.getProveedor().getId());
 
         if (productoEncontrado != null) {
             throw new ProductoExistente();
@@ -62,7 +62,11 @@ public class ServicioProductoImpl implements ServicioProducto {
     @Override
     public List<Producto> buscarConFiltros(Long tipoProductoId) {
         return productoRepository.buscarConFiltros(tipoProductoId);
-
     }
+
+    @Override
+    public List<Producto> buscarPorProveedorId(Long proveedorId) {
+        return productoRepository.buscarPorProveedorId(proveedorId);
+    }    
 
 }

@@ -8,7 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -23,12 +25,15 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.tallerwebi.dominio.entidades.Producto;
+import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
 import com.tallerwebi.dominio.servicios.ServicioMarca;
 import com.tallerwebi.dominio.servicios.ServicioPresentacion;
 import com.tallerwebi.dominio.servicios.ServicioProducto;
+import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
+import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 @Controller
 @RequestMapping("/producto")
@@ -36,16 +41,20 @@ public class ControladorProducto implements ServletContextAware {
     private ServicioProducto servicioProducto;
     private ServletContext servletContext;
     private final ServicioTipoProducto servicioTipoProducto;
-    private final ServicioMarca servicioMarca;    
+    private final ServicioMarca servicioMarca;
     private final ServicioPresentacion servicioPresentacion;
+    private final ServicioProveedorI servicioProveedor;
 
-    public ControladorProducto(ServicioProducto servicioProducto,ServicioTipoProducto servicioTipoProducto, 
-    ServicioMarca servicioMarca, ServicioPresentacion servicioPresentacion) {
+    @Autowired
+    public ControladorProducto(ServicioProducto servicioProducto, ServicioTipoProducto servicioTipoProducto,
+            ServicioMarca servicioMarca, ServicioPresentacion servicioPresentacion,
+            ServicioProveedorI servicioProveedor) {
         new ArrayList<>();
         this.servicioProducto = servicioProducto;
         this.servicioMarca = servicioMarca;
         this.servicioTipoProducto = servicioTipoProducto;
         this.servicioPresentacion = servicioPresentacion;
+        this.servicioProveedor = servicioProveedor;
     }
 
     public void setServletContext(ServletContext servletContext) {
@@ -53,25 +62,45 @@ public class ControladorProducto implements ServletContextAware {
     }
 
     @RequestMapping(path = "/nuevo-producto", method = RequestMethod.GET)
-    public ModelAndView nuevoProducto() {
+    public ModelAndView nuevoProducto(HttpServletRequest request) {
+        UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+        String rol_proveedor = "PROVEEDOR";
+
+        if (usuarioSesion == null || !rol_proveedor.equalsIgnoreCase(usuarioSesion.getRol())) {
+            return new ModelAndView("redirect:/login");
+        }
+
         ModelMap model = new ModelMap();
-        model.put("producto", new Producto());
+        Producto producto = new Producto();
+        model.put("producto", producto);
+        Proveedor proveedor = servicioProveedor.obtenerPorIdUsuario(usuarioSesion.getId());
+        producto.setProveedor(proveedor);
         model.put("tiposProducto", servicioTipoProducto.obtener());
         model.put("marcas", servicioMarca.obtener());
         model.put("presentaciones", servicioPresentacion.obtener());
+
         return new ModelAndView("nuevo-producto", model);
     }
 
     @RequestMapping(path = "/listado", method = RequestMethod.GET)
-    public ModelAndView mostrarProductos() {
+    public ModelAndView mostrarProductos(HttpServletRequest request) {
 
         ModelMap modelo = new ModelMap();
 
         try {
-            List<Producto> productos = this.servicioProducto.obtener();
+            UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+            String rol_proveedor = "PROVEEDOR";
+
+            if (usuarioSesion == null || !rol_proveedor.equalsIgnoreCase(usuarioSesion.getRol())) {
+                return new ModelAndView("redirect:/login");
+            }
+
+            Proveedor proveedor = servicioProveedor.obtenerPorIdUsuario(usuarioSesion.getId());
+
+            List<Producto> productos = this.servicioProducto.buscarPorProveedorId(proveedor.getId());
             modelo.put("productos", productos);
-            if(productos.isEmpty()) {
-                modelo.put("exito", "No hay Productos");
+            if (productos.isEmpty()) {
+                modelo.put("error", "No hay Productos");
             } else {
                 modelo.put("exito", "Hay productos.");
             }
@@ -85,9 +114,19 @@ public class ControladorProducto implements ServletContextAware {
 
     @PostMapping("/crear")
     public ModelAndView crearProducto(@ModelAttribute Producto producto,
-            @RequestParam(value ="imagenFile", required = false) MultipartFile imagenFile) {
+            @RequestParam(value = "imagenFile", required = false) MultipartFile imagenFile,
+            HttpServletRequest request) {
         ModelMap model = new ModelMap();
+        UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+        String rol_proveedor = "PROVEEDOR";
+
+        if (usuarioSesion == null || !rol_proveedor.equalsIgnoreCase(usuarioSesion.getRol())) {
+            return new ModelAndView("redirect:/login");
+        }
         try {
+            Proveedor proveedor = servicioProveedor.obtenerPorIdUsuario(usuarioSesion.getId());
+            producto.setProveedor(proveedor);
+
             if (imagenFile != null && !imagenFile.isEmpty()) {
                 String uploadDirectory = servletContext.getRealPath("/resources/core/uploads/");
                 Path uploadPath = Paths.get(uploadDirectory);
@@ -101,7 +140,7 @@ public class ControladorProducto implements ServletContextAware {
                 // Guardar la ruta en el producto
                 producto.setImagenUrl("/resources/core/uploads/" + imagenFile.getOriginalFilename());
             }
-            servicioProducto.crearProducto(producto);            
+            servicioProducto.crearProducto(producto);
         } catch (ProductoExistente e) {
             model.put("error", "El producto ya existe");
             return new ModelAndView("nuevo-producto", model);
@@ -114,7 +153,7 @@ public class ControladorProducto implements ServletContextAware {
 
     @RequestMapping("/editar/{id}")
     public ModelAndView mostrarFormularioEditarProducto(@PathVariable Long id) {
-        
+
         Producto producto = servicioProducto.obtenerPorId(id);
         ModelMap model = new ModelMap();
         model.put("producto", producto);
@@ -127,11 +166,21 @@ public class ControladorProducto implements ServletContextAware {
 
     @PostMapping("/editar/{id}")
     public ModelAndView editarProducto(@PathVariable Long id,
-                                 @ModelAttribute("producto") Producto producto,
-                                 @RequestParam(value = "imagenFile", required = false) MultipartFile imagenFile,
-                                 RedirectAttributes redirectAttributes) {
-                                    ModelMap model = new ModelMap();
+            @ModelAttribute("producto") Producto producto,
+            @RequestParam(value = "imagenFile", required = false) MultipartFile imagenFile,
+            RedirectAttributes redirectAttributes, HttpServletRequest request) {
+        ModelMap model = new ModelMap();
         try {
+            UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+            String rol_proveedor = "PROVEEDOR";
+
+            if (usuarioSesion == null || !rol_proveedor.equalsIgnoreCase(usuarioSesion.getRol())) {
+                return new ModelAndView("redirect:/login");
+            }
+
+            Proveedor proveedor = servicioProveedor.obtenerPorIdUsuario(usuarioSesion.getId());
+            producto.setProveedor(proveedor);
+
             if (imagenFile != null && !imagenFile.isEmpty()) {
                 String uploadDirectory = servletContext.getRealPath("/resources/core/uploads/");
                 Path uploadPath = Paths.get(uploadDirectory);
@@ -145,27 +194,28 @@ public class ControladorProducto implements ServletContextAware {
                 // Guardar la ruta en el producto
                 producto.setImagenUrl("/resources/core/uploads/" + imagenFile.getOriginalFilename());
             }
-            //producto.setId(id); // aseguramos que edite el producto correcto
+            
             servicioProducto.actualizar(producto);
-            redirectAttributes.addFlashAttribute("exito", "Producto actualizado correctamente");
-            model.put("exito", "Producto editado correctamente");
-            return new ModelAndView("redirect:/producto/listado", model);
-            //return "redirect:/producto/listar";
+            model.put("exito", "El producto se modificó con éxito ✅");
+            model.put("producto", producto);
+            model.put("tiposProducto", servicioTipoProducto.obtener());
+            model.put("marcas", servicioMarca.obtener());
+            model.put("presentaciones", servicioPresentacion.obtener());
+            return new ModelAndView("editar-producto", model);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error al actualizar producto: " + e.getMessage());
-            model.put("error", "El producto ya existe");
+            model.put("error", "Error al actualizar producto: " + e.getMessage());
             return new ModelAndView("editar-producto", model);
         }
     }
 
-     @RequestMapping("/eliminar/{id}")
+    @RequestMapping("/eliminar/{id}")
     public String eliminarProducto(@PathVariable Long id, RedirectAttributes redirectAttrs) {
-    try {
-        servicioProducto.eliminar(id);
-        redirectAttrs.addFlashAttribute("exito", "Producto eliminado con éxito");
-    } catch (NoHayProductoExistente e) {
-        redirectAttrs.addFlashAttribute("error", "Producto no encontrado");
+        try {
+            servicioProducto.eliminar(id);
+            redirectAttrs.addFlashAttribute("exito", "Producto eliminado con éxito");
+        } catch (NoHayProductoExistente e) {
+            redirectAttrs.addFlashAttribute("error", "Producto no encontrado");
+        }
+        return "redirect:/producto/listado";
     }
-    return "redirect:/producto/listado";
-}
 }

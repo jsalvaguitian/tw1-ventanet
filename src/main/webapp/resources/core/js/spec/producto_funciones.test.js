@@ -30,6 +30,6 @@ describe("Producto Funciones", function() {
   });
 
   it("debe devolver false cuando los campos nombre,precio, stock, tipo de Producto, marca y proveedor son validos pero presentacion es invalido", function() {
-    expect(validarCamposObligatoriosDeProducto("producto1", 10000, 5, 1, 1,1,0)).toBe(false);
+    expect(validarCamposObligatoriosDeProducto("producto1", 10000, 5, 1, 1,0)).toBe(false);
   });   
 });

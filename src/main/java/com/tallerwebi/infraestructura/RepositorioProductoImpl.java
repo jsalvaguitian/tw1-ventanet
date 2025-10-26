@@ -65,7 +65,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         }
     }
     
-    public Producto obtenerPorNombreMarcaYProveedor(String nombre, Long marcaId, Integer proveedorId) {
+    public Producto obtenerPorNombreMarcaYProveedor(String nombre, Long marcaId, Long proveedorId) {
         var session = sessionFactory.getCurrentSession();
         var cb = session.getCriteriaBuilder();
         var query = cb.createQuery(Producto.class);
@@ -75,13 +75,13 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
                 cb.and(
                         cb.equal(root.get("nombre"), nombre),
                         cb.equal(root.get("marca").get("id"), marcaId),
-                        cb.equal(root.get("proveedorId"), proveedorId)));
+                        cb.equal(root.get("proveedor").get("id"), proveedorId)));
 
         return session.createQuery(query).uniqueResult();
     }
 
     public List<Producto> buscarConFiltros(Long tipoProductoId) {
-         StringBuilder hql = new StringBuilder("SELECT p FROM Producto p WHERE 1=1");
+         StringBuilder hql = new StringBuilder("SELECT p FROM Producto p WHERE ");
 
         // Lista de parámetros
         Map<String, Object> params = new HashMap<>();
@@ -92,8 +92,33 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         }
 */
         if (tipoProductoId != null) {
-            hql.append(" AND p.tipoProducto.id = :tipoProductoId");
+            hql.append(" p.tipoProducto.id = :tipoProductoId");
             params.put("tipoProductoId", tipoProductoId);
+        }
+
+
+        // Creamos la query
+        Query query = sessionFactory.getCurrentSession()
+                .createQuery(hql.toString(), Producto.class);
+
+        // Asignamos parámetros dinámicamente
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            query.setParameter(entry.getKey(), entry.getValue());
+        }
+
+        return query.getResultList();
+
+    }
+
+    public List<Producto> buscarPorProveedorId(Long proveedorId) {
+         StringBuilder hql = new StringBuilder("SELECT p FROM Producto p WHERE ");
+
+        // Lista de parámetros
+        Map<String, Object> params = new HashMap<>();
+
+        if (proveedorId != null) {
+            hql.append(" p.proveedor.id = :proveedorId");
+            params.put("proveedorId", proveedorId);
         }
 
 
