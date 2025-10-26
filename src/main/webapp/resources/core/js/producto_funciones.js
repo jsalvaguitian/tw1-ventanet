@@ -1,7 +1,7 @@
 export function validarCamposObligatoriosDeProducto(inputNombreValue, inputPrecioValue,inputStockValue, tipoProductoIdValue, marcaIdValue, 
-  proveedorIdValue,presentacionIdValue) {
+  presentacionIdValue) {
     return inputNombreValue?.length > 0 && inputPrecioValue > 0 && inputStockValue >= 0 && tipoProductoIdValue > 0
-    && marcaIdValue > 0 && proveedorIdValue > 0 && presentacionIdValue > 0;
+    && marcaIdValue > 0 && presentacionIdValue > 0;
   }
 
 export function validarCamposMayoresACeroDeProducto(inputValMayorACeroValue) {
