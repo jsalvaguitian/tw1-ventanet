@@ -12,7 +12,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToMany;
 
-import com.tallerwebi.dominio.enums.EstadoProveedor;
+import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.enums.Rubro;
 
 
@@ -26,10 +26,10 @@ public class Proveedor extends Usuario{
     @Enumerated(EnumType.STRING)
     private Rubro rubro;              
     private String sitioWeb; 
-    
+    /*
     @Enumerated(EnumType.STRING)
-    private EstadoProveedor estado;             // Activo, Inactivo, Suspendido
-
+    private EstadoUsuario estado;             // Activo, Inactivo, Suspendido
+*/
     private String documento;        // Ruta del documento legal del proveedor
 
     @ManyToMany
@@ -42,7 +42,7 @@ public class Proveedor extends Usuario{
 
     public Proveedor() {
         super();
-        this.estado = EstadoProveedor.PENDIENTE;
+        this.estado = EstadoUsuario.PENDIENTE;
     }
 
 
@@ -86,12 +86,12 @@ public class Proveedor extends Usuario{
     }
 
 
-    public EstadoProveedor getEstado() {
+    public EstadoUsuario getEstado() {
         return estado;
     }
 
 
-    public void setEstado(EstadoProveedor estado) {
+    public void setEstado(EstadoUsuario estado) {
         this.estado = estado;
     }
 

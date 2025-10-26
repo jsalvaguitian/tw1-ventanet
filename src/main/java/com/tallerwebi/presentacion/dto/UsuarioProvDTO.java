@@ -3,7 +3,7 @@ package com.tallerwebi.presentacion.dto;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tallerwebi.dominio.entidades.Proveedor;
-import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.enums.Rubro;
 
 public class UsuarioProvDTO {
@@ -13,9 +13,12 @@ public class UsuarioProvDTO {
     private String cuit;
     private String razonSocial;
     private Rubro rubro;
+    private EstadoUsuario estado;
 
     private MultipartFile documento;
 
+    private String documentoPath;
+    
     public UsuarioProvDTO(Long id, String razonSocial) {
         this.id = id;
         this.razonSocial = razonSocial;
@@ -24,6 +27,7 @@ public class UsuarioProvDTO {
     public UsuarioProvDTO() {
     }
 
+    
     
 
     public String getEmail() {
@@ -84,6 +88,22 @@ public class UsuarioProvDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public EstadoUsuario getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoUsuario estado) {
+        this.estado = estado;
+    }
+
+    public String getDocumentoPath() {
+        return documentoPath;
+    }
+
+    public void setDocumentoPath(String documentoPath) {
+        this.documentoPath = documentoPath;
     }
     
 }

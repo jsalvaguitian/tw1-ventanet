@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.UUID;
 
 import javax.transaction.Transactional;
 
@@ -64,10 +67,31 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
             // + 1 o mas caracteres + periodo + de 2 a 5 mayusculas o minusculas
             throw new EmailInvalido("Correo electronico invalido");
         }
+
+        String token = UUID.randomUUID().toString();
+        usuario.setTokenVerificacion(token);
+
+        // Setear expiracion del token a 24 horas
+        usuario.setExpiracionToken(LocalDateTime.now().plusHours(24));
+
         // hashear contrasenia antes de guardar
         contraseniaHasheada = PasswordUtil.hashear(usuario.getPassword());
         usuario.setPassword(contraseniaHasheada);
         repositorioUsuario.guardar(usuario);
+
+        // Enviar correo con el link de verificación
+        // Ej: https://tuapp.com/verificar?token=token
+        enviarCorreoVerificacion(usuario);
+    }
+
+    @Override
+    public void enviarCorreoVerificacion(Usuario usuario) {
+        String asunto = "Verificacion de cuenta";
+        String url = "http://localhost:8080/verificar?token=" + usuario.getTokenVerificacion();
+        String cuerpo = "Hola " + usuario.getEmail() +
+                ". Para verificar tu cuenta, hace click en el siguiente enlace: \n " +
+                url + "\n\n" + "Este enlace expirara en 24 horas.";
+
     }
 
     /*

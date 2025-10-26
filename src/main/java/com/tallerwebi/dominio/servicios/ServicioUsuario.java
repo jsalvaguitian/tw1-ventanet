@@ -22,5 +22,7 @@ public interface ServicioUsuario {
             throws UsuarioExistente, ContraseniaInvalida, CuitInvalido, IOException;
 
     Usuario buscarPorMail(String email) throws UsuarioInexistenteException;
+    
+    void enviarCorreoVerificacion(Usuario usuario);
 
 }

@@ -27,4 +27,25 @@ public class ServicioProveedorImpl implements ServicioProveedorI{
         return repositorioProveedor.obtenerTodosLosNombresProveedoresActivos();
     }
 
+
+    @Override
+    public List<Proveedor> obtenerTodosLosProveedoresPendientes() {
+        return repositorioProveedor.obtenerTodosLosProveedoresPendientes();
+    }
+
+
+
+    @Override
+    public Proveedor buscarPorId(Long id) {
+        return repositorioProveedor.buscarPorId(id);
+    }
+
+
+
+    @Override
+    public void actualizar(Proveedor proveedor) {
+        repositorioProveedor.actualizar(proveedor);
+    }
+
+
 }

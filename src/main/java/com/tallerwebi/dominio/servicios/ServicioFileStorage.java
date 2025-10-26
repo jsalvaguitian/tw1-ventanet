@@ -28,9 +28,9 @@ public class ServicioFileStorage {
     }
 
     private String guardarArchivoGenerico(MultipartFile archivo,
-                                          List<String> extensionesValidas,
-                                          List<String> tiposMimeValidos,
-                                          String subcarpeta) throws IOException {
+            List<String> extensionesValidas,
+            List<String> tiposMimeValidos,
+            String subcarpeta) throws IOException {
 
         if (archivo.isEmpty())
             throw new IOException("El archivo es obligatorio.");
@@ -64,7 +64,9 @@ public class ServicioFileStorage {
         Files.copy(archivo.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
 
         // Ruta relativa para guardar en BD
-        return "/resources/core/uploads/" + subcarpeta + "/" + nombreUnico;
+        // return "/resources/core/uploads/" + subcarpeta + "/" + nombreUnico;
+        return "/uploads/" + subcarpeta + "/" + nombreUnico;
+
     }
 
     public String guardarArchivoImgOPdf(MultipartFile archivo) throws IOException {
@@ -82,8 +84,7 @@ public class ServicioFileStorage {
                         "application/vnd.ms-excel",
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                         "text/csv",
-                        "application/vnd.oasis.opendocument.spreadsheet"
-                ),
+                        "application/vnd.oasis.opendocument.spreadsheet"),
                 "varios");
     }
 }

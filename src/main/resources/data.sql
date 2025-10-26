@@ -41,7 +41,7 @@ INSERT INTO Usuario (
 INSERT INTO Proveedor (
     id, razonsocial, cuit, rubro, sitioWeb, estado, documento
 ) VALUES (
-    3, 'Gómez Servicios S.A.', '30123456789', null , 'https://www.gomezservicios.com', 'PENDIENTE', null
+    3, 'Gómez Servicios S.A.', '30123456789', null , 'https://www.gomezservicios.com', 'ACTIVO', "/docs/p0.pdf"
 );
 
 
