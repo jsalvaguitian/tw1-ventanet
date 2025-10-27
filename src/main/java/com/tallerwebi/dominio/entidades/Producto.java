@@ -26,7 +26,7 @@ public class Producto {
     private String descripcion;
     private String imagenUrl;
     private int stock;
-    private String cuitProveedor;
+    //private String cuitProveedor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tipo_producto_id", nullable = false)
@@ -36,7 +36,16 @@ public class Producto {
     @JoinColumn(name = "marca_id", nullable = false)
     private Marca marca;
 
-    private Integer proveedorId;
+    @ManyToOne(optional = false)    
+    private Proveedor proveedor;
+
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
+    }
+
+    public Proveedor getProveedor() {
+        return proveedor;
+    }
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "presentacion_id", nullable = false)
@@ -53,13 +62,13 @@ public class Producto {
 
     private Boolean aceptaEnvio;
 
-    public String getCuitProveedor() {
-        return cuitProveedor;
-    }
+    // public String getCuitProveedor() {
+    //     return cuitProveedor;
+    // }
 
-    public void setCuitProveedor(String cuitProveedor) {
-        this.cuitProveedor = cuitProveedor;
-    }
+    // public void setCuitProveedor(String cuitProveedor) {
+    //     this.cuitProveedor = cuitProveedor;
+    // }
 
     public Dimensiones getDimensiones() {
         return dimensiones;
@@ -125,9 +134,9 @@ public class Producto {
         this.marca = marca;
     }
 
-    public void setProveedorId(Integer proveedorId) {
-        this.proveedorId = proveedorId;
-    }
+    // public void setProveedorId(Integer proveedorId) {
+    //     this.proveedorId = proveedorId;
+    // }
 
     public void setPresentacion(Presentacion presentacion) {
         this.presentacion = presentacion;
@@ -165,44 +174,44 @@ public class Producto {
         return marca;
     }
 
-    public Integer getProveedorId() {
-        return proveedorId;
-    }
+    // public Integer getProveedorId() {
+    //     return proveedorId;
+    // }
 
     public Presentacion getPresentacion() {
         return presentacion;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
-        result = prime * result + ((cuitProveedor == null) ? 0 : cuitProveedor.hashCode());
-        return result;
-    }
+    // @Override
+    // public int hashCode() {
+    //     final int prime = 31;
+    //     int result = 1;
+    //     result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
+    //     result = prime * result + ((cuitProveedor == null) ? 0 : cuitProveedor.hashCode());
+    //     return result;
+    // }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Producto other = (Producto) obj;
-        if (nombre == null) {
-            if (other.nombre != null)
-                return false;
-        } else if (!nombre.equals(other.nombre))
-            return false;
-        if (cuitProveedor == null) {
-            if (other.cuitProveedor != null)
-                return false;
-        } else if (!cuitProveedor.equals(other.cuitProveedor))
-            return false;
-        return true;
-    }
+    // @Override
+    // public boolean equals(Object obj) {
+    //     if (this == obj)
+    //         return true;
+    //     if (obj == null)
+    //         return false;
+    //     if (getClass() != obj.getClass())
+    //         return false;
+    //     Producto other = (Producto) obj;
+    //     if (nombre == null) {
+    //         if (other.nombre != null)
+    //             return false;
+    //     } else if (!nombre.equals(other.nombre))
+    //         return false;
+    //     if (cuitProveedor == null) {
+    //         if (other.cuitProveedor != null)
+    //             return false;
+    //     } else if (!cuitProveedor.equals(other.cuitProveedor))
+    //         return false;
+    //     return true;
+    // }
 
 
 }
