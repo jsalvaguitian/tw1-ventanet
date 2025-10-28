@@ -1,20 +1,8 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.entidades.Cliente;
-import com.tallerwebi.dominio.entidades.Proveedor;
-import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.excepcion.ContraseniaInvalida;
-import com.tallerwebi.dominio.excepcion.CuitInvalido;
-import com.tallerwebi.dominio.excepcion.EmailInvalido;
-import com.tallerwebi.dominio.excepcion.UsuarioExistente;
-import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
-import com.tallerwebi.dominio.servicios.ServicioUsuario;
-import com.tallerwebi.presentacion.dto.DatosLogin;
+import java.io.IOException;
 
-import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
-import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
-
-import net.bytebuddy.asm.Advice.Return;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,10 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.io.IOException;
-import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
+import com.tallerwebi.dominio.entidades.Cliente;
+import com.tallerwebi.dominio.entidades.Proveedor;
+import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.excepcion.ContraseniaInvalida;
+import com.tallerwebi.dominio.excepcion.CuitInvalido;
+import com.tallerwebi.dominio.excepcion.EmailInvalido;
+import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
+import com.tallerwebi.dominio.servicios.ServicioUsuario;
+import com.tallerwebi.presentacion.dto.DatosLogin;
+import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
+import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 @Controller
 public class ControladorAutenticacion {
@@ -73,11 +69,11 @@ public class ControladorAutenticacion {
                         datosLogin.getPassword());
                 String rol = usuarioBuscado.getRol();
                 UsuarioSesionDto usuarioSesion = new UsuarioSesionDto(usuarioBuscado.getId(), usuarioBuscado.getEmail(),
-                        rol);
+                        rol, usuarioBuscado.getNombre(), usuarioBuscado.getApellido());
                 request.getSession().setAttribute("usuarioLogueado", usuarioSesion);
 
                 if (rol.equalsIgnoreCase("CLIENTE")) {
-                    return new ModelAndView("redirect:/dashboard");
+                    return new ModelAndView("redirect:/cliente/dashboard");
 
                 } else if (rol.equalsIgnoreCase("PROVEEDOR")) {
                     return new ModelAndView("redirect:/dashboard-proveedor");
@@ -152,6 +148,11 @@ public class ControladorAutenticacion {
     @RequestMapping(path = "/dashboard", method = RequestMethod.GET)
     public ModelAndView irADashboard() {
         return new ModelAndView("dashboard");
+    }
+
+    @RequestMapping(path = "/dashboard/detalle-cotizacion", method = RequestMethod.GET)
+    public ModelAndView irADetalleCotizacion() {
+        return new ModelAndView("detalle-cotizacion");
     }
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
