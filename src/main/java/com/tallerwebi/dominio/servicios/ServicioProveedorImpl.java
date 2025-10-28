@@ -40,3 +40,15 @@ public class ServicioProveedorImpl implements ServicioProveedorI{
     
 
 
+
+
+    @Override
+    public Proveedor obtenerPorIdUsuario(Long idUsuario) {
+        Proveedor proveedor = repositorioProveedor.buscarProveedorPorIdUsuario(idUsuario);
+        if (proveedor == null) {
+            throw new IllegalStateException("El usuario no corresponde a un proveedor válido");
+        }        
+        return proveedor;
+    }
+
+}

@@ -1,0 +1,46 @@
+<!-- fragments/sidebar.html -->
+<div th:fragment="sidebar">
+  <aside id="sidebar" class="d-flex flex-column position-relative"> 
+    <button class="toggle-btn" onclick="toggleSidebar()">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <ul class="nav flex-column mt-4">
+
+      <!-- Dashboard -->
+      <li class="nav-item">
+        <a th:href="@{/dashboard}" class="nav-link">
+          <i class="bi bi-house"></i><span>Dashboard</span>
+        </a>
+      </li>
+
+      <!-- Materiales con submenú -->
+      <li class="nav-item">
+        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+          href="#submenuMateriales" role="button" aria-expanded="false" aria-controls="submenuMateriales">
+          <span><i class="bi bi-journal-text me-2"></i>Materiales</span>
+          <i class="bi bi-chevron-down"></i>
+        </a>
+
+        <div class="collapse ps-4" id="submenuMateriales">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a th:href="@{/producto/nuevo-producto}" class="nav-link">Alta manual</a>
+            </li>
+            <li class="nav-item">
+              <a th:href="@{/producto/listado}" class="nav-link">Listado de materiales</a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- Más secciones (opcional) -->
+      <!-- <li class="nav-item">
+        <a th:href="@{/reportes}" class="nav-link">
+          <i class="bi bi-graph-up"></i><span>Reportes</span>
+        </a>
+      </li> -->
+
+    </ul>
+  </aside>
+</div>

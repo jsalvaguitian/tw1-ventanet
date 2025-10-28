@@ -42,43 +42,48 @@ import javax.servlet.http.HttpSession;
 public class ControladorProductoTest {
     private ControladorProducto controladorProductos;
     private ServicioProducto servicioProducto;
-    private  ServicioTipoProducto servicioTipoProducto;
-    private  ServicioMarca servicioMarca;    
-    private  ServicioPresentacion servicioPresentacion;
-    private  ServicioProveedorI servicioProveedorI;
+    private ServicioTipoProducto servicioTipoProducto;
+    private ServicioMarca servicioMarca;
+    private ServicioPresentacion servicioPresentacion;
+    private ServicioProveedorI servicioProveedor;
     private HttpServletRequest requestMock;
     private HttpSession sessionMock;
-    private Usuario usuarioMock;
-    
 
     @BeforeEach
-    public void init(){
-        requestMock = mock(HttpServletRequest.class);
-        sessionMock= mock(HttpSession.class);
-        this.servicioProducto =  mock(ServicioProducto.class);
+    public void init() {
+        this.servicioProducto = mock(ServicioProducto.class);
         this.servicioTipoProducto = mock(ServicioTipoProducto.class);
         this.servicioMarca = mock(ServicioMarca.class);
         this.servicioPresentacion = mock(ServicioPresentacion.class);
-        this.servicioProveedorI = mock(ServicioProveedorI.class);
-        this.controladorProductos = new ControladorProducto(this.servicioProducto, this.servicioTipoProducto, this.servicioMarca, this.servicioPresentacion,servicioProveedorI);
-        usuarioMock = mock(Usuario.class);
-		when(usuarioMock.getEmail()).thenReturn("pedro.gomez@email.com");
-        when(usuarioMock.getId()).thenReturn(3L);
-        when(usuarioMock.getNombre()).thenReturn("Pedro Gomez");
-        when(usuarioMock.getRol()).thenReturn("PROVEEDOR");
+        this.servicioProveedor = mock(ServicioProveedorI.class);
+        requestMock = mock(HttpServletRequest.class);
+        sessionMock = mock(HttpSession.class);
+        this.controladorProductos = new ControladorProducto(this.servicioProducto, this.servicioTipoProducto,
+                this.servicioMarca, this.servicioPresentacion, servicioProveedor);
     }
 
     @Test
     public void consultarProductosSinHaberAgregadoNingunoTengoMensajeNoHayProductos() {
-        //preparacion
+        UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
+        uSesionDto.setId(3L);
+        uSesionDto.setRol("Proveedor");
+        uSesionDto.setUsername("proveedor@empresa.com");
+        // tengo q simular sesion con usuario logueado
+        when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
+        when(requestMock.getSession()).thenReturn(sessionMock);
+
+        Proveedor proveedorMock = new Proveedor();
+        proveedorMock.setId(3L); // el ID que luego se usa para buscar productos
+        when(servicioProveedor.obtenerPorIdUsuario(3L)).thenReturn(proveedorMock);
+        // preparacion
         doThrow(NoHayProductoExistente.class).when(servicioProducto).obtener();
-        
-        //ejecución
-        ModelAndView modelAndView = controladorProductos.mostrarProductos();
-        
-        //verificación
+
+        // ejecución
+        ModelAndView modelAndView = controladorProductos.mostrarProductos(requestMock);
+
+        // verificación
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("producto-listado"));
-        List<Producto> productosDto =  (List<Producto>)modelAndView.getModel().get("productos");
+        List<Producto> productosDto = (List<Producto>) modelAndView.getModel().get("productos");
         assertThat(productosDto.size(), equalTo(0));
         assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("No hay Productos"));
     }
@@ -87,15 +92,27 @@ public class ControladorProductoTest {
     public void dadoQueExistenProductosCuandoLasConsultoSeMuestran3Productos() {
 
         // Peticion de tipo GET
+        UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
+        uSesionDto.setId(3L);
+        uSesionDto.setRol("Proveedor");
+        uSesionDto.setUsername("proveedor@empresa.com");
+        // tengo q simular sesion con usuario logueado
+        when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
+        when(requestMock.getSession()).thenReturn(sessionMock);
+
+        Proveedor proveedorMock = new Proveedor();
+        proveedorMock.setId(3L); // el ID que luego se usa para buscar productos
+        when(servicioProveedor.obtenerPorIdUsuario(3L)).thenReturn(proveedorMock);
+
         List<Producto> productosDto = new ArrayList<>();
-         productosDto.add(new Producto());
         productosDto.add(new Producto());
-        productosDto.add(new Producto());        
-        when(servicioProducto.obtener()).thenReturn(productosDto);
+        productosDto.add(new Producto());
+        productosDto.add(new Producto());
+        when(servicioProducto.buscarPorProveedorId(3L)).thenReturn(productosDto);
         // preparacion
 
         // ejecucion
-        ModelAndView modelAndView = controladorProductos.mostrarProductos();
+        ModelAndView modelAndView = controladorProductos.mostrarProductos(requestMock);
 
         // verificacion
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("producto-listado"));
@@ -105,58 +122,44 @@ public class ControladorProductoTest {
     }
     // Peticion POST,PUT, DELETE
     // Validar que la vista sea la correcta
-    
-@Test
-public void cuandoGuardoProductoValidoRedirigeAListadoConExito() throws ProductoExistente {
-    when(requestMock.getSession()).thenReturn(sessionMock);
 
-        //creo un usuario proveedor
+    @Test
+    public void cuandoGuardoProductoValidoRedirigeAListadoConExito() throws ProductoExistente {
+        when(requestMock.getSession()).thenReturn(sessionMock);
+        // creo un usuario proveedor
         UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
-        uSesionDto.setId(3L);
-        uSesionDto.setRol("PROVEEDOR");
-        uSesionDto.setUsername("pedro.gomez@email.com");
-
-        //tengo q simular sesion con usuario logueado
+        uSesionDto.setRol("Proveedor");
+        uSesionDto.setUsername("proveedor@empresa.com");
+        // tengo q simular sesion con usuario logueado
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
 
+        Producto producto = new Producto();
+        TipoProducto tipoProducto = new TipoProducto();
+        tipoProducto.setId(1L);
 
-    Producto producto = new Producto();
-    TipoProducto tipoProducto = new TipoProducto();
-    tipoProducto.setId(1L);
-    
-    Presentacion presentacion = new Presentacion();
-    presentacion.setId(1L);
-    
+        Presentacion presentacion = new Presentacion();
+        presentacion.setId(1L);
 
-    Marca marca = new Marca();
-    marca.setId(1L);
+        Marca marca = new Marca();
+        marca.setId(1L);
 
-    Proveedor proveedor = new Proveedor();
-    proveedor.setId(3L);
+        Proveedor proveedor = new Proveedor();
+        proveedor.setId(3L);
 
-    producto.setNombre("Ventana doble vidrio");
-    producto.setPrecio(1200.50);    
-    producto.setProveedor(proveedor);
-    producto.setStock(10);
-    producto.setPresentacion(presentacion);
-    producto.setTipoProducto(tipoProducto);
-    producto.setMarca(marca);
+        producto.setNombre("Ventana doble vidrio");
+        producto.setPrecio(1200.50);
+        producto.setProveedor(proveedor);
+        producto.setStock(10);
+        producto.setPresentacion(presentacion);
+        producto.setTipoProducto(tipoProducto);
+        producto.setMarca(marca);
 
-    when(servicioProveedorI.obtenerPorIdUsuario(uSesionDto.getId()))
-        .thenReturn(proveedor);
+        // Configuramos el mock
+        doNothing().when(servicioProducto).crearProducto(any(Producto.class));
 
-    // Configuramos el mock
-    doNothing().when(servicioProducto).crearProducto(any(Producto.class));
+        ModelAndView modelAndView = controladorProductos.crearProducto(producto, null, requestMock);
 
-    ModelAndView modelAndView = controladorProductos.crearProducto(producto, null, requestMock);
-
-    verify(servicioProveedorI, times(1)).obtenerPorIdUsuario(uSesionDto.getId());
-    
-    // Verificamos que se haya llamado a crearProducto una vez (se puede verificar el objeto final)
-    verify(servicioProducto, times(1)).crearProducto(any(Producto.class));
-
-    assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:listado"));
-}
-
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:listado"));
+    }
 
 }

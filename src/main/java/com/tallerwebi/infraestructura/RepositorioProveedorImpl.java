@@ -49,4 +49,16 @@ public class RepositorioProveedorImpl implements RepositorioProveedor {
                 .uniqueResult();
     }
 
+     @Override
+    public Proveedor buscarProveedorPorIdUsuario(Long idUsuario) {
+        return (Proveedor) sessionFactory.getCurrentSession()
+                .createCriteria(Proveedor.class)
+                .add(Restrictions.eq("id", idUsuario) )
+                .uniqueResult();
+    }
+
+    
+
+    
+
 }

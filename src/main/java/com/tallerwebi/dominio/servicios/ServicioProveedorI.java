@@ -6,5 +6,5 @@ import com.tallerwebi.dominio.entidades.Proveedor;
  
 public interface ServicioProveedorI {
     List<Proveedor> obtenerTodosLosProveedoresActivos();
-    Proveedor obtenerPorIdUsuario(Long idUsuario);    
+    Proveedor obtenerPorIdUsuario(Long idUsuario); 
 }

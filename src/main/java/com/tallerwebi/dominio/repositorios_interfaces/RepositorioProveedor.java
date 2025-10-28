@@ -8,6 +8,5 @@ public interface RepositorioProveedor {
     Proveedor buscarProveedorPorCuit(String cuit);
 
     List<Proveedor> obtenerTodosLosNombresProveedoresActivos();
-    
-    Proveedor buscarProveedorPorIdUsuario(Long idUsuario);
+    Proveedor buscarProveedorPorIdUsuario(Long idUsuario);  
 }
