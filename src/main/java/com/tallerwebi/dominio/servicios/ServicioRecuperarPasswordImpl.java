@@ -54,7 +54,7 @@ public class ServicioRecuperarPasswordImpl implements ServicioRecuperarPassword 
                 url + "\n\n" + "Este enlace expirara en 30 min.";
         System.out.println("DEBUG >> Email del usuario en servicio: " + usuario.getEmail());
 
-        servicioEmail.enviarEmail(usuario.getEmail(), asunto, cuerpo);
+        servicioEmail.enviarEmail(usuario.getEmail(), asunto, cuerpo, false);
 
     }
 

@@ -1,8 +1,13 @@
 package com.tallerwebi.dominio.servicios;
 
+import com.tallerwebi.dominio.entidades.Cliente;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.excepcion.ContraseniaInvalida;
+import com.tallerwebi.dominio.excepcion.CuentaNoActivaException;
+import com.tallerwebi.dominio.excepcion.CuentaPendienteException;
+import com.tallerwebi.dominio.excepcion.CuentaRechazadaException;
 import com.tallerwebi.dominio.excepcion.CuitInvalido;
 import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
@@ -17,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -29,39 +33,54 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
     private RepositorioUsuario repositorioUsuario;
     private RepositorioProveedor repositorioProveedor;
     private ServicioFileStorage fileStorageService = new ServicioFileStorage();
+    private ServicioEmail servicioEmail;
 
     @Autowired
-    public ServicioUsuarioImpl(RepositorioUsuario repositorioUsuario, RepositorioProveedor repositorioProveedor) {
+    public ServicioUsuarioImpl(RepositorioUsuario repositorioUsuario, RepositorioProveedor repositorioProveedor,
+            ServicioEmail servicioEmail) {
         this.repositorioUsuario = repositorioUsuario;
         this.repositorioProveedor = repositorioProveedor;
+        this.servicioEmail = servicioEmail;
     }
 
     @Override
-    public Usuario consultarUsuario(String email, String password) throws UsuarioInexistenteException {
+    public Usuario iniciarSesion(String email, String password) throws UsuarioInexistenteException, CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException {
         Usuario encontrado = repositorioUsuario.buscarPorMail(email);
-        if (encontrado != null && PasswordUtil.verificar(password, encontrado.getPassword())) {
-            return encontrado;
+
+        if (encontrado == null || !PasswordUtil.verificar(password, encontrado.getPassword())) {
+            throw new UsuarioInexistenteException();
         }
-        throw new UsuarioInexistenteException();
+
+        switch (encontrado.getEstado()) {
+            case NO_ACTIVO:
+            throw new CuentaNoActivaException();
+
+            case PENDIENTE:
+                throw new CuentaPendienteException();
+            case RECHAZADO:
+                throw new CuentaRechazadaException();
+        }
+
+        return encontrado;
     }
 
     @Override
-    public void registrar(Usuario usuario) throws UsuarioExistente, ContraseniaInvalida, EmailInvalido {
+    public void registrar(Cliente cliente) throws UsuarioExistente, ContraseniaInvalida, EmailInvalido {
         String contraseniaHasheada = "";
-        Usuario usuarioEncontrado = repositorioUsuario.buscarPorMail(usuario.getEmail());
+        Usuario usuarioEncontrado = repositorioUsuario.buscarPorMail(cliente.getEmail());
         if (usuarioEncontrado != null) {
             throw new UsuarioExistente();
         }
         // Validar Contrasenia
-        if (usuario.getPassword().length() < 8 ||
-                !usuario.getPassword().matches(".*[A-Z].*") || // que tenga 1 mayuscula
-                !usuario.getPassword().matches(".*[a-z].*") || // que tenga 1 minuscula
-                !usuario.getPassword().matches(".*[^a-zA-Z0-9].*")) { // que tenga 1 simbolo
+        if (cliente.getPassword().length() < 8 ||
+                !cliente.getPassword().matches(".*[A-Z].*") || // que tenga 1 mayuscula
+                !cliente.getPassword().matches(".*[a-z].*") || // que tenga 1 minuscula
+                !cliente.getPassword().matches(".*[^a-zA-Z0-9].*")) { // que tenga 1 simbolo
             throw new ContraseniaInvalida(
                     "La contraseña debe tener al menos 8 caracteres, 1 mayúscula, 1 minúscula y 1 símbolo.");
         }
         // Validar email
-        if (!usuario.getEmail()
+        if (!cliente.getEmail()
                 .matches("[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,5}")) {
             // que haya 1 o mas caracteres + permite periodos (.) seguido de caracteres + @
             // + 1 o mas caracteres + periodo + de 2 a 5 mayusculas o minusculas
@@ -69,29 +88,18 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
         }
 
         String token = UUID.randomUUID().toString();
-        usuario.setTokenVerificacion(token);
+        cliente.setTokenVerificacion(token);
 
         // Setear expiracion del token a 24 horas
-        usuario.setExpiracionToken(LocalDateTime.now().plusHours(24));
+        cliente.setExpiracionToken(LocalDateTime.now().plusHours(24));
 
         // hashear contrasenia antes de guardar
-        contraseniaHasheada = PasswordUtil.hashear(usuario.getPassword());
-        usuario.setPassword(contraseniaHasheada);
-        repositorioUsuario.guardar(usuario);
+        contraseniaHasheada = PasswordUtil.hashear(cliente.getPassword());
+        cliente.setPassword(contraseniaHasheada);
+        repositorioUsuario.guardar(cliente);
 
         // Enviar correo con el link de verificación
-        // Ej: https://tuapp.com/verificar?token=token
-        enviarCorreoVerificacion(usuario);
-    }
-
-    @Override
-    public void enviarCorreoVerificacion(Usuario usuario) {
-        String asunto = "Verificacion de cuenta";
-        String url = "http://localhost:8080/verificar?token=" + usuario.getTokenVerificacion();
-        String cuerpo = "Hola " + usuario.getEmail() +
-                ". Para verificar tu cuenta, hace click en el siguiente enlace: \n " +
-                url + "\n\n" + "Este enlace expirara en 24 horas.";
-
+        servicioEmail.enviarEmailActivacion(cliente);
     }
 
     /*
@@ -127,6 +135,8 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
         String contraseniaHasheada = PasswordUtil.hashear(proveedor.getPassword());
         proveedor.setPassword(contraseniaHasheada);
         repositorioUsuario.guardar(proveedor);
+        servicioEmail.enviarEmailActivacion(proveedor);
+
     }
 
     private boolean validarContrasenia(String password) {
@@ -171,6 +181,37 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
         }
 
         return usuarioEncontrado;
+    }
+
+    @Override /// COMPLETAR
+    public boolean verificarToken(String token) {
+
+        Usuario usuario = repositorioUsuario.buscarPorToken(token);
+
+        if (usuario == null) {
+            return false;
+        }
+
+        if (usuario.getExpiracionToken().isBefore(LocalDateTime.now())) {
+            return false; // token vencido
+        }
+
+        // Activar o cambiar estado según el tipo de usuario
+        if (usuario instanceof Cliente) {
+            usuario.setEstado(EstadoUsuario.ACTIVO);
+        } /*
+           * else if (usuario instanceof Proveedor) {
+           * usuario.setEstado("PENDIENTE");
+           * }
+           */
+
+        usuario.setTokenVerificacion(null);
+        ;
+        usuario.setExpiracionToken(null);
+
+        repositorioUsuario.actualizar(usuario);
+        return true;
+
     }
 
 }

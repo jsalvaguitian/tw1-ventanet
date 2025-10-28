@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Activá tu cuenta</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+    <tr>
+      <td style="padding: 20px; text-align: center; border-bottom: 3px solid #0056D2;">
+        <h2 style="color: #0056D2; margin: 0;">Ventanet</h2>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding: 25px;">
+        <h3 style="color: #333;">Activá tu cuenta</h3>
+        <p style="color: #444;">Hola <strong th:text="${nombre} ?: 'Usuario'">Usuario</strong>,</p>
+
+
+        <p style="color: #444;">
+          Estás a un paso de activar tu cuenta en <strong>Ventanet</strong>.  
+          Sólo necesitás presionar el botón de abajo para confirmar tu dirección de correo electrónico.
+        </p>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a th:href="@{${linkActivacion}}"
+             style="background-color: #0056D2; color: white; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-weight: bold;">
+             Activar cuenta
+          </a>
+        </div>
+
+        <p style="font-size: 14px; color: #777;">
+          Este enlace expirará en 24 horas.  
+          Si no solicitaste esta cuenta, podés ignorar este correo.
+        </p>
+
+        <p style="color: #333; margin-top: 40px;">¡Te damos la bienvenida!<br>El equipo de Ventanet</p>
+      </td>
+    </tr>
+    <tr>
+      <td style="background-color: #f3f3f3; color: #888; font-size: 11px; padding: 15px; text-align: center;">
+        © 2025 Ventanet - Todos los derechos reservados.
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

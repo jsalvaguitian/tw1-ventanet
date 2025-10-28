@@ -54,5 +54,23 @@
         </div>
     </main>
 
+    <!-- Toggle password -->
+    <script th:inline="javascript">
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = btn.closest('.password-wrapper').querySelector('input');
+                const icon = btn.querySelector('.material-symbols-outlined');
+
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.textContent = 'visibility_off';
+                } else {
+                    input.type = 'password';
+                    icon.textContent = 'visibility';
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>

@@ -149,7 +149,7 @@ public class ControladorAdministrador {
                     "El equipo de Ventanet";
         }
 
-        servicioEmail.enviarEmail(proveedor.getEmail(), asunto, mensaje);
+        servicioEmail.enviarEmail(proveedor.getEmail(), asunto, mensaje, false);
 
         respuesta.put("mensaje", "Proveedor " + nuevoEstado.toLowerCase() + " correctamente.");
         respuesta.put("estado", nuevoEstado);
