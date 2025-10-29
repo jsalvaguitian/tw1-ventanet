@@ -78,6 +78,6 @@ public class RepositorioProveedorImpl implements RepositorioProveedor {
                 .createCriteria(Proveedor.class)
                 .add(Restrictions.eq("id", idUsuario))
                 .uniqueResult();
-    }
+    }    
 
 }

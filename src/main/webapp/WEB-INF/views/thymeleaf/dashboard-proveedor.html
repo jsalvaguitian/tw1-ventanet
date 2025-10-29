@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
+    <link rel="stylesheet" th:href="@{/css/dashboard-proveedor.css}" />
     <style>
         body {
             overflow-x: hidden;
@@ -17,7 +17,6 @@
             height: 100vh;
         }
 
-        /* === HEADER === */
         header {
             height: 60px;
             background-color: #343a40;
@@ -57,13 +56,13 @@
             min-width: 180px;
         }
 
-        /* === LAYOUT === */
+
         .main-container {
             display: flex;
             flex: 1;
         }
 
-        /* === SIDEBAR === */
+
         #sidebar {
             width: 240px;
             min-height: 100vh;
@@ -102,14 +101,14 @@
             background: transparent;
         }
 
-        /* === MAIN CONTENT === */
+
         main {
             flex-grow: 1;
             padding: 20px;
             background-color: #f4f6f9;
         }
 
-        /* Estilo badge notificaciones */
+
         header .badge {
             position: absolute;
             top: 2px;
@@ -119,7 +118,7 @@
             color: white;
         }
 
-        /* Estilo dropdown de notificaciones */
+
         .dropdown-menu li {
             font-size: 0.9rem;
         }
@@ -147,19 +146,84 @@
             background-color: #f8f9fa;
         }
     </style>
+    <!-- <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            const stats = document.querySelectorAll(".stat");
+            const tableContainer = document.createElement("div");
+            tableContainer.classList.add("events-table");
+            document.querySelector(".stats").after(tableContainer);
+
+            // ✅ Thymeleaf convierte el objeto Java en JSON real
+            let cotizaciones = [[${ cotizaciones }]];
+
+            console.log("Cotizaciones disponibles:", cotizaciones);
+            loadTable("TOTAL");
+
+            function loadTable(tipo) {
+                let filtradas = [];
+
+                switch (tipo) {
+                    case "COTIZACIONES PENDIENTES":
+                        filtradas = cotizaciones.filter(c => c.estado === "PENDIENTE");
+                        break;
+                    case "COTIZACIONES APROBADAS":
+                        filtradas = cotizaciones.filter(c => c.estado === "APROBADA");
+                        break;
+                    case "COTIZACIONES RECHAZADAS":
+                        filtradas = cotizaciones.filter(c => c.estado === "RECHAZADO");
+                        break;
+                    case "COTIZACIONES COMPLETADAS":
+                        filtradas = cotizaciones.filter(c => c.estado === "COMPLETADA");
+                        break;
+                    default:
+                        filtradas = cotizaciones;
+                }
+
+                let html = `
+                <table class="table table-striped mt-4">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Monto Total</th>
+                            <th>Estado</th>
+                            <th>Fecha Creación</th>
+                            <th>Fecha Expiración</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filtradas.map(c => `
+                            <tr>
+                                <td>${c.id}</td>
+                                <td>${c.clienteNombre ?? '-'}</td>
+                                <td>${c.montoTotal}</td>
+                                <td>${c.estado}</td>
+                                <td>${c.fechaCreacion}</td>
+                                <td>${c.fechaExpiracion}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+                tableContainer.innerHTML = html;
+            }
+        });
+    </script> -->
+
+
 </head>
 
 <body>
 
     <!-- ===== HEADER ===== -->
-        <!-- Logo -->
-        <!-- HEADER -->
-<header class="site-header">
-    <div class="header-inner">
-        <a th:href="@{/}" class="logo">
-            <span class="brand">VENTANET</span>
-        </a>
-    </div>
+    <!-- Logo -->
+    <!-- HEADER -->
+    <header class="site-header">
+        <div class="header-inner">
+            <a th:href="@{/}" class="logo">
+                <span class="brand">VENTANET</span>
+            </a>
+        </div>
 
         <!-- Menú derecho -->
         <ul class="nav">
@@ -207,7 +271,7 @@
                     <span th:text="${mailProveedor}">Proveedor</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                   <!-- <li><a class="dropdown-item" href="#">Perfil</a></li>
+                    <!-- <li><a class="dropdown-item" href="#">Perfil</a></li>
                     <li><a class="dropdown-item" href="#">Configuración</a></li>-->
                     <li>
                         <hr class="dropdown-divider">
@@ -223,78 +287,94 @@
     </header>
 
 
-    <div class="main-container">
+    <div class="d-flex" style="min-height: 100vh;">
         <!-- ===== SIDEBAR ===== -->
-        <aside id="sidebar" class="d-flex flex-column position-relative">
-            <button class="toggle-btn" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
-            <ul class="nav flex-column mt-4">
-                <!-- Dashboard -->
-                <li class="nav-item">
-                    <a th:href="@{/dashboard-proveedor}" class="nav-link">
-                        <i class="bi bi-house"></i><span>Dashboard</span>
-                    </a>
-                </li>
-
-                <!-- Materiales con submenú -->
-                <li class="nav-item">
-                    <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                        href="#submenuMateriales" role="button" aria-expanded="false" aria-controls="submenuMateriales">
-                        <span><i class="bi bi-journal-text me-2"></i>Materiales</span>
-                        <i class="bi bi-chevron-down"></i>
-                    </a>
-                    <div class="collapse ps-4" id="submenuMateriales">
-                        <ul class="nav flex-column">
-                            <li class="nav-item">
-                                <a th:href="@{/producto/nuevo-producto}" class="nav-link">Alta manual</a>
-                            </li>
-                            <!--
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">Importar desde Excel, CSV</a>
-                            </li>-->
-                            <li class="nav-item">
-                                <a th:href="@{/producto/listado}" class="nav-link">Listado de productos</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <!-- Solicitudes de Cotización 
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="bi bi-lock"></i><span>Solicitudes de Cotiza-</span>
-                    </a>
-                </li>-->
-
-                <!-- Actualización de Precios
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="bi bi-clipboard-data"></i><span>Actualización de Precios</span>
-                    </a>
-                </li>-->
-
-                <!-- Reportes
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="bi bi-graph-up"></i><span>Reportes</span>
-                    </a>
-                </li>-->
-
-                <!-- Configuración 
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="bi bi-gear"></i><span>Configuración</span>
-                    </a>
-                </li>-->
-            </ul>
-        </aside>
-
+        <div th:replace="sidebar :: sidebar"></div>
 
         <!-- ===== MAIN CONTENT ===== -->
-        <main>
-            <article>
-                <h1>Bienvenido, <span th:text="${mailProveedor}"></span></h1>
-            </article>
-        </main>
+        <div class="main" id="mainContent">
+            <div class="header row align-items-center mb-4">
+                <div class="col-12 col-md-8 mb-2 mb-md-0">
+                    <input type="text" class="form-control" placeholder="Buscar por cotización, Ubicación, Fecha, etc.">
+                </div>
+                <div class="col-12 col-md-4 d-flex align-items-center justify-content-md-end">
+                    <div class="profile-section">
+                        <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop&crop=face"
+                            alt="Cliente" class="profile-img">
+                        <div class="profile-info">
+                            <h3><span th:text="${mailProveedor}"></span></h3>
+                            <p>PROVEEDOR</p>
+                        </div>
+                        <i class="fas fa-edit" style="color: white; margin-left: 10px;"></i>
+                    </div>
+                </div>
+                <div class="stats">
+                    <div class="stat flex-fill text-center">
+                        <span class="number" id="totalEvents" th:text="${totalCotizaciones}">0</span><br>
+                        <span class="label">Total de Cotizaciones</span>
+                    </div>
+                    <div class="stat flex-fill text-center">
+                        <span class="number" id="pendingEvents" th:text="${cotizacionesPendientes}">0</span><br>
+                        <span class="label">Cotizaciones Pendientes</span>
+                    </div>
+                    <div class="stat flex-fill text-center">
+                        <span class="number" id="approvedEvents" th:text="${cotizacionesAprobadas}">0</span><br>
+                        <span class="label">Cotizaciones Aprobadas</span>
+                    </div>
+                    <div class="stat flex-fill text-center">
+                        <span class="number" id="rejectedEvents" th:text="${cotizacionesRechazadas}">0</span><br>
+                        <span class="label">Cotizaciones Rechazadas</span>
+                    </div>
+                    <div class="stat flex-fill text-center">
+                        <span class="number" id="completedEvents" th:text="${cotizacionesCompletadas}">0</span><br>
+                        <span class="label">Cotizaciones Completadas</span>
+                    </div>
+                </div>
+
+                <!-- <div class="filters mb-3">
+                    <select id="dateFilter" class="form-select w-auto me-2">
+                        <option value="all">Todos</option>
+                        <option value="today">Hoy</option>
+                        <option value="yesterday">Ayer</option>
+                        <option value="last7">Últimos 7 días</option>
+                        <option value="last30">Últimos 30 días</option>
+                        <option value="month">Este Mes</option>
+                        <option value="custom">Rango Personalizado</option>
+                    </select>
+                    <button id="applyFilter" class="btn btn-primary me-2">Aplicar</button>
+                    <button class="btn btn-primary me-2">Crear Cotización</button>
+                </div>
+                <div>
+                    <div class="events-table">
+                        <div id="eventsGrid" class="events-grid"></div>
+                    </div>
+                </div> -->
+            </div>
+            <div class="events-table">
+                <table class="table table-striped mt-4" id="tablaCotizaciones" th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Monto Total</th>
+                            <th>Estado</th>
+                            <th>Fecha Creación</th>
+                            <th>Fecha Expiración</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cotizacion : ${cotizaciones}">
+                        <td th:text="${cotizacion.id}"></td>
+                        <td th:text="${cotizacion.cliente.nombre}"></td>
+                        <td th:text="${cotizacion.montoTotal}"></td>
+                        <td th:text="${cotizacion.estado}"></td>
+                        <td th:text="${cotizacion.fechaCreacion}"></td>
+                        <td th:text="${cotizacion.fechaExpiracion}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap JS -->

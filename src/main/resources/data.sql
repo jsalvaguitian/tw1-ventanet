@@ -13,9 +13,16 @@ INSERT INTO Presentacion (id, descripcion, unidadMedida, cantidad) VALUES
     (1, 'Kilogramo', 'kg', 1.0),
     (2, 'Litro', 'litros', 0.5),
     (3, 'Unidad', 'unidades', 10.0);
+<<<<<<< HEAD
 
 -- Tipos de producto
 INSERT INTO TipoProducto (id, nombre) VALUES
+=======
+ 
+INSERT INTO
+    TipoProducto(id, nombre)
+VALUES
+>>>>>>> b83b86cb9883420e422834175aab41c62a06a09b
     (1, 'Puerta'),
     (2, 'Ventana'),
     (3, 'Techo');
@@ -83,121 +90,48 @@ INSERT INTO Producto (
 (9, 'Ventana doble vidrio', 20000.00, 'Ventana doble vidrio templado', '/uploads/imagenes/ventana-doble-vidrio.jpg', 5, 6, 2, 1, 2, 'VDV-01', true),
 (10, 'Puerta blindada', 45000.00, 'Puerta de seguridad', '/uploads/imagenes/puerta-blindada.jpg', 8, 6, 1, 3, 1, 'PB-02', false);
 
-INSERT INTO
-    Cotizacion(
-        id,
-        clienteId,
-        nombre,
-        cantidad,
-        ubicacion,
-        alto,
-        ancho,
-        materialPerfil,
-        tipoVidrio,
-        color,
-        fechaCotizacion
-    )
+
+
+
+-- COTIZACIONES DE PRUEBA
+INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
+VALUES (1, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 10 DAY), 2, 3, 95000.00, 'PENDIENTE');
+
+INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
+VALUES (2, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 10 DAY), 2, 3, 37000.00, 'APROBADA');
+
+INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
+VALUES (3, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY), 2, 3, 37000.00, 'PENDIENTE');
+
+INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
+VALUES (4, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY), 2, 3, 52000.00, 'COMPLETADA');
+
+
+
+
+-- ITEMS DE LA COTIZACIÓN 1
+INSERT INTO CotizacionItem (id, cotizacion_id, producto_id, cantidad, precioUnitario)
 VALUES
-    (   1,
-        2,
-        'Ventana Corrediza 2 hojas',
-        2,
-        'CABA',
-        1.00,
-        1.20,
-        'Aluminio',
-        'Simple',
-        'BLANCO',
-        CURRENT_DATE
-    ),
-    (
-        2,
-        2,
-        'Ventana Oscilobatiente aluminio',
-        1,
-        'San Justo',
-        0.80,
-        1.00,
-        'Aluminio',
-        'Simple',
-        'GRIS',
-        CURRENT_DATE
-    ),
-    (
-        3,
-        2,
-        'Paño Fijo DVH',
-        3,
-        'Morón',
-        1.20,
-        1.50,
-        'Aluminio',
-        'DVH',
-        'NEGRO',
-        CURRENT_DATE
-    ),
-    (
-        4,
-        2,
-        'Ventana corrediza PVC',
-        4,
-        'La Plata',
-        1.20,
-        1.80,
-        'PVC',
-        'Simple',
-        'BLANCO',
-        CURRENT_DATE
-    ),
-    (
-        5,
-        2,
-        'Ventana batiente con mosquitero',
-        2,
-        'Lomas de Zamora',
-        0.60,
-        1.00,
-        'Aluminio',
-        'Simple',
-        'GRIS',
-        CURRENT_DATE
-    ),
-    (
-        6,
-        2,
-        'Ventana corrediza 3 hojas',
-        1,
-        'Quilmes',
-        1.20,
-        2.00,
-        'Aluminio',
-        'Simple',
-        'NEGRO',
-        CURRENT_DATE
-    ),
-    (
-        7,
-        2,
-        'Ventana paño fijo aluminio',
-        2,
-        'Avellaneda',
-        0.80,
-        1.20,
-        'Aluminio',
-        'Simple',
-        'BLANCO',
-        CURRENT_DATE
-    ),
-    (
-        8,
-        2,
-        'Ventana oscilobatiente PVC',
-        1,
-        'Lanús',
-        0.80,
-        1.00,
-        'PVC',
-        'Simple',
-        'GRIS',
-        CURRENT_DATE
-    );
+(1, 1, 1, 2, 15000.00),  -- Puerta de Madera x2
+(2, 1, 2, 3, 10000.00),  -- Ventana de Aluminio x3
+(3, 1, 6, 5, 5000.00);   -- Pintura Blanca x5
+
+-- ITEMS DE LA COTIZACIÓN 2
+INSERT INTO CotizacionItem (id, cotizacion_id, producto_id, cantidad, precioUnitario)
+VALUES
+(4, 2, 7, 1, 17000.00),  -- Puerta de PVC x1
+(5, 2, 9, 1, 20000.00);  -- Ventana doble vidrio x1
+
+-- ITEMS DE LA COTIZACIÓN 3
+INSERT INTO CotizacionItem (id, cotizacion_id, producto_id, cantidad, precioUnitario)
+VALUES
+(6, 3, 7, 3, 17000.00),  -- Puerta de PVC x1
+(7, 3, 9, 1, 20000.00);  -- Ventana doble vidrio x1
+
+-- ITEMS DE LA COTIZACIÓN 4
+INSERT INTO CotizacionItem (id, cotizacion_id, producto_id, cantidad, precioUnitario)
+VALUES
+(8, 4, 1, 2, 15000.00),  -- Puerta de Madera x2
+(9, 4, 7, 3, 17000.00), 
+(10, 4, 9, 1, 20000.00);  -- Ventana doble vidrio x1
+
