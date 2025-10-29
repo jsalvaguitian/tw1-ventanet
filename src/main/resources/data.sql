@@ -13,16 +13,9 @@ INSERT INTO Presentacion (id, descripcion, unidadMedida, cantidad) VALUES
     (1, 'Kilogramo', 'kg', 1.0),
     (2, 'Litro', 'litros', 0.5),
     (3, 'Unidad', 'unidades', 10.0);
-<<<<<<< HEAD
 
 -- Tipos de producto
 INSERT INTO TipoProducto (id, nombre) VALUES
-=======
- 
-INSERT INTO
-    TipoProducto(id, nombre)
-VALUES
->>>>>>> b83b86cb9883420e422834175aab41c62a06a09b
     (1, 'Puerta'),
     (2, 'Ventana'),
     (3, 'Techo');
