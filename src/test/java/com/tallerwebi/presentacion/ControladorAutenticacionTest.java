@@ -3,6 +3,9 @@ package com.tallerwebi.presentacion;
 import com.tallerwebi.dominio.entidades.Cliente;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.ContraseniaInvalida;
+import com.tallerwebi.dominio.excepcion.CuentaNoActivaException;
+import com.tallerwebi.dominio.excepcion.CuentaPendienteException;
+import com.tallerwebi.dominio.excepcion.CuentaRechazadaException;
 import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
@@ -13,13 +16,13 @@ import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -34,6 +37,7 @@ public class ControladorAutenticacionTest {
 	private HttpServletRequest requestMock;
 	private HttpSession sessionMock;
 	private ServicioUsuario servicioUsuarioMock;
+	private RedirectAttributes redirectAttributesMock;
 
 	@BeforeEach
 	public void init() {
@@ -46,14 +50,15 @@ public class ControladorAutenticacionTest {
 		sessionMock = mock(HttpSession.class);
 		servicioUsuarioMock = mock(ServicioUsuario.class);
 		controladorLogin = new ControladorAutenticacion(servicioUsuarioMock);
+		redirectAttributesMock = mock(RedirectAttributes.class);
 
 		when(requestMock.getParameter("confirmarPassword")).thenReturn("123");
 	}
 
 	@Test
-	public void loginConUsuarioYPasswordInorrectosDeberiaLlevarALoginNuevamente() throws UsuarioInexistenteException {
+	public void loginConUsuarioYPasswordInorrectosDeberiaLlevarALoginNuevamente() throws UsuarioInexistenteException, CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException {
 		// preparacion
-		when(servicioUsuarioMock.consultarUsuario(anyString(), anyString()))
+		when(servicioUsuarioMock.iniciarSesion(anyString(), anyString()))
 				.thenThrow(new UsuarioInexistenteException());
 
 		// Ejecución
@@ -66,14 +71,14 @@ public class ControladorAutenticacionTest {
 	}
 
 	@Test
-	public void loginConUsuarioYPasswordCorrectosDeberiaLLevarAHome() throws UsuarioInexistenteException {
+	public void loginConUsuarioYPasswordCorrectosDeberiaLLevarAHome() throws UsuarioInexistenteException, CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException {
 		// preparacion
 		Usuario usuarioEncontradoMock = mock(Usuario.class);
 		when(usuarioEncontradoMock.getRol()).thenReturn("ADMIN");
 
 		when(requestMock.getSession()).thenReturn(sessionMock);
 
-		when(servicioUsuarioMock.consultarUsuario(anyString(), anyString())).thenReturn(usuarioEncontradoMock);
+		when(servicioUsuarioMock.iniciarSesion(anyString(), anyString())).thenReturn(usuarioEncontradoMock);
 
 		// ejecucion
 		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
@@ -88,11 +93,12 @@ public class ControladorAutenticacionTest {
 			throws UsuarioExistente, ContraseniaInvalida, EmailInvalido {
 
 		// ejecucion
-		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock, requestMock);
+		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock, requestMock,redirectAttributesMock);
 
 		// validacion
-		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
-		verify(servicioUsuarioMock, times(1)).registrar(any(Usuario.class));
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/info-registro-resultado"));
+		verify(servicioUsuarioMock, times(1)).registrar(any(Cliente.class));
+		verify(redirectAttributesMock, times(1)).addFlashAttribute("tipoUsuario", "cliente");
 	}
 
 	@Test
@@ -102,7 +108,7 @@ public class ControladorAutenticacionTest {
 		doThrow(UsuarioExistente.class).when(servicioUsuarioMock).registrar(any(Cliente.class));
 
 		// ejecucion
-		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock, requestMock);
+		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock, requestMock, null);
 
 		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-usuario"));
@@ -116,7 +122,7 @@ public class ControladorAutenticacionTest {
 		doThrow(RuntimeException.class).when(servicioUsuarioMock).registrar(any(Cliente.class));
 
 		// ejecucion
-		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock, requestMock);
+		ModelAndView modelAndView = controladorLogin.registrarme(usuarioMock, requestMock, null);
 
 		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-usuario"));

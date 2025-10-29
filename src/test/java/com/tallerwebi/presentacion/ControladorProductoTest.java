@@ -2,6 +2,10 @@ package com.tallerwebi.presentacion;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.entidades.Marca;
@@ -9,6 +13,7 @@ import com.tallerwebi.dominio.entidades.Presentacion;
 import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.TipoProducto;
+import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
 import com.tallerwebi.dominio.servicios.ServicioMarca;
@@ -23,6 +28,8 @@ import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.doNothing;
@@ -113,8 +120,7 @@ public class ControladorProductoTest {
         assertThat(productosDtoObtenidos.size(), equalTo(3));
         assertThat(modelAndView.getModel().get("exito").toString(), equalToIgnoringCase("Hay productos."));
     }
-    // Peticion POST,PUT, DELETE
-    // Validar que la vista sea la correcta
+    
 
     @Test
     public void cuandoGuardoProductoValidoRedirigeAListadoConExito() throws ProductoExistente {
@@ -154,5 +160,92 @@ public class ControladorProductoTest {
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:listado"));
     }
+
+    @Test
+public void cuandoNombreEsNuloDebeMostrarError() throws ProductoExistente {
+    when(requestMock.getSession()).thenReturn(sessionMock);
+    UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
+    uSesionDto.setRol("Proveedor");
+    when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
+
+    Producto producto = new Producto();
+    producto.setNombre(null); 
+    producto.setPrecio(500);
+    producto.setStock(5);
+    producto.setProveedor(new Proveedor());
+    producto.getProveedor().setId(1L);
+    producto.setMarca(new Marca());
+    producto.getMarca().setId(1L);
+    producto.setTipoProducto(new TipoProducto());
+    producto.getTipoProducto().setId(1L);
+
+    // simulamos que el servicio lanza excepción por datos inválidos
+    doThrow(new IllegalArgumentException("El nombre del producto es obligatorio."))
+        .when(servicioProducto).crearProducto(any(Producto.class));
+
+    ModelAndView mav = controladorProductos.crearProducto(producto, null, requestMock);
+
+    assertThat(mav.getViewName(), equalTo("nuevo-producto"));
+    assertThat(mav.getModel().get("error").toString(),
+               equalToIgnoringCase("El nombre del producto es obligatorio."));
+}
+
+@Test
+public void cuandoStockNegativoDebeMostrarError() throws ProductoExistente {
+    when(requestMock.getSession()).thenReturn(sessionMock);
+    UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
+    uSesionDto.setRol("Proveedor");
+    when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
+
+    Producto producto = new Producto();
+    producto.setNombre("Vidrio templado");
+    producto.setPrecio(200);
+    producto.setStock(-5); 
+    producto.setProveedor(new Proveedor());
+    producto.getProveedor().setId(1L);
+    producto.setMarca(new Marca());
+    producto.getMarca().setId(1L);
+    producto.setTipoProducto(new TipoProducto());
+    producto.getTipoProducto().setId(1L);
+
+    doThrow(new IllegalArgumentException("El stock no puede ser negativo."))
+        .when(servicioProducto).crearProducto(any(Producto.class));
+
+    ModelAndView mav = controladorProductos.crearProducto(producto, null, requestMock);
+
+    assertThat(mav.getViewName(), equalTo("nuevo-producto"));
+    assertThat(mav.getModel().get("error").toString(),
+               equalToIgnoringCase("El stock no puede ser negativo."));
+}
+
+
+@Test
+public void cuandoPrecioEsNegativoDebeMostrarError() throws ProductoExistente {
+    when(requestMock.getSession()).thenReturn(sessionMock);
+    UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
+    uSesionDto.setRol("Proveedor");
+    when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
+
+    Producto producto = new Producto();
+    producto.setNombre("Producto inválido");
+    producto.setPrecio(-10); 
+    producto.setStock(3);
+    producto.setProveedor(new Proveedor());
+    producto.getProveedor().setId(1L);
+    producto.setMarca(new Marca());
+    producto.getMarca().setId(1L);
+    producto.setTipoProducto(new TipoProducto());
+    producto.getTipoProducto().setId(1L);
+
+    doThrow(new IllegalArgumentException("El precio debe ser mayor que cero."))
+        .when(servicioProducto).crearProducto(any(Producto.class));
+
+    ModelAndView mav = controladorProductos.crearProducto(producto, null, requestMock);
+
+    assertThat(mav.getViewName(), equalTo("nuevo-producto"));
+    assertThat(mav.getModel().get("error").toString(),
+               equalToIgnoringCase("El precio debe ser mayor que cero."));
+}
+
 
 }

@@ -1,7 +1,8 @@
 package com.tallerwebi.dominio.enums;
 
-public enum EstadoProveedor {
-    ACTIVO,
+public enum EstadoCotizacion {
+    APROBADA,
     PENDIENTE,
     RECHAZADO,
+    COMPLETADA
 }

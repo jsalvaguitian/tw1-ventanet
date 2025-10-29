@@ -4,6 +4,9 @@ import com.tallerwebi.dominio.entidades.Cliente;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.ContraseniaInvalida;
+import com.tallerwebi.dominio.excepcion.CuentaNoActivaException;
+import com.tallerwebi.dominio.excepcion.CuentaPendienteException;
+import com.tallerwebi.dominio.excepcion.CuentaRechazadaException;
 import com.tallerwebi.dominio.excepcion.CuitInvalido;
 import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
@@ -14,20 +17,22 @@ import com.tallerwebi.presentacion.dto.DatosLogin;
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
-import net.bytebuddy.asm.Advice.Return;
-
+import org.dom4j.rule.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.lang.ProcessBuilder.Redirect;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -66,25 +71,34 @@ public class ControladorAutenticacion {
             model.put("error_password", "Por favor, ingresa la contraseña.");
         }
 
-        if (!emailIngresado.isBlank() && !contraseniaIngresada.isBlank() && emailTieneFormatoValido(emailIngresado)) {
+        if (model.isEmpty()) { // o sea no hubo msj de errores de validacion
 
             try {
-                Usuario usuarioBuscado = servicioUsuario.consultarUsuario(datosLogin.getEmail(),
+                Usuario usuarioBuscado;
+
+                usuarioBuscado = servicioUsuario.iniciarSesion(datosLogin.getEmail(),
                         datosLogin.getPassword());
+
                 String rol = usuarioBuscado.getRol();
                 UsuarioSesionDto usuarioSesion = new UsuarioSesionDto(usuarioBuscado.getId(), usuarioBuscado.getEmail(),
-                        rol);
+                        rol, usuarioBuscado.getNombre(), usuarioBuscado.getApellido());
                 request.getSession().setAttribute("usuarioLogueado", usuarioSesion);
 
                 if (rol.equalsIgnoreCase("CLIENTE")) {
-                    return new ModelAndView("redirect:/dashboard");
+                    return new ModelAndView("redirect:/cliente/dashboard");
 
                 } else if (rol.equalsIgnoreCase("PROVEEDOR")) {
-                    return new ModelAndView("redirect:/dashboard-proveedor");
+                    return new ModelAndView("redirect:/proveedor/dashboard-proveedor");
 
                 } else if (rol.equalsIgnoreCase("ADMIN")) {
                     return new ModelAndView("redirect:/admin/dashboard-admin");
                 }
+
+            } catch (CuentaNoActivaException | CuentaPendienteException | CuentaRechazadaException e) {
+                e.printStackTrace();
+                model.put("error", e.getMessage());
+                model.put("datosLogin", datosLogin);
+                return new ModelAndView("login", model);
 
             } catch (UsuarioInexistenteException e) {
                 model.put("error", "Usuario o clave incorrecta");
@@ -98,7 +112,8 @@ public class ControladorAutenticacion {
     }
 
     @RequestMapping(path = "/registrarme", method = RequestMethod.POST)
-    public ModelAndView registrarme(@ModelAttribute("usuario") Cliente usuario, HttpServletRequest request) {
+    public ModelAndView registrarme(@ModelAttribute("usuario") Cliente usuario, HttpServletRequest request,
+            RedirectAttributes redirectAttributes) {
         // request confirmar password
         String confirmarPassword = request.getParameter("confirmarPassword");
         // Comparar contrasenias
@@ -113,6 +128,7 @@ public class ControladorAutenticacion {
             cliente.setEmail(usuario.getEmail());
             cliente.setPassword(usuario.getPassword());
             cliente.setNombre(usuario.getNombre());
+            cliente.setApellido(usuario.getApellido());
 
             servicioUsuario.registrar(cliente);
         } catch (UsuarioExistente e) {
@@ -128,13 +144,17 @@ public class ControladorAutenticacion {
             model.put("error", "Email invalido");
             return new ModelAndView("nuevo-usuario", model);
         } catch (Exception e) {
+            e.printStackTrace();
             ModelMap model = new ModelMap();
             model.put("error", "Error al registrar el nuevo usuario");
             model.put("usuario", usuario);
 
             return new ModelAndView("nuevo-usuario", model);
         }
-        return new ModelAndView("redirect:/login");
+        redirectAttributes.addFlashAttribute("tipoUsuario", "cliente");
+
+        return new ModelAndView("redirect:/info-registro-resultado");
+
     }
 
     @RequestMapping(path = "/nuevo-usuario", method = RequestMethod.GET)
@@ -149,9 +169,9 @@ public class ControladorAutenticacion {
         return new ModelAndView("home");
     }
 
-    @RequestMapping(path = "/dashboard", method = RequestMethod.GET)
-    public ModelAndView irADashboard() {
-        return new ModelAndView("dashboard");
+    @RequestMapping(path = "/dashboard/detalle-cotizacion", method = RequestMethod.GET)
+    public ModelAndView irADetalleCotizacion() {
+        return new ModelAndView("detalle-cotizacion");
     }
 
     @RequestMapping(path = "/", method = RequestMethod.GET)
@@ -165,9 +185,19 @@ public class ControladorAutenticacion {
         return "redirect:/login";
     }
 
-    @RequestMapping(path = "/info-registro-proveedor", method = RequestMethod.GET)
-    public ModelAndView irAInformacionRegistroProveedor() {
-        return new ModelAndView("info-registro-proveedor");
+    @RequestMapping(path = "/info-registro-resultado", method = RequestMethod.GET)
+    public ModelAndView irAInformacionRegistroProveedor(@ModelAttribute("tipoUsuario") String tipoUsuario) {
+        ModelMap modelo = new ModelMap();
+        modelo.put("tipoUsuario", tipoUsuario);
+
+        if (tipoUsuario.equals("cliente")) {
+            modelo.put("mensaje", "Por favor, revisa tu email para terminar el proceso de activacion de cuenta.");
+        } else if (tipoUsuario.equals("proveedor")) {
+            modelo.put("mensaje",
+                    "Su registro fue un exito. Y se encuentra en proceso de verificación por nuestro equipo.");
+        }
+
+        return new ModelAndView("info-registro-resultado", modelo);
     }
 
     @RequestMapping(path = "/registro-proveedor", method = RequestMethod.GET)
@@ -178,7 +208,8 @@ public class ControladorAutenticacion {
     }
 
     @PostMapping("/registro-proveedor")
-    public ModelAndView procesarRegistroProveedor(@ModelAttribute UsuarioProvDTO usuarioProvDto) {
+    public ModelAndView procesarRegistroProveedor(@ModelAttribute UsuarioProvDTO usuarioProvDto,
+            RedirectAttributes redirectAttributes) {
         ModelMap datos = new ModelMap();
         Proveedor usuarioProv = usuarioProvDto.obtenerEntidad();
 
@@ -217,7 +248,9 @@ public class ControladorAutenticacion {
 
             try {
                 servicioUsuario.registrarProveedor(usuarioProv, usuarioProvDto.getDocumento());
-                return new ModelAndView("redirect:/info-registro-proveedor");
+                redirectAttributes.addFlashAttribute("tipoUsuario", "proveedor");
+
+                return new ModelAndView("redirect:/info-registro-resultado");
 
             } catch (ContraseniaInvalida e) {
                 datos.put("error_password",
@@ -236,6 +269,20 @@ public class ControladorAutenticacion {
 
         datos.put("usuarioProveedorDTO", usuarioProvDto);
         return new ModelAndView("nuevo-proveedor", datos);
+    }
+
+    @GetMapping("/verificar")
+    public ModelAndView verificarCuenta(@RequestParam("token") String token) {
+        boolean exito = servicioUsuario.verificarToken(token);
+        ModelMap model = new ModelMap();
+
+        if (exito) {
+            model.put("mensaje", "Cuenta activada con éxito.");
+        } else {
+            model.put("mensaje", "El enlace de verificación es inválido o ha expirado.");
+        }
+
+        return new ModelAndView("verificacion-resultado", model);
     }
 
     private boolean estaVacioRazonSocial(String razonSocial) {
@@ -259,5 +306,4 @@ public class ControladorAutenticacion {
         return cuit != null && !cuit.isBlank() && cuit.length() == 11 && cuit.matches("\\d+");
     }
 
-    
 }
