@@ -1,6 +1,9 @@
 package com.tallerwebi.infraestructura;
 
 import java.util.List;
+
+import javax.persistence.criteria.JoinType;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -8,12 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.tallerwebi.dominio.entidades.Cotizacion;
-import com.tallerwebi.dominio.repositorios_interfaces.RepositorioGenerico;
+import com.tallerwebi.dominio.repositorios_interfaces.RepositorioCotizacion;
 
 @Repository("repositorioCotizacion")
-public class RepositorioCotizacionImpl implements RepositorioGenerico<Cotizacion> {
-    // private final Map<Long, Producto> database;
-    // private static Long proximoId;
+public class RepositorioCotizacionImpl implements RepositorioCotizacion {
+
     private SessionFactory sessionFactory;
 
     @Autowired
@@ -22,47 +24,51 @@ public class RepositorioCotizacionImpl implements RepositorioGenerico<Cotizacion
     }
 
     @Override
-    public Cotizacion obtener(Long id) {
+    public Cotizacion obtenerPorId(Long id) {
         final Session session = sessionFactory.getCurrentSession();
         return (Cotizacion) session.createCriteria(Cotizacion.class)
-                .add(Restrictions.eq("clienteId", id))
-                .uniqueResult();
-    }
-
-    @Override
-    public List<Cotizacion> obtener() {
-        return sessionFactory.getCurrentSession()
-                .createQuery("from Cotizacion", Cotizacion.class)
-                .list();
-    }
-
-    @Override
-    public void eliminar(Long id) {
-        Cotizacion cotizacion = (Cotizacion) sessionFactory.getCurrentSession().createCriteria(Cotizacion.class)
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
-
-        if (cotizacion != null) {
-            sessionFactory.getCurrentSession().remove(cotizacion);
-        }
     }
 
     @Override
-    public Boolean guardar(Cotizacion item) {
-        sessionFactory.getCurrentSession().save(item);
-        return true;
+    public List<Cotizacion> obtenerPorIdProveedor(Long proveedorId) {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery(
+                "SELECT c FROM Cotizacion c " +
+                        "JOIN FETCH c.cliente " +
+                        "JOIN FETCH c.proveedor " +
+                        "WHERE c.proveedor.id = :proveedorId",
+                Cotizacion.class);
+        query.setParameter("proveedorId", proveedorId);
+        return query.getResultList();
     }
 
     @Override
-    public Boolean actualizar(Cotizacion item) {
+    public List<Cotizacion> obtenerPorIdProveedorYEstado(Long proveedorId, String estado) {
+        var session = sessionFactory.getCurrentSession();
+        var cb = session.getCriteriaBuilder();
+        var query = cb.createQuery(Cotizacion.class);
+        var root = query.from(Cotizacion.class);
+
+        query.select(root).where(
+                cb.and(
+                        cb.equal(root.get("proveedor").get("id"), proveedorId),
+                        cb.equal(root.get("estado").get("estado"), estado)));
+
+        return session.createQuery(query).getResultList();
+    }
+
+    @Override
+    public boolean actualizarEstado(Cotizacion item) {
         sessionFactory.getCurrentSession().update(item);
         return true;
     }
 
     public List<Cotizacion> obtenerPorIdCliente(Long clienteId) {
-       return sessionFactory.getCurrentSession()
-            .createQuery("from Cotizacion c where c.clienteId = :clienteId", Cotizacion.class)
-            .setParameter("clienteId", clienteId)
-            .list();
+        return sessionFactory.getCurrentSession()
+                .createQuery("from Cotizacion c where c.clienteId = :clienteId", Cotizacion.class)
+                .setParameter("clienteId", clienteId)
+                .list();
     }
 }

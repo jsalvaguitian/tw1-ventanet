@@ -1,119 +1,135 @@
 package com.tallerwebi.dominio.entidades;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
-import com.tallerwebi.dominio.enums.Color;
+import com.tallerwebi.dominio.enums.EstadoCotizacion;
 
 @Entity
 public class Cotizacion {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long clienteId;
-    private String nombre;
-    private Integer cantidad;
-    private String ubicacion;
-    private Double alto;
-    private Double ancho;
-    private String materialPerfil;
-    private String tipoVidrio;
+    @Column(name = "fecha_creacion", nullable = false)
+    private LocalDate fechaCreacion;
+    @Column(name = "fecha_expiracion")
+    private LocalDate fechaExpiracion;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "proveedor_id", nullable = false)
+    private Proveedor proveedor;
+    @OneToMany(mappedBy = "cotizacion", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<CotizacionItem> items = new ArrayList<>();
+    @Column(name = "monto_total", nullable = false)
+    private Double montoTotal = 0.0;
     @Enumerated(EnumType.STRING)
-    private Color color;
-    private LocalDate fechaCotizacion;
+    private EstadoCotizacion estado;
 
-
-   
-    public void setId(Long id) {
-        this.id = id;
+    public void eliminarItem(CotizacionItem item) {
+        this.items.remove(item);
+        item.setCotizacion(null);
+        recalcularMontoTotal();
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public void setAlto(Double alto) {
-        this.alto = alto;
-    }
-
-    public void setAncho(Double ancho) {
-        this.ancho = ancho;
-    }
-
-    public void setMaterialPerfil(String materialPerfil) {
-        this.materialPerfil = materialPerfil;
-    }
-
-    public void setTipoVidrio(String tipoVidrio) {
-        this.tipoVidrio = tipoVidrio;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
+    public void recalcularMontoTotal() {
+        this.montoTotal = items.stream()
+                .mapToDouble(item -> {
+                    Object subtotal = item.getSubtotal();
+                    if (subtotal == null) {
+                        return 0.0;
+                    }
+                    if (subtotal instanceof Number) {
+                        return ((Number) subtotal).doubleValue();
+                    }
+                    if (subtotal instanceof String) {
+                        try {
+                            return Double.parseDouble((String) subtotal);
+                        } catch (NumberFormatException e) {
+                            return 0.0;
+                        }
+                    }
+                    return 0.0;
+                })
+                .sum(); 
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public Integer getCantidad() {
-        return cantidad;
+    public LocalDate getFechaCreacion() {
+        return fechaCreacion;
     }
 
-    public Double getAlto() {
-        return alto;
+    public void setFechaCreacion(LocalDate fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
-    public Double getAncho() {
-        return ancho;
+    public LocalDate getFechaExpiracion() {
+        return fechaExpiracion;
     }
 
-    public String getMaterialPerfil() {
-        return materialPerfil;
+    public void setFechaExpiracion(LocalDate fechaExpiracion) {
+        this.fechaExpiracion = fechaExpiracion;
     }
 
-    public String getTipoVidrio() {
-        return tipoVidrio;
+    public Cliente getCliente() {
+        return cliente;
     }
 
-    public Color getColor() {
-        return color;
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
-    public String getUbicacion() {
-        return ubicacion;
+    public Proveedor getProveedor() {
+        return proveedor;
     }
 
-    public void setUbicacion(String ubicacion) {
-        this.ubicacion = ubicacion;
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
     }
 
-    public LocalDate getFechaCotizacion() {
-        return fechaCotizacion;
+    public List<CotizacionItem> getItems() {
+        return items;
     }
 
-    public void setFechaCotizacion(LocalDate fechaCotizacion) {
-        this.fechaCotizacion = fechaCotizacion;
+    public void setItems(List<CotizacionItem> items) {
+        this.items = items;
     }
 
-    public Long getClienteId() {
-        return clienteId;
+    public Double getMontoTotal() {
+        return montoTotal;
     }
-    public void setClienteId(Long clienteId) {
-        this.clienteId = clienteId;
+
+    public void setMontoTotal(Double montoTotal) {
+        this.montoTotal = montoTotal;
+    }
+
+    public EstadoCotizacion getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoCotizacion estado) {
+        this.estado = estado;
     }
 }
