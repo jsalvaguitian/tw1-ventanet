@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verificación de Cuenta</title>
+  <!-- Bootswatch (por ejemplo: Minty o Cosmo) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/minty/bootstrap.min.css">
+</head>
+<body class="bg-light">
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card text-center shadow-lg">
+          <div class="card-body p-4">
+            <h2 class="card-title mb-3">Verificación de Cuenta</h2>
+
+            <!-- Mensaje dinámico -->
+            <p th:text="${mensaje}" class="lead mb-4"></p>
+
+            <!-- Botón para ir al login -->
+            <a th:href="@{/login}" class="btn btn-primary">
+              <i class="bi bi-box-arrow-in-right"></i> Ir al Login
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Icons (para el icono del botón) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+</body>
+</html>

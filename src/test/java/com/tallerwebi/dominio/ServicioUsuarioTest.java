@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import com.tallerwebi.dominio.entidades.UsuarioAuth;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 /* 
 public class ServicioUsuarioTest {

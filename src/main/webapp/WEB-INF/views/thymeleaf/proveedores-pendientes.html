@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proveedores pendientes</title>
+
+  <!-- Bootswatch Spacelab (Bootstrap 5) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/spacelab/bootstrap.min.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    crossorigin="anonymous" />
+
+  <style>
+    .table-div {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+
+    .table-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: .75rem;
+      border-radius: .5rem;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .table-row .col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .table-row .actions {
+      display: flex;
+      gap: .5rem;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    @media (max-width: 768px) {
+      .table-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .table-row .actions {
+        justify-content: flex-end;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02"
+        aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarColor02">
+        <ul class="navbar-nav me-auto">
+
+          <li class="nav-item fw-bold">
+            <a class="nav-link" href="#">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-bold" th:href="@{/admin/proveedores-pendientes}">Proveedores pendientes</a>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle fw-bold" data-bs-toggle="dropdown" href="#" role="button"
+              aria-haspopup="true" aria-expanded="false">Administrador</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item fw-bold" href="#"> <span th:text="${mailAdmin}">Admin</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <form th:action="@{/logout}" method="get">
+                <button type="submit" class="dropdown-item fw-bold">Cerrar sesion</button>
+              </form>
+            </div>
+          </li>
+        </ul>
+        <form class="d-flex">
+          <input class="form-control me-sm-2" type="search" placeholder="Search">
+          <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+  <div class="container py-4">
+    <h1 class="mb-3">Proveedores pendientes</h1>
+
+    <div id="resultado" role="status" aria-live="polite"></div>
+
+    <div class="d-none d-md-flex fw-bold mb-2">
+      <div class="col">Razón social</div>
+      <div class="col">Email</div>
+      <div class="col">Documento</div>
+      <div class="col text-end">Acciones</div>
+    </div>
+
+    <div class="table-div" id="tabla-proveedores">
+      <div th:each="prov : ${proveedoresPendientes}" class="table-row" th:attr="data-id=${prov.id}"
+        th:id="${'prov-row-' + prov.id}">
+        <div class="col">
+          <div class="small text-muted d-md-none">Razón social</div>
+          <div th:text="${prov.razonSocial}">Razón Social</div>
+        </div>
+
+        <div class="col">
+          <div class="small text-muted d-md-none">Email</div>
+          <div th:text="${prov.email}">email@ejemplo.com</div>
+        </div>
+
+        <div class="col">
+          <div class="small text-muted d-md-none">Documento</div>
+          <div th:text="${prov.documentoPath != null ? prov.documentoPath : 'Sin documento'}">documento.pdf</div>
+        </div>
+
+        <div class="col actions text-end">
+          <!-- Abrir archivo en nueva pestaña -->
+          <a class="btn btn-outline-primary btn-sm" th:if="${prov.documentoPath != null}"
+            th:href="@{/admin/ver-documento-proveedor/{id}(id=${prov.id})}" target="_blank">
+            <i class="fa fa-file"></i> Ver documento
+          </a>
+
+          <button type="button" class="btn btn-success btn-sm btn-aceptar" th:attr="data-id=${prov.id}">
+            <i class="fa fa-check"></i> Aceptar
+          </button>
+
+          <button type="button" class="btn btn-danger btn-sm btn-rechazar" th:attr="data-id=${prov.id}">
+            <i class="fa fa-times"></i> Rechazar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header" id="confirmHeader">
+          <h5 class="modal-title" id="confirmModalLabel">Confirmar acción</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body" id="confirmMessage">
+          ¿Estás seguro de realizar esta acción?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn" id="btnConfirmar">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    (function () {
+      const tabla = document.getElementById('tabla-proveedores');
+      const resultado = document.getElementById('resultado');
+      const confirmModalEl = document.getElementById('confirmModal');
+      const confirmModal = new bootstrap.Modal(confirmModalEl);
+      const confirmMessage = document.getElementById('confirmMessage');
+      const confirmHeader = document.getElementById('confirmHeader');
+      const btnConfirmar = document.getElementById('btnConfirmar');
+
+      let idSeleccionado = null;
+      let nuevoEstado = null;
+      let filaSeleccionada = null;
+
+      tabla.addEventListener('click', (e) => {
+        const aceptarBtn = e.target.closest('.btn-aceptar');
+        const rechazarBtn = e.target.closest('.btn-rechazar');
+
+        if (aceptarBtn || rechazarBtn) {
+          const id = (aceptarBtn || rechazarBtn).getAttribute('data-id');
+          idSeleccionado = id;
+          nuevoEstado = aceptarBtn ? 'ACTIVO' : 'RECHAZADO';
+          filaSeleccionada = (aceptarBtn || rechazarBtn).closest('.table-row');
+
+          // Cambiar apariencia del modal según acción
+          if (nuevoEstado === 'ACTIVO') {
+            confirmHeader.className = 'modal-header bg-success text-white';
+            confirmMessage.textContent = '¿Deseas aceptar este proveedor?';
+            btnConfirmar.className = 'btn btn-success';
+            btnConfirmar.textContent = 'Aceptar';
+          } else {
+            confirmHeader.className = 'modal-header bg-danger text-white';
+            confirmMessage.textContent = '¿Deseas rechazar este proveedor?';
+            btnConfirmar.className = 'btn btn-danger';
+            btnConfirmar.textContent = 'Rechazar';
+          }
+
+          confirmModal.show();
+        }
+      });
+
+      // Confirmar acción
+      btnConfirmar.addEventListener('click', async () => {
+        confirmModal.hide();
+        if (!idSeleccionado || !nuevoEstado) return;
+
+        try {
+          const res = await fetch('/spring/admin/cambiar-estado-proveedor', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: String(idSeleccionado), nuevoEstado })
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (res.ok) {
+            mostrarResultado('success', data.mensaje || `Proveedor ${nuevoEstado.toLowerCase()} correctamente.`);
+            if (filaSeleccionada) filaSeleccionada.remove();
+          } else {
+            mostrarResultado('danger', data.error || 'Error al cambiar estado.');
+          }
+        } catch (err) {
+          console.error(err);
+          mostrarResultado('danger', 'Error de conexión.');
+        }
+
+        // limpiar variables
+        idSeleccionado = null;
+        nuevoEstado = null;
+        filaSeleccionada = null;
+      });
+
+      function mostrarResultado(tipo, texto) {
+        resultado.innerHTML = `<div class="alert alert-${tipo} mt-3">${texto}</div>`;
+        setTimeout(() => resultado.innerHTML = '', 5000);
+      }
+    })();
+  </script>
+</body>
+
+</html>
