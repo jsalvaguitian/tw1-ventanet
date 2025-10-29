@@ -57,8 +57,6 @@ public class RepositorioProveedorImpl implements RepositorioProveedor {
                 .uniqueResult();
     }
 
-    
-
-    
+        
 
 }
