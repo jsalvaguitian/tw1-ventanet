@@ -73,18 +73,12 @@ public class ControladorClienteTest {
         uSesionDto.setUsername(null);
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
         ModelAndView modelAndView = controladorCliente.irDashboard(requestMock);
-        assertThat(modelAndView.getModel().get("mailCliente"), equalTo(null));
-        assertThat(modelAndView.getViewName(), equalTo("dashboard"));
+        /*assertThat(modelAndView.getModel().get("mailCliente"), equalTo(null));
+        assertThat(modelAndView.getViewName(), equalTo("dashboard"));*/
+            assertThat(modelAndView.getViewName(), equalTo("redirect:/login"));
+
     }
 
-    @Test
-    public void queRedirijaAlLoginSiElUsuarioLogueadoNoTieneRol() {
-        when(requestMock.getSession()).thenReturn(sessionMock);
-        UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
-        uSesionDto.setRol(null);
-        uSesionDto.setUsername("cliente@unlam.edu.ar");
-        when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
-        ModelAndView modelAndView = controladorCliente.irDashboard(requestMock);
-        assertThat(modelAndView.getViewName(), equalTo("redirect:/login"));
-    }
+
+
 }

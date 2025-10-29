@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Registro ' + (${tipoUsuario} == 'cliente' ? 'Cliente' : 'Proveedor')">Registro exitoso</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        header {
+            background-color: #0e1bd3;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header img {
+            height: 40px;
+        }
+
+        header nav a {
+            color: #000;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+
+        .container-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70vh;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .card img {
+            width: 80px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            color: #1a1a1a;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 15px;
+        }
+
+        footer {
+            background-color: #2e3439;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #74b9ff;
+            text-decoration: none;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 576px) {
+            .card {
+                padding: 25px;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="d-flex align-items-center">
+            <span class="ms-3 fw-semibold">VENTANET</span>
+        </div>
+
+    </header>
+
+    <main class="container-box">
+        <div class="card">
+            <img src="/img/check-icon.png" alt="Éxito"> <!-- ícono de check -->
+            <h3>¡Registro exitoso!</h3>
+            <p th:text="${mensaje}">Revisá tu mail para terminar el proceso de activación de cuenta.</p>
+            <a th:href="@{/login}" class="btn btn-primary">
+                <i class="bi bi-box-arrow-in-right"></i> Ir al Login
+            </a>
+        </div>
+    </main>
+
+    <footer>
+        Ventanet - 2025 - Todos los derechos reservados
+    </footer>
+</body>
+
+</html>

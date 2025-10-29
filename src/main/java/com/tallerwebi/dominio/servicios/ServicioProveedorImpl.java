@@ -3,7 +3,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioProveedor;
 
@@ -25,7 +25,7 @@ public class ServicioProveedorImpl implements ServicioProveedorI{
     public List<Proveedor> obtenerTodosLosProveedoresActivos() {
         return repositorioProveedor.obtenerTodosLosNombresProveedoresActivos();
     }
-  
+  /* 
   @Override
     public Proveedor obtenerPorIdUsuario(Long idUsuario) {
         Proveedor proveedor = repositorioProveedor.buscarProveedorPorIdUsuario(idUsuario);
@@ -34,11 +34,31 @@ public class ServicioProveedorImpl implements ServicioProveedorI{
         }        
         return proveedor;
     }
+*/
 
-}
 
     
 
+
+
+    @Override
+    public List<Proveedor> obtenerTodosLosProveedoresPendientes() {
+        return repositorioProveedor.obtenerTodosLosProveedoresPendientes();
+    }
+
+
+
+    @Override
+    public Proveedor buscarPorId(Long id) {
+        return repositorioProveedor.buscarPorId(id);
+    }
+
+
+
+    @Override
+    public void actualizar(Proveedor proveedor) {
+        repositorioProveedor.actualizar(proveedor);
+    }
 
 
 

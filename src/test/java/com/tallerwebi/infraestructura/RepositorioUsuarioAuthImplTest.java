@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.tallerwebi.dominio.entidades.Proveedor;
-import com.tallerwebi.dominio.entidades.UsuarioAuth;
 import com.tallerwebi.dominio.utils.PasswordUtil;
 
 /*
