@@ -20,6 +20,86 @@ INSERT INTO TipoProducto (id, nombre) VALUES
     (2, 'Ventana'),
     (3, 'Techo');
 
+-- Tipo de ventana
+INSERT INTO TipoVentana (id, nombre) VALUES
+    (1, 'Corrediza'),
+    (2, 'Oscilobatiente'),
+    (3, 'Paño fijo'),
+    (4, 'Abatible'),
+    (5, 'Plegable');
+
+-- Ancho
+INSERT INTO Ancho (id, nombre) VALUES
+    (1, '0.5 m'),
+    (2, '0.6 m'),
+    (3, '0.7 m'),
+    (4, '0.8 m'),
+    (5, '0.9 m'),
+    (6, '1.0 m'),
+    (7, '1.2 m'),
+    (8, '1.3 m'),
+    (9, '1.4 m'),
+    (10, '1.5 m'),
+    (11, '1.6 m'),
+    (12, '1.7 m'),
+    (13, '1.8 m'),
+    (14, '1.9 m'),
+    (15, '2.0 m'),
+    (16, '2.2 m'),
+    (17, '2.3 m'),
+    (18, '2.4 m'),
+    (19, '2.5 m'),
+    (20, '2.6 m'),
+    (21, '2.7 m'),
+    (22, '2.8 m'),
+    (23, '2.9 m');   
+    
+-- Alto
+INSERT INTO Alto (id, nombre) VALUES
+    (1, '0.5 m'),
+    (2, '0.6 m'),
+    (3, '0.7 m'),
+    (4, '0.8 m'),
+    (5, '0.9 m'),
+    (6, '1.0 m'),
+    (7, '1.2 m'),
+    (8, '1.3 m'),
+    (9, '1.4 m'),
+    (10, '1.5 m'),
+    (11, '1.6 m'),
+    (12, '1.7 m'),
+    (13, '1.8 m'),
+    (14, '1.9 m'),
+    (15, '2.0 m'),
+    (16, '2.2 m'),
+    (17, '2.3 m'),
+    (18, '2.4 m'),
+    (19, '2.5 m'),
+    (20, '2.6 m'),
+    (21, '2.7 m'),
+    (22, '2.8 m'),
+    (23, '2.9 m');
+
+-- Material de perfil
+INSERT INTO MaterialDePerfil (id, nombre) VALUES
+    (1, 'Aluminio'),
+    (2, 'PVC'),
+    (3, 'Madera');
+
+-- Tipo de vidrio
+INSERT INTO TipoDeVidrio (id, nombre) VALUES
+    (1, 'Simple'),
+    (2, 'Doble'),
+    (3, 'Laminado'),
+    (4, 'Templado');
+
+-- Color
+INSERT INTO Color (id, nombre) VALUES
+    (1, 'Blanco'),
+    (2, 'Gris'),
+    (3, 'Marrón'),
+    (4, 'Negro');     
+
 -- ===============================================
 -- USUARIOS BASE
 -- ===============================================
@@ -70,18 +150,58 @@ INSERT INTO Proveedor (
 -- ===============================================
 INSERT INTO Producto (
     id, nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
-    tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio
+    tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
+    tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
 ) VALUES
-(1, 'Puerta de Madera', 15000.00, 'Puerta maciza de madera', '/uploads/imagenes/puerta-madera.jpg', 20, 3, 1, 1, 1, 'PMA-01', true),
-(2, 'Ventana de Aluminio', 10000.00, 'Ventana corrediza de aluminio', '/uploads/imagenes/ventana-aluminio.jpg', 30, 3, 2, 2, 2, 'VAL-01', true),
-(3, 'Techo de chapa', 25000.00, 'Techo acanalado galvanizado', '/uploads/imagenes/techo-chapa.jpeg', 15, 3, 3, 3, 3, 'TCH-01', false),
-(4, 'Puerta económica', 14500.00, 'Puerta igual pero de otro proveedor', '/uploads/imagenes/puerta-madera.jpg', 10, 4, 1, 1, 1, 'PMA-02', true),
-(5, 'Ventana de Aluminio reforzada', 12000.00, 'Ventana igual de otro proveedor', '/uploads/imagenes/ventana-aluminio-2.jpg', 25, 4, 2, 2, 2, 'VAL-02', true),
-(6, 'Pintura blanca', 5000.00, 'Pintura para interiores', '/uploads/imagenes/pintura-blanca.jpg', 40, 5, 3, 2, 2, 'PIN-BL', true),
-(7, 'Puerta de PVC', 17000.00, 'Puerta plástica económica', '/uploads/imagenes/puerta-pvc.jpeg', 20, 5, 1, 3, 1, 'PVP-02', true),
-(8, 'Techo aislante', 30000.00, 'Techo con aislante térmico', '/uploads/imagenes/techo-aislante.jpg', 10, 6, 3, 2, 3, 'TCH-A2', false),
-(9, 'Ventana doble vidrio', 20000.00, 'Ventana doble vidrio templado', '/uploads/imagenes/ventana-doble-vidrio.jpg', 5, 6, 2, 1, 2, 'VDV-01', true),
-(10, 'Puerta blindada', 45000.00, 'Puerta de seguridad', '/uploads/imagenes/puerta-blindada.jpg', 8, 6, 1, 3, 1, 'PB-02', false);
+-- Puerta de madera
+(1, 'Puerta de Madera', 15000.00, 'Puerta maciza de madera', '/uploads/imagenes/puerta-madera.jpg', 20, 3,
+ 1, 1, 1, 'PMA-01', true,
+ NULL, NULL, NULL, NULL, NULL, 3), -- color marrón
+
+-- Ventana de aluminio
+(2, 'Ventana de Aluminio', 10000.00, 'Ventana corrediza de aluminio', '/uploads/imagenes/ventana-aluminio.jpg', 30, 3,
+ 2, 2, 2, 'VAL-01', true,
+ 1, 10, 10, 1, 1, 1), -- corrediza, 1.5x1.5m, aluminio, vidrio simple, blanco
+
+-- Techo de chapa
+(3, 'Techo de chapa', 25000.00, 'Techo acanalado galvanizado', '/uploads/imagenes/techo-chapa.jpeg', 15, 3,
+ 3, 3, 3, 'TCH-01', false,
+ NULL, NULL, NULL, NULL, NULL, 2), -- gris
+
+-- Puerta económica
+(4, 'Puerta económica', 14500.00, 'Puerta igual pero de otro proveedor', '/uploads/imagenes/puerta-madera.jpg', 10, 4,
+ 1, 1, 1, 'PMA-02', true,
+ NULL, NULL, NULL, NULL, NULL, 3), -- marrón
+
+-- Ventana de aluminio reforzada
+(5, 'Ventana de Aluminio reforzada', 12000.00, 'Ventana igual de otro proveedor', '/uploads/imagenes/ventana-aluminio-2.jpg', 25, 4,
+ 2, 2, 2, 'VAL-02', true,
+ 1, 12, 12, 1, 2, 1), -- corrediza, 1.7x1.7m, aluminio, doble vidrio, blanco
+
+-- Pintura blanca
+(6, 'Pintura blanca', 5000.00, 'Pintura para interiores', '/uploads/imagenes/pintura-blanca.jpg', 40, 5,
+ 3, 2, 2, 'PIN-BL', true,
+ NULL, NULL, NULL, NULL, NULL, 1), -- blanco
+
+-- Puerta de PVC
+(7, 'Puerta de PVC', 17000.00, 'Puerta plástica económica', '/uploads/imagenes/puerta-pvc.jpeg', 20, 5,
+ 1, 3, 1, 'PVP-02', true,
+ NULL, NULL, NULL, 2, NULL, 1), -- material PVC, color blanco
+
+-- Techo aislante
+(8, 'Techo aislante', 30000.00, 'Techo con aislante térmico', '/uploads/imagenes/techo-aislante.jpg', 10, 6,
+ 3, 2, 3, 'TCH-A2', false,
+ NULL, NULL, NULL, NULL, NULL, 2), -- gris
+
+-- Ventana doble vidrio
+(9, 'Ventana doble vidrio', 20000.00, 'Ventana doble vidrio templado', '/uploads/imagenes/ventana-doble-vidrio.jpg', 5, 6,
+ 2, 1, 2, 'VDV-01', true,
+ 2, 15, 15, 1, 4, 1), -- oscilobatiente, 2.0x2.0m, aluminio, vidrio templado, blanco
+
+-- Puerta blindada
+(10, 'Puerta blindada', 45000.00, 'Puerta de seguridad', '/uploads/imagenes/puerta-blindada.jpg', 8, 6,
+ 1, 3, 1, 'PB-02', false,
+ NULL, NULL, NULL, 1, NULL, 4); -- aluminio, color negro
 
 
 
