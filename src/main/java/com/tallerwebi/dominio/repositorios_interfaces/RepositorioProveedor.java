@@ -14,5 +14,7 @@ public interface RepositorioProveedor {
     Proveedor buscarPorId(Long id);
 
     void actualizar(Proveedor proveedor);
+
+    Proveedor buscarProveedorPorIdUsuario(Long idUsuario);
     
 }

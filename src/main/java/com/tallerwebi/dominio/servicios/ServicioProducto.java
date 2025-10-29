@@ -12,4 +12,5 @@ public interface ServicioProducto {
     void actualizar(Producto producto);
     void eliminar(Long id);
     List<Producto> buscarConFiltros(Long tipoProductoId);
+    List<Producto> buscarPorProveedorId(Long proveedorId);
 }

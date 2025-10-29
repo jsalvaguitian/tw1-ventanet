@@ -1,6 +1,5 @@
 package com.tallerwebi.dominio.entidades;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -10,7 +9,9 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+
+import javax.persistence.CascadeType;
 
 import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.enums.Rubro;
@@ -32,8 +33,8 @@ public class Proveedor extends Usuario{
 */
     private String documento;        // Ruta del documento legal del proveedor
 
-    @ManyToMany
-    private Set<Producto> productos = new LinkedHashSet<>();
+    // @OneToMany(mappedBy = "proveedor")
+    // private List<Producto> productos = new ArrayList<Producto>();
 
     private String ubicacion;
     private Double latitud;
@@ -164,14 +165,14 @@ public class Proveedor extends Usuario{
     }
 
 
-    public Set<Producto> getProductos() {
-        return productos;
-    }
+    // public List<Producto> getProductos() {
+    //     return productos;
+    // }
 
 
-    public void setProductos(Set<Producto> productos) {
-        this.productos = productos;
-    }
+    // public void setProductos(List<Producto> productos) {
+    //     this.productos = productos;
+    // }
 
     
 }

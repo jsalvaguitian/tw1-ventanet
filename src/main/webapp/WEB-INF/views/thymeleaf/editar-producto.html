@@ -8,10 +8,10 @@
   <title>Taller Web I</title>
 
   <!-- Bootstrap core css -->
-  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
 
   <!-- custom style -->
-   <link rel="stylesheet" th:href="@{/css/producto.css}" />
+  <link rel="stylesheet" th:href="@{/css/producto.css}" />
 </head>
 
 <body>
@@ -82,160 +82,90 @@
   <main role="main" class="container">
 
     <div class="main-container">
-      <aside id="sidebar" class="d-flex flex-column position-relative">
-      <button class="toggle-btn" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
-      <ul class="nav flex-column mt-4">
-        <!-- Dashboard -->
-        <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="bi bi-house"></i><span>Dashboard</span>
-          </a>
-        </li>
+      <div th:replace="sidebar :: sidebar"></div>
+      <main>
+        <div class="form-card">
+          <form action="#" th:action="@{/producto/editar/{id}(id=${producto.id})}" method="POST" th:object="${producto}"
+            enctype="multipart/form-data">
+            <h3>Edición de Producto</h3>
 
-        <!-- Materiales con submenú -->
-        <li class="nav-item">
-          <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-            href="#submenuMateriales" role="button" aria-expanded="false" aria-controls="submenuMateriales">
-            <span><i class="bi bi-journal-text me-2"></i>Materiales</span>
-            <i class="bi bi-chevron-down"></i>
-          </a>
-          <div class="collapse ps-4" id="submenuMateriales">
-            <ul class="nav flex-column">
-              <li class="nav-item">
-                <a th:href="@{/producto/nuevo-producto}" class="nav-link">Alta manual</a>
-              </li>
-              <!-- <li class="nav-item">
-                <a href="#" class="nav-link">Importar desde Excel, CSV</a>
-              </li> -->
-              <li class="nav-item">
-                <a th:href="@{/producto/listado}" class="nav-link">Listado de materiales</a>
-              </li>
-            </ul>
-          </div>
-        </li>
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input th:field="*{nombre}" id="nombre" class="form-control" required />
+            </div>
 
-        <!-- Solicitudes de Cotización -->
-        <!-- <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="bi bi-lock"></i><span>Solicitudes de Cotiza-</span>
-          </a>
-        </li> -->
+            <!-- Precio -->
+            <div class="mb-3">
+              <label for="precio" class="form-label">Precio</label>
+              <input th:field="*{precio}" id="precio" type="number" step="0.01" min="0" class="form-control" required />
+            </div>
 
-        <!-- Actualización de Precios -->
-        <!-- <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="bi bi-clipboard-data"></i><span>Actualización de Precios</span>
-          </a>
-        </li> -->
+            <!-- Descripción -->
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea th:field="*{descripcion}" id="descripcion" class="form-control" rows="3"></textarea>
+            </div>
 
-        <!-- Reportes -->
-        <!-- <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="bi bi-graph-up"></i><span>Reportes</span>
-          </a>
-        </li> -->
+            <!-- Imagen (archivo) -->
+            <div class="mb-3">
+              <label for="imagenFile" class="form-label">Imagen del Producto</label>
+              <input id="imagenFile" name="imagenFile" type="file" class="form-control" accept="image/*" />
+            </div>
 
-        <!-- Configuración -->
-        <!-- <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="bi bi-gear"></i><span>Configuración</span>
-          </a>
-        </li> -->
-      </ul>
-    </aside>
+            <!-- Stock -->
+            <div class="mb-3">
+              <label for="stock" class="form-label">Stock</label>
+              <input th:field="*{stock}" id="stock" type="number" min="0" class="form-control" required />
+            </div>
 
-    <main>
-      <div class="form-card">
-      <form action="#" th:action="@{/producto/editar/{id}(id=${producto.id})}" method="POST" th:object="${producto}"
-        enctype="multipart/form-data">
-        <h3>Edición de Producto</h3>
+            <!-- Tipo de Producto -->
+            <div class="mb-3">
+              <label for="tipo_producto_id" class="form-label">Tipo de Producto</label>
+              <select th:field="*{tipoProducto.id}" id="tipo_producto_id" class="form-select">
+                <option value="">Seleccione...</option>v
+                <option th:each="tipo : ${tiposProducto}" th:value="${tipo.id}" th:text="${tipo.nombre}"></option>
+              </select>
+            </div>
 
-                <!-- Nombre -->
-        <div class="mb-3">
-          <label for="nombre" class="form-label">Nombre</label>
-          <input th:field="*{nombre}" id="nombre" class="form-control" required />
+            <!-- Marca -->
+            <div class="mb-3">
+              <label for="marca_id" class="form-label">Marca</label>
+              <select th:field="*{marca.id}" id="marca_id" class="form-select">
+                <option value="">Seleccione...</option>
+                <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option>
+              </select>
+            </div>
+
+            <!-- Presentación -->
+            <div class="mb-3">
+              <label for="presentacion_id" class="form-label">Presentación</label>
+              <select th:field="*{presentacion.id}" id="presentacion_id" class="form-select">
+                <option value="">Seleccione...</option>
+                <option th:each="pres : ${presentaciones}" th:value="${pres.id}" th:text="${pres.descripcion}"></option>
+              </select>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-between">
+              <button id="btn-edit" class="btn btn-submit" type="submit">Guardar Cambios</button>
+            </div>
+
+            <!-- Mensajes de error -->
+            <p th:if="${error != null}" class="alert alert-danger mt-3" th:text="'Error: ' + ${error}"></p>
+          </form>
         </div>
-
-        <!-- Precio -->
-        <div class="mb-3">
-          <label for="precio" class="form-label">Precio</label>
-          <input th:field="*{precio}" id="precio" type="number" step="0.01" min="0" class="form-control" required />
-        </div>
-
-        <!-- Descripción -->
-        <div class="mb-3">
-          <label for="descripcion" class="form-label">Descripción</label>
-          <textarea th:field="*{descripcion}" id="descripcion" class="form-control" rows="3"></textarea>
-        </div>
-
-        <!-- Imagen (archivo) -->
-        <div class="mb-3">
-          <label for="imagenFile" class="form-label">Imagen del Producto</label>
-          <input id="imagenFile" name="imagenFile" type="file" class="form-control" accept="image/*" />
-        </div>
-
-        <!-- Stock -->
-        <div class="mb-3">
-          <label for="stock" class="form-label">Stock</label>
-          <input th:field="*{stock}" id="stock" type="number" min="0" class="form-control" required />
-        </div>
-
-        <!-- Tipo de Producto -->
-        <div class="mb-3">
-          <label for="tipo_producto_id" class="form-label">Tipo de Producto</label>
-          <select th:field="*{tipoProducto.id}" id="tipo_producto_id" class="form-select">
-            <option value="">Seleccione...</option>v           
-            <option th:each="tipo : ${tiposProducto}" th:value="${tipo.id}" th:text="${tipo.nombre}"></option>
-          </select>
-        </div>
-
-        <!-- Marca -->
-        <div class="mb-3">
-          <label for="marca_id" class="form-label">Marca</label>
-          <select th:field="*{marca.id}" id="marca_id" class="form-select">
-            <option value="">Seleccione...</option>            
-            <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option>
-          </select>
-        </div>
-
-        <!-- Proveedor -->
-        <div class="mb-3">
-          <label for="proveedor_id" class="form-label">Proveedor</label>
-          <select th:field="*{proveedorId}" id="proveedor_id" class="form-select">
-            <option value="0">Seleccione...</option>
-            <option value="1">Proveedor 1</option>
-            <!-- <option th:each="proveedor : ${proveedores}" th:value="${proveedor.id}" th:text="${proveedor.nombre}"></option> -->
-          </select>
-        </div>
-
-        <!-- Presentación -->
-        <div class="mb-3">
-          <label for="presentacion_id" class="form-label">Presentación</label>
-          <select th:field="*{presentacion.id}" id="presentacion_id" class="form-select">
-            <option value="">Seleccione...</option>            
-             <option th:each="pres : ${presentaciones}" th:value="${pres.id}" th:text="${pres.descripcion}"></option>
-          </select>
-        </div>
-
-        <!-- Botones -->
-        <div class="d-flex justify-content-between">
-          <button id="btn-crear" class="btn btn-submit" type="submit" disabled>Guardar Cambios</button>
-        </div>
-
-        <!-- Mensajes de error -->
-        <p th:if="${error != null}" class="alert alert-danger mt-3" th:text="'Error: ' + ${error}"></p>
-      </form>
-    </div>
-    </main>
+      </main>
 
     </div>
 
-    
+
 
   </main>
 
   <!-- Bootstrap core js -->
-  <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+  <!-- <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Producto JS -->
   <script type="module" th:src="@{/js/producto.js}"></script>
@@ -244,5 +174,41 @@
       document.getElementById("sidebar").classList.toggle("collapsed");
     }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script th:inline="javascript">
+/*<![CDATA[*/
+  // Thymeleaf reemplaza esto por un literal JS:
+  // - si exito tiene valor -> "El producto..." (con comillas)
+  // - si exito es null -> null (literal JS)
+  const mensajeExito = /*[[${exito}]]*/ null;
+  const mensajeError  = /*[[${error}]]*/ null;
+
+  if (mensajeExito) {
+    Swal.fire({
+      icon: 'success',
+      title: '¡Éxito!',
+      text: mensajeExito,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true
+    }).then(() => {     
+      window.location.href = /*[[@{/producto/listado}]]*/ '/producto/listado';
+    });
+  }
+
+  if (mensajeError) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: mensajeError,
+      confirmButtonText: 'Entendido'
+    });
+  }
+/*]]>*/
+</script>
+
+
 </body>
+
 </html>

@@ -11,4 +11,5 @@ public interface ServicioProveedorI {
     Proveedor buscarPorId(Long id);
     void actualizar(Proveedor proveedor);
 
+    Proveedor obtenerPorIdUsuario(Long idUsuario); 
 }

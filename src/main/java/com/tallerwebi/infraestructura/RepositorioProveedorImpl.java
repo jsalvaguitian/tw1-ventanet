@@ -63,5 +63,16 @@ public class RepositorioProveedorImpl implements RepositorioProveedor {
     public void actualizar(Proveedor proveedor) {
         sessionFactory.getCurrentSession().update(proveedor);
     }
+     @Override
+    public Proveedor buscarProveedorPorIdUsuario(Long idUsuario) {
+        return (Proveedor) sessionFactory.getCurrentSession()
+                .createCriteria(Proveedor.class)
+                .add(Restrictions.eq("id", idUsuario) )
+                .uniqueResult();
+    }
+
+    
+
+    
 
 }
