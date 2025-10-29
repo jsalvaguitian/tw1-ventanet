@@ -9,4 +9,5 @@ public interface RepositorioCotizacion {
     List<Cotizacion> obtenerPorIdProveedor(Long proveedorId);
     List<Cotizacion> obtenerPorIdProveedorYEstado(Long proveedorId, String estado);    
     boolean actualizarEstado(Cotizacion item);
+    List<Cotizacion> obtenerPorIdCliente(Long id);
 }

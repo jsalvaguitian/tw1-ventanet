@@ -8,4 +8,5 @@ public interface ServicioCotizacion {
     Cotizacion obtenerPorId(Long id);
     List<Cotizacion> obtenerPorIdProveedor(Long proveedorId);
     void actualizarEstado(Long estadoId, Long cotizacionId);
+    List<Cotizacion> obtenerCotizacionPorIdCliente(Long id);
 }

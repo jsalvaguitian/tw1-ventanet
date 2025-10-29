@@ -37,4 +37,14 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         throw new UnsupportedOperationException("Unimplemented method 'actualizarEstado'");
     }
 
+    @Override
+    @Transactional
+    public List<Cotizacion> obtenerCotizacionPorIdCliente(Long id) {
+        List<Cotizacion> cotizaciones = cotizacionRepository.obtenerPorIdCliente(id);
+        if (cotizaciones == null || cotizaciones.isEmpty()) {
+            throw new NoHayProductoExistente();
+        }
+        return cotizaciones;
+    }
+
 }

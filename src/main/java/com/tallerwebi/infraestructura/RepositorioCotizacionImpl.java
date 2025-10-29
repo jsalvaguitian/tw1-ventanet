@@ -65,4 +65,10 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
         return true;
     }
 
+    public List<Cotizacion> obtenerPorIdCliente(Long clienteId) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from Cotizacion c where c.clienteId = :clienteId", Cotizacion.class)
+                .setParameter("clienteId", clienteId)
+                .list();
+    }
 }

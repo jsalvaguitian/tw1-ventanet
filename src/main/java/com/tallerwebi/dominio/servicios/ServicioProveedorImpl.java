@@ -3,7 +3,6 @@ import java.util.List;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioProveedor;
 
@@ -33,22 +32,6 @@ public class ServicioProveedorImpl implements ServicioProveedorI{
             throw new IllegalStateException("El usuario no corresponde a un proveedor válido");
         }        
         return proveedor;
-    }
-
-}
-
-    
-
-
-
-
-    @Override
-    public Proveedor obtenerPorIdUsuario(Long idUsuario) {
-        Proveedor proveedor = repositorioProveedor.buscarProveedorPorIdUsuario(idUsuario);
-        if (proveedor == null) {
-            throw new IllegalStateException("El usuario no corresponde a un proveedor válido");
-        }        
-        return proveedor;
-    }
+    }  
 
 }
