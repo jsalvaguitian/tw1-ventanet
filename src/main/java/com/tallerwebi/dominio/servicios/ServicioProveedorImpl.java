@@ -24,7 +24,7 @@ public class ServicioProveedorImpl implements ServicioProveedorI{
     public List<Proveedor> obtenerTodosLosProveedoresActivos() {
         return repositorioProveedor.obtenerTodosLosNombresProveedoresActivos();
     }
-  
+  /* 
   @Override
     public Proveedor obtenerPorIdUsuario(Long idUsuario) {
         Proveedor proveedor = repositorioProveedor.buscarProveedorPorIdUsuario(idUsuario);
@@ -32,6 +32,42 @@ public class ServicioProveedorImpl implements ServicioProveedorI{
             throw new IllegalStateException("El usuario no corresponde a un proveedor válido");
         }        
         return proveedor;
-    }  
+    }
+*/
+
+
+    
+
+
+
+    @Override
+    public List<Proveedor> obtenerTodosLosProveedoresPendientes() {
+        return repositorioProveedor.obtenerTodosLosProveedoresPendientes();
+    }
+
+
+
+    @Override
+    public Proveedor buscarPorId(Long id) {
+        return repositorioProveedor.buscarPorId(id);
+    }
+
+
+
+    @Override
+    public void actualizar(Proveedor proveedor) {
+        repositorioProveedor.actualizar(proveedor);
+    }
+
+
+
+    @Override
+    public Proveedor obtenerPorIdUsuario(Long idUsuario) {
+        Proveedor proveedor = repositorioProveedor.buscarProveedorPorIdUsuario(idUsuario);
+        if (proveedor == null) {
+            throw new IllegalStateException("El usuario no corresponde a un proveedor válido");
+        }        
+        return proveedor;
+    }
 
 }

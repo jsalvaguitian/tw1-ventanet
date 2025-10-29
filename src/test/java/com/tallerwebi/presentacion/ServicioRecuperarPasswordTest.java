@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -71,7 +72,7 @@ public class ServicioRecuperarPasswordTest {
 
         // Veo que envie el mail
         verify(servicioEmailMock).enviarEmail(contains("test@gmail.com"), contains("Recuperacion de contrasenia"),
-                contains("localhost:8080/app/cambiar-password?token="));
+                contains("localhost:8080/app/cambiar-password?token="), eq(false));
 
     }
 }

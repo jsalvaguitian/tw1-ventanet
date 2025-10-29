@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.tallerwebi.dominio.entidades.Proveedor;
-import com.tallerwebi.dominio.enums.EstadoProveedor;
+import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioProveedor;
 
 @Repository("repositorioProveedor")
@@ -37,19 +37,47 @@ public class RepositorioProveedorImpl implements RepositorioProveedor {
 
         String hql = "FROM Proveedor p WHERE p.estado = :estado";
         Query query = this.sessionFactory.getCurrentSession().createQuery(hql);
-        query.setParameter("estado", EstadoProveedor.ACTIVO);
+        query.setParameter("estado", EstadoUsuario.ACTIVO);
         
         return query.getResultList();
+    }
+
+    /*@Override
+    public Proveedor buscarProveedorPorIdUsuario(Long idUsuario) {
+        return (Proveedor) sessionFactory.getCurrentSession()
+                .createCriteria(Proveedor.class)
+                .add(Restrictions.eq("id", idUsuario) )
+                .uniqueResult();
+    }*/
+
+    @Override
+    public List<Proveedor> obtenerTodosLosProveedoresPendientes() {
+        String hql = "FROM Proveedor p WHERE p.estado = :estado";
+        Query query = this.sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("estado", EstadoUsuario.PENDIENTE);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public Proveedor buscarPorId(Long id) {
+        return (Proveedor) sessionFactory.getCurrentSession()
+                .createCriteria(Proveedor.class)
+                .add(Restrictions.eq("id", id))
+                .uniqueResult();
+    }
+
+    @Override
+    public void actualizar(Proveedor proveedor) {
+        sessionFactory.getCurrentSession().update(proveedor);
     }
 
     @Override
     public Proveedor buscarProveedorPorIdUsuario(Long idUsuario) {
         return (Proveedor) sessionFactory.getCurrentSession()
                 .createCriteria(Proveedor.class)
-                .add(Restrictions.eq("id", idUsuario) )
+                .add(Restrictions.eq("id", idUsuario))
                 .uniqueResult();
     }    
-
-        
 
 }

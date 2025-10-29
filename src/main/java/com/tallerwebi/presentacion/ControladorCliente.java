@@ -34,7 +34,7 @@ public class ControladorCliente   {
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
         String rol_cliente = "CLIENTE";
 
-        if (usuarioSesion == null || !rol_cliente.equalsIgnoreCase(usuarioSesion.getRol())) {
+        if (usuarioSesion == null || !rol_cliente.equalsIgnoreCase(usuarioSesion.getRol()) || usuarioSesion.getUsername() == null) {
             return new ModelAndView("redirect:/login");
         }
 
