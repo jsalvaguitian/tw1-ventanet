@@ -1,8 +1,5 @@
 package com.tallerwebi.dominio.entidades;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -12,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Producto {
@@ -25,8 +21,7 @@ public class Producto {
     private double precio;
     private String descripcion;
     private String imagenUrl;
-    private int stock;
-    //private String cuitProveedor;
+    private int stock;    
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tipo_producto_id", nullable = false)
@@ -61,14 +56,7 @@ public class Producto {
     private TipoMaterial TipoMaterial;
 
     private Boolean aceptaEnvio;
-
-    // public String getCuitProveedor() {
-    //     return cuitProveedor;
-    // }
-
-    // public void setCuitProveedor(String cuitProveedor) {
-    //     this.cuitProveedor = cuitProveedor;
-    // }
+    
 
     public Dimensiones getDimensiones() {
         return dimensiones;
@@ -132,11 +120,7 @@ public class Producto {
 
     public void setMarca(Marca marca) {
         this.marca = marca;
-    }
-
-    // public void setProveedorId(Integer proveedorId) {
-    //     this.proveedorId = proveedorId;
-    // }
+    }    
 
     public void setPresentacion(Presentacion presentacion) {
         this.presentacion = presentacion;
@@ -173,45 +157,9 @@ public class Producto {
     public Marca getMarca() {
         return marca;
     }
-
-    // public Integer getProveedorId() {
-    //     return proveedorId;
-    // }
-
+    
     public Presentacion getPresentacion() {
         return presentacion;
     }
-
-    // @Override
-    // public int hashCode() {
-    //     final int prime = 31;
-    //     int result = 1;
-    //     result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
-    //     result = prime * result + ((cuitProveedor == null) ? 0 : cuitProveedor.hashCode());
-    //     return result;
-    // }
-
-    // @Override
-    // public boolean equals(Object obj) {
-    //     if (this == obj)
-    //         return true;
-    //     if (obj == null)
-    //         return false;
-    //     if (getClass() != obj.getClass())
-    //         return false;
-    //     Producto other = (Producto) obj;
-    //     if (nombre == null) {
-    //         if (other.nombre != null)
-    //             return false;
-    //     } else if (!nombre.equals(other.nombre))
-    //         return false;
-    //     if (cuitProveedor == null) {
-    //         if (other.cuitProveedor != null)
-    //             return false;
-    //     } else if (!cuitProveedor.equals(other.cuitProveedor))
-    //         return false;
-    //     return true;
-    // }
-
 
 }

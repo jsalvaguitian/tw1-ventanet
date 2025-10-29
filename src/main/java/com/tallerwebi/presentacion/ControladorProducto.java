@@ -128,6 +128,13 @@ public class ControladorProducto implements ServletContextAware {
             Proveedor proveedor = servicioProveedor.obtenerPorIdUsuario(usuarioSesion.getId());
             producto.setProveedor(proveedor);
 
+            String errorValidacion = validarProducto(producto);
+            if (errorValidacion != null) {
+                model.put("error", errorValidacion);
+                model.put("producto", producto); // para mantener los datos cargados
+                return new ModelAndView("nuevo-producto", model);
+            }
+
             if (imagenFile != null && !imagenFile.isEmpty()) {
                 String uploadDirectory = servletContext.getRealPath("/resources/core/uploads/");
                 Path uploadPath = Paths.get(uploadDirectory);
@@ -195,7 +202,7 @@ public class ControladorProducto implements ServletContextAware {
                 // Guardar la ruta en el producto
                 producto.setImagenUrl("/resources/core/uploads/" + imagenFile.getOriginalFilename());
             }
-            
+
             servicioProducto.actualizar(producto);
             model.put("exito", "El producto se modificó con éxito ✅");
             model.put("producto", producto);
@@ -219,4 +226,43 @@ public class ControladorProducto implements ServletContextAware {
         }
         return "redirect:/producto/listado";
     }
+
+    /**
+     * Valida los campos obligatorios y reglas básicas del producto.
+     * 
+     * @param producto el producto a validar
+     * @return mensaje de error si hay algún problema, o null si todo es válido
+     */
+    private String validarProducto(Producto producto) {
+        if (producto == null) {
+            return "El producto no puede ser nulo.";
+        }
+
+        if (producto.getNombre() == null || producto.getNombre().trim().isEmpty()) {
+            return "El nombre del producto es obligatorio.";
+        }
+
+        if (producto.getNombre().length() > 155) {
+            return "El nombre no puede superar los 155 caracteres.";
+        }
+
+        if (producto.getPrecio() <= 0) {
+            return "El precio debe ser mayor que cero.";
+        }
+
+        if (producto.getStock() < 0) {
+            return "El stock no puede ser negativo.";
+        }
+
+        if (producto.getTipoProducto() == null || producto.getTipoProducto().getId() <= 0) {
+            return "Debe seleccionar un tipo de producto.";
+        }
+
+        if (producto.getMarca() == null || producto.getMarca().getId() <= 0) {
+            return "Debe seleccionar una marca.";
+        }
+
+        return null; // si todo está OK
+    }
+
 }
