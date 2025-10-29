@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -152,7 +153,7 @@ public class ControladorProducto implements ServletContextAware {
             model.put("error", "El producto ya existe");
             return new ModelAndView("nuevo-producto", model);
         } catch (Exception e) {
-            model.put("error", "Error al registrar el nuevo producto");
+            model.put("error", "Error al registrar el nuevo producto: "  + e.getMessage());
             return new ModelAndView("nuevo-producto", model);
         }
         return new ModelAndView("redirect:listado", model);
