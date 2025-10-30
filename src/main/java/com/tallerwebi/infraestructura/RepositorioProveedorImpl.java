@@ -78,6 +78,22 @@ public class RepositorioProveedorImpl implements RepositorioProveedor {
                 .createCriteria(Proveedor.class)
                 .add(Restrictions.eq("id", idUsuario))
                 .uniqueResult();
+    }
+
+    @Override
+    public Integer contarProveedores() {
+        String hql = "SELECT COUNT(p.id) FROM Proveedor p";
+        Long count = (Long) sessionFactory.getCurrentSession().createQuery(hql).uniqueResult();
+        return count.intValue();
+    }
+
+    @Override
+    public Integer contarProveedores(EstadoUsuario estado) {
+        String hql = "SELECT COUNT(p.id) FROM Proveedor p WHERE p.estado = :estado";
+        Query query = this.sessionFactory.getCurrentSession().createQuery(hql);
+        query.setParameter("estado", estado);
+        Long count = (Long) query.getSingleResult();
+        return count.intValue();
     }    
 
 }

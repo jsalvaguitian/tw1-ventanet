@@ -81,7 +81,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
     }
 
     public List<Producto> buscarConFiltros(Long tipoProductoId) {
-         StringBuilder hql = new StringBuilder("SELECT p FROM Producto p WHERE ");
+         StringBuilder hql = new StringBuilder("FROM Producto p");
 
         // Lista de parámetros
         Map<String, Object> params = new HashMap<>();
@@ -92,7 +92,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         }
 */
         if (tipoProductoId != null) {
-            hql.append(" p.tipoProducto.id = :tipoProductoId");
+            hql.append("WHERE p.tipoProducto.id = :tipoProductoId");
             params.put("tipoProductoId", tipoProductoId);
         }
 
@@ -111,13 +111,13 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
     }
 
     public List<Producto> buscarPorProveedorId(Long proveedorId) {
-         StringBuilder hql = new StringBuilder("SELECT p FROM Producto p WHERE ");
+         StringBuilder hql = new StringBuilder("FROM Producto p");
 
         // Lista de parámetros
         Map<String, Object> params = new HashMap<>();
 
         if (proveedorId != null) {
-            hql.append(" p.proveedor.id = :proveedorId");
+            hql.append(" WHERE p.proveedor.id = :proveedorId");
             params.put("proveedorId", proveedorId);
         }
 

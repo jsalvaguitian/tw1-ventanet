@@ -1,5 +1,7 @@
 package com.tallerwebi.dominio.repositorios_interfaces;
 
+import java.util.List;
+
 import com.tallerwebi.dominio.entidades.Usuario;
 
 public interface RepositorioUsuario {
@@ -10,5 +12,7 @@ public interface RepositorioUsuario {
     void modificar(Usuario usuario);
     Usuario buscarPorMail(String email);
     Usuario buscarPorToken(String token);
-    void actualizar(Usuario usuario);}
+    void actualizar(Usuario usuario);
+    Integer contarUsuarios();
+    List<Usuario> obtenerTodosLosUsuarios();}
 

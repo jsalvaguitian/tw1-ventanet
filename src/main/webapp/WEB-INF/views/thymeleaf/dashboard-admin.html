@@ -32,7 +32,7 @@
                         <span class="label">Proveedores Pendientes</span>
                     </div>
                     <div class="alert alert-dismissible alert-info stat flex-fill text-center">
-                        <span class="number" id="rejectedEvents" th:text="${proveedoresRechazadas}">0</span><br>
+                        <span class="number" id="rejectedEvents" th:text="${proveedoresRechazados}">0</span><br>
                         <span class="label">Proveedores Rechazadas</span>
                     </div>
                     <div class="alert alert-dismissible alert-info stat flex-fill text-center">
@@ -44,28 +44,25 @@
         </div>
 
         <div class="events-table">
-            <table class="table table-striped mt-4" id="tablaCotizaciones" th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Monto Total</th>
+                        <th>Rol</th>
+                        <th>Nombre o Razón Social</th>
                         <th>Estado</th>
-                        <th>Fecha Creación</th>
-                        <th>Fecha Expiración</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="cotizacion : ${cotizaciones}">
-                        <td th:text="${cotizacion.id}"></td>
-                        <td th:text="${cotizacion.cliente.nombre}"></td>
-                        <td th:text="${cotizacion.montoTotal}"></td>
-                        <td th:text="${cotizacion.estado}"></td>
-                        <td th:text="${cotizacion.fechaCreacion}"></td>
-                        <td th:text="${cotizacion.fechaExpiracion}"></td>
+                    <tr th:each="usuario : ${usuarios}">
+                        <td th:text="${usuario.id}"></td>
+                        <td th:text="${usuario.rol}"></td>
+                        <td th:text="${usuario.nombreMostrable}"></td>
+                        <td th:text="${usuario.estado}"></td>
                     </tr>
                 </tbody>
             </table>
+                
         </div>
     </main>
 </body>
