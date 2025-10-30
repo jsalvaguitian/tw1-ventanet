@@ -26,9 +26,17 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
     @Override
     public Cotizacion obtenerPorId(Long id) {
         final Session session = sessionFactory.getCurrentSession();
-        return (Cotizacion) session.createCriteria(Cotizacion.class)
-                .add(Restrictions.eq("id", id))
-                .uniqueResult();
+
+        var query = session.createQuery(
+                "SELECT c FROM Cotizacion c " +
+                        "JOIN FETCH c.cliente " +
+                        "JOIN FETCH c.proveedor " +
+                        "LEFT JOIN FETCH c.items i " +
+                        "LEFT JOIN FETCH i.producto " +                        
+                        "WHERE c.id = :id",
+                Cotizacion.class);
+        query.setParameter("id", id);
+        return query.uniqueResult();      
     }
 
     @Override
