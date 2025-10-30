@@ -13,9 +13,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Transient;
 
 import com.tallerwebi.dominio.enums.EstadoUsuario;
-
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -44,8 +44,6 @@ public abstract class Usuario {
 
     private String tokenVerificacion;
     private LocalDateTime expiracionToken;
-
-    
 
     public String getApellido() {
         return apellido;
@@ -165,6 +163,15 @@ public abstract class Usuario {
 
     public void activar() {
         activo = true;
+    }
+
+    @Transient
+    public String getNombreMostrable() {
+        if (this instanceof Proveedor) {
+            return ((Proveedor) this).getRazonSocial();
+        } else {
+            return getNombre() + " " + getApellido();
+        }
     }
 
 }

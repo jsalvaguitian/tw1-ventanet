@@ -22,15 +22,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.servicios.ServicioAdministrador;
+import com.tallerwebi.dominio.servicios.ServicioClienteI;
 import com.tallerwebi.dominio.servicios.ServicioEmail;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
+import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
@@ -40,17 +41,23 @@ public class ControladorAdministrador {
 
     private ServicioAdministrador servicioAdmin;
     private ServicioProveedorI servicioProveedor;
+    private ServicioClienteI servicioCliente;
+    private ServicioUsuario servicioUsuario; 
     private ServicioEmail servicioEmail;
 
     private ServletContext servletContext; // rutas relativas
 
     @Autowired
     public ControladorAdministrador(ServicioAdministrador servicioAdmin, ServicioProveedorI servicioProveedor,
-            ServicioEmail servicioEmail, ServletContext servletContext) {
+            ServicioEmail servicioEmail, ServletContext servletContext, ServicioClienteI servicioCliente, ServicioUsuario servicioUsuario) {
+                
         this.servicioAdmin = servicioAdmin;
         this.servicioProveedor = servicioProveedor;
         this.servicioEmail = servicioEmail;
-        this.servletContext = servletContext;
+        this.servletContext = servletContext;//para ver el pdf de afip
+        this.servicioCliente = servicioCliente;
+        this.servicioUsuario = servicioUsuario;
+
     }
 
     @GetMapping("/dashboard-admin")
@@ -65,6 +72,16 @@ public class ControladorAdministrador {
         }
 
         modelMap.put("mailAdmin", usuarioSesionDto.getUsername());
+
+        modelMap.put("totalUsuarios", servicioUsuario.contarUsuarios());
+        modelMap.put("totalProveedores", servicioProveedor.contarProveedores(null));
+        modelMap.put("proveedoresPendientes", servicioProveedor.contarProveedores(EstadoUsuario.PENDIENTE));
+        modelMap.put("proveedoresRechazados", servicioProveedor.contarProveedores(EstadoUsuario.RECHAZADO));
+        modelMap.put("totalClientes", servicioCliente.contarClientes());
+
+        // lista combinada de clientes y proveedores
+        modelMap.put("usuarios", servicioUsuario.obtenerTodosLosUsuarios());
+
         return new ModelAndView("dashboard-admin", modelMap);
     }
 

@@ -1,0 +1,31 @@
+<nav th:fragment="navbar" class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" th:href="@{/home}">VENTANET</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02"
+            aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarColor02">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item fw-bold">
+          <a class="nav-link" th:href="@{/admin/dashboard-admin}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-bold" th:href="@{/admin/proveedores-pendientes}">Proveedores pendientes</a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle fw-bold" data-bs-toggle="dropdown" href="#" role="button"
+             aria-haspopup="true" aria-expanded="false">Administrador</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item fw-bold" href="#"> <span th:text="${mailAdmin}">Admin</span> </a>
+            <div class="dropdown-divider"></div>
+            <form th:action="@{/logout}" method="get">
+              <button type="submit" class="dropdown-item fw-bold">Cerrar sesión</button>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -21,9 +21,10 @@ public class Producto {
     private double precio;
     private String descripcion;
     private String imagenUrl;
-    private int stock;    
+    private int stock;
+    
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "tipo_producto_id", nullable = false)
     private TipoProducto tipoProducto;
 
@@ -33,6 +34,30 @@ public class Producto {
 
     @ManyToOne(optional = false)    
     private Proveedor proveedor;
+
+    @ManyToOne
+    @JoinColumn(name = "tipo_ventana_id")
+    private TipoVentana tipoVentana;
+
+    @ManyToOne
+    @JoinColumn(name = "ancho_id")
+    private Ancho ancho;
+
+    @ManyToOne
+    @JoinColumn(name = "alto_id")
+    private Alto alto;
+
+    @ManyToOne
+    @JoinColumn(name = "material_perfil_id")
+    private MaterialDePerfil materialDePerfil;
+
+    @ManyToOne
+    @JoinColumn(name = "tipo_vidrio_id")
+    private TipoDeVidrio tipoDeVidrio;
+
+    @ManyToOne
+    @JoinColumn(name = "color_id")
+    private Color color;
 
     public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
@@ -160,6 +185,54 @@ public class Producto {
     
     public Presentacion getPresentacion() {
         return presentacion;
+    }
+
+    public TipoVentana getTipoVentana() {
+        return tipoVentana;
+    }
+
+    public void setTipoVentana(TipoVentana tipoVentana) {
+        this.tipoVentana = tipoVentana;
+    }
+
+    public Ancho getAncho() {
+        return ancho;
+    }
+
+    public void setAncho(Ancho ancho) {
+        this.ancho = ancho;
+    }
+
+    public Alto getAlto() {
+        return alto;
+    }
+
+    public void setAlto(Alto alto) {
+        this.alto = alto;
+    }
+
+    public MaterialDePerfil getMaterialDePerfil() {
+        return materialDePerfil;
+    }
+
+    public void setMaterialDePerfil(MaterialDePerfil materialDePerfil) {
+        this.materialDePerfil = materialDePerfil;
+    }
+
+    public TipoDeVidrio getTipoDeVidrio() {
+        return tipoDeVidrio;
+    }
+
+    public void setTipoDeVidrio(TipoDeVidrio tipoDeVidrio) {
+        this.tipoDeVidrio = tipoDeVidrio;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
 }

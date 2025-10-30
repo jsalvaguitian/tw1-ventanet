@@ -5,6 +5,8 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 import com.tallerwebi.dominio.entidades.Cotizacion;
+import com.tallerwebi.dominio.enums.EstadoCotizacion;
+import com.tallerwebi.dominio.excepcion.CotizacionesExistente;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.infraestructura.RepositorioCotizacionImpl;
 
@@ -32,9 +34,15 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
     }
 
     @Override
-    public void actualizarEstado(Long estadoId, Long cotizacionId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'actualizarEstado'");
+    public void actualizarEstado(Long cotizacionId, EstadoCotizacion estado) throws CotizacionesExistente {
+        
+        Cotizacion cotizacion = cotizacionRepository.obtenerPorId(cotizacionId);
+        if (cotizacion == null) {
+            throw new CotizacionesExistente();
+        }
+        
+        cotizacion.setEstado(estado);
+        cotizacionRepository.actualizarEstado(cotizacion);        
     }
 
     @Override

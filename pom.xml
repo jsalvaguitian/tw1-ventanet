@@ -1,5 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.tallerwebi</groupId>
     <artifactId>tallerwebi-base</artifactId>
@@ -22,7 +23,7 @@
         <hsqldb.version>2.3.2</hsqldb.version>
         <springsecurity.version>5.4.0</springsecurity.version>
 
-         <javamail.version>1.6.2</javamail.version>
+        <javamail.version>1.6.2</javamail.version>
     </properties>
 
     <dependencies>
@@ -116,7 +117,8 @@
             <version>${playwright.version}</version>
             <scope>test</scope>
         </dependency>
-        <!--Dependencia para Java mail-->
+        <!--Dependencia
+        para Java mail-->
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>javax.mail</artifactId>
@@ -124,7 +126,8 @@
         </dependency>
 
 
-        <!--Dependencia para encriptar las contrasenias-->
+        <!--Dependencia
+        para encriptar las contrasenias-->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
@@ -132,23 +135,28 @@
         </dependency>
 
         <dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-databind</artifactId>
-    <version>2.19.1</version>
-</dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.19.1</version>
+        </dependency>
 
-<dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-core</artifactId>
-    <version>2.19.1</version>
-</dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.19.1</version>
+        </dependency>
 
-<dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-annotations</artifactId>
-    <version>2.19.1</version>
-</dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.19.1</version>
+        </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.19.1</version>
+        </dependency>
 
 
         <!-- compile only, deployed container will provide this -->
