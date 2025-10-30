@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -71,7 +72,7 @@ public class ControladorAutenticacionTest {
 	}
 
 	@Test
-	public void loginConUsuarioYPasswordCorrectosDeberiaLLevarAHome() throws UsuarioInexistenteException, CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException {
+	public void loginAdminConUsuarioYPasswordCorrectosDeberiaLLevarAlDashboard() throws UsuarioInexistenteException, CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException {
 		// preparacion
 		Usuario usuarioEncontradoMock = mock(Usuario.class);
 		when(usuarioEncontradoMock.getRol()).thenReturn("ADMIN");
@@ -88,6 +89,98 @@ public class ControladorAutenticacionTest {
 		verify(sessionMock, times(1)).setAttribute(eq("usuarioLogueado"), any(UsuarioSesionDto.class));
 	}
 
+	@Test
+	public void queSePuedaMostrarElFormularioDeLogin(){
+		//preparacion
+		String vistaEsperada = "login";
+		//ejecucion
+		ModelAndView modelAndView = controladorLogin.irALogin();
+
+		//validacion
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase(vistaEsperada));
+		assertThat(modelAndView.getModel().get("datosLogin"), instanceOf(DatosLogin.class));
+	}
+
+	@Test
+	public void dadoUnUsuarioProveedorConCredencialesValidasDeberiaRedirigirAlDashboardProveedor() throws UsuarioInexistenteException, CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException {
+		// preparacion
+		Usuario usuarioEncontradoMock = mock(Usuario.class);
+		when(usuarioEncontradoMock.getRol()).thenReturn("PROVEEDOR");
+
+		when(requestMock.getSession()).thenReturn(sessionMock);
+
+		when(servicioUsuarioMock.iniciarSesion(anyString(), anyString())).thenReturn(usuarioEncontradoMock);
+
+		// ejecucion
+		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+
+		// validacion
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/proveedor/dashboard-proveedor"));
+		verify(sessionMock, times(1)).setAttribute(eq("usuarioLogueado"), any(UsuarioSesionDto.class));
+	}
+
+	@Test
+	public void dadoUnUsuarioClienteConCredencialesValidasDeberiaRedirigirAlDashboard() throws UsuarioInexistenteException, CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException {
+		// preparacion
+		Usuario usuarioEncontradoMock = mock(Usuario.class);
+		when(usuarioEncontradoMock.getRol()).thenReturn("CLIENTE");
+
+		when(requestMock.getSession()).thenReturn(sessionMock);
+
+		when(servicioUsuarioMock.iniciarSesion(anyString(), anyString())).thenReturn(usuarioEncontradoMock);
+
+		// ejecucion
+		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+
+		// validacion
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/cliente/dashboard"));
+		verify(sessionMock, times(1)).setAttribute(eq("usuarioLogueado"), any(UsuarioSesionDto.class));
+	}
+
+	@Test
+	public void dadoUnClienteConCuentaNoActivaDeberiaMostrarErrorEnLogin() throws UsuarioInexistenteException, CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException {
+		// preparacion
+		when(servicioUsuarioMock.iniciarSesion(anyString(), anyString()))
+				.thenThrow(new CuentaNoActivaException());
+
+		// Ejecución
+		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+
+		// Validación
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
+		assertThat(modelAndView.getModel().get("error").toString(),
+				equalToIgnoringCase("Debes verificar tu correo electrónico para activar tu cuenta."));
+	}
+
+	@Test
+	public void dadoUnProveedorConCuentaPendienteDeberiaMostrarErrorEnLogin() throws UsuarioInexistenteException, CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException {
+		// preparacion
+		when(servicioUsuarioMock.iniciarSesion(anyString(), anyString()))
+				.thenThrow(new CuentaPendienteException());
+
+		// Ejecución
+		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+
+		// Validación
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
+		assertThat(modelAndView.getModel().get("error").toString(),
+				equalToIgnoringCase("Tu cuenta está pendiente de aprobación por el administrador."));
+	}
+
+	@Test
+	public void dadoUnProveedorConCuentaRechazadaDeberiaMostrarUnErrorEnLogin() throws UsuarioInexistenteException, CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException{
+		//preparacion
+		when(servicioUsuarioMock.iniciarSesion(anyString(), anyString())).thenThrow(new CuentaRechazadaException());
+
+		//ejecucion
+		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
+
+		//validacion
+		assertThat(modelAndView.getViewName(),equalToIgnoringCase("login"));
+		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Tu solicitud fue rechazada. Contacta al soporte."));
+	}
+
+	//********************* REGISTRO ************************* */
 	@Test
 	public void registrameSiUsuarioNoExisteDeberiaCrearUsuarioYVolverAlLogin()
 			throws UsuarioExistente, ContraseniaInvalida, EmailInvalido {

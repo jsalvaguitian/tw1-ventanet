@@ -1,4 +1,4 @@
-package com.tallerwebi.presentacion;
+package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.entidades.ResetearPasswordToken;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioTokenRecuperarPasswordImpl;
