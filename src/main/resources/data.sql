@@ -129,13 +129,23 @@ INSERT INTO Usuario (
 
 (6, 'Juan', 'Fulano', 'proveedor4', 'juan.fulano@email.com',
  '$2a$10$9rO6fX2qRUYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
- '444555666', 'Calle Santa Fe 2245', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO');
+ '444555666', 'Calle Santa Fe 2245', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+
+ (7, 'María', 'Lopez', 'cliente2', 'maria.lopez@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '111333555', 'Av. Belgrano 456', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
+
+(8, 'Carlos', 'Martinez', 'cliente3', 'carlos.martinez@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '222444666', 'Calle San Martín 789', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO');
 
 -- ===============================================
 -- SUBCLASES (JOINED)
 -- ===============================================
 INSERT INTO Admin (id) VALUES (1);
 INSERT INTO Cliente (id) VALUES (2);
+INSERT INTO Cliente (id) VALUES (7);
+INSERT INTO Cliente (id) VALUES (8);
 
 INSERT INTO Proveedor (
     id, razonSocial, cuit, rubro, sitioWeb, documento, ubicacion, latitud, longitud
@@ -219,8 +229,12 @@ VALUES (3, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY), 2, 3, 37000.00,
 INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
 VALUES (4, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY), 2, 3, 52000.00, 'COMPLETADA');
 
+INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
+VALUES (5, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 5 DAY), 7, 3, 80000.00, 'PENDIENTE');
 
-
+-- Cotización 6: Cliente 8 - Aprobada
+INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
+VALUES (6, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 10 DAY), 8, 3, 102000.00, 'APROBADA');
 
 -- ITEMS DE LA COTIZACIÓN 1
 INSERT INTO CotizacionItem (id, cotizacion_id, producto_id, cantidad, precioUnitario)
@@ -247,4 +261,25 @@ VALUES
 (8, 4, 1, 2, 15000.00),  -- Puerta de Madera x2
 (9, 4, 7, 3, 17000.00), 
 (10, 4, 9, 1, 20000.00);  -- Ventana doble vidrio x1
+
+
+-- ===============================================
+-- ITEMS DE LA COTIZACIÓN 5 (Cliente 7)
+-- ===============================================
+INSERT INTO CotizacionItem (id, cotizacion_id, producto_id, cantidad, precioUnitario)
+VALUES
+(11, 5, 1, 2, 15000.00),  -- Puerta de Madera x2
+(12, 5, 2, 2, 10000.00),  -- Ventana de Aluminio x2
+(13, 5, 3, 1, 25000.00);  -- Techo de chapa x1
+
+
+-- ===============================================
+-- ITEMS DE LA COTIZACIÓN 6 (Cliente 8)
+-- ===============================================
+INSERT INTO CotizacionItem (id, cotizacion_id, producto_id, cantidad, precioUnitario)
+VALUES
+(14, 6, 1, 3, 15000.00),  -- Puerta de Madera x3
+(15, 6, 2, 4, 10000.00),  -- Ventana de Aluminio x4
+(16, 6, 3, 1, 25000.00);  -- Techo de chapa x1
+
 
