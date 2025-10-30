@@ -206,7 +206,7 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
            */
 
         usuario.setTokenVerificacion(null);
-        ;
+        
         usuario.setExpiracionToken(null);
 
         repositorioUsuario.actualizar(usuario);
