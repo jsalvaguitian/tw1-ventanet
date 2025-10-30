@@ -93,6 +93,44 @@ body {
     color: #888;
 }
 
+/* Estilo base para el estado */
+.status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    /* Estilo redondeado */
+    font-weight: bold;
+    color: #333;
+    /* Texto oscuro por defecto */
+    min-width: 90px;
+    text-align: center;
+}
+
+/* Colores condicionales */
+.status-pendiente {
+    background-color: #ffeba0;
+    /* Amarillo claro */
+    color: #8a6d3b;
+}
+
+.status-aprobada {
+    background-color: #d0f7d0;
+    /* Verde claro */
+    color: #3c763d;
+}
+
+.status-rechazado {
+    background-color: #f2c7c7;
+    /* Rojo claro */
+    color: #a94442;
+}
+
+.status-completada {
+    background-color: #c0e6ff;
+    /* Azul claro */
+    color: #31708f;
+}
+
 .events-table {
     background: #fff;
     border-radius: 8px;

@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import javax.transaction.Transactional;
@@ -212,6 +213,16 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
         repositorioUsuario.actualizar(usuario);
         return true;
 
+    }
+
+    @Override
+    public Integer contarUsuarios() {
+        return repositorioUsuario.contarUsuarios();
+    }
+
+    @Override
+    public List<Usuario> obtenerTodosLosUsuarios() {
+        return repositorioUsuario.obtenerTodosLosUsuarios();
     }
 
 }

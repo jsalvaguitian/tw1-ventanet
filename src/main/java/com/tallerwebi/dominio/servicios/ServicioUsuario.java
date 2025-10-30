@@ -1,6 +1,7 @@
 package com.tallerwebi.dominio.servicios;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,5 +30,9 @@ public interface ServicioUsuario {
     
 
     boolean verificarToken(String token);
+
+    Integer contarUsuarios();
+
+    List<Usuario> obtenerTodosLosUsuarios();
 
 }

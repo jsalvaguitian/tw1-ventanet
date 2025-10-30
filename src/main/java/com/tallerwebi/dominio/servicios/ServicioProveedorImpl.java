@@ -4,6 +4,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.tallerwebi.dominio.entidades.Proveedor;
+import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioProveedor;
 
 
@@ -69,5 +70,20 @@ public class ServicioProveedorImpl implements ServicioProveedorI{
         }        
         return proveedor;
     }
+
+
+
+    @Override
+    public Integer contarProveedores(EstadoUsuario estado) {
+        if(estado == null){
+            return repositorioProveedor.contarProveedores();
+        }else{
+            return repositorioProveedor.contarProveedores(estado);
+        }
+    }
+   
+
+
+
 
 }
