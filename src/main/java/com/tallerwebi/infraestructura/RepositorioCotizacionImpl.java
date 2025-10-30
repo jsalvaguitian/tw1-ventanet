@@ -32,11 +32,11 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
                         "JOIN FETCH c.cliente " +
                         "JOIN FETCH c.proveedor " +
                         "LEFT JOIN FETCH c.items i " +
-                        "LEFT JOIN FETCH i.producto " +                        
+                        "LEFT JOIN FETCH i.producto " +
                         "WHERE c.id = :id",
                 Cotizacion.class);
         query.setParameter("id", id);
-        return query.uniqueResult();      
+        return query.uniqueResult();
     }
 
     @Override
@@ -73,10 +73,25 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
         return true;
     }
 
+    /*
+     * public List<Cotizacion> obtenerPorIdCliente(Long clienteId) {
+     * return sessionFactory.getCurrentSession()
+     * .createQuery("from Cotizacion c where c.cliente.id = :clienteId",
+     * Cotizacion.class)
+     * .setParameter("clienteId", clienteId)
+     * .list();
+     * }
+     */
+    @Override
     public List<Cotizacion> obtenerPorIdCliente(Long clienteId) {
         return sessionFactory.getCurrentSession()
-                .createQuery("from Cotizacion c where c.clienteId = :clienteId", Cotizacion.class)
+                .createQuery("SELECT c FROM Cotizacion c " +
+                        "JOIN FETCH c.proveedor " +
+                        "JOIN FETCH c.cliente " +
+                        "LEFT JOIN FETCH c.items " +
+                        "WHERE c.cliente.id = :clienteId", Cotizacion.class)
                 .setParameter("clienteId", clienteId)
                 .list();
     }
+
 }
