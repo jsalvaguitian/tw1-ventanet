@@ -3,6 +3,10 @@ package com.tallerwebi.infraestructura;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioUsuario;
 
+import java.util.List;
+
+import javax.persistence.Query;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -15,7 +19,7 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     private SessionFactory sessionFactory;
 
     @Autowired
-    public RepositorioUsuarioImpl(SessionFactory sessionFactory){
+    public RepositorioUsuarioImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -56,6 +60,21 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     @Override
     public void actualizar(Usuario usuario) {
         sessionFactory.getCurrentSession().update(usuario);
+    }
+
+    @Override
+    public Integer contarUsuarios() {
+        String hql = "SELECT COUNT(u.id) FROM Usuario u WHERE u.rol <> 'ADMIN'";
+        Long count = (Long) sessionFactory.getCurrentSession().createQuery(hql).uniqueResult();
+        return count.intValue();
+    }
+
+    @Override
+    public List<Usuario> obtenerTodosLosUsuarios() {
+        String hql = "FROM Usuario u WHERE u.rol <> 'ADMIN'";
+        Query query = this.sessionFactory.getCurrentSession().createQuery(hql);
+
+        return query.getResultList();
     }
 
 }
