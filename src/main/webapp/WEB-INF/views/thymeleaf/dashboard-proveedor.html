@@ -361,7 +361,7 @@
                         const subtotal = item.cantidad * item.precioUnitario;
                         htmlContent += `
                     <tr>
-                        <td>${item.nombreProducto}</td>
+                        <td>${item.producto.nombre}</td>
                         <td>${item.cantidad}</td>
                         <td>$${item.precioUnitario.toFixed(2)}</td>
                         <td>$${subtotal.toFixed(2)}</td>
