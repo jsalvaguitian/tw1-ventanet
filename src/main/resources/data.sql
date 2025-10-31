@@ -843,7 +843,7 @@ VALUES
 (529,'FAMAILLA',24);
 
 
-INSERT INTO Partido (id_partido, nombre, provincia_id, localidad_id)
+INSERT INTO Partido (id_partido, nombre, localidad_id, provincia_id)
 VALUES
 (1,'VILLA SANTOS TESEI',1,1),
 (2,'HURLINGHAM',1,1),
