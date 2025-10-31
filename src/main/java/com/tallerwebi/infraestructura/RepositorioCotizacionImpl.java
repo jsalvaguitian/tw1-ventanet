@@ -74,9 +74,18 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
     }
 
     public List<Cotizacion> obtenerPorIdCliente(Long clienteId) {
-        return sessionFactory.getCurrentSession()
-                .createQuery("from Cotizacion c where c.clienteId = :clienteId", Cotizacion.class)
-                .setParameter("clienteId", clienteId)
-                .list();
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery(
+            "SELECT DISTINCT c FROM Cotizacion c " +
+            "JOIN FETCH c.cliente " +
+            "JOIN FETCH c.proveedor " +
+            "LEFT JOIN FETCH c.items i " +
+            "LEFT JOIN FETCH i.producto " +
+            "WHERE c.cliente.id = :clienteId " +
+            "ORDER BY c.fechaCreacion DESC",
+            Cotizacion.class);
+        query.setParameter("clienteId", clienteId);
+        return query.getResultList();
     }
 }
+

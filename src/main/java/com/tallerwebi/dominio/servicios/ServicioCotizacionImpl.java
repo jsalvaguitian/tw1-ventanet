@@ -10,6 +10,7 @@ import com.tallerwebi.dominio.excepcion.CotizacionesExistente;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.infraestructura.RepositorioCotizacionImpl;
 
+
 @Service
 @Transactional
 public class ServicioCotizacionImpl implements ServicioCotizacion {
@@ -48,7 +49,9 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
     @Override
     @Transactional
     public List<Cotizacion> obtenerCotizacionPorIdCliente(Long id) {
+        System.out.println("[ServicioCotizacion] buscar cotizaciones para clienteId=" + id);
         List<Cotizacion> cotizaciones = cotizacionRepository.obtenerPorIdCliente(id);
+        System.out.println("[ServicioCotizacion] cantidad encontrada=" + (cotizaciones == null ? 0 : cotizaciones.size()));
         if (cotizaciones == null || cotizaciones.isEmpty()) {
             throw new NoHayProductoExistente();
         }
