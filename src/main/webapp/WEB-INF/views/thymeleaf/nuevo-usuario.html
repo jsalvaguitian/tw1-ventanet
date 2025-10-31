@@ -19,13 +19,18 @@
             font-family: 'Inter', 'Segoe UI', sans-serif;
         }
 
-        header {
-            background-color: #392cdc;
-            color: white;
-            padding: 1rem 0;
-            text-align: center;
-            font-weight: 600;
-            font-size: 1.5rem;
+        .site-header {
+            width: 100%;
+            border-bottom: 1px solid #f0edf8;
+            background: #fff;
+        }
+
+        .header-inner {
+            width: 90%;
+            margin: 0 auto;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
         }
 
         .container {
@@ -81,26 +86,17 @@
             color: #b00020;
             margin-top: 1rem;
         }
-        .brand{
-            color: white;
-        }
     </style>
 </head>
 
 <body>
-    <!-- HEADER 
 <header class="site-header">
     <div class="header-inner">
         <a th:href="@{/}" class="logo">
             <span class="brand">VENTANET</span>
         </a>
     </div>
-</header>-->
-    <header>
-        <a th:href="@{/}" class="logo">
-            <span class="brand">VENTANET</span>
-        </a>
-    </header>
+</header>
 
     <main>
         <div class="container">
