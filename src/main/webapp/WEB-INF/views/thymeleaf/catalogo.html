@@ -10,32 +10,7 @@
 
 <body>
   <!-- HEADER -->
-  <header class="site-header">
-    <div class="header-inner">
-      <a th:href="@{/}" class="logo">
-        <span class="brand">VENTANET</span>
-      </a>
-      <nav class="ms-auto">
-        <ul class="nav">
-          <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-
-          <!-- Menú desplegable -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="registroDropdown" role="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              Registro
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="registroDropdown">
-              <li><a th:href="@{/nuevo-usuario}" class="dropdown-item">Cliente</a></li>
-              <li><a th:href="@{/registro-proveedor}" class="dropdown-item">Proveedor</a></li>
-            </ul>
-          </li>
-          <li class="nav-item"><a class="nav-link" th:href="@{/login}">Ingreso</a></li>
-          <li class="nav-item"><a class="nav-link" th:href="@{/catalogo}">Ver catalogo</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <div th:replace="fragments/header :: header"></div>
 
     <div class="container-fluid mt-3">
         <div class="row">
@@ -119,6 +94,9 @@
             </div>
         </div>
     </div>
-</body>
 
+    <!-- FOOTER -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+</body>
 </html>
