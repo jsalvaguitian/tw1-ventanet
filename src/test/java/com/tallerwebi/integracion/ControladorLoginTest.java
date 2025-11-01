@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,7 +58,8 @@ public class ControladorLoginTest {
 		ModelAndView modelAndView = result.getModelAndView();
         assert modelAndView != null;
 		assertThat("redirect:/home", equalToIgnoringCase(Objects.requireNonNull(modelAndView.getViewName())));
-		assertThat(true, is(modelAndView.getModel().isEmpty()));
+		//assertThat(true, is(modelAndView.getModel().isEmpty()));
+		assertThat(modelAndView.getModel().keySet(), contains("usuarioLogueado"));
 	}
 
 	@Test
