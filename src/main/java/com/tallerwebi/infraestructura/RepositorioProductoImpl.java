@@ -92,7 +92,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         }
 */
         if (tipoProductoId != null) {
-            hql.append("WHERE p.tipoProducto.id = :tipoProductoId");
+            hql.append(" WHERE p.tipoProducto.id = :tipoProductoId");
             params.put("tipoProductoId", tipoProductoId);
         }
 
