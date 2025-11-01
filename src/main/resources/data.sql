@@ -21,12 +21,20 @@ INSERT INTO TipoProducto (id, nombre) VALUES
     (3, 'Techo');
 
 -- Tipo de ventana
-INSERT INTO TipoVentana (id, nombre) VALUES
-    (1, 'Corrediza'),
-    (2, 'Oscilobatiente'),
-    (3, 'Paño fijo'),
-    (4, 'Abatible'),
-    (5, 'Plegable');
+INSERT INTO TipoVentana (id, nombre, tipo_producto_id) VALUES
+    (1, 'Corrediza', 2),
+    (2, 'Oscilobatiente', 2),
+    (3, 'Paño fijo', 2),
+    (4, 'Abatible', 2),
+    (5, 'Plegable', 2),
+    (6, 'Abatible', 1),
+    (7, 'Corrediza', 1),
+    (8, 'Doble', 1),
+    (9, 'Plegable', 1),
+    (10, 'De Chapa', 3),
+    (11, 'Aislante', 3);
+    
+
 
 -- Ancho
 INSERT INTO Ancho (id, nombre) VALUES

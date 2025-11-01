@@ -58,4 +58,9 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         return cotizaciones;
     }
 
+    @Override
+    public Cotizacion guardar(Cotizacion cotizacion) {
+        return cotizacionRepository.guardar(cotizacion);
+    }
+
 }
