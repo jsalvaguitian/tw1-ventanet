@@ -16,35 +16,7 @@
 
 <body>
   <!-- HEADER -->
-  <header class="site-header">
-    <div class="header-inner">
-      <a th:href="@{/}" class="logo">
-        <span class="brand">VENTANET</span>
-      </a>
-      <nav class="ms-auto">
-        <ul class="nav">
-          <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-
-          <!-- Menú desplegable -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="registroDropdown" role="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              Registro
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="registroDropdown">
-              <li><a th:href="@{/nuevo-usuario}" class="dropdown-item">Cliente</a></li>
-              <li><a th:href="@{/registro-proveedor}" class="dropdown-item">Proveedor</a></li>
-            </ul>
-          </li>
-          <li class="nav-item"><a class="nav-link" th:href="@{/login}">Ingreso</a></li>
-          <li class="nav-item"><a class="nav-link" th:href="@{/catalogo}">Ver catalogo</a></li>
-
-        </ul>
-
-      </nav>
-    </div>
-  </header>
-
+  <div th:replace="fragments/header :: header"></div>
 
   <!-- HERO -->
   <header class="bg-light text-dark text-center py-5 hero-section">
@@ -68,6 +40,7 @@
             <div class="card-body text-center">
               <h5 class="card-title">Ventana Corrediza</h5>
               <p class="card-text">Optimiza espacios con máxima luminosidad.</p>
+              <a th:href="@{/catalogo}" class="stretched-link"></a>
             </div>
           </div>
         </div>
@@ -77,6 +50,7 @@
             <div class="card-body text-center">
               <h5 class="card-title">Oscilobatiente</h5>
               <p class="card-text">Ventilación controlada y segura.</p>
+              <a th:href="@{/catalogo}" class="stretched-link"></a>
             </div>
           </div>
         </div>
@@ -86,6 +60,7 @@
             <div class="card-body text-center">
               <h5 class="card-title">Paño Fijo</h5>
               <p class="card-text">Diseño minimalista y elegante.</p>
+              <a th:href="@{/catalogo}" class="stretched-link"></a>
             </div>
           </div>
         </div>
@@ -93,11 +68,28 @@
     </section>
   </main>
 
-  <!-- STRIP FABRICANDO -->
-  <section class="fabricando text-center py-4">
-    <h3>Fabricando desde 2025 <br> Innovación al servicio de la construcción.</h3>
-  </section>
+  <!-- NOSOTROS / FABRICANDO -->
+  <section class="fabricando text-center py-5 bg-light">
+    <div class="container">
+      <h3 class="mb-4">Fabricando desde 2025 <br> Innovación al servicio de la construcción.</h3>
+      <p class="lead mb-5">Somos un equipo dedicado al desarrollo de soluciones en aberturas modernas y eficientes.</p>
 
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h4 class="text-primary">Misión</h4>
+          <p>Brindar productos de calidad que combinen diseño, funcionalidad y durabilidad.</p>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h4 class="text-primary">Visión</h4>
+          <p>Ser referentes en innovación y servicio en el mercado de aberturas.</p>
+        </div>
+        <div class="col-md-4">
+          <h4 class="text-primary">Alcance</h4>
+          <p>Atendemos a todo el país con soluciones personalizadas para cada proyecto.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- SOCIOS -->
   <section class="py-5 text-center">
@@ -110,36 +102,37 @@
     </div>
   </section>
 
-  <!-- CONTACTO -->
-  <section id="contacto" class="contacto bg-dark text-light py-5">
-    <div class="container">
-      <h2 class="text-center mb-4">Contacto</h2>
-      <div class="row align-items-center">
-        <div class="col-md-6 mb-4 mb-md-0">
-          <p>Escribinos y nos pondremos en contacto contigo lo antes posible.</p>
+  <!-- FAQ -->
+  <section class="faq-section py-5 text-white bg-dark">
+  <h2 class="text-center mb-4">Preguntas Frecuentes</h2>
+    <div id="faqCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+      <div class="carousel-inner">
+
+        <div class="carousel-item active text-center">
+          <h5>¿Qué tipos de aberturas fabrican?</h5>
+          <p>Trabajamos con aluminio, PVC y vidrio templado, según las necesidades de cada cliente.</p>
         </div>
-        <div class="col-md-6">
-          <form>
-            <div class="mb-3">
-              <label for="nombre" class="form-label">Nombre</label>
-              <input type="text" class="form-control" id="nombre" placeholder="Tu nombre">
-            </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" placeholder="Tu email">
-            </div>
-            <div class="mb-3">
-              <label for="asunto" class="form-label">Asunto</label>
-              <input type="text" class="form-control" id="asunto" placeholder="Asunto">
-            </div>
-            <div class="mb-3">
-              <label for="mensaje" class="form-label">Mensaje</label>
-              <textarea class="form-control" id="mensaje" rows="4" placeholder="Escribe tu mensaje"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Enviar</button>
-          </form>
+
+        <div class="carousel-item text-center">
+          <h5>¿Realizan envíos al interior?</h5>
+          <p>Sí, enviamos a todo el país con embalaje seguro y transporte especializado.</p>
+        </div>
+
+        <div class="carousel-item text-center">
+          <h5>¿Ofrecen instalación?</h5>
+          <p>Contamos con un equipo propio de instaladores certificados.</p>
         </div>
       </div>
+
+      <!-- Flechas de navegación -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#faqCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#faqCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+      </button>
     </div>
   </section>
 
@@ -155,46 +148,47 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer class="site-footer py-5">
+  <!-- CONTACTO -->
+  <section id="contacto" class="contacto bg-dark text-light py-5">
     <div class="container">
-      <div class="row text-center text-md-start">
+      <h2 class="text-center mb-4">Contacto</h2>
 
-        <!-- Columna Izquierda: Redes sociales -->
-        <div class="col-md-4">
-          <p class="mb-1">2025 © Ventanet</p>
-          <p class="mb-1">
-            <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
-            <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
-          </p>
+      <div class="row justify-content-center">
+        <div class="col-md-5 mb-4 mb-md-0">
+          <p class="mb-4">Escribinos y nos pondremos en contacto contigo lo antes posible.</p>
+          <form th:action="@{/contacto/enviar}" method="post">
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Tu nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" id="email" placeholder="Tu email" required>
+            </div>
         </div>
 
-        <!-- Columna Medio: Navegación -->
-        <div class="col-md-4 mb-4 mb-md-0">
-          <ul class="list-unstyled">
-            <li><a href="#productos" class="footer-link">Productos</a></li>
-            <li><a href="login.html" class="footer-link">Ingreso</a></li>
-            <li><a href="nuevo-usuario.html" class="footer-link">Registro</a></li>
-          </ul>
-        </div>
-
-        <!-- Columna Derecha: Datos Empresa -->
-        <div class="col-md-4 mb-4 mb-md-0">
-          <h5 class="mb-3">Seguinos en:</h5>
-          <div class="d-flex justify-content-center justify-content-md-start gap-3">
-            <a href="https://facebook.com"><img th:src="@{/img/rrss1.png}" alt="Facebook" width="30"></a>
-            <a href="https://instagram.com"><img th:src="@{/img/rrss2.png}" alt="Instagram" width="30"></a>
-            <a href="https://linkedin.com"><img th:src="@{/img/rrss3.png}" alt="Linkedin" width="30"></a>
-          </div>
+        <div class="col-md-5">
+            <div class="mb-3">
+              <label for="mensaje" class="form-label">Mensaje</label>
+              <textarea name="mensaje" class="form-control" id="mensaje" rows="5" placeholder="Escribe tu mensaje" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Enviar</button>
+          </form>
         </div>
       </div>
+
+      <div th:if="${param.contacto}" class="alert alert-success text-center mt-4">
+        ¡Tu mensaje fue enviado con éxito! Te responderemos pronto.
+      </div>
     </div>
-  </footer>
+  </section>
+
+  <!-- FOOTER -->
+  <div th:replace="fragments/footer :: footer"></div>
 
   <!-- Boostrap core js 
   <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>-->
   <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
 
 </body>
-
 </html>

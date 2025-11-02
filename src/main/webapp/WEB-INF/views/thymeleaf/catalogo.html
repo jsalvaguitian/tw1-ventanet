@@ -4,13 +4,14 @@
 <head>
     <title>Catálogo</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <!-- estilo para el header -->
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 
 <body>
-    <header>
-                <a th:href="@{/home}" class="navbar-brand">Ventanet</a>
+  <!-- HEADER -->
+  <div th:replace="fragments/header :: header"></div>
 
-    </header>
     <div class="container-fluid mt-3">
         <div class="row">
             <!-- FILTROS -->
@@ -93,6 +94,9 @@
             </div>
         </div>
     </div>
-</body>
 
+    <!-- FOOTER -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+</body>
 </html>
