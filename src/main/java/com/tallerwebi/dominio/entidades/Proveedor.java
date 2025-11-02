@@ -9,6 +9,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 
 import javax.persistence.CascadeType;
@@ -39,6 +40,9 @@ public class Proveedor extends Usuario{
     private String ubicacion;
     private Double latitud;
     private Double longitud;
+
+    @Lob
+    private byte[] logo; 
 
 
     public Proveedor() {
@@ -137,7 +141,13 @@ public class Proveedor extends Usuario{
         this.longitud = longitud;
     }
 
-
+    public byte[] getLogo() {
+        return logo;
+    }
+    
+    public void setLogo(byte[] logo) {
+        this.logo = logo;
+    }
     @Override
     public int hashCode() {
         final int prime = 31;

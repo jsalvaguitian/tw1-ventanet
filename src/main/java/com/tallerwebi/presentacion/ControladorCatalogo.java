@@ -42,7 +42,21 @@ public class ControladorCatalogo {
         this.servicioMarca = servicioMarca;
     }
 
-    @GetMapping("/catalogo")
+    @GetMapping("/menu-catalogo")
+    public ModelAndView irAMenueneralCatalogo() {
+        return new ModelAndView("menu-general-catalogo");
+    }
+
+    @GetMapping("/ver-proveedores")
+    public ModelAndView verProveedores(HttpServletRequest request) {
+        ModelMap modelMap = new ModelMap();
+        List<Proveedor> proveedores = servicioProveedor.obtenerTodosLosProveedoresActivos();
+
+        return new ModelAndView("ver-proveedores", modelMap);
+    }
+    
+
+    @GetMapping("/ver-productos")
     public ModelAndView verCatalogo(HttpServletRequest request,
             @RequestParam(required = false) Long proveedorId,
             @RequestParam(required = false) Long tipoProductoId){

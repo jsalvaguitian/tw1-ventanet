@@ -1,0 +1,167 @@
+body {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f8f9fb;
+    color: #333;
+}
+
+.banner {
+    text-align: center;
+    padding: 60px 20px 40px;
+    background: linear-gradient(135deg, #abb9cd, #ffffff);
+}
+
+.banner h1 {
+    font-size: 2.5rem;
+    color: #2b4ea2;
+    margin-bottom: 20px;
+}
+
+.banner p {
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.cards-container {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 40px;
+    flex-wrap: wrap;
+    padding: 40px 20px;
+}
+
+.card {
+    position: relative;
+    width: 400px;
+    height: 320px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.card:hover {
+    transform: translateY(-8px);
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: all 0.5s ease;
+    z-index: 0;
+}
+
+/* Fondos de las cards */
+.card.proveedor::before {
+    background-image: url('../img/explorar-proveedor.jpg');
+}
+
+.card.producto::before {
+    background-image: url('../img/explorar-producto.jpg');
+}
+
+.card-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(0px);
+    transition: backdrop-filter 0.5s ease, background 0.5s ease;
+    text-align: center;
+    padding: 15px;
+}
+
+.card:hover .card-content {
+    backdrop-filter: blur(5px);
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.card h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #0971a5;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.8);
+
+    font-weight: 600;
+}
+
+.info {
+    opacity: 0;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #333;
+    /*max-width: 90%;*/
+    transition: opacity 0.5s ease;
+}
+
+.card:hover .info {
+    opacity: 1;
+}
+
+.text {
+    padding-bottom: 4rem;
+    text-align: center;
+}
+
+/* 🔹 Responsive */
+@media (max-width: 768px) {
+    .banner h1 {
+        font-size: 2rem;
+    }
+
+    .banner p {
+        font-size: 1rem;
+        padding: 0 10px;
+    }
+
+    .cards-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 25px;
+        padding: 20px;
+    }
+
+    .card {
+        width: 90%;
+        height: 180px;
+    }
+
+
+}
+
+@media (max-width: 480px) {
+    .banner h1 {
+        font-size: 1.6rem;
+    }
+
+    .banner p {
+        font-size: 0.95rem;
+    }
+
+    .card {
+        height: 160px;
+    }
+
+    .card h2 {
+        font-size: 1.1rem;
+    }
+
+    .info {
+        font-size: 0.85rem;
+    }
+}
