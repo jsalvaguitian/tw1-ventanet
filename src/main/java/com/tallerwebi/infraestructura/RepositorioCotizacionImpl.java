@@ -73,16 +73,13 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
         return true;
     }
 
-    /*
-     * public List<Cotizacion> obtenerPorIdCliente(Long clienteId) {
-     * return sessionFactory.getCurrentSession()
-     * .createQuery("from Cotizacion c where c.cliente.id = :clienteId",
-     * Cotizacion.class)
-     * .setParameter("clienteId", clienteId)
-     * .list();
-     * }
-     */
     @Override
+    public Cotizacion guardar(Cotizacion cotizacion) {
+        final Session session = sessionFactory.getCurrentSession();
+        session.save(cotizacion);
+        return cotizacion;
+    }
+
     public List<Cotizacion> obtenerPorIdCliente(Long clienteId) {
         var session = sessionFactory.getCurrentSession();
         var query = session.createQuery(

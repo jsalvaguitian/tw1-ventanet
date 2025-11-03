@@ -6,65 +6,62 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import com.tallerwebi.dominio.entidades.Localidad;
-
+import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioGenerico;
 
-
-@Repository("repositorioLocalidad")
-public class RepositorioLocalidadImpl implements RepositorioGenerico<Localidad> {
+@Repository("repositorioTipoVentana")
+public class RepositorioTipoVentanaImpl implements RepositorioGenerico<TipoVentana> {
     // private final Map<Long, Producto> database;
     // private static Long proximoId;
     private SessionFactory sessionFactory;
 
     @Autowired
-    public RepositorioLocalidadImpl(SessionFactory sessionFactory) {
+    public RepositorioTipoVentanaImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public Localidad obtener(Long id) {
+    public TipoVentana obtener(Long id) {
         final Session session = sessionFactory.getCurrentSession();
-        return (Localidad) session.createCriteria(Localidad.class)
-                .add(Restrictions.eq("id_localidad", id))
+        return (TipoVentana) session.createCriteria(TipoVentana.class)
+                .add(Restrictions.eq("id", id))
                 .uniqueResult();
     }
 
     @Override
-    public List<Localidad> obtener() {
+    public List<TipoVentana> obtener() {
         return sessionFactory.getCurrentSession()
-                .createQuery("from Localidad", Localidad.class)
+                .createQuery("from TipoVentana", TipoVentana.class)
+                .list();
+    }
+
+    public List<TipoVentana> obtenerPorIdTipoProducto(Long id_tipo_producto) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from TipoVentana where tipo_producto_id = :tipo_producto_id", TipoVentana.class)
+                .setParameter("tipo_producto_id", id_tipo_producto)
                 .list();
     }
 
     @Override
-    public Boolean guardar(Localidad item) {
+    public Boolean guardar(TipoVentana item) {
         sessionFactory.getCurrentSession().save(item);
         return true;
     }
 
     @Override
-    public Boolean actualizar(Localidad item) {
+    public Boolean actualizar(TipoVentana item) {
         sessionFactory.getCurrentSession().update(item);
         return true;
     }
 
     @Override
     public void eliminar(Long id) {
-        Localidad presentacion = (Localidad) sessionFactory.getCurrentSession().createCriteria(Localidad.class)
-                .add(Restrictions.eq("id_localidad", id))
+        TipoVentana presentacion = (TipoVentana) sessionFactory.getCurrentSession().createCriteria(TipoVentana.class)
+                .add(Restrictions.eq("id", id))
                 .uniqueResult();
 
         if (presentacion != null) {
             sessionFactory.getCurrentSession().remove(presentacion);
         }
-    }
-
-    public List<Localidad> obtenerPorIdDeProvincia(Long provincia_id) {
-        return sessionFactory.getCurrentSession()
-                .createQuery("from Localidad where provincia_id = :provincia_id", Localidad.class)
-                .setParameter("provincia_id", provincia_id)
-                .list();
     }
 }
