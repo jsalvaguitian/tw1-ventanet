@@ -59,4 +59,11 @@ public class RepositorioPartidoImpl implements RepositorioGenerico<Partido> {
             sessionFactory.getCurrentSession().remove(presentacion);
         }
     }
+
+        public List<Partido> obtenerPorIdDeLocalidad(Long localidad_id) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from Partido where localidad_id = :localidad_id", Partido.class)
+                .setParameter("localidad_id", localidad_id)
+                .list();
+    }
 }
