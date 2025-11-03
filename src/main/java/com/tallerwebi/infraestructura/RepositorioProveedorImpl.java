@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.enums.EstadoUsuario;
+import com.tallerwebi.dominio.enums.Rubro;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioProveedor;
 
 @Repository("repositorioProveedor")
@@ -38,17 +39,19 @@ public class RepositorioProveedorImpl implements RepositorioProveedor {
         String hql = "FROM Proveedor p WHERE p.estado = :estado";
         Query query = this.sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("estado", EstadoUsuario.ACTIVO);
-        
+
         return query.getResultList();
     }
 
-    /*@Override
-    public Proveedor buscarProveedorPorIdUsuario(Long idUsuario) {
-        return (Proveedor) sessionFactory.getCurrentSession()
-                .createCriteria(Proveedor.class)
-                .add(Restrictions.eq("id", idUsuario) )
-                .uniqueResult();
-    }*/
+    /*
+     * @Override
+     * public Proveedor buscarProveedorPorIdUsuario(Long idUsuario) {
+     * return (Proveedor) sessionFactory.getCurrentSession()
+     * .createCriteria(Proveedor.class)
+     * .add(Restrictions.eq("id", idUsuario) )
+     * .uniqueResult();
+     * }
+     */
 
     @Override
     public List<Proveedor> obtenerTodosLosProveedoresPendientes() {
@@ -94,6 +97,26 @@ public class RepositorioProveedorImpl implements RepositorioProveedor {
         query.setParameter("estado", estado);
         Long count = (Long) query.getSingleResult();
         return count.intValue();
-    }    
+    }
+
+    @Override
+    public List<Rubro> obtenerRubrosActivos() {
+        String hql = "SELECT DISTINCT p.rubro FROM Proveedor p WHERE p.activo = true";
+        org.hibernate.query.Query<Rubro> query = this.sessionFactory.getCurrentSession().createQuery(hql, Rubro.class);
+        return query.getResultList();
+
+    }
+
+    @Override
+    public List<Proveedor> listarPorRubro(Rubro rubro) {
+
+        String hql = "FROM Proveedor p where p.rubro =: rubro AND p.activo = TRUE";
+        org.hibernate.query.Query<Proveedor> query = this.sessionFactory.getCurrentSession().createQuery(hql,
+                Proveedor.class);
+        query.setParameter("rubro", rubro);
+
+        return query.getResultList();
+
+    }
 
 }

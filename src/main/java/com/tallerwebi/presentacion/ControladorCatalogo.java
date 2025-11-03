@@ -1,7 +1,9 @@
 package com.tallerwebi.presentacion;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,13 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.entidades.Marca;
 import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.TipoProducto;
+import com.tallerwebi.dominio.enums.Rubro;
 import com.tallerwebi.dominio.servicios.ServicioMarca;
 import com.tallerwebi.dominio.servicios.ServicioProdV2;
 import com.tallerwebi.dominio.servicios.ServicioProducto;
@@ -50,16 +55,38 @@ public class ControladorCatalogo {
     @GetMapping("/ver-proveedores")
     public ModelAndView verProveedores(HttpServletRequest request) {
         ModelMap modelMap = new ModelMap();
+        List<Rubro> rubros = servicioProveedor.obtenerRubrosActivos();
+
         List<Proveedor> proveedores = servicioProveedor.obtenerTodosLosProveedoresActivos();
+        List<UsuarioProvDTO> provDTOs = convertirProveedoresADtosFiltro(proveedores);
+
+
+        modelMap.put("rubros", rubros);
+        modelMap.put("proveedores", provDTOs);
 
         return new ModelAndView("ver-proveedores", modelMap);
     }
-    
 
+    @GetMapping("/proveedores/filtrar/{rubro}")
+    @ResponseBody
+    public List<UsuarioProvDTO> filtrarProveedoresPorRubro(@PathVariable Rubro rubro) {
+        List<Proveedor>proveedores = servicioProveedor.obtenerProveedoresPorRubro(rubro);
+        List<UsuarioProvDTO> provDTOs = convertirProveedoresADtosFiltro(proveedores);
+
+        return provDTOs;
+    }
+    
+    @GetMapping("/catalogo/{id}")
+    public ModelAndView verCatalogoProveedor(@PathVariable("id") Long idProveedor) {
+        ModelMap modelMap = new ModelMap();
+        
+        return new ModelAndView("catalogo", modelMap);
+    }
+    
     @GetMapping("/ver-productos")
     public ModelAndView verCatalogo(HttpServletRequest request,
             @RequestParam(required = false) Long proveedorId,
-            @RequestParam(required = false) Long tipoProductoId){
+            @RequestParam(required = false) Long tipoProductoId) {
 
         ModelMap modelMap = new ModelMap();
 
@@ -73,7 +100,7 @@ public class ControladorCatalogo {
 
         // List<Producto> productos = servicioProducto.obtener();// por el momento 15
         // productos tendra la
-        List<Producto> productos = servicioProducto.buscarConFiltros(tipoProductoId);//despues agregar mas filtros
+        List<Producto> productos = servicioProducto.buscarConFiltros(tipoProductoId);// despues agregar mas filtros
 
         // bbdd
 
@@ -90,11 +117,13 @@ public class ControladorCatalogo {
         // luego preguntar si un cliente inicio sesion
     }
 
+    // -------------------------------------------------------------------------------------------------
     private List<UsuarioProvDTO> convertirProveedoresADtosFiltro(List<Proveedor> proveedores) {
         List<UsuarioProvDTO> usuarioProvDTOs = new ArrayList<>();
 
         for (Proveedor uno : proveedores) {
-            UsuarioProvDTO dtoProv = new UsuarioProvDTO(uno.getId(), uno.getRazonSocial());
+            UsuarioProvDTO dtoProv = new UsuarioProvDTO(uno.getId(), uno.getRazonSocial(), uno.getLogoPath(), uno.getRubro());// pido
+                                                                                                              // loguito
             usuarioProvDTOs.add(dtoProv);
         }
         return usuarioProvDTOs;

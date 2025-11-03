@@ -18,7 +18,8 @@ INSERT INTO Presentacion (id, descripcion, unidadMedida, cantidad) VALUES
 INSERT INTO TipoProducto (id, nombre) VALUES
     (1, 'Puerta'),
     (2, 'Ventana'),
-    (3, 'Techo');
+    (3, 'Techo'),
+    (4, 'Piso y Revestimiento');
 
 -- Tipo de ventana
 INSERT INTO TipoVentana (id, nombre, tipo_producto_id) VALUES
@@ -122,7 +123,7 @@ INSERT INTO Usuario (
 (2, 'Juan', 'Pérez', 'cliente1', 'juan.perez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '111222333', 'Calle Falsa 123', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
-
+----- PROVEEDORES
 (3, 'Pedro', 'Gómez', 'proveedor1', 'pedro.gomez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '444555666', 'Calle Empresa 45', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
@@ -138,14 +139,36 @@ INSERT INTO Usuario (
 (6, 'Juan', 'Fulano', 'proveedor4', 'juan.fulano@email.com',
  '$2a$10$9rO6fX2qRUYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '444555666', 'Calle Santa Fe 2245', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
-
+----- MÁS CLIENTES
  (7, 'María', 'Lopez', 'cliente2', 'maria.lopez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '111333555', 'Av. Belgrano 456', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
 
 (8, 'Carlos', 'Martinez', 'cliente3', 'carlos.martinez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
- '222444666', 'Calle San Martín 789', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO');
+ '222444666', 'Calle San Martín 789', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
+ 
+ --- MAS PROVEEDORES
+(9, 'Ana', 'García', 'proveedor5', 'ana.garcia@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '777888999', 'Calle Comercio 321', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(10, 'Luis', 'Fernández', 'proveedor6', 'luis@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '666555444', 'Av. Industria 654', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(11, 'Manuel', 'Ramírez', 'proveedor7', 'manuel@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '333222111', 'Calle Fabricación 987', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+ (12, 'Juana', 'Díaz', 'proveedor8', 'juana@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq','334323211', 'Calle Producción 159', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(13, 'Marcos', 'Vargas', 'proveedor9', 'marcos@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '112233445', 'Av. Comercial 753', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(14, 'Raimundo', 'Santos', 'proveedor10', 'raimundo@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '998877665', 'Calle Industrial 852', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+ (15, 'Juliana', 'Guitian', 'proveedor11', 'juliana@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '556677889', 'Av. Empresarial 951', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(16, 'Javier', 'Castro', 'proveedor12', 'javier@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '443322110', 'Calle de la Industria 357', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(17, 'Leandro', 'Rojas', 'proveedor13', 'leandro@email.com', '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '221100334', 'Av. Fabricación 258', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO');
 
 -- ===============================================
 -- SUBCLASES (JOINED)
@@ -156,12 +179,21 @@ INSERT INTO Cliente (id) VALUES (7);
 INSERT INTO Cliente (id) VALUES (8);
 
 INSERT INTO Proveedor (
-    id, razonSocial, cuit, rubro, sitioWeb, documento, ubicacion, latitud, longitud
+    id, razonSocial, cuit, rubro, sitioWeb, documento, ubicacion, latitud, longitud, logoPath
 ) VALUES
-(3, 'Gómez Servicios S.A.', '30123456789', NULL, 'https://www.gomezservicios.com', NULL, 'Buenos Aires', -34.60, -58.38),
-(4, 'Simpson Proveedores', '30222222222', NULL, 'https://www.simpsonpro.com', NULL, 'Springfield', -34.61, -58.40),
-(5, 'Pedro Construcciones', '30333333333', NULL, 'https://www.pedroconstruye.com', NULL, 'Córdoba', -31.42, -64.18),
-(6, 'Fulano Materiales', '30444444444', NULL, 'https://www.fulano.com', NULL, 'Rosario', -32.95, -60.66);
+(3, 'Interfloor S.A.', '30123456789','PISOS_REVESTIMIENTOS', 'https://interfloor.com.ar/', NULL, 'Buenos Aires', -34.60, -58.38, 'img/logo-interfloor-argentina.svg'),
+(4, 'Pewen Piso S.A', '30222222222','PISOS_REVESTIMIENTOS', 'https://www.simpsonpro.com', NULL, 'Springfield', -34.61, -58.40, 'img/logo-pewenpisos.png'),
+(5, 'Rolon Piso', '30333333333','PISOS_REVESTIMIENTOS', 'https://www.pedroconstruye.com', NULL, 'Córdoba', -31.42, -64.18, 'img/logo-rolon-pisos.png'),
+(6, 'Aluar', '30444444444','VIDRIOS_ABERTURAS', 'https://www.fulano.com', NULL, 'Rosario', -32.95, -60.66, 'img/logo1.png'),
+(9, 'Abercom', '30444444777', 'VIDRIOS_ABERTURAS', 'https://www.abercom.com', NULL, 'Salta', -22.22, -12.11, 'img/logo-abercom.png'),
+(10, 'Aluplast S.A.', '30555555555', 'VIDRIOS_ABERTURAS', 'https://www.aluplast.com.ar', NULL, 'Buenos Aires', -34.61, -58.39, 'img/logo2.png'),
+(11, 'Deceuninck Argentina', '30666666666', 'VIDRIOS_ABERTURAS', 'https://www.deceuninck.com.ar', NULL, 'Buenos Aires', -34.62, -58.37, 'img/logo-deceuninck.png'),
+(12, 'Pacheco Chapas S.R.L.', '30777777777', 'HIERROS_ESTRUCTURAS', 'https://www.pachecochapas.com.ar', NULL, 'Tigre', -34.47, -58.61, 'img/logo-pacheco-chapas.png'),
+(13, 'Todo Tejas', '30888888888', 'MATERIALES_OBRA', 'https://www.todotejas.com.ar', NULL, 'La Plata', -34.92, -57.95, 'img/logo-todotejas.png'),
+(14, 'Chapaferro S.A.', '30999999999', 'HIERROS_ESTRUCTURAS', 'https://www.chapaferro.com.ar', NULL, 'Rosario', -32.96, -60.65, '/img/logo-chapaferro.png'),
+(15, 'Tejas Fantini', '30101010101', 'MATERIALES_OBRA', 'https://www.tejasfantini.com.ar', NULL, 'Córdoba', -31.41, -64.19, 'img/logo-tejas-fantini.png'),
+(16, 'Adramet S.R.L.', '30202020202', 'HIERROS_ESTRUCTURAS', 'https://www.adramet.com.ar', NULL, 'Avellaneda', -34.67, -58.36, 'img/logo-adramet.jpg'),
+(17, 'El Ítalo Construcciones', '30303030303', 'MATERIALES_OBRA', 'https://www.elitalo.com.ar', NULL, 'San Miguel', -34.53, -58.70, 'img/logo-elitalo.png');
 
 -- ===============================================
 -- PRODUCTOS (las FK deben existir antes)
@@ -220,6 +252,48 @@ INSERT INTO Producto (
 (10, 'Puerta blindada', 45000.00, 'Puerta de seguridad', '/uploads/imagenes/puerta-blindada.jpg', 8, 6,
  1, 3, 1, 'PB-02', false,
  NULL, NULL, NULL, 1, NULL, 4); -- aluminio, color negro
+
+
+-- 24 productos Aluplast extendidos
+INSERT INTO Producto (
+    nombre, precio, descripcion, imagenUrl, stock, tipo_producto_id, marca_id, proveedor_id, 
+    tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id, presentacion_id, modelo, aceptaEnvio
+) VALUES
+-- Ventanas corredizas PVC
+('Ventana Corrediza PVC 1.2x1.5 m', 35000.0, 'Ventana corrediza de PVC, vidrio simple, color blanco', 'img/ventana1.png', 20, 2, 1, 10, 1, 7, 10, 2, 1, 1, 'COR-PVC-120x150', true),
+('Ventana Corrediza PVC 1.5x1.2 m', 37000.0, 'Ventana corrediza de PVC, vidrio doble, color gris', 'img/ventana2.png', 15, 2, 2, 10, 1, 10, 7, 2, 2, 1, 'COR-PVC-150x120', true),
+('Ventana Corrediza PVC 1.0x1.0 m', 32000.0, 'Ventana corrediza de PVC, vidrio simple, color marrón', 'img/ventana3.png', 18, 2, 3, 10, 1, 6, 6, 2, 3, 1, 'COR-PVC-100x100', true),
+('Ventana Corrediza PVC 1.3x1.5 m', 36000.0, 'Ventana corrediza de PVC, vidrio templado, color negro', 'img/ventana4.png', 12, 2, 1, 10, 1, 8, 10, 2, 4, 1, 'COR-PVC-130x150', true),
+
+-- Ventanas oscilobatientes Aluminio
+('Ventana Oscilobatiente Aluminio 1.0x1.2 m', 45000.0, 'Ventana oscilobatiente de aluminio, vidrio laminado, color marrón', 'img/ventana5.png', 10, 2, 3, 10, 2, 6, 7, 1, 3, 3, 'OSC-ALU-100x120', true),
+('Ventana Oscilobatiente Aluminio 1.2x1.5 m', 48000.0, 'Ventana oscilobatiente de aluminio, vidrio templado, color negro', 'img/ventana6.png', 12, 2, 1, 10, 2, 7, 10, 1, 4, 4, 'OSC-ALU-120x150', true),
+('Ventana Oscilobatiente Aluminio 0.9x1.2 m', 43000.0, 'Ventana oscilobatiente de aluminio, vidrio doble, color blanco', 'img/ventana7.png', 14, 2, 2, 10, 2, 5, 7, 1, 2, 1, 'OSC-ALU-090x120', true),
+('Ventana Oscilobatiente Aluminio 1.0x1.5 m', 47000.0, 'Ventana oscilobatiente de aluminio, vidrio laminado, color gris', 'img/ventana8.png', 9, 2, 3, 10, 2, 6, 10, 1, 3, 1, 'OSC-ALU-100x150', true),
+
+-- Paños fijos PVC
+('Paño Fijo PVC 0.8x1.0 m', 22000.0, 'Paño fijo de PVC, vidrio simple, color blanco', 'img/pano1.png', 30, 2, 2, 10, 3, 4, 6, 2, 1, 1, 'PF-PVC-080x100', true),
+('Paño Fijo PVC 1.0x1.2 m', 25000.0, 'Paño fijo de PVC, vidrio doble, color gris', 'img/pano2.png', 25, 2, 1, 10, 3, 6, 7, 2, 2, 1, 'PF-PVC-100x120', true),
+('Paño Fijo PVC 1.2x1.5 m', 28000.0, 'Paño fijo de PVC, vidrio laminado, color marrón', 'img/pano3.png', 20, 2, 3, 10, 3, 7, 10, 2, 3, 1, 'PF-PVC-120x150', true),
+('Paño Fijo PVC 1.0x1.0 m', 24000.0, 'Paño fijo de PVC, vidrio templado, color negro', 'img/pano4.png', 18, 2, 1, 10, 3, 6, 6, 2, 4, 1, 'PF-PVC-100x100', true),
+
+-- Puertas abatibles PVC
+('Puerta Abatible PVC 0.9x2.0 m', 40000.0, 'Puerta abatible de PVC, vidrio templado, color blanco', 'img/puerta1.png', 8, 1, 1, 10, 6, 5, 15, 2, 4, 1, 'PA-PVC-090x200', true),
+('Puerta Abatible PVC 1.0x2.1 m', 42000.0, 'Puerta abatible de PVC, vidrio laminado, color marrón', 'img/puerta2.png', 5, 1, 2, 10, 6, 6, 16, 2, 3, 3, 'PA-PVC-100x210', true),
+('Puerta Abatible PVC 1.0x2.0 m', 41000.0, 'Puerta abatible de PVC, vidrio doble, color gris', 'img/puerta3.png', 7, 1, 3, 10, 6, 6, 16, 2, 2, 1, 'PA-PVC-100x200', true),
+('Puerta Abatible PVC 1.1x2.2 m', 43000.0, 'Puerta abatible de PVC, vidrio simple, color negro', 'img/puerta4.png', 4, 1, 1, 10, 6, 7, 17, 2, 1, 1, 'PA-PVC-110x220', true),
+
+-- Ventanas plegables Aluminio
+('Ventana Plegable Aluminio 1.8x2.0 m', 65000.0, 'Ventana plegable de aluminio, vidrio doble, color blanco', 'img/ventana9.png', 6, 2, 3, 10, 5, 13, 15, 1, 2, 1, 'PLG-ALU-180x200', true),
+('Ventana Plegable Aluminio 2.0x2.2 m', 68000.0, 'Ventana plegable de aluminio, vidrio templado, color negro', 'img/ventana10.png', 4, 2, 1, 10, 5, 15, 16, 1, 4, 4, 'PLG-ALU-200x220', true),
+('Ventana Plegable Aluminio 1.5x1.8 m', 62000.0, 'Ventana plegable de aluminio, vidrio laminado, color marrón', 'img/ventana11.png', 5, 2, 2, 10, 5, 10, 15, 1, 3, 3, 'PLG-ALU-150x180', true),
+('Ventana Plegable Aluminio 1.6x2.0 m', 64000.0, 'Ventana plegable de aluminio, vidrio simple, color gris', 'img/ventana12.png', 3, 2, 3, 10, 5, 11, 16, 1, 1, 1, 'PLG-ALU-160x200', true),
+
+-- Ventanas abatibles PVC
+('Ventana Abatible PVC 1.0x1.5 m', 37000.0, 'Ventana abatible de PVC, vidrio doble, color blanco', 'img/ventana13.png', 10, 2, 1, 10, 4, 6, 10, 2, 2, 1, 'AB-PVC-100x150', true),
+('Ventana Abatible PVC 1.2x1.6 m', 39000.0, 'Ventana abatible de PVC, vidrio laminado, color gris', 'img/ventana14.png', 8, 2, 2, 10, 4, 7, 12, 2, 3, 1, 'AB-PVC-120x160', true),
+('Ventana Abatible PVC 1.3x1.5 m', 40000.0, 'Ventana abatible de PVC, vidrio templado, color marrón', 'img/ventana15.png', 6, 2, 3, 10, 4, 8, 10, 2, 4, 1, 'AB-PVC-130x150', true),
+('Ventana Abatible PVC 1.0x1.8 m', 41000.0, 'Ventana abatible de PVC, vidrio simple, color negro', 'img/ventana16.png', 5, 2, 1, 10, 4, 6, 14, 2, 1, 1, 'AB-PVC-100x180', true);
 
 
 

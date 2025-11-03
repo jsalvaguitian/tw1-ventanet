@@ -41,8 +41,7 @@ public class Proveedor extends Usuario{
     private Double latitud;
     private Double longitud;
 
-    @Lob
-    private byte[] logo; 
+    private String logoPath; 
 
 
     public Proveedor() {
@@ -141,13 +140,7 @@ public class Proveedor extends Usuario{
         this.longitud = longitud;
     }
 
-    public byte[] getLogo() {
-        return logo;
-    }
     
-    public void setLogo(byte[] logo) {
-        this.logo = logo;
-    }
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -172,6 +165,16 @@ public class Proveedor extends Usuario{
         } else if (!cuit.equals(other.cuit))
             return false;
         return true;
+    }
+
+
+    public String getLogoPath() {
+        return logoPath;
+    }
+
+
+    public void setLogoPath(String logoPath) {
+        this.logoPath = logoPath;
     }
 
 
