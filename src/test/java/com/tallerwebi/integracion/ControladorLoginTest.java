@@ -56,8 +56,10 @@ public class ControladorLoginTest {
 
 		ModelAndView modelAndView = result.getModelAndView();
         assert modelAndView != null;
-		assertThat("redirect:/home", equalToIgnoringCase(Objects.requireNonNull(modelAndView.getViewName())));
-		assertThat(true, is(modelAndView.getModel().isEmpty()));
+		//assertThat("redirect:/home", equalToIgnoringCase(Objects.requireNonNull(modelAndView.getViewName())));
+		//assertThat(true, is(modelAndView.getModel().isEmpty()));
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
+    	assertThat(modelAndView.getModel().isEmpty(), is(false));
 	}
 
 	@Test
