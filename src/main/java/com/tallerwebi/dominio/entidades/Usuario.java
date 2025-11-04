@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
+import javax.persistence.Lob;
 
 import com.tallerwebi.dominio.enums.EstadoUsuario;
 
@@ -33,6 +34,9 @@ public abstract class Usuario {
     private String telefono;
     private String direccion;
     private LocalDate fechaCreacion;
+
+    @Lob
+    private byte[] fotoPerfil = null;
 
     @Column(name = "rol", insertable = false, updatable = false) // solo de lectura
     private String rol;
@@ -165,6 +169,14 @@ public abstract class Usuario {
         activo = true;
     }
 
+    public byte[] getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public void setFotoPerfil(byte[] fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
+
     @Transient
     public String getNombreMostrable() {
         if (this instanceof Proveedor) {
@@ -173,5 +185,4 @@ public abstract class Usuario {
             return getNombre() + " " + getApellido();
         }
     }
-
 }
