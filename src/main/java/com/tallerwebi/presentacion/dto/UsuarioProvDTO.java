@@ -18,17 +18,17 @@ public class UsuarioProvDTO {
     private MultipartFile documento;
 
     private String documentoPath;
+    private String logoPath;
     
-    public UsuarioProvDTO(Long id, String razonSocial) {
+    public UsuarioProvDTO(Long id, String razonSocial, String logoPath, Rubro rubro) {
         this.id = id;
         this.razonSocial = razonSocial;
+        this.logoPath= logoPath;
+        this.rubro = rubro;
     }
 
     public UsuarioProvDTO() {
     }
-
-    
-    
 
     public String getEmail() {
         return email;
@@ -104,6 +104,14 @@ public class UsuarioProvDTO {
 
     public void setDocumentoPath(String documentoPath) {
         this.documentoPath = documentoPath;
+    }
+
+    public String getLogoPath() {
+        return logoPath;
+    }
+
+    public void setLogoPath(String logoPath) {
+        this.logoPath = logoPath;
     }
     
 }

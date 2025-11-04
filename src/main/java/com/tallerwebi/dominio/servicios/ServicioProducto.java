@@ -3,6 +3,8 @@ package com.tallerwebi.dominio.servicios;
 import java.util.List;
 
 import com.tallerwebi.dominio.entidades.Producto;
+import com.tallerwebi.dominio.entidades.TipoProducto;
+import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
 
 public interface ServicioProducto {
@@ -13,4 +15,8 @@ public interface ServicioProducto {
     void eliminar(Long id);
     List<Producto> buscarConFiltros(Long tipoProductoId);
     List<Producto> buscarPorProveedorId(Long proveedorId);
+    List<Producto> obtenerProductosFiltrados(Long idProveedor, String busqueda, Long tipoProductoId,
+            Long tipoVentanaId);
+    List<TipoProducto> obtenerTiposProductos(Long idProveedor);
+    List<TipoVentana> obtenerTiposVentanas(Long idProveedor);
 }

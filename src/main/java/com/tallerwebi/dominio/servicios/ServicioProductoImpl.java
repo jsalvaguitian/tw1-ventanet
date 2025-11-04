@@ -6,6 +6,8 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.tallerwebi.dominio.entidades.Producto;
+import com.tallerwebi.dominio.entidades.TipoProducto;
+import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
 import com.tallerwebi.infraestructura.RepositorioProductoImpl;
@@ -67,6 +69,23 @@ public class ServicioProductoImpl implements ServicioProducto {
     @Override
     public List<Producto> buscarPorProveedorId(Long proveedorId) {
         return productoRepository.buscarPorProveedorId(proveedorId);
+    }
+
+    @Override
+    public List<Producto> obtenerProductosFiltrados(Long idProveedor, String busqueda, Long tipoProductoId,
+            Long tipoVentanaId) {
+
+        return productoRepository.filtrarProductos(idProveedor, busqueda, tipoProductoId, tipoVentanaId);
+    }
+
+    @Override
+    public List<TipoProducto> obtenerTiposProductos(Long idProveedor) {
+        return productoRepository.obtenerTiposProductoPorProveedor(idProveedor);
+    }
+
+    @Override
+    public List<TipoVentana> obtenerTiposVentanas(Long idProveedor) {
+        return productoRepository.obtenerTiposVentanasPorProveedor(idProveedor);
     }    
 
 }

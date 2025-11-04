@@ -32,11 +32,11 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
                         "JOIN FETCH c.cliente " +
                         "JOIN FETCH c.proveedor " +
                         "LEFT JOIN FETCH c.items i " +
-                        "LEFT JOIN FETCH i.producto " +                        
+                        "LEFT JOIN FETCH i.producto " +
                         "WHERE c.id = :id",
                 Cotizacion.class);
         query.setParameter("id", id);
-        return query.uniqueResult();      
+        return query.uniqueResult();
     }
 
     @Override
@@ -94,5 +94,6 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
         query.setParameter("clienteId", clienteId);
         return query.getResultList();
     }
+
 }
 
