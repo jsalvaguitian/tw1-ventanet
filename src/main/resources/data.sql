@@ -214,6 +214,74 @@ INSERT INTO Producto (
  NULL, NULL, NULL, 1, NULL, 4); -- aluminio, color negro
 
 
+-- ===============================================
+-- PRODUCTOS ADICIONALES
+-- ===============================================
+
+-- Proveedor 4 (Simpson Proveedores)
+INSERT INTO Producto (
+    id, nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
+    tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
+    tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
+) VALUES
+-- Variante de Puerta de Madera
+(11, 'Puerta de Madera Premium', 15800.00, 'Puerta maciza con terminación barnizada', '/uploads/imagenes/puerta-madera-premium.jpg', 12, 4,
+ 1, 1, 1, 'PMA-03', true,
+ NULL, NULL, NULL, NULL, NULL, 4), -- color negro
+
+-- Variante de Ventana de Aluminio
+(12, 'Ventana de Aluminio Blanca', 9800.00, 'Ventana corrediza de aluminio blanco', '/uploads/imagenes/ventana-aluminio-blanca.jpg', 25, 4,
+ 2, 2, 2, 'VAL-03', true,
+ 1, 10, 10, 1, 1, 1), -- vidrio simple, color blanco
+
+-- Producto nuevo del rubro techo
+(13, 'Techo translúcido', 27000.00, 'Techo de policarbonato translúcido', '/uploads/imagenes/techo-translucido.jpg', 8, 4,
+ 3, 3, 3, 'TCH-T1', false,
+ NULL, NULL, NULL, NULL, NULL, 1);
+
+-- Proveedor 5 (Pedro Construcciones)
+INSERT INTO Producto (
+    id, nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
+    tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
+    tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
+) VALUES
+-- Misma puerta con leve variación de precio
+(14, 'Puerta de Madera', 15200.00, 'Puerta maciza de madera reforzada', '/uploads/imagenes/puerta-madera-reforzada.jpg', 18, 5,
+ 1, 1, 1, 'PMA-04', true,
+ NULL, NULL, NULL, NULL, NULL, 3), -- marrón
+
+-- Ventana doble vidrio igual a otra pero distinto proveedor
+(15, 'Ventana doble vidrio', 19500.00, 'Ventana doble vidrio templado, marco reforzado', '/uploads/imagenes/ventana-doble-vidrio-reforzada.jpg', 12, 5,
+ 2, 1, 2, 'VDV-02', true,
+ 2, 15, 15, 1, 4, 1), -- oscilobatiente, aluminio, blanco
+
+-- Producto nuevo: pintura gris
+(16, 'Pintura gris', 5300.00, 'Pintura para exteriores color gris', '/uploads/imagenes/pintura-gris.jpg', 25, 5,
+ 3, 2, 2, 'PIN-GR', true,
+ NULL, NULL, NULL, NULL, NULL, 2);
+
+-- Proveedor 6 (Fulano Materiales)
+INSERT INTO Producto (
+    id, nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
+    tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
+    tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
+) VALUES
+-- Puerta PVC igual a otro proveedor pero color distinto
+(17, 'Puerta de PVC', 16800.00, 'Puerta de PVC con acabado brillante', '/uploads/imagenes/puerta-pvc-brillante.jpg', 22, 6,
+ 1, 3, 1, 'PVP-03', true,
+ NULL, NULL, NULL, 2, NULL, 2), -- gris
+
+-- Ventana corrediza económica
+(18, 'Ventana de Aluminio Económica', 8900.00, 'Ventana corrediza simple económica', '/uploads/imagenes/ventana-aluminio-economica.jpg', 30, 6,
+ 2, 2, 2, 'VAL-04', true,
+ 1, 10, 10, 1, 1, 1), -- vidrio simple, blanco
+
+-- Nuevo producto de techos
+(19, 'Techo galvanizado premium', 32000.00, 'Techo galvanizado con recubrimiento anticorrosivo', '/uploads/imagenes/techo-galvanizado-premium.jpg', 10, 6,
+ 3, 3, 3, 'TCH-GP', false,
+ NULL, NULL, NULL, NULL, NULL, 2);
+
+
 
 
 -- COTIZACIONES DE PRUEBA
@@ -291,7 +359,7 @@ VALUES
 (5,'CIUDAD DE BUENOS AIRES'),
 (6,'CÓRDOBA'),
 (7,'CORRIENTES'),
-(8,'ENTRE RÍOS'),
+(8,'ENTRE RIOS'),
 (9,'FORMOSA'),
 (10,'JUJUY'),
 (11,'LA PAMPA'),
@@ -299,15 +367,15 @@ VALUES
 (13,'MENDOZA'),
 (14,'MISIONES'),
 (15,'NEUQUÉN'),
-(16,'RÍO NEGRO'),
+(16,'RIO NEGRO'),
 (17,'SALTA'),
 (18,'SAN JUAN'),
 (19,'SAN LUIS'),
 (20,'SANTA CRUZ'),
 (21,'SANTA FE'),
 (22,'SANTIAGO DEL ESTERO'),
-(23,'TIERRA DEL FUEGO, ANTÁRTIDA E ISLAS DEL ATLÁNTICO SUR'),
-(24,'TUCUMÁN');
+(23,'TIERRA DEL FUEGO, ANTARTIDA E ISLAS DEL ATLANTICO SUR'),
+(24,'TUCUMAN');
 
 
 INSERT INTO Localidad (id_localidad, nombre, provincia_id)
@@ -416,7 +484,7 @@ VALUES
 (102,'ITUZAINGO',1),
 (103,'LOBOS',1),
 (104,'9 DE JULIO',1),
-(105,'BAHÍA BLANCA',1),
+(105,'BAHIA BLANCA',1),
 (106,'GENERAL LAVALLE',1),
 (107,'DAIREAUX',1),
 (108,'CARLOS TEJEDOR',1),
@@ -454,7 +522,7 @@ VALUES
 (140,'LA PAZ',2),
 (141,'POMAN',2),
 (142,'EL ALTO',2),
-(143,'ANDALGALÁ',2),
+(143,'ANDALGALA',2),
 (144,'CAPAYAN',2),
 (145,'VALLE VIEJO',2),
 (146,'ANCASTI',2),
@@ -471,7 +539,7 @@ VALUES
 (157,'SARGENTO CABRAL',3),
 (158,'25 DE MAYO',3),
 (159,'BERMEJO',3),
-(160,'LIBERTADOR GENERAL SAN MARTÍN',3),
+(160,'LIBERTADOR GENERAL SAN MARTIN',3),
 (161,'SAN FERNANDO',3),
 (162,'LIBERTAD',3),
 (163,'O HIGGINS',3),
@@ -486,7 +554,7 @@ VALUES
 (172,'COMANDANTE FERNANDEZ',3),
 (173,'CHACABUCO',3),
 (174,'9 DE JULIO',3),
-(175,'FRAY JUSTO SANTA MARÍA DE ORO',3),
+(175,'FRAY JUSTO SANTA MARIA DE ORO',3),
 (176,'QUITILIPI',3),
 (177,'LANGUIÑEO',4),
 (178,'RIO SENGUER',4),
@@ -527,7 +595,7 @@ VALUES
 (213,'GENERAL SAN MARTIN',6),
 (214,'MARCOS JUAREZ',6),
 (215,'COLON',6),
-(216,'SANTA MARÍA',6),
+(216,'SANTA MARIA',6),
 (217,'RIO PRIMERO',6),
 (218,'PUNILLA',6),
 (219,'RIO SEGUNDO',6),
@@ -647,10 +715,10 @@ VALUES
 (333,'GENERAL LAMADRID',12),
 (334,'CORONEL FELIPE VARELA',12),
 (335,'GENERAL JUAN F QUIROGA',12),
-(336,'GENERAL SAN MARTÍN',12),
+(336,'GENERAL SAN MARTIN',12),
 (337,'INDEPENDENCIA',12),
 (338,'CASTRO BARROS',12),
-(339,'GENERAL ÁNGEL VERA PEÑALOZA',12),
+(339,'GENERAL ANGEL VERA PEÑALOZA',12),
 (340,'MALARGUE',13),
 (341,'SAN CARLOS',13),
 (342,'SAN MARTIN',13),
@@ -669,7 +737,7 @@ VALUES
 (355,'RIVADAVIA',13),
 (356,'JUNIN',13),
 (357,'SAN RAFAEL',13),
-(358,'LIBERTADOR GENERAL SAN MARTÍN',14),
+(358,'LIBERTADOR GENERAL SAN MARTIN',14),
 (359,'SAN PEDRO',14),
 (360,'CAINGUAS',14),
 (361,'APOSTOLES',14),
@@ -722,7 +790,7 @@ VALUES
 (408,'CAFAYATE',17),
 (409,'ORAN',17),
 (410,'ANTA',17),
-(411,'GENERAL JOSE DE SAN MARTÍN',17),
+(411,'GENERAL JOSE DE SAN MARTIN',17),
 (412,'CHICOANA',17),
 (413,'RIVADAVIA',17),
 (414,'GENERAL GUEMES',17),
@@ -758,19 +826,19 @@ VALUES
 (444,'RAWSON',18),
 (445,'SAN MARTIN',18),
 (446,'GENERAL PEDERNERA',19),
-(447,'LIBERTADOR GENERAL SAN MARTÍN',19),
+(447,'LIBERTADOR GENERAL SAN MARTIN',19),
 (448,'CORONEL PRINGLES',19),
 (449,'JUNIN',19),
 (450,'AYACUCHO',19),
 (451,'CHACABUCO',19),
-(452,'JUAN MARTÍN DE PUEYRREDÓN',19),
+(452,'JUAN MARTIN DE PUEYRREDÓN',19),
 (453,'GOBERNADOR DUPUY',19),
 (454,'BELGRANO',19),
 (455,'LAGO ARGENTINO',20),
 (456,'DESEADO',20),
 (457,'MAGALLANES',20),
 (458,'GUER AIKE',20),
-(459,'RÍO CHICO',20),
+(459,'RIO CHICO',20),
 (460,'CORPEN AIKE',20),
 (461,'LAGO BUENOS AIRES',20),
 (462,'CONSTITUCION',21),
@@ -822,7 +890,7 @@ VALUES
 (508,'USHUAIA',23),
 (509,'ISLAS DEL ATLANTICO SUR',23),
 (510,'RIO GRANDE',23),
-(511,'ANTÁRTIDA ARGENTINA',23),
+(511,'ANTARTIDA ARGENTINA',23),
 (512,'TOLHUIN',23),
 (513,'CRUZ ALTA',24),
 (514,'CHICLIGASTA',24),

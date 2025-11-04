@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,144 +8,198 @@
   <link th:href="@{/css/main.css}" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
 
-<!-- HEADER -->
-<header class="site-header">
+  <!-- HEADER -->
+  <header class="site-header">
     <div class="header-inner">
-        <a th:href="@{/}" class="logo">
-            <span class="brand">VENTANET</span>
-        </a>
+      <a th:href="@{/}" class="logo">
+        <span class="brand">VENTANET</span>
+      </a>
     </div>
-</header>
+  </header>
 
-<!-- SELECCION DE ATRIBUTOS -->
-<main class="container my-5">
-  <h2 class="text-center mb-4">Solicitud de Presupuesto</h2>
+  <!-- SELECCION DE ATRIBUTOS -->
+  <main class="container my-5">
+    <h2 class="text-center mb-4">Solicitud de Presupuesto</h2>
 
-  <form id="formPresupuesto" onsubmit="return enviarSolicitud(event)" class="row g-4">
+    <form id="formPresupuesto" onsubmit="return enviarSolicitud(event)" class="row g-4">
 
-    <!-- 1. Tipo de ventana -->
-    <div class="col-md-6">
-      <label for="tipoVentana" class="form-label">Tipo de ventana</label>
-      <select class="form-select" id="tipoVentana" required onchange="mostrarImagen()">
-        <option value="">Seleccione...</option>
-        <option value="op1.jpg">Corrediza</option>
-        <option value="op3.png">Oscilobatiente</option>
-        <option value="op2.jpg">Paño fijo</option>
-        <option value="op4.png">Abatible</option>
-        <option value="op5.png">Plegable</option>
-      </select>
-    </div>
-    <div class="col-md-6 d-flex justify-content-center align-items-center">
-      <img id="imagenVentana" th:src="@{/img/}" alt="Vista previa" class="img-fluid rounded shadow" style="max-height:200px; display:none;">
-    </div>
-
-    <!-- 2. Medidas -->
-    <div class="col-md-6">
-      <label for="ancho" class="form-label">Ancho (m)</label>
-      <select class="form-select" id="ancho" required>
-        <option value="">Seleccione...</option>
-      </select>
-    </div>
-    <div class="col-md-6">
-      <label for="alto" class="form-label">Alto (m)</label>
-      <select class="form-select" id="alto" required>
-        <option value="">Seleccione...</option>
-      </select>
-    </div>
-
-    <!-- 3. Material -->
-    <div class="col-md-6">
-      <label for="material" class="form-label">Material de perfil</label>
-      <select class="form-select" id="material" required>
-        <option value="">Seleccione...</option>
-        <option value="aluminio">Aluminio</option>
-        <option value="pvc">PVC</option>
-        <option value="madera">Madera</option>
-      </select>
-    </div>
-
-    <!-- 4. Vidrio -->
-    <div class="col-md-6">
-      <label for="vidrio" class="form-label">Tipo de vidrio</label>
-      <select class="form-select" id="vidrio" required>
-        <option value="">Seleccione...</option>
-        <option value="simple">Simple (flotado)</option>
-        <option value="dvh">Doble (DVH)</option>
-        <option value="laminado">Laminado</option>
-        <option value="templado">Templado</option>
-      </select>
-    </div>
-
-    <!-- 5. Color -->
-    <div class="col-md-6">
-      <label for="color" class="form-label">Color</label>
-      <select class="form-select" id="color" required>
-        <option value="">Seleccione...</option>
-        <option value="blanco">Blanco</option>
-        <option value="gris">Gris</option>
-        <option value="marron">Marrón</option>
-        <option value="negro">Negro</option>
-      </select>
-    </div>
-
-    <!-- 6. Opciones extra -->
-    <div class="col-md-6 d-flex flex-column">
-      <label class="form-label">Opciones adicionales</label>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="premarco">
-        <label class="form-check-label" for="premarco">Con premarco</label>
+      <!-- 1. Tipo de ventana -->
+      <div class="col-md-6">
+        <label for="tipoVentana" class="form-label">Tipo de ventana</label>
+        <select class="form-select" id="tipoVentana">
+          <option value="">Seleccione...</option>
+          <option value="1">Corrediza</option>
+          <option value="2">Oscilobatiente</option>
+          <option value="3">Paño fijo</option>
+          <option value="4">Abatible</option>
+          <option value="5">Plegable</option>
+        </select>
       </div>
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="barrotillos">
-        <label class="form-check-label" for="barrotillos">Con barrotillos</label>
-      </div>
-    </div>
-
-    <!-- 7. Boton -->
-    <div class="col-12 text-center mt-4">
-      <button type="submit" class="btn btn-primary px-5 py-2">Solicitar presupuesto</button>
-    </div>
-  </form>
-</main>
-
-<!-- FOOTER -->
-<footer class="site-footer py-5">
-  <div class="container">
-    <div class="row text-center text-md-start">
-      
-      <!-- Columna Izquierda: Redes sociales -->
-	<div class="col-md-4">
-        <p class="mb-1">2025 © Ventanet</p>
-        <p class="mb-1">
-          <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
-          <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
-        </p>
+      <div class="col-md-6 d-flex justify-content-center align-items-center">
+        <!-- <img id="imagenVentana" th:src="@{/img/}" alt="Vista previa" class="img-fluid rounded shadow"
+          style="max-height:200px; display:none;"> -->
       </div>
 
-      <!-- Columna Medio: Navegación -->
-      <div class="col-md-4 mb-4 mb-md-0">
-        <ul class="list-unstyled">
-          <li><a href="#productos" class="footer-link">Productos</a></li>
-          <li><a href="login.html" class="footer-link">Ingreso</a></li>
-          <li><a href="nuevo-usuario.html" class="footer-link">Registro</a></li>
-        </ul>
+      <!-- 2. Medidas -->
+      <div class="col-md-6">
+        <label for="ancho" class="form-label">Ancho (m)</label>
+        <select class="form-select" id="ancho">
+          <option value="">Seleccione...</option>          
+          <option value="1">0.5 m</option>
+          <option value="2">0.6 m</option>
+          <option value="3">0.7 m</option>
+          <option value="4">0.8 m</option>
+          <option value="5">0.9 m</option>
+          <option value="6">1.0 m</option>
+          <option value="7">1.2 m</option>
+          <option value="8">1.3 m</option>
+          <option value="9">1.4 m</option>
+          <option value="10">1.5 m</option>
+          <option value="11">1.6 m</option>
+          <option value="12">1.7 m</option>
+          <option value="13">1.8 m</option>
+          <option value="14">1.9 m</option>
+          <option value="15">2.0 m</option>
+          <option value="16">2.2 m</option>
+          <option value="17">2.3 m</option>
+          <option value="18">2.4 m</option>
+          <option value="19">2.5 m</option>
+          <option value="20">2.6 m</option>
+          <option value="21">2.7 m</option>
+          <option value="19">2.8 m</option>
+          <option value="20">2.9 m</option>
+
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="alto" class="form-label">Alto (m)</label>
+        <select class="form-select" id="alto">
+          <option value="">Seleccione...</option>
+              <option value="1">0.5 m</option>
+              <option value="2">0.6 m</option>
+              <option value="3">0.7 m</option>
+              <option value="4">0.8 m</option>
+              <option value="5">0.9 m</option>
+              <option value="6">1.0 m</option>
+              <option value="7">1.2 m</option>
+              <option value="8">1.3 m</option>
+              <option value="9">1.4 m</option>
+              <option value="10">1.5 m</option>
+              <option value="11">1.6 m</option>
+              <option value="12">1.7 m</option>
+              <option value="13">1.8 m</option>
+              <option value="14">1.9 m</option>
+              <option value="15">2.0 m</option>
+              <option value="16">2.2 m</option>
+              <option value="17">2.3 m</option>
+              <option value="18">2.4 m</option>
+              <option value="19">2.5 m</option>
+              <option value="20">2.6 m</option>
+              <option value="21">2.7 m</option>
+              <option value="19">2.8 m</option>
+              <option value="20">2.9 m</option>
+        </select>
       </div>
 
-      <!-- Columna Derecha: Datos Empresa -->
-     <div class="col-md-4 mb-4 mb-md-0">
-        <h5 class="mb-3">Seguinos en:</h5>
-        <div class="d-flex justify-content-center justify-content-md-start gap-3">
-          <a href="https://facebook.com"><img th:src="@{/img/rrss1.png}" alt="Facebook" width="30"></a>
-          <a href="https://instagram.com"><img th:src="@{/img/rrss2.png}" alt="Instagram" width="30"></a>
-          <a href="https://linkedin.com"><img th:src="@{/img/rrss3.png}" alt="Linkedin" width="30"></a>
+      <!-- 3. Material -->
+      <div class="col-md-6">
+        <label for="material" class="form-label">Material de perfil</label>
+        <select class="form-select" id="material">
+          <option value="">Seleccione...</option>
+              <option value="1">Aluminio</option>
+              <option value="2">PVC</option>
+              <option value="3">Madera</option>
+        </select>
+      </div>
+
+      <!-- 4. Vidrio -->
+      <div class="col-md-6">
+        <label for="vidrio" class="form-label">Tipo de vidrio</label>
+        <select class="form-select" id="vidrio">
+          <option value="">Seleccione...</option>
+              <option value="1">Simple</option>
+              <option value="2">Doble</option>
+              <option value="3">Laminado</option>
+              <option value="4">Templado</option>
+        </select>
+      </div>
+
+      <!-- 5. Color -->
+      <div class="col-md-6">
+        <label for="color" class="form-label">Color</label>
+        <select class="form-select" id="color">
+          <option value="">Seleccione...</option>
+              <option value="1">Blanco</option>
+              <option value="2">Gris</option>
+              <option value="3">Marrón</option>
+              <option value="4">Negro</option>
+        </select>
+      </div>
+
+      <!-- 6. Opciones extra -->
+      <div class="col-md-6 d-flex flex-column">
+        <label class="form-label">Opciones adicionales</label>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="premarco">
+          <label class="form-check-label" for="premarco">Con premarco</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="barrotillos">
+          <label class="form-check-label" for="barrotillos">Con barrotillos</label>
+        </div>
+      </div>     
+      <div class="col-12 text-center mt-4">
+        <button type="submit" class="btn btn-primary px-5 py-2">Solicitar presupuesto</button>
+      </div>
+      <div>
+        <div class="col-md-9">          
+          <div id="contenedorProductos" class="row mt-4 justify-content-center text-center">
+          </div>
+        </div>
+      </div>
+    </form>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer py-5">
+    <div class="container">
+      <div class="row text-center text-md-start">
+
+        <!-- Columna Izquierda: Redes sociales -->
+        <div class="col-md-4">
+          <p class="mb-1">2025 © Ventanet</p>
+          <p class="mb-1">
+            <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
+            <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
+          </p>
+        </div>
+
+        <!-- Columna Medio: Navegación -->
+        <div class="col-md-4 mb-4 mb-md-0">
+          <ul class="list-unstyled">
+            <li><a href="#productos" class="footer-link">Productos</a></li>
+            <li><a href="login.html" class="footer-link">Ingreso</a></li>
+            <li><a href="nuevo-usuario.html" class="footer-link">Registro</a></li>
+          </ul>
+        </div>
+
+        <!-- Columna Derecha: Datos Empresa -->
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5 class="mb-3">Seguinos en:</h5>
+          <div class="d-flex justify-content-center justify-content-md-start gap-3">
+            <a href="https://facebook.com"><img th:src="@{/img/rrss1.png}" alt="Facebook" width="30"></a>
+            <a href="https://instagram.com"><img th:src="@{/img/rrss2.png}" alt="Instagram" width="30"></a>
+            <a href="https://linkedin.com"><img th:src="@{/img/rrss3.png}" alt="Linkedin" width="30"></a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</footer>
+  </footer>
 
-<script th:src="@{/js/script.js}"></script>
+  <script th:src="@{/js/presupuesto.js}"></script>
 </body>
+
 </html>

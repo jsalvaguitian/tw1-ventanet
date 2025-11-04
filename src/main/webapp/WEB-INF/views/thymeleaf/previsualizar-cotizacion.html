@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Previsualización de Cotización</title>
+    <link rel="stylesheet" href="/spring/css/bootstrap.min.css">
+</head>
+<body class="container mt-4">
+
+<h2 class="mb-4">Previsualización de Cotizaciones</h2>
+
+<div th:if="${mensaje}" class="alert alert-warning" th:text="${mensaje}"></div>
+
+<div th:each="cotizacion : ${cotizaciones}" class="mb-5">
+    <h4 th:text="'Proveedor: ' + ${cotizacion.proveedor.nombre}"></h4>
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Producto</th>
+                <th>Descripción</th>
+                <th>Precio Unitario</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${cotizacion.items}">
+                <td th:text="${item.producto.nombre}"></td>
+                <td th:text="${item.producto.descripcion}"></td>
+                <td th:text="${item.precioUnitario}"></td>
+                <td th:text="${item.cantidad}"></td>
+                <td th:text="${item.precioUnitario * item.cantidad}"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="text-end fw-bold">Total</td>
+                <td th:text="${cotizacion.montoTotal}"></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<form action="/spring/cotizacion/confirmar" method="post">
+    <button type="submit" class="btn btn-success">Confirmar y Enviar Cotización</button>
+</form>
+
+</body>
+</html>

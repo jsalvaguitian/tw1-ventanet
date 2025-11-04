@@ -64,7 +64,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
             sessionFactory.getCurrentSession().remove(producto);
         }
     }
-    
+
     public Producto obtenerPorNombreMarcaYProveedor(String nombre, Long marcaId, Long proveedorId) {
         var session = sessionFactory.getCurrentSession();
         var cb = session.getCriteriaBuilder();
@@ -81,21 +81,20 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
     }
 
     public List<Producto> buscarConFiltros(Long tipoProductoId) {
-         StringBuilder hql = new StringBuilder("FROM Producto p");
+        StringBuilder hql = new StringBuilder("FROM Producto p");
 
         // Lista de parámetros
         Map<String, Object> params = new HashMap<>();
-/* 
-        if (proveedorId != null) {
-            hql.append(" AND p.proveedorId = :proveedorId");
-            params.put("proveedorId", proveedorId);
-        }
-*/
+        /*
+         * if (proveedorId != null) {
+         * hql.append(" AND p.proveedorId = :proveedorId");
+         * params.put("proveedorId", proveedorId);
+         * }
+         */
         if (tipoProductoId != null) {
             hql.append("WHERE p.tipoProducto.id = :tipoProductoId");
             params.put("tipoProductoId", tipoProductoId);
         }
-
 
         // Creamos la query
         Query query = sessionFactory.getCurrentSession()
@@ -111,7 +110,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
     }
 
     public List<Producto> buscarPorProveedorId(Long proveedorId) {
-         StringBuilder hql = new StringBuilder("FROM Producto p");
+        StringBuilder hql = new StringBuilder("FROM Producto p");
 
         // Lista de parámetros
         Map<String, Object> params = new HashMap<>();
@@ -120,7 +119,6 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
             hql.append(" WHERE p.proveedor.id = :proveedorId");
             params.put("proveedorId", proveedorId);
         }
-
 
         // Creamos la query
         Query query = sessionFactory.getCurrentSession()
@@ -135,4 +133,75 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
 
     }
 
+    public List<Producto> buscarProductosParaCotizacion(           
+            Long tipoVentanaId,
+            Long anchoId,
+            Long altoId,
+            Long materialDePerfilId,
+            Long tipoDeVidrioId,
+            Long colorId,
+            Boolean conPremarco,
+            Boolean conBarrotillos) {
+
+        StringBuilder hql = new StringBuilder("FROM Producto p WHERE 1=1");
+        Map<String, Object> params = new HashMap<>();
+
+        // Filtros dinámicos        
+
+        if (tipoVentanaId != null) {
+            hql.append(" AND p.tipoVentana.id = :tipoVentanaId");
+            params.put("tipoVentanaId", tipoVentanaId);
+        }
+
+        if (anchoId != null) {
+            hql.append(" AND p.ancho.id = :anchoId");
+            params.put("anchoId", anchoId);
+        }
+
+        if (altoId != null) {
+            hql.append(" AND p.alto.id = :altoId");
+            params.put("altoId", altoId);
+        }
+
+        if (materialDePerfilId != null) {
+            hql.append(" AND p.materialDePerfil.id = :materialDePerfilId");
+            params.put("materialDePerfilId", materialDePerfilId);
+        }
+
+        if (tipoDeVidrioId != null) {
+            hql.append(" AND p.tipoDeVidrio.id = :tipoDeVidrioId");
+            params.put("tipoDeVidrioId", tipoDeVidrioId);
+        }
+
+        if (colorId != null) {
+            hql.append(" AND p.color.id = :colorId");
+            params.put("colorId", colorId);
+        }
+
+        // Opciones adicionales (si las tenés en Producto)
+        if (conPremarco != null && conPremarco) {
+            hql.append(" AND p.dimensiones.conPremarco = true");
+        }
+
+        if (conBarrotillos != null && conBarrotillos) {
+            hql.append(" AND p.dimensiones.conBarrotillos = true");
+        }
+
+        // Crear query dinámica
+        Query query = sessionFactory.getCurrentSession().createQuery(hql.toString(), Producto.class);
+
+        // Seteo dinámico de parámetros
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            query.setParameter(entry.getKey(), entry.getValue());
+        }
+
+        return query.getResultList();
+    }
+
+    public List<Producto> obtenertodosPorListadoId(List<Long> productosIds) {
+        String hql = "FROM Producto p WHERE p.id IN :ids";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql, Producto.class);
+        query.setParameter("ids", productosIds);
+        return query.getResultList();
+    }
 }
