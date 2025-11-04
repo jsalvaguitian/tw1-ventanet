@@ -1,10 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,7 +21,6 @@ import com.tallerwebi.dominio.entidades.TipoProducto;
 import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.enums.Rubro;
 import com.tallerwebi.dominio.servicios.ServicioMarca;
-import com.tallerwebi.dominio.servicios.ServicioProdV2;
 import com.tallerwebi.dominio.servicios.ServicioProducto;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
