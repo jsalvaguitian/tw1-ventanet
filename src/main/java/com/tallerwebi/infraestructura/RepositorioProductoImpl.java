@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.tallerwebi.dominio.entidades.Producto;
+import com.tallerwebi.dominio.entidades.TipoProducto;
+import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioGenerico;
 
 @Repository("repositorioProducto")
@@ -64,7 +66,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
             sessionFactory.getCurrentSession().remove(producto);
         }
     }
-    
+
     public Producto obtenerPorNombreMarcaYProveedor(String nombre, Long marcaId, Long proveedorId) {
         var session = sessionFactory.getCurrentSession();
         var cb = session.getCriteriaBuilder();
@@ -81,21 +83,20 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
     }
 
     public List<Producto> buscarConFiltros(Long tipoProductoId) {
-         StringBuilder hql = new StringBuilder("FROM Producto p");
+        StringBuilder hql = new StringBuilder("FROM Producto p");
 
         // Lista de parámetros
         Map<String, Object> params = new HashMap<>();
-/* 
-        if (proveedorId != null) {
-            hql.append(" AND p.proveedorId = :proveedorId");
-            params.put("proveedorId", proveedorId);
-        }
-*/
+        /*
+         * if (proveedorId != null) {
+         * hql.append(" AND p.proveedorId = :proveedorId");
+         * params.put("proveedorId", proveedorId);
+         * }
+         */
         if (tipoProductoId != null) {
-            hql.append("WHERE p.tipoProducto.id = :tipoProductoId");
+            hql.append(" WHERE p.tipoProducto.id = :tipoProductoId");
             params.put("tipoProductoId", tipoProductoId);
         }
-
 
         // Creamos la query
         Query query = sessionFactory.getCurrentSession()
@@ -111,7 +112,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
     }
 
     public List<Producto> buscarPorProveedorId(Long proveedorId) {
-         StringBuilder hql = new StringBuilder("FROM Producto p");
+        StringBuilder hql = new StringBuilder("FROM Producto p");
 
         // Lista de parámetros
         Map<String, Object> params = new HashMap<>();
@@ -120,7 +121,6 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
             hql.append(" WHERE p.proveedor.id = :proveedorId");
             params.put("proveedorId", proveedorId);
         }
-
 
         // Creamos la query
         Query query = sessionFactory.getCurrentSession()
@@ -133,6 +133,54 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
 
         return query.getResultList();
 
+    }
+
+    public List<Producto> filtrarProductos(Long idProveedor, String busqueda, Long tipoProductoId, Long tipoVentanaId) {
+        Session session = sessionFactory.getCurrentSession();
+
+        String hql = "FROM Producto p WHERE p.proveedor.id = :idProveedor ";
+        if (busqueda != null && !busqueda.trim().isEmpty())
+            hql += "AND LOWER(p.nombre) LIKE LOWER(:busqueda) ";
+
+        if (tipoProductoId != null)
+            hql += "AND p.tipoProducto.id =:tipoProductoId";
+
+        if (tipoVentanaId != null)
+            hql += "AND p.tipoVentana.id =: tipoVentanaId";
+
+        Query query = session.createQuery(hql, Producto.class);
+        query.setParameter("idProveedor", idProveedor);
+
+        if (busqueda != null && !busqueda.trim().isEmpty())
+            query.setParameter("busqueda", "%" + busqueda + "%");
+
+        if(tipoProductoId !=null)
+            query.setParameter("tipoProductoId", tipoProductoId);
+        
+        if(tipoVentanaId != null)
+            query.setParameter("tipoVentanaId", tipoVentanaId);
+
+        return query.getResultList();
+    }
+
+    public List<TipoProducto> obtenerTiposProductoPorProveedor(Long idProveedor) {
+        Session session = sessionFactory.getCurrentSession();
+
+        String hql = "SELECT DISTINCT p.tipoProducto FROM Producto p WHERE p.proveedor.id =: idProveedor AND p.tipoProducto IS NOT NULL";
+        org.hibernate.Query<TipoProducto> query = session.createQuery(hql, TipoProducto.class);
+        query.setParameter("idProveedor", idProveedor);
+
+        return query.getResultList();
+    }
+
+    public List<TipoVentana> obtenerTiposVentanasPorProveedor(Long idProveedor) {
+         Session session = sessionFactory.getCurrentSession();
+
+        String hql = "SELECT DISTINCT p.tipoVentana FROM Producto p WHERE p.proveedor.id =: idProveedor AND p.tipoVentana IS NOT NULL";
+        org.hibernate.Query<TipoVentana> query = session.createQuery(hql, TipoVentana.class);
+        query.setParameter("idProveedor", idProveedor);
+
+        return query.getResultList();
     }
 
 }

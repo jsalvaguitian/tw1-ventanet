@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Ventanet</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/catalogo.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+
+
+</head>
+
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <section class="banner">
+        <h1>Catálogo Ventanet</h1>
+        <p>
+            Elegí cómo querés explorar todo lo que Ventanet tiene para ofrecer.
+            Podés navegar por proveedor para conocer sus catálogos completos, o explorar por producto para buscar,
+            comparar y cotizar fácilmente.
+        </p>
+    </section>
+
+    <section class="cards-container">
+        <a class="card proveedor" th:href="@{/ver-proveedores}">
+            <div class="card-content">
+                <div class="text">
+                    <h2>Explorar por proveedor</h2>
+                    <p class="info">Descubrí todas las marcas y empresas que forman parte de Ventanet y accedé a sus
+                        catálogos.</p>
+                </div>
+
+            </div>
+        </a>
+
+        <a class="card producto" th:href="@{/ver-productos}">
+            <div class="card-content">
+                <div class="text">
+                    <h2>Explorar por producto</h2>
+                    <p class="info">Buscá productos por categoría, consultá detalles y cotizá con los proveedores
+                        disponibles.</p>
+                </div>
+            </div>
+        </a>
+    </section>
+    <div th:replace="fragments/footer :: footer"></div>
+
+</body>
+
+</html>

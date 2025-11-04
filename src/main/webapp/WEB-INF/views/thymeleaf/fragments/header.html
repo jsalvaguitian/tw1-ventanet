@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+  <div th:fragment="header">
+    <!-- HEADER -->
+    <header class="site-header">
+      <div class="header-inner">
+        <a th:href="@{/}" class="logo">
+          <span class="brand">VENTANET</span>
+        </a>
+
+        <!-- NAV cuando el usuario NO está logueado -->
+        <nav class="ms-auto" th:if="${usuarioLogueado == null}">
+          <ul class="nav">
+            <li class="nav-item">
+              <a class="nav-link" href="#contacto">Contacto</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/menu-catalogo}">Ver catálogo</a>
+            </li>
+            
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="registroDropdown" role="button"
+                 data-bs-toggle="dropdown" aria-expanded="false">
+                Registro
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="registroDropdown">
+                <li><a th:href="@{/nuevo-usuario}" class="dropdown-item">Cliente</a></li>
+                <li><a th:href="@{/registro-proveedor}" class="dropdown-item">Proveedor</a></li>
+              </ul>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" th:href="@{/login}">Ingreso</a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- NAV cuando el usuario SÍ está logueado -->
+        <nav class="ms-auto" th:if="${usuarioLogueado != null}">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/catalogo}">Ver catálogo</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle"
+                      href="#"
+                      id="cuentaDropdown"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false">
+                      <span th:text="'Hola ' + ${usuarioLogueado.nombre} + ' (' + ${usuarioLogueado.rol} + ')'">Hola Usuario</span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="cuentaDropdown">
+                        <li>
+                            <a class="dropdown-item"
+                              th:href="${usuarioLogueado.rol == 'PROVEEDOR'} ? @{/proveedor/dashboard-proveedor} : @{/cliente/dashboard}">
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/logout}">Cerrar sesión</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+      </div>
+    </header>
+  </div>
+</body>
+</html>
