@@ -10,12 +10,21 @@ import com.tallerwebi.dominio.entidades.Cliente;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.Usuario;
 
+import jakarta.mail.*;
+import jakarta.mail.Message;
+import jakarta.mail.Session;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+
+/* 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
+*/
 import java.util.Properties;
 
 //Aplicando JavaMail
@@ -83,7 +92,7 @@ public class ServicioEmail {
         properties.put("mail.smtp.port", "587");
         properties.put("mail.smtp.starttls.enable", "true");
 
-        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+        Session session = Session.getInstance(properties, new Authenticator() {
 
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(remitente, clave);
@@ -118,14 +127,5 @@ public class ServicioEmail {
 
     }
 
-    /*
-     * public static void main(String[] args) {
-     * ServicioEmail emailService = new ServicioEmail();
-     * emailService.enviarEmail(
-     * "nicolasreynoso@hotmail.es",
-     * "Prueba desde Java",
-     * "Este es un test");
-     * }Por dios el mail se mando
-     */
 
 }

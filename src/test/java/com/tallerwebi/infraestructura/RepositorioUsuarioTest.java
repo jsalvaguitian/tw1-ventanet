@@ -2,8 +2,8 @@ package com.tallerwebi.infraestructura;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.isNotNull;
-
-import javax.mail.Session;
+import jakarta.mail.*;
+//import javax.mail.Session;
 import javax.transaction.Transactional;
 
 import org.hibernate.SessionFactory;
