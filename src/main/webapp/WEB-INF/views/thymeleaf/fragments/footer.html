@@ -35,5 +35,13 @@
 
         </div>
       </div>
+      
+      <div class="text-center mt-3 text-muted small">
+        <span th:if="${dolarData.oficial != null}">
+          Dólar Oficial | Compra: $<span th:text="${dolarData.oficial.compra}"></span>
+          | Venta: $<span th:text="${dolarData.oficial.venta}"></span>
+        </span>
+      </div>
+
     </footer>
   </div>
