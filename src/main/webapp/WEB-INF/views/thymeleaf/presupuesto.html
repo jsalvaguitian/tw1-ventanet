@@ -5,276 +5,467 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Solicitar Presupuesto - Ventanet</title>
+  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link th:href="@{/css/dashboard.css}" rel="stylesheet">
   <link th:href="@{/css/main.css}" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <header class="site-header">
-    <div class="header-inner">
-      <a th:href="@{/}" class="logo">
-        <span class="brand">VENTANET</span>
-      </a>
+  <!-- Mobile navbar (like dashboard) -->
+  <nav class="navbar d-md-none px-3" style="box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+    <span class="navbar-title">Ventanet</span>
+    <button class="hamburger btn me-2" id="menuBtn">&#9776;</button>
+    <div class="dropdown" id="dropdownMenu"
+      style="display:none;position:absolute;top:56px;left:0;width:100%;z-index:1200;">
+      <div class="desplegable shadow p-2">
+        <a class="dropdown-item active" th:href="@{/}">Inicio</a>
+      </div>
     </div>
-  </header>
+  </nav>
+
+  <div class="sidebar" id="sidebar">
+    <h2>Ventanet</h2>
+    <ul>
+      <li class="active">Presupuesto</li>
+      <li><a th:href="@{/cliente/dashboard}">Dashboard</a></li>
+    </ul>
+  </div>
 
   <!-- SELECCION DE ATRIBUTOS -->
-  <main class="container my-5">
-    <h2 class="text-center mb-4">Solicitud de Presupuesto</h2>
+  <div class="main" id="mainContent">
+    <div class="container my-5">
+      <h2 class="text-center mb-4">Solicitud de Presupuesto</h2>
 
-    <form id="formPresupuesto" onsubmit="return enviarSolicitud(event)" class="row g-4">
+      <form id="formPresupuesto" th:action="@{/presupuesto/crear-form}" method="post" class="row g-4">
 
-      <div class="col-md-4">
-        <label for="provincia" class="form-label">Provincias</label>
-        <select class="form-select" id="provincia" name="provincia">
-          <option value="">Seleccione...</option>
-          <th:block th:each="pv : ${provincias}">
-            <option th:value="${pv.id_provincia}" th:text="${pv.nombre}"></option>
-          </th:block>
-        </select>
-      </div>
-
-
-      <div class="col-md-4">
-        <label for="localidad" class="form-label">Localidad</label>
-        <select class="form-select" id="localidad" name="localidad">
-          <option value="">Seleccione...</option>
-        </select>
-      </div>
-
-      <div class="col-md-4">
-        <label for="partido" class="form-label">Partido</label>
-        <select class="form-select" id="partido" name="partido">
-          <option value="">Seleccione...</option>
-        </select>
-      </div>
-
-
-
-
-      <!-- Tipo de producto (consume tipos desde el servidor) -->
-      <div class="col-md-3">
-        <label for="tipoProducto" class="form-label">Tipo de producto</label>
-        <select class="form-select" id="tipoProducto" name="tipoProducto">
-          <option value="">Seleccione...</option>
-          <th:block th:each="tp : ${tiposProducto}">
-            <option th:value="${tp.id}" th:text="${tp.nombre}"></option>
-          </th:block>
-        </select>
-      </div>
-
-      <!-- 1. Tipo de ventana -->
-      <div class="col-md-3">
-        <label for="tipoVentana" class="form-label">Categoria</label>
-        <select class="form-select" id="tipoVentana" required onchange="mostrarImagen()">
-          <option value="">Seleccione...</option>
-        </select>
-      </div>
-
-      <div class="col-md-6 d-flex justify-content-center align-items-center">
-        <img id="imagenVentana" th:src="@{/img/}" alt="Vista previa" class="img-fluid rounded shadow"
-          style="max-height:200px; display:none;">
-      </div>
-
-
-
-      <!-- 2. Medidas -->
-      <div class="col-md-6">
-        <label for="ancho" class="form-label">Ancho (m)</label>
-        <select class="form-select" id="ancho" required name="ancho">
-          <option value="">Seleccione...</option>
-          <th:block th:each="a : ${anchos}">
-            <option th:value="${a.id}" th:text="${a.nombre}"></option>
-          </th:block>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label for="alto" class="form-label">Alto (m)</label>
-        <select class="form-select" id="alto" required name="alto">
-          <option value="">Seleccione...</option>
-          <th:block th:each="h : ${altos}">
-            <option th:value="${h.id}" th:text="${h.nombre}"></option>
-          </th:block>
-        </select>
-      </div>
-
-      <!-- 3. Material -->
-      <div class="col-md-6">
-        <label for="material" class="form-label">Material de perfil</label>
-        <select class="form-select" id="material" required>
-          <option value="">Seleccione...</option>
-          <th:block th:each="h : ${materiales}">
-            <option th:value="${h.id}" th:text="${h.nombre}"></option>
-          </th:block>
-          <!--<option value="aluminio">Aluminio</option>
-        <option value="pvc">PVC</option>
-        <option value="madera">Madera</option>-->
-        </select>
-      </div>
-
-      <!-- 4. Vidrio -->
-      <div class="col-md-6">
-        <label for="vidrio" class="form-label">Tipo de vidrio</label>
-        <select class="form-select" id="vidrio" required>
-          <option value="">Seleccione...</option>
-          <option value="simple">Simple (flotado)</option>
-          <option value="dvh">Doble (DVH)</option>
-          <option value="laminado">Laminado</option>
-          <option value="templado">Templado</option>
-        </select>
-      </div>
-
-      <!-- 5. Color -->
-      <div class="col-md-6">
-        <label for="color" class="form-label">Color</label>
-        <select class="form-select" id="color" required>
-          <option value="">Seleccione...</option>
-          <th:block th:each="h : ${colores}">
-            <option th:value="${h.id}" th:text="${h.nombre}"></option>
-          </th:block>
-          <!--<option value="blanco">Blanco</option>
-        <option value="gris">Gris</option>
-        <option value="marron">Marrón</option>
-        <option value="negro">Negro</option>
-      -->
-        </select>
-      </div>
-
-
-      <!-- 6. Opciones extra -->
-      <div class="col-md-6 d-flex flex-column">
-        <label class="form-label">Opciones adicionales</label>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="premarco">
-          <label class="form-check-label" for="premarco">Con premarco</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="barrotillos">
-          <label class="form-check-label" for="barrotillos">Con barrotillos</label>
-        </div>
-      </div>
-
-      <!-- 7. Boton -->
-      <div class="col-12 text-center mt-4">
-        <div class="d-flex justify-content-center gap-2">
-          <button type="button" class="btn btn-secondary px-4 py-2" id="btnAdd" onclick="addItem()">Añadir</button>
-          <button type="submit" class="btn btn-primary px-5 py-2">Solicitar presupuesto</button>
-        </div>
-      </div>
-    </form>
-
-      <!-- 4. Vidrio -->
-      <div class="col-md-6">
-        <label for="vidrio" class="form-label">Tipo de vidrio</label>
-        <select class="form-select" id="vidrio">
-          <option value="">Seleccione...</option>
-              <option value="1">Simple</option>
-              <option value="2">Doble</option>
-              <option value="3">Laminado</option>
-              <option value="4">Templado</option>
-        </select>
-      </div>
-    </div>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="site-footer py-5">
-    <div class="container">
-      <div class="row text-center text-md-start">
-
-        <!-- Columna Izquierda: Redes sociales -->
         <div class="col-md-4">
-          <p class="mb-1">2025 © Ventanet</p>
-          <p class="mb-1">
-            <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
-            <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
-          </p>
+          <label for="provincia" class="form-label">Provincias</label>
+          <select class="form-select" id="provincia" name="provincia">
+            <option value="">Seleccione...</option>
+            <th:block th:each="pv : ${provincias}">
+              <option th:value="${pv.id_provincia}" th:text="${pv.nombre}"></option>
+            </th:block>
+          </select>
         </div>
 
-        <!-- Columna Medio: Navegación -->
-        <div class="col-md-4 mb-4 mb-md-0">
-          <ul class="list-unstyled">
-            <li><a href="#productos" class="footer-link">Productos</a></li>
-            <li><a href="login.html" class="footer-link">Ingreso</a></li>
-            <li><a href="nuevo-usuario.html" class="footer-link">Registro</a></li>
-          </ul>
+
+        <div class="col-md-4">
+          <label for="localidad" class="form-label">Localidad</label>
+          <select class="form-select" id="localidad" name="localidad">
+            <option value="">Seleccione...</option>
+          </select>
         </div>
 
-      <!-- 5. Color -->
-      <div class="col-md-6">
-        <label for="color" class="form-label">Color</label>
-        <select class="form-select" id="color">
-          <option value="">Seleccione...</option>
-              <option value="1">Blanco</option>
-              <option value="2">Gris</option>
-              <option value="3">Marrón</option>
-              <option value="4">Negro</option>
-        </select>
-      </div>
+        <div class="col-md-4">
+          <label for="partido" class="form-label">Partido</label>
+          <select class="form-select" id="partido" name="partido">
+            <option value="">Seleccione...</option>
+          </select>
+        </div>
 
-      <!-- 6. Opciones extra -->
-      <div class="col-md-6 d-flex flex-column">
-        <label class="form-label">Opciones adicionales</label>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="premarco">
-          <label class="form-check-label" for="premarco">Con premarco</label>
+
+
+
+        <!-- Tipo de producto (consume tipos desde el servidor) -->
+        <div class="col-md-3">
+          <label for="tipoProducto" class="form-label">Tipo de producto</label>
+          <select class="form-select" id="tipoProducto" name="tipoProducto">
+            <option value="">Seleccione...</option>
+            <th:block th:each="tp : ${tiposProducto}">
+              <option th:value="${tp.id}" th:text="${tp.nombre}"></option>
+            </th:block>
+          </select>
         </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="barrotillos">
-          <label class="form-check-label" for="barrotillos">Con barrotillos</label>
+
+        <!-- 1. Tipo de ventana -->
+        <div class="col-md-3">
+          <label for="tipoVentana" class="form-label">Categoria</label>
+          <select class="form-select" id="tipoVentana" onchange="mostrarImagen()">
+            <option value="">Seleccione...</option>
+          </select>
         </div>
-      </div>     
-      <div class="col-12 text-center mt-4">
-        <button type="submit" class="btn btn-primary px-5 py-2">Solicitar presupuesto</button>
-      </div>
-      <div>
-        <div class="col-md-9">          
-          <div id="contenedorProductos" class="row mt-4 justify-content-center text-center">
+
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+          <img id="imagenVentana" th:src="@{/img/}" alt="Vista previa" class="img-fluid rounded shadow"
+            style="max-height:200px; display:none;">
+        </div>
+
+        <!-- 2. Medidas -->
+        <div class="col-md-6">
+          <label for="ancho" class="form-label">Ancho (m)</label>
+          <select class="form-select" id="ancho" name="ancho">
+            <option value="">Seleccione...</option>
+            <th:block th:each="a : ${anchos}">
+              <option th:value="${a.id}" th:text="${a.nombre}"></option>
+            </th:block>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label for="alto" class="form-label">Alto (m)</label>
+          <select class="form-select" id="alto" name="alto">
+            <option value="">Seleccione...</option>
+            <th:block th:each="h : ${altos}">
+              <option th:value="${h.id}" th:text="${h.nombre}"></option>
+            </th:block>
+          </select>
+        </div>
+
+        <!-- 3. Material -->
+        <div class="col-md-6">
+          <label for="material" class="form-label">Material de perfil</label>
+          <select class="form-select" id="material">
+            <option value="">Seleccione...</option>
+            <th:block th:each="h : ${materiales}">
+              <option th:value="${h.id}" th:text="${h.nombre}"></option>
+            </th:block>
+          </select>
+        </div>
+
+        <!-- 4. Vidrio -->
+        <div class="col-md-6">
+          <label for="vidrio" class="form-label">Tipo de vidrio</label>
+          <select class="form-select" id="vidrio">
+            <option value="">Seleccione...</option>
+            <option value="simple">Simple (flotado)</option>
+            <option value="dvh">Doble (DVH)</option>
+            <option value="laminado">Laminado</option>
+            <option value="templado">Templado</option>
+          </select>
+        </div>
+
+        <!-- 5. Color -->
+        <div class="col-md-6">
+          <label for="color" class="form-label">Color</label>
+          <select class="form-select" id="color">
+            <option value="">Seleccione...</option>
+            <th:block th:each="h : ${colores}">
+              <option th:value="${h.id}" th:text="${h.nombre}"></option>
+            </th:block>
+          </select>
+        </div>
+
+
+        <!-- 6. Opciones extra -->
+        <div class="col-md-6 d-flex flex-column">
+          <label class="form-label">Opciones adicionales</label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="premarco">
+            <label class="form-check-label" for="premarco">Con premarco</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="barrotillos">
+            <label class="form-check-label" for="barrotillos">Con barrotillos</label>
           </div>
         </div>
-      </div>
-    </form>
-  </main>
 
-  <!-- FOOTER -->
-  <footer class="site-footer py-5">
-    <div class="container">
-      <div class="row text-center text-md-start">
-
-        <!-- Columna Izquierda: Redes sociales -->
-        <div class="col-md-4">
-          <p class="mb-1">2025 © Ventanet</p>
-          <p class="mb-1">
-            <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
-            <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
-          </p>
-        </div>
-
-        <!-- Columna Medio: Navegación -->
-        <div class="col-md-4 mb-4 mb-md-0">
-          <ul class="list-unstyled">
-            <li><a href="#productos" class="footer-link">Productos</a></li>
-            <li><a href="login.html" class="footer-link">Ingreso</a></li>
-            <li><a href="nuevo-usuario.html" class="footer-link">Registro</a></li>
-          </ul>
-        </div>
-
-        <!-- Columna Derecha: Datos Empresa -->
-        <div class="col-md-4 mb-4 mb-md-0">
-          <h5 class="mb-3">Seguinos en:</h5>
-          <div class="d-flex justify-content-center justify-content-md-start gap-3">
-            <a href="https://facebook.com"><img th:src="@{/img/rrss1.png}" alt="Facebook" width="30"></a>
-            <a href="https://instagram.com"><img th:src="@{/img/rrss2.png}" alt="Instagram" width="30"></a>
-            <a href="https://linkedin.com"><img th:src="@{/img/rrss3.png}" alt="Linkedin" width="30"></a>
+        <!-- 7. Boton -->
+        <div class="col-12 text-center mt-4">
+          <div class="d-flex justify-content-center gap-2">
+            <button type="button" class="btn btn-secondary px-4 py-2" id="btnAdd" onclick="addItem()">Añadir</button>
+            <button type="submit" class="btn btn-primary px-5 py-2">Solicitar presupuesto</button>
           </div>
+        </div>
+      </form>
+
+      <!-- Tabla de items añadidos -->
+      <div class="mt-4">
+        <h4>Items añadidos</h4>
+        <div class="table-responsive">
+          <table class="table table-sm" id="itemsTable">
+            <thead>
+              <tr>
+                <th>Tipo ventana</th>
+                <th>Tipo producto</th>
+                <th>Ancho</th>
+                <th>Alto</th>
+                <th>Material</th>
+                <th>Vidrio</th>
+                <th>Color</th>
+                <th>Opciones</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+        <!-- Lugar para mostrar errores por item retornados por el servidor -->
+        <div id="serverErrors" style="display:none;margin-top:12px;">
+          <h6>Errores al crear algunos items</h6>
+          <ul id="serverErrorsList" class="text-danger"></ul>
         </div>
       </div>
     </div>
-  </footer>
 
-  <script th:src="@{/js/presupuesto.js}"></script>
+
+
+    <!--<script th:src="@{/js/script.js}"></script>-->
+
+    <script>
+      // Manejo simple para añadir filas desde el formulario superior hacia la tabla de items.
+      (function () {
+        let itemIndex = 0;
+
+        window.addItem = function () {
+          const tipo = document.getElementById('tipoVentana').value;
+          const tipoText = document.getElementById('tipoVentana').selectedOptions[0]?.text || '';
+          const ancho = document.getElementById('ancho').value;
+          const anchoText = document.getElementById('ancho').selectedOptions[0]?.text || ancho;
+          const alto = document.getElementById('alto').value;
+          const altoText = document.getElementById('alto').selectedOptions[0]?.text || alto;
+          const material = document.getElementById('material').value;
+          const materialText = document.getElementById('material').selectedOptions[0]?.text || material;
+          const tipoProductoId = document.getElementById('tipoProducto') ? document.getElementById('tipoProducto').value : '';
+          const tipoProductoText = document.getElementById('tipoProducto') ? document.getElementById('tipoProducto').selectedOptions[0]?.text || '' : '';
+          const vidrio = document.getElementById('vidrio').value;
+          const vidrioText = document.getElementById('vidrio').selectedOptions[0]?.text || vidrio;
+          const color = document.getElementById('color').value;
+          const colorText = document.getElementById('color').selectedOptions[0]?.text || color;
+          const premarco = document.getElementById('premarco').checked;
+          const barrotillos = document.getElementById('barrotillos').checked;
+
+          // Validación mínima
+          if (!tipo || !ancho || !alto || !material || !vidrio || !color) {
+            showToast('Complete todos los campos antes de añadir el item.');
+            return;
+          }
+
+          const tbody = document.querySelector('#itemsTable tbody');
+          const idx = itemIndex++;
+
+          const tr = document.createElement('tr');
+          tr.setAttribute('data-idx', idx);
+
+          tr.innerHTML = `
+        <td>${escapeHtml(tipoText)}</td>
+        <td>${escapeHtml(tipoProductoText)}</td>
+        <td>${escapeHtml(anchoText)}</td>
+        <td>${escapeHtml(altoText)}</td>
+        <td>${escapeHtml(materialText)}</td>
+        <td>${escapeHtml(vidrioText)}</td>
+        <td>${escapeHtml(colorText)}</td>
+        <td>
+          <button type="button" class="btn btn-sm btn-danger" onclick="removeItem(${idx})">Eliminar</button>
+        </td>
+      `;
+
+          // Añadir inputs ocultos para enviar con el formulario
+          const form = document.getElementById('formPresupuesto');
+          const inputs = [
+            { name: 'itemTipoVentana[]', value: tipo },
+            { name: 'itemTipoProducto[]', value: tipoProductoId },
+            { name: 'itemAncho[]', value: ancho },
+            { name: 'itemAlto[]', value: alto },
+            { name: 'itemMaterial[]', value: material },
+            { name: 'itemVidrio[]', value: vidrio },
+            { name: 'itemColor[]', value: color },
+            { name: 'itemPremarco[]', value: premarco },
+            { name: 'itemBarrotillos[]', value: barrotillos }
+          ];
+
+          inputs.forEach(inp => {
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = inp.name;
+            hidden.value = inp.value;
+            hidden.dataset.idx = idx;
+            hidden.classList.add('generated-input');
+            form.appendChild(hidden);
+          });
+
+          tbody.appendChild(tr);
+
+          // Limpiar campos del formulario para una nueva entrada
+          document.getElementById('tipoVentana').value = '';
+          document.getElementById('tipoProducto').value = '';
+          document.getElementById('ancho').value = '';
+          document.getElementById('alto').value = '';
+          document.getElementById('material').value = '';
+          document.getElementById('vidrio').value = '';
+          document.getElementById('color').value = '';
+          document.getElementById('premarco').checked = false;
+          document.getElementById('barrotillos').checked = false;
+          const img = document.getElementById('imagenVentana');
+          if (img) img.style.display = 'none';
+          // poner foco en el primer campo
+          document.getElementById('tipoVentana').focus();
+        };
+
+        window.removeItem = function (idx) {
+          // eliminar fila
+          const tr = document.querySelector('#itemsTable tbody tr[data-idx="' + idx + '"]');
+          // query selector with proper escaping
+          const tr2 = document.querySelector('#itemsTable tbody tr[data-idx="' + idx + '"]');
+          // remove inputs
+          document.querySelectorAll('.generated-input').forEach(el => {
+            if (el.dataset.idx == idx) el.remove();
+          });
+          // remove the tr matching idx
+          const row = document.querySelector('#itemsTable tbody tr[data-idx="' + idx + '"]');
+          if (row) row.remove();
+        };
+
+        function escapeHtml(text) {
+          if (!text) return '';
+          return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        // Mostrar un toast simple en pantalla (no bloqueante)
+        window.showToast = function (message, timeout = 3500) {
+          let container = document.getElementById('toastContainer');
+          if (!container) {
+            container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.style.position = 'fixed';
+            container.style.right = '20px';
+            container.style.top = '20px';
+            container.style.zIndex = 1050;
+            document.body.appendChild(container);
+          }
+
+          const toast = document.createElement('div');
+          toast.className = 'toast-message';
+          toast.style.background = 'rgba(0,0,0,0.85)';
+          toast.style.color = '#fff';
+          toast.style.padding = '10px 14px';
+          toast.style.borderRadius = '6px';
+          toast.style.marginTop = '8px';
+          toast.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';
+          toast.style.cursor = 'pointer';
+          toast.textContent = message;
+
+          // click to remove early
+          toast.addEventListener('click', () => toast.remove());
+
+          container.appendChild(toast);
+
+          setTimeout(() => {
+            // fade out
+            toast.style.transition = 'opacity 300ms ease';
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 350);
+          }, timeout);
+        };
+
+        // We submit the form normally now; add minimal pre-submit check to ensure there is at least one item.
+        const form = document.getElementById('formPresupuesto');
+        form.addEventListener('submit', function (ev) {
+          const inputs = Array.from(document.querySelectorAll('.generated-input'));
+          if (inputs.length === 0) {
+            ev.preventDefault();
+            showToast('No hay items en la tabla. Añade al menos uno.');
+            return false;
+          }
+
+          // Validate location selects are chosen (server requires provincia and localidad)
+          const provinciaVal = document.getElementById('provincia') ? document.getElementById('provincia').value : '';
+          const localidadVal = document.getElementById('localidad') ? document.getElementById('localidad').value : '';
+          if (!provinciaVal) {
+            ev.preventDefault();
+            showToast('Seleccione la provincia antes de enviar el presupuesto.');
+            return false;
+          }
+          if (!localidadVal) {
+            ev.preventDefault();
+            showToast('Seleccione la localidad antes de enviar el presupuesto.');
+            return false;
+          }
+          // allow the browser to submit the form and let the server persist items directly into DB
+        });
+
+      })();
+    </script>
+    <script>
+      // Cargar categorias (TipoVentana) para el producto seleccionado mediante AJAX
+      (function () {
+        const tipoProductoEl = document.getElementById('tipoProducto');
+        const tipoVentanaEl = document.getElementById('tipoVentana');
+        const provinciaEl = document.getElementById('provincia');
+        const localidadEl = document.getElementById('localidad');
+        const partidoEl = document.getElementById('partido');
+
+        if (!tipoProductoEl || !tipoVentanaEl) return;
+
+        tipoProductoEl.addEventListener('change', function () {
+          const prodId = this.value;
+
+          // limpiar opciones
+          tipoVentanaEl.innerHTML = '<option value="">Seleccione...</option>';
+          if (!prodId) return;
+          // Llamada al endpoint que retorna JSON
+          fetch(window.location.href + '/tipo-ventana?tipoProductoId=' + encodeURIComponent(prodId))
+            .then(resp => {
+              if (!resp.ok) throw new Error('Error en la respuesta');
+              return resp.json();
+            })
+            .then(list => {
+              list.forEach(it => {
+                const opt = document.createElement('option');
+                opt.value = it.id;
+                opt.textContent = it.nombre;
+                tipoVentanaEl.appendChild(opt);
+              });
+            })
+            .catch(err => {
+              console.error('No se pudieron cargar las categorias', err);
+              showToast('No se pudieron cargar las categorias para el producto seleccionado.');
+            });
+        });
+
+        provinciaEl.addEventListener('change', function () {
+          const provId = this.value;
+          // limpiar opciones
+          localidadEl.innerHTML = '<option value="">Seleccione...</option>';
+          if (!provId) return;
+          // Llamada al endpoint que retorna JSON
+          fetch(window.location.href + '/provincia?provinciaId=' + encodeURIComponent(provId))
+            .then(resp => {
+              if (!resp.ok) throw new Error('Error en la respuesta');
+              return resp.json();
+            })
+            .then(list => {
+              list.forEach(it => {
+                const opt = document.createElement('option');
+                opt.value = it.id_localidad;
+                opt.textContent = it.nombre;
+                localidadEl.appendChild(opt);
+              });
+            })
+            .catch(err => {
+              console.error('No se pudieron cargar las localidades', err);
+              showToast('No se pudieron cargar las localidades para la provincia seleccionada.');
+            });
+
+        });
+
+        localidadEl.addEventListener('change', function () {
+          const localidadId = this.value;
+          // limpiar opciones
+          partidoEl.innerHTML = '<option value="">Seleccione...</option>';
+          if (!localidadId) return;
+          // Llamada al endpoint que retorna JSON
+          fetch(window.location.href + '/localidad?localidadId=' + encodeURIComponent(localidadId))
+            .then(resp => {
+              if (!resp.ok) throw new Error('Error en la respuesta');
+              return resp.json();
+            })
+            .then(list => {
+              list.forEach(it => {
+                const opt = document.createElement('option');
+                opt.value = it.id_partido;
+                opt.textContent = it.nombre;
+                partidoEl.appendChild(opt);
+              });
+            })
+            .catch(err => {
+              console.error('No se pudieron cargar los partidos', err);
+              showToast('No se pudieron cargar los partidos para la localidad seleccionada.');
+            });
+
+        });
+      })();
+    </script>
 </body>
 
 </html>
