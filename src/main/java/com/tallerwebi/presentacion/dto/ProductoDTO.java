@@ -13,6 +13,8 @@ public class ProductoDTO {
     private Integer presentacionId;
     private String tipoProducto;
     private String marca;
+    private String tipoVentana;
+    
     
     public ProductoDTO() {
     }   

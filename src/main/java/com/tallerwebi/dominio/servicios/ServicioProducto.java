@@ -6,6 +6,7 @@ import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.TipoProducto;
 import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
+import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
 
 public interface ServicioProducto {
     List<Producto> obtener();
@@ -19,4 +20,5 @@ public interface ServicioProducto {
             Long tipoVentanaId);
     List<TipoProducto> obtenerTiposProductos(Long idProveedor);
     List<TipoVentana> obtenerTiposVentanas(Long idProveedor);
+    List<ProductoGenericoDTO> obtenerProductosGenericos();
 }

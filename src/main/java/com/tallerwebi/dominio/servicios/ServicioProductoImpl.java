@@ -11,6 +11,7 @@ import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
 import com.tallerwebi.infraestructura.RepositorioProductoImpl;
+import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
 
 @Service("servicioProducto")
 @Transactional
@@ -86,6 +87,11 @@ public class ServicioProductoImpl implements ServicioProducto {
     @Override
     public List<TipoVentana> obtenerTiposVentanas(Long idProveedor) {
         return productoRepository.obtenerTiposVentanasPorProveedor(idProveedor);
+    }
+
+    @Override
+    public List<ProductoGenericoDTO> obtenerProductosGenericos() {
+        return productoRepository.obtenerProductosGenericos();
     }    
 
 }

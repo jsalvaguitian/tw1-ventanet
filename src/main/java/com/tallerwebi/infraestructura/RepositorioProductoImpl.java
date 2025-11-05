@@ -17,6 +17,7 @@ import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.TipoProducto;
 import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioGenerico;
+import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
 
 @Repository("repositorioProducto")
 public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
@@ -181,6 +182,23 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         query.setParameter("idProveedor", idProveedor);
 
         return query.getResultList();
+    }
+
+    public List<ProductoGenericoDTO> obtenerProductosGenericos() {
+        Session session = sessionFactory.getCurrentSession();
+
+        String hql = "SELECT new com.tallerwebi.presentacion.dto.ProductoGenericoDTO(" +
+        "p.tipoProducto.nombre, "+
+        "COALESCE(p.tipoVentana.nombre, 'N/A'), " +
+        "COALESCE(p.materialDePerfil.nombre, 'N/A'), " +
+        "COALESCE(p.tipoDeVidrio.nombre,'N/A'), " +
+        "COALESCE(CONCAT(p.ancho.nombre, 'x', p.alto.nombre), 'N/A'), " +
+        "COUNT(DISTINCT p.proveedor.id)) "+
+        "FROM Producto p " +
+        "GROUP BY " +
+        "p.tipoProducto.id, p.tipoVentana.id, p.materialDePerfil.id, p.tipoDeVidrio.id, p.ancho.id, p.alto.id";
+
+        return session.createQuery(hql, ProductoGenericoDTO.class).list();
     }
 
 }

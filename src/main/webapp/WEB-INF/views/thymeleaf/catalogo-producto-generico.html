@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="row" th:each="p : ${productosGenericos}">
+    <div class="col-md-4 mb-4">
+        <div class="card mi-card text-center shadow">
+            <img th:src="@{/img/productos/generico-{p.tipoProducto}.png}" alt="Imagen genérica">
+            <div class="card-body">
+                <h5 th:text="${p.tipoProducto} + ' ' + ${p.tipoVentana} + ' ' +${p.tipoVidrio} + ' ' + ${p.materialPerfil} + ' ' + ${p.dimensiones} + ' '+ ${p.color}"></h5>
+                <p th:text="'Disponible en ' + ${p.cantidadProveedores} + ' proveedor(es)'"></p>
+                <a th:href="@{'/catalogo/detalles/' + ${p.tipoProducto} + '/' + ${p.tipoVentana}}" 
+                   class="btn btn-primary">Ver detalle</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

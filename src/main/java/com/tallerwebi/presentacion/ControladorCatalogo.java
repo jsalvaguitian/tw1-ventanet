@@ -25,7 +25,10 @@ import com.tallerwebi.dominio.servicios.ServicioProducto;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
 import com.tallerwebi.presentacion.dto.ProductoDTO;
+import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
+
+import jakarta.mail.Session;
 
 @Controller
 public class ControladorCatalogo {
@@ -153,7 +156,17 @@ public class ControladorCatalogo {
     // boton solicitar cotizacion
     // si el cliente no esta logueado solicitar q se loguee
     // si lo esta, se notifica N proveedores que tiene ese producto
+
     @GetMapping("/ver-productos")
+    public ModelAndView verCatalogoPorProductosGenericos(){
+        ModelMap modelMap = new ModelMap();
+        List<ProductoGenericoDTO> productosGenericos = servicioProducto.obtenerProductosGenericos();
+        modelMap.put("productosGenericos", productosGenericos);
+        return new ModelAndView("catalogo-producto-generico", modelMap);
+
+    }
+    
+    /*@GetMapping("/ver-productos")
     public ModelAndView verCatalogo(HttpServletRequest request,
             @RequestParam(required = false) Long proveedorId,
             @RequestParam(required = false) Long tipoProductoId) {
@@ -185,7 +198,7 @@ public class ControladorCatalogo {
 
         return new ModelAndView("catalogo", modelMap);
         // luego preguntar si un cliente inicio sesion
-    }
+    }*/
 
     // -------------------------------------------------------------------------------------------------
     private List<UsuarioProvDTO> convertirProveedoresADtosFiltro(List<Proveedor> proveedores) {
