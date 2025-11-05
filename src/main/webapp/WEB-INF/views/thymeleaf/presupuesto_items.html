@@ -46,6 +46,41 @@
         <div th:if="${items == null or #lists.size(items) == 0}">
             <p>No hay items para este presupuesto.</p>
         </div>
+                    <!-- Productos que hacen merge agrupados por proveedor -->
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Productos sugeridos por proveedor</h5>
+                            <div th:if="${productosPorProveedor != null and #lists.size(productosPorProveedor) > 0}">
+                                <div th:each="grupo : ${productosPorProveedor}" class="mb-3">
+                                    <h6 th:text="${grupo.proveedorNombre}"></h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Nombre</th>
+                                                    <th>Precio</th>
+                                                    <th>Stock</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="prod : ${grupo.productos}">
+                                                    <td th:text="${prod.id}"></td>
+                                                    <td th:text="${prod.nombre}"></td>
+                                                    <td th:text="${prod.precio}"></td>
+                                                    <td th:text="${prod.stock}"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:if="${productosPorProveedor == null or #lists.size(productosPorProveedor) == 0}">
+                                <p>No se encontraron productos relacionados con los items.</p>
+                            </div>
+                        </div>
+                    </div>
+
     </div>
 
     <div th:if="${presupuesto == null and error == null}">

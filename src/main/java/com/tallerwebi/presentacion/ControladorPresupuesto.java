@@ -610,6 +610,79 @@ public class ControladorPresupuesto {
             datos.put("presupuesto", p);
             datos.put("items", p.getItems() == null ? new java.util.ArrayList<>() : p.getItems());
             datos.put("fecha", p.getFechaCreacion() == null ? null : p.getFechaCreacion().toString());
+            // Build product merge list: for each product in catalog, if it matches any item
+            // of the presupuesto, group it by proveedor.
+            try {
+                List<Producto> allProducts = servicioProducto.obtener();
+                java.util.List<java.util.Map<String, Object>> grupos = new java.util.ArrayList<>();
+                java.util.Map<Long, java.util.Map<String, Object>> grupoPorProveedor = new java.util.LinkedHashMap<>();
+
+                for (Producto prod : allProducts) {
+                    if (prod == null || prod.getProveedor() == null) continue;
+                    boolean matches = false;
+                    if (p.getItems() != null) {
+                        for (PresupuestoItem it : p.getItems()) {
+                            /*// Match by tipoProducto (required) and then check optional attributes
+                            if (it.getTipoProducto() == null || prod.getTipoProducto() == null) continue;
+                            if (!prod.getTipoProducto().getId().equals(it.getTipoProducto().getId())) continue;
+                            // tipoVentana
+
+                             */
+                            if (it.getTipoVentana() != null) {
+                                if (prod.getTipoVentana() == null || !prod.getTipoVentana().getId().equals(it.getTipoVentana().getId()))
+                                    continue;
+                            }
+                           /* // ancho
+                            if (it.getAncho() != null) {
+                                if (prod.getAncho() == null || !prod.getAncho().getId().equals(it.getAncho().getId())) continue;
+                            }
+                            // alto
+                            if (it.getAlto() != null) {
+                                if (prod.getAlto() == null || !prod.getAlto().getId().equals(it.getAlto().getId())) continue;
+                            }
+                                */
+                            // material
+                            if (it.getMaterial() != null) {
+                                if (prod.getMaterialDePerfil() == null || !prod.getMaterialDePerfil().getId().equals(it.getMaterial().getId())) continue;
+                            }
+                            /*
+                            // color
+                            if (it.getColor() != null) {
+                                if (prod.getColor() == null || !prod.getColor().getId().equals(it.getColor().getId())) continue;
+                            }
+ */
+                            // if we reached this point, product matches this item
+                            matches = true;
+                            break;
+                        }
+                    }
+                    if (!matches) continue;
+
+                    Long provId = prod.getProveedor().getId();
+                    java.util.Map<String, Object> grupo = grupoPorProveedor.get(provId);
+                    if (grupo == null) {
+                        grupo = new java.util.HashMap<>();
+                        grupo.put("proveedorId", provId);
+                        grupo.put("proveedorNombre", prod.getProveedor().getNombre());
+                        grupo.put("productos", new java.util.ArrayList<java.util.Map<String, Object>>() );
+                        grupoPorProveedor.put(provId, grupo);
+                    }
+                    @SuppressWarnings("unchecked")
+                    java.util.List<java.util.Map<String, Object>> lista = (java.util.List<java.util.Map<String, Object>>) grupo.get("productos");
+                    java.util.Map<String, Object> pd = new java.util.HashMap<>();
+                    pd.put("id", prod.getId());
+                    pd.put("nombre", prod.getNombre());
+                    pd.put("precio", prod.getPrecio());
+                    pd.put("stock", prod.getStock());
+                    lista.add(pd);
+                }
+
+                // move to list preserving order
+                grupoPorProveedor.values().forEach(v -> grupos.add(v));
+                datos.put("productosPorProveedor", grupos);
+            } catch (Exception ex) {
+                System.out.println("[ControladorPresupuesto] fallo al buscar productos para merge: " + ex.getMessage());
+            }
             return new ModelAndView("presupuesto_items", datos);
         } catch (Exception e) {
             System.out.println("[ControladorPresupuesto] error recuperando presupuesto id=" + id + ": " + e.getMessage());
