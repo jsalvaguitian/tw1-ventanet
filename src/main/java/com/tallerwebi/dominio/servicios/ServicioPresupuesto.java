@@ -14,4 +14,6 @@ public interface ServicioPresupuesto {
 
     void eliminar(Long id);
 
+    List<Presupuesto> obtenerPresupuestosPorIdUsuario(Long id_usuario);
+
 }

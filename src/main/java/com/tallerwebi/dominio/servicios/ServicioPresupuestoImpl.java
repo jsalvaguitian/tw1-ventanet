@@ -1,10 +1,12 @@
 package com.tallerwebi.dominio.servicios;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.tallerwebi.dominio.entidades.Presupuesto;
 import com.tallerwebi.dominio.entidades.PresupuestoItem;
+import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioPresupuesto;
 
@@ -51,5 +53,17 @@ public class ServicioPresupuestoImpl implements ServicioPresupuesto {
     @Override
     public void eliminar(Long id) {
         throw new UnsupportedOperationException("No implementado aún");
+    }
+
+    @Override
+    @Transactional
+    public List<Presupuesto> obtenerPresupuestosPorIdUsuario(Long id_usuario) {
+        System.out.println("[ServicioPresupuesto] buscar presupuestos para clienteId=" + id_usuario);
+        List<Presupuesto> presupuestos = repositorioPresupuesto.obtenerPorIdCliente(id_usuario);
+        System.out.println("[ServicioPresupuesto] cantidad encontrada=" + (presupuestos == null ? 0 : presupuestos.size()));
+        if (presupuestos == null || presupuestos.isEmpty()) {
+            throw new NoHayProductoExistente();
+        }
+        return presupuestos;
     }
 }
