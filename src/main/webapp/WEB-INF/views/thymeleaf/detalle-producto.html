@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${producto.nombre}">Detalle del producto</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+        <link rel="stylesheet" th:href="@{/css/main.css}" />
+
+    <style>
+        .detalle-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+        }
+        .producto-img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+        .precio {
+            font-size: 1.5rem;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .volver-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+  <div th:replace="fragments/header :: header"></div>
+
+<div class="container detalle-container">
+    <div class="row">
+        <div class="col-md-6">
+            <img th:src="@{${'/'+producto.imagenUrl}}" alt="Imagen del producto" class="producto-img img-fluid">
+        </div>
+
+        <div class="col-md-6">
+            <h2 th:text="${producto.nombre}"></h2>
+            <p th:text="${producto.descripcion}"></p>
+
+            <p><strong>Modelo:</strong> <span th:text="${producto.modelo}"></span></p>
+            <p><strong>Tipo de producto:</strong> <span th:text="${producto.tipoProducto.nombre}"></span></p>
+            <p th:if="${producto.tipoVentana != null}">
+                <strong>Tipo de ventana:</strong> <span th:text="${producto.tipoVentana.nombre}"></span>
+            </p>
+            
+            <p th:if="${producto.materialDePerfil != null}">
+                <strong>Material del perfil:</strong> <span th:text="${producto.materialDePerfil.nombre}"></span>
+            </p>
+            
+            <p th:if="${producto.tipoDeVidrio != null}">
+                <strong>Tipo de vidrio:</strong> <span th:text="${producto.tipoDeVidrio.nombre}"></span>
+            </p>
+
+            <p><strong>Stock:</strong> <span th:text="${producto.stock}"></span> unidades</p>
+            <p class="precio">Precio: $<span th:text="${producto.precio}"></span></p>
+
+            <a th:href="@{'/catalogo/' + ${proveedor.id}}" class="btn btn-secondary volver-btn"> Volver al catálogo</a>
+        </div>
+    </div>
+</div>
+  <div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>

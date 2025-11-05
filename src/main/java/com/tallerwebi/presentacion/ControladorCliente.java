@@ -1,4 +1,5 @@
 package com.tallerwebi.presentacion;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,17 +20,16 @@ import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 @Controller
 @RequestMapping("/cliente")
-public class ControladorCliente   {
+public class ControladorCliente {
 
     private final ServicioClienteI servicioClienteI;
-    private final ServicioCotizacion servicioCotizacion;  // inyección correcta
+    private final ServicioCotizacion servicioCotizacion; // inyección correcta
 
     // Constructor que Spring usa para inyección
     public ControladorCliente(ServicioClienteI servicioClienteI, ServicioCotizacion servicioCotizacion) {
         this.servicioClienteI = servicioClienteI;
         this.servicioCotizacion = servicioCotizacion;
     }
-
 
     @GetMapping("/dashboard")
     public ModelAndView irDashboard(HttpServletRequest request) {
@@ -38,22 +38,25 @@ public class ControladorCliente   {
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
         String rol_cliente = "CLIENTE";
 
-        if (usuarioSesion == null || !rol_cliente.equalsIgnoreCase(usuarioSesion.getRol()) || usuarioSesion.getUsername() == null) {
+        if (usuarioSesion == null || !rol_cliente.equalsIgnoreCase(usuarioSesion.getRol())
+                || usuarioSesion.getUsername() == null) {
             return new ModelAndView("redirect:/login");
         }
 
-    System.out.println("[ControladorCliente] usuarioSesion id=" + usuarioSesion.getId() + " rol=" + usuarioSesion.getRol());
-    datosModelado.put("nombreCliente", usuarioSesion.getNombre());
+        System.out.println(
+                "[ControladorCliente] usuarioSesion id=" + usuarioSesion.getId() + " rol=" + usuarioSesion.getRol());
+        datosModelado.put("nombreCliente", usuarioSesion.getNombre());
         datosModelado.put("apellidoCliente", usuarioSesion.getApellido());
         datosModelado.put("rolCliente", usuarioSesion.getRol());
-    
+
         try {
             List<Cotizacion> cotizaciones = servicioCotizacion.obtenerCotizacionPorIdCliente(usuarioSesion.getId());
             if (cotizaciones == null) {
                 cotizaciones = new ArrayList<>();
             }
             datosModelado.put("cotizaciones", cotizaciones);
-            datosModelado.put("mensaje", cotizaciones.isEmpty() ? "No hay cotizaciones" : "Hay cotizaciones disponibles");
+            datosModelado.put("mensaje",
+                    cotizaciones.isEmpty() ? "No hay cotizaciones" : "Hay cotizaciones disponibles");
             // Serializar una versión simplificada a JSON para JS en la vista
             try {
                 List<Map<String, Object>> simplified = new ArrayList<>();

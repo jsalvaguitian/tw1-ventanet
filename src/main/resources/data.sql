@@ -18,15 +18,24 @@ INSERT INTO Presentacion (id, descripcion, unidadMedida, cantidad) VALUES
 INSERT INTO TipoProducto (id, nombre) VALUES
     (1, 'Puerta'),
     (2, 'Ventana'),
-    (3, 'Techo');
+    (3, 'Techo'),
+    (4, 'Piso y Revestimiento');
 
 -- Tipo de ventana
-INSERT INTO TipoVentana (id, nombre) VALUES
-    (1, 'Corrediza'),
-    (2, 'Oscilobatiente'),
-    (3, 'Paño fijo'),
-    (4, 'Abatible'),
-    (5, 'Plegable');
+INSERT INTO TipoVentana (id, nombre, tipo_producto_id) VALUES
+    (1, 'Corrediza', 2),
+    (2, 'Oscilobatiente', 2),
+    (3, 'Paño fijo', 2),
+    (4, 'Abatible', 2),
+    (5, 'Plegable', 2),
+    (6, 'Abatible', 1),
+    (7, 'Corrediza', 1),
+    (8, 'Doble', 1),
+    (9, 'Plegable', 1),
+    (10, 'De Chapa', 3),
+    (11, 'Aislante', 3);
+    
+
 
 -- Ancho
 INSERT INTO Ancho (id, nombre) VALUES
@@ -114,7 +123,7 @@ INSERT INTO Usuario (
 (2, 'Juan', 'Pérez', 'cliente1', 'juan.perez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '111222333', 'Calle Falsa 123', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
-
+----- PROVEEDORES
 (3, 'Pedro', 'Gómez', 'proveedor1', 'pedro.gomez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '444555666', 'Calle Empresa 45', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
@@ -130,14 +139,36 @@ INSERT INTO Usuario (
 (6, 'Juan', 'Fulano', 'proveedor4', 'juan.fulano@email.com',
  '$2a$10$9rO6fX2qRUYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '444555666', 'Calle Santa Fe 2245', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
-
+----- MÁS CLIENTES
  (7, 'María', 'Lopez', 'cliente2', 'maria.lopez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '111333555', 'Av. Belgrano 456', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
 
 (8, 'Carlos', 'Martinez', 'cliente3', 'carlos.martinez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
- '222444666', 'Calle San Martín 789', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO');
+ '222444666', 'Calle San Martín 789', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
+ 
+ --- MAS PROVEEDORES
+(9, 'Ana', 'García', 'proveedor5', 'ana.garcia@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '777888999', 'Calle Comercio 321', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(10, 'Luis', 'Fernández', 'proveedor6', 'luis@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '666555444', 'Av. Industria 654', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(11, 'Manuel', 'Ramírez', 'proveedor7', 'manuel@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '333222111', 'Calle Fabricación 987', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+ (12, 'Juana', 'Díaz', 'proveedor8', 'juana@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq','334323211', 'Calle Producción 159', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(13, 'Marcos', 'Vargas', 'proveedor9', 'marcos@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '112233445', 'Av. Comercial 753', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(14, 'Raimundo', 'Santos', 'proveedor10', 'raimundo@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '998877665', 'Calle Industrial 852', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+ (15, 'Juliana', 'Guitian', 'proveedor11', 'juliana@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '556677889', 'Av. Empresarial 951', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(16, 'Javier', 'Castro', 'proveedor12', 'javier@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '443322110', 'Calle de la Industria 357', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(17, 'Leandro', 'Rojas', 'proveedor13', 'leandro@email.com', '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '221100334', 'Av. Fabricación 258', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO');
 
 -- ===============================================
 -- SUBCLASES (JOINED)
@@ -148,140 +179,331 @@ INSERT INTO Cliente (id) VALUES (7);
 INSERT INTO Cliente (id) VALUES (8);
 
 INSERT INTO Proveedor (
-    id, razonSocial, cuit, rubro, sitioWeb, documento, ubicacion, latitud, longitud
+    id, razonSocial, cuit, rubro, sitioWeb, documento, ubicacion, latitud, longitud, logoPath
 ) VALUES
-(3, 'Gómez Servicios S.A.', '30123456789', NULL, 'https://www.gomezservicios.com', NULL, 'Buenos Aires', -34.60, -58.38),
-(4, 'Simpson Proveedores', '30222222222', NULL, 'https://www.simpsonpro.com', NULL, 'Springfield', -34.61, -58.40),
-(5, 'Pedro Construcciones', '30333333333', NULL, 'https://www.pedroconstruye.com', NULL, 'Córdoba', -31.42, -64.18),
-(6, 'Fulano Materiales', '30444444444', NULL, 'https://www.fulano.com', NULL, 'Rosario', -32.95, -60.66);
+(3, 'Interfloor S.A.', '30123456789','PISOS_REVESTIMIENTOS', 'https://interfloor.com.ar/', NULL, 'Buenos Aires', -34.60, -58.38, 'img/logo-interfloor-argentina.svg'),
+(4, 'Pewen Piso S.A', '30222222222','PISOS_REVESTIMIENTOS', 'https://www.simpsonpro.com', NULL, 'Springfield', -34.61, -58.40, 'img/logo-pewenpisos.png'),
+(5, 'Rolon Piso', '30333333333','PISOS_REVESTIMIENTOS', 'https://www.pedroconstruye.com', NULL, 'Córdoba', -31.42, -64.18, 'img/logo-rolon-pisos.png'),
+(6, 'Aluar', '30444444444','VIDRIOS_ABERTURAS', 'https://www.fulano.com', NULL, 'Rosario', -32.95, -60.66, 'img/logo1.png'),
+(9, 'Abercom', '30444444777', 'VIDRIOS_ABERTURAS', 'https://www.abercom.com', NULL, 'Salta', -22.22, -12.11, 'img/logo-abercom.png'),
+(10, 'Aluplast S.A.', '30555555555', 'VIDRIOS_ABERTURAS', 'https://www.aluplast.com.ar', NULL, 'Buenos Aires', -34.61, -58.39, 'img/logo2.png'),
+(11, 'Deceuninck Argentina', '30666666666', 'VIDRIOS_ABERTURAS', 'https://www.deceuninck.com.ar', NULL, 'Buenos Aires', -34.62, -58.37, 'img/logo-deceuninck.png'),
+(12, 'Pacheco Chapas S.R.L.', '30777777777', 'HIERROS_ESTRUCTURAS', 'https://www.pachecochapas.com.ar', NULL, 'Tigre', -34.47, -58.61, 'img/logo-pacheco-chapas.png'),
+(13, 'Todo Tejas', '30888888888', 'MATERIALES_OBRA', 'https://www.todotejas.com.ar', NULL, 'La Plata', -34.92, -57.95, 'img/logo-todotejas.png'),
+(14, 'Chapaferro S.A.', '30999999999', 'HIERROS_ESTRUCTURAS', 'https://www.chapaferro.com.ar', NULL, 'Rosario', -32.96, -60.65, '/img/logo-chapaferro.png'),
+(15, 'Tejas Fantini', '30101010101', 'MATERIALES_OBRA', 'https://www.tejasfantini.com.ar', NULL, 'Córdoba', -31.41, -64.19, 'img/logo-tejas-fantini.png'),
+(16, 'Adramet S.R.L.', '30202020202', 'HIERROS_ESTRUCTURAS', 'https://www.adramet.com.ar', NULL, 'Avellaneda', -34.67, -58.36, 'img/logo-adramet.jpg'),
+(17, 'El Ítalo Construcciones', '30303030303', 'MATERIALES_OBRA', 'https://www.elitalo.com.ar', NULL, 'San Miguel', -34.53, -58.70, 'img/logo-elitalo.png');
 
 -- ===============================================
 -- PRODUCTOS (las FK deben existir antes)
 -- ===============================================
 INSERT INTO Producto (
-    id, nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
+    nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
     tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
     tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
 ) VALUES
 -- Puerta de madera
-(1, 'Puerta de Madera', 15000.00, 'Puerta maciza de madera', '/uploads/imagenes/puerta-madera.jpg', 20, 3,
+('Puerta de Madera', 15000.00, 'Puerta maciza de madera', '/uploads/imagenes/puerta-madera.jpg', 20, 3,
  1, 1, 1, 'PMA-01', true,
  NULL, NULL, NULL, NULL, NULL, 3), -- color marrón
 
 -- Ventana de aluminio
-(2, 'Ventana de Aluminio', 10000.00, 'Ventana corrediza de aluminio', '/uploads/imagenes/ventana-aluminio.jpg', 30, 3,
+('Ventana de Aluminio', 10000.00, 'Ventana corrediza de aluminio', '/uploads/imagenes/ventana-aluminio.jpg', 30, 3,
  2, 2, 2, 'VAL-01', true,
  1, 10, 10, 1, 1, 1), -- corrediza, 1.5x1.5m, aluminio, vidrio simple, blanco
 
 -- Techo de chapa
-(3, 'Techo de chapa', 25000.00, 'Techo acanalado galvanizado', '/uploads/imagenes/techo-chapa.jpeg', 15, 3,
+('Techo de chapa', 25000.00, 'Techo acanalado galvanizado', '/uploads/imagenes/techo-chapa.jpeg', 15, 3,
  3, 3, 3, 'TCH-01', false,
  NULL, NULL, NULL, NULL, NULL, 2), -- gris
 
 -- Puerta económica
-(4, 'Puerta económica', 14500.00, 'Puerta igual pero de otro proveedor', '/uploads/imagenes/puerta-madera.jpg', 10, 4,
+('Puerta económica', 14500.00, 'Puerta igual pero de otro proveedor', '/uploads/imagenes/puerta-madera.jpg', 10, 4,
  1, 1, 1, 'PMA-02', true,
  NULL, NULL, NULL, NULL, NULL, 3), -- marrón
 
 -- Ventana de aluminio reforzada
-(5, 'Ventana de Aluminio reforzada', 12000.00, 'Ventana igual de otro proveedor', '/uploads/imagenes/ventana-aluminio-2.jpg', 25, 4,
+('Ventana de Aluminio reforzada', 12000.00, 'Ventana igual de otro proveedor', '/uploads/imagenes/ventana-aluminio-2.jpg', 25, 4,
  2, 2, 2, 'VAL-02', true,
  1, 12, 12, 1, 2, 1), -- corrediza, 1.7x1.7m, aluminio, doble vidrio, blanco
 
 -- Pintura blanca
-(6, 'Pintura blanca', 5000.00, 'Pintura para interiores', '/uploads/imagenes/pintura-blanca.jpg', 40, 5,
+('Pintura blanca', 5000.00, 'Pintura para interiores', '/uploads/imagenes/pintura-blanca.jpg', 40, 5,
  3, 2, 2, 'PIN-BL', true,
  NULL, NULL, NULL, NULL, NULL, 1), -- blanco
 
 -- Puerta de PVC
-(7, 'Puerta de PVC', 17000.00, 'Puerta plástica económica', '/uploads/imagenes/puerta-pvc.jpeg', 20, 5,
+('Puerta de PVC', 17000.00, 'Puerta plástica económica', '/uploads/imagenes/puerta-pvc.jpeg', 20, 5,
  1, 3, 1, 'PVP-02', true,
  NULL, NULL, NULL, 2, NULL, 1), -- material PVC, color blanco
 
 -- Techo aislante
-(8, 'Techo aislante', 30000.00, 'Techo con aislante térmico', '/uploads/imagenes/techo-aislante.jpg', 10, 6,
+('Techo aislante', 30000.00, 'Techo con aislante térmico', '/uploads/imagenes/techo-aislante.jpg', 10, 6,
  3, 2, 3, 'TCH-A2', false,
  NULL, NULL, NULL, NULL, NULL, 2), -- gris
 
 -- Ventana doble vidrio
-(9, 'Ventana doble vidrio', 20000.00, 'Ventana doble vidrio templado', '/uploads/imagenes/ventana-doble-vidrio.jpg', 5, 6,
+('Ventana doble vidrio', 20000.00, 'Ventana doble vidrio templado', '/uploads/imagenes/ventana-doble-vidrio.jpg', 5, 6,
  2, 1, 2, 'VDV-01', true,
  2, 15, 15, 1, 4, 1), -- oscilobatiente, 2.0x2.0m, aluminio, vidrio templado, blanco
 
 -- Puerta blindada
-(10, 'Puerta blindada', 45000.00, 'Puerta de seguridad', '/uploads/imagenes/puerta-blindada.jpg', 8, 6,
+('Puerta blindada', 45000.00, 'Puerta de seguridad', '/uploads/imagenes/puerta-blindada.jpg', 8, 6,
  1, 3, 1, 'PB-02', false,
  NULL, NULL, NULL, 1, NULL, 4); -- aluminio, color negro
 
-
--- ===============================================
--- PRODUCTOS ADICIONALES
--- ===============================================
-
--- Proveedor 4 (Simpson Proveedores)
 INSERT INTO Producto (
-    id, nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
+    nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
     tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
     tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
 ) VALUES
--- Variante de Puerta de Madera
-(11, 'Puerta de Madera Premium', 15800.00, 'Puerta maciza con terminación barnizada', '/uploads/imagenes/puerta-madera-premium.jpg', 12, 4,
- 1, 1, 1, 'PMA-03', true,
- NULL, NULL, NULL, NULL, NULL, 4), -- color negro
+-- 1
+('Ventana PVC IDEAL 4000', 25000.00, 'Sistema de ventana PVC IDEAL 4000 con perfilería de 70 mm, aislamiento térmico Uf=1,3 W/m²K, vidrio hasta 41 mm, versión corrediza para máxima iluminación y ahorro energético.', 'img/ventana-corrediza.png', 15, 10,
+ 2, 1, 3, 'PVC-4000-COR', true,
+ 1, 6, 10, 2, 2, 1),
 
--- Variante de Ventana de Aluminio
-(12, 'Ventana de Aluminio Blanca', 9800.00, 'Ventana corrediza de aluminio blanco', '/uploads/imagenes/ventana-aluminio-blanca.jpg', 25, 4,
- 2, 2, 2, 'VAL-03', true,
- 1, 10, 10, 1, 1, 1), -- vidrio simple, color blanco
+-- 2
+('Ventana PVC IDEAL 5000', 32000.00, 'Ventana PVC IDEAL 5000 multicámara con triple junta de estanqueidad, refuerzo de seguridad RC2 y máxima eficiencia térmica para construcciones de alta exigencia.', 'img/ventana-corrediza-doblevidrio.jpg', 10, 10,
+ 2, 2, 3, 'PVC-5000-OSC', true,
+ 2, 7, 11, 2, 2, 1),
 
--- Producto nuevo del rubro techo
-(13, 'Techo translúcido', 27000.00, 'Techo de policarbonato translúcido', '/uploads/imagenes/techo-translucido.jpg', 8, 4,
- 3, 3, 3, 'TCH-T1', false,
- NULL, NULL, NULL, NULL, NULL, 1);
+-- 3
+('Puerta de entrada PVC/Aluminio', 45000.00, 'Puerta de entrada de PVC/aluminio con herrajes de seguridad, triple acristalamiento y acabado en lamas decorativas, ideal para aislamiento térmico y acústico.', 'img/puerta-aluminio.jpg', 5, 10,
+ 1, 3, 3, 'PE-ALU-01', true,
+ 6, 10, 20, 2, 2, 1),
 
--- Proveedor 5 (Pedro Construcciones)
+-- 4
+('Ventana oscilobatiente de aluminio', 28000.00, 'Ventana oscilobatiente de aluminio de alta calidad, con ventilación regulada, apertura abatible-oscilo y acabado en colores modernos.', 'img/venta-oscibilitante.png', 12, 10,
+ 2, 1, 3, 'ALU-OSC-01', true,
+ 2, 7, 12, 1, 1, 2),
+
+-- 5
+('Ventana corrediza de aluminio', 26000.00, 'Ventana corrediza de aluminio de diseño minimalista, ideal para balcones o terrazas, que maximiza la entrada de luz sin ocupar espacio de apertura.', 'img/ventana-corrediza-templado.jpg', 20, 10,
+ 2, 2, 3, 'ALU-COR-01', true,
+ 1, 8, 11, 1, 1, 1),
+
+-- 6
+('Puerta interior de madera lacada', 18000.00, 'Puerta de madera lacada con perfilería interior de PVC Aluplast, diseñada para ambientes interiores, con alta resistencia al desgaste y acabado elegante.', 'img/puerta-madera.jpg', 25, 10,
+ 1, 3, 3, 'PM-LAC-01', true,
+ 6, 6, 20, 3, 1, 3),
+
+-- 7
+('Ventana PVC Energeto', 35000.00, 'Ventana de PVC con el sistema energeto® sin refuerzo metálico, con valores Uw desde 0,60 W/m²K, pensada para proyectos de edificación pasiva y ultraeficiencia.', 'img/ventana-abatible.jpg', 8, 10,
+ 2, 1, 3, 'PVC-ENER-01', true,
+ 1, 7, 12, 2, 2, 1),
+
+-- 8
+('Ventana plegable de aluminio', 60000.00, 'Ventana plegable (tipo folding) de aluminio, para espacios amplios como terrazas o galerías, con múltiples hojas que se pliegan completamente y diseño de alta gama.', 'img/ventana-plegable.jpeg', 4, 10,
+ 2, 2, 3, 'ALU-FOLD-01', true,
+ 5, 10, 15, 1, 1, 1),
+
+-- 9
+('Paño fijo de PVC', 22000.00, 'Paño fijo de PVC con gran superficie de cristal, ideal para iluminación cenital o laterales amplios, con perfilería discreta y máxima estabilidad térmica.', 'img/ventana-paniofijo2.jpeg', 15, 10,
+ 2, 1, 3, 'PVC-FIX-01', true,
+ 3, 9, 18, 2, 2, 1),
+
+-- 10
+('Puerta abatible de PVC con vidrio templado', 38000.00, 'Puerta abatible de PVC con vidrio templado, herraje multipunto de seguridad y acabado en imitación madera para exteriores residenciales.', 'img/puerta-abatible2.jpeg', 6, 10,
+ 1, 3, 3, 'PA-PVC-01', true,
+ 4, 8, 20, 2, 4, 3),
+
+-- 11
+('Ventana doble de aluminio con vidrio acústico', 40000.00, 'Ventana doble de aluminio con vidrio acústico laminado 44/2, especial para zonas expuestas al ruido, con perfilería robusta y diseño elegante.', 'img/ventana-corrediza-doblevidrio.jpg', 7, 10,
+ 2, 2, 3, 'ALU-DBL-01', true,
+ 8, 8, 12, 1, 3, 2),
+
+-- 12
+('Puerta doble de madera UV-lacada', 50000.00, 'Puerta doble de madera con herraje oculto, UV-lacada, adecuada para entrada principal de vivienda, con diseño simétrico y acabado premium.', 'uploads/imagenes/puerta-blindada.jpg', 3, 10,
+ 1, 3, 3, 'PD-LAC-01', true,
+ 6, 12, 20, 3, 1, 3),
+
+-- 13
+('Ventana simple de PVC', 20000.00, 'Ventana simple de PVC para renovación, perfil estándar, apertura corredera-oscilobatiente, color blanco y vidrio sencillo, opción económica pero de calidad Aluplast.', 'img/venta-oscibilitante.png', 18, 10,
+ 2, 1, 3, 'PVC-SIM-01', true,
+ 1, 6, 10, 2, 1, 1),
+
+-- 14
+('Puerta plegable de PVC-Aluminio', 55000.00, 'Puerta plegable de PVC-aluminio para ambientes interiores/exteriores, hojas de gran tamaño, herrajes de alta resistencia, acabado color grafito.', 'img/puerta-abatible.jpeg', 4, 10,
+ 1, 2, 3, 'PP-FOLD-01', true,
+ 9, 10, 20, 2, 1, 4),
+
+-- 15
+('Ventana templada de aluminio y PVC', 36000.00, 'Ventana templada de aluminio y PVC, con hoja semiempotrada, diseño minimalista sin bisagras visibles, vidrio templado 6 mm + cámara y junta central triple.', 'img/ventana-corrediza-templada.jpg', 9, 10,
+ 2, 2, 3, 'ALU-PVC-TEMP-01', true,
+ 8, 7, 11, 1, 4, 2),
+
+-- 16
+('Puerta exterior reforzada de madera-aluminio', 65000.00, 'Puerta exterior reforzada de madera-aluminio, con perfilería Aluplast, aislamiento térmico, cámara de aire y herraje de seguridad, perfecta para viviendas de alto estándar.', 'img/puerta-madera.jpg', 3, 10,
+ 1, 3, 3, 'PE-REF-01', true,
+ 6, 12, 21, 3, 2, 3);
+
+
+
+
+--ABERCOM
+
 INSERT INTO Producto (
-    id, nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
+    nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
     tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
     tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
 ) VALUES
--- Misma puerta con leve variación de precio
-(14, 'Puerta de Madera', 15200.00, 'Puerta maciza de madera reforzada', '/uploads/imagenes/puerta-madera-reforzada.jpg', 18, 5,
- 1, 1, 1, 'PMA-04', true,
- NULL, NULL, NULL, NULL, NULL, 3), -- marrón
+-- Ventanas corredizas
+('Ventana Corrediza de PVC Abercom Serie Europa', 175000.00, 'Ventana corrediza de dos hojas en PVC blanco, excelente aislación térmica y acústica, sistema de cierre multipunto.', '/uploads/imagenes/abercom-ventana-corrediza-europa.jpg', 25, 9,
+ 1, 3, 1, 'ACV-01', true, 1, 2, 2, 1, 1, 1),
 
--- Ventana doble vidrio igual a otra pero distinto proveedor
-(15, 'Ventana doble vidrio', 19500.00, 'Ventana doble vidrio templado, marco reforzado', '/uploads/imagenes/ventana-doble-vidrio-reforzada.jpg', 12, 5,
- 2, 1, 2, 'VDV-02', true,
- 2, 15, 15, 1, 4, 1), -- oscilobatiente, aluminio, blanco
+('Ventana Corrediza de Aluminio Línea Modena', 165000.00, 'Ventana corrediza de aluminio anodizado con doble contacto, ideal para viviendas familiares y oficinas.', '/uploads/imagenes/abercom-ventana-modena.jpg', 30, 9,
+ 1, 3, 1, 'ACV-02', true, 1, 3, 2, 2, 2, 2),
 
--- Producto nuevo: pintura gris
-(16, 'Pintura gris', 5300.00, 'Pintura para exteriores color gris', '/uploads/imagenes/pintura-gris.jpg', 25, 5,
- 3, 2, 2, 'PIN-GR', true,
- NULL, NULL, NULL, NULL, NULL, 2);
+-- Ventanas batientes
+('Ventana Batiente PVC Línea Premium', 198000.00, 'Ventana de una hoja batiente con herrajes europeos y burletes de EPDM, máxima estanqueidad.', '/uploads/imagenes/abercom-batiente-premium.jpg', 20, 9,
+ 1, 3, 1, 'ABP-01', true, 2, 2, 2, 1, 1, 1),
 
--- Proveedor 6 (Fulano Materiales)
-INSERT INTO Producto (
-    id, nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
+('Ventana Batiente de Aluminio A30 New', 182000.00, 'Ventana batiente de aluminio con cámara europea, disponible en color blanco o anodizado natural.', '/uploads/imagenes/abercom-batiente-a30.jpg', 15, 9,
+ 1, 1, 1, 'ABP-02', true, 2, 3, 3, 2, 2, 2),
+
+-- Puertas balconeras
+('Puerta Balconera de PVC Abercom Classic', 220000.00, 'Puerta balconera de dos hojas de PVC con vidrio DVH y cierre de doble manija.', '/uploads/imagenes/abercom-balconera-classic.jpg', 18, 9,
+ 2, 1, 1, 'APB-01', true, 3, 3, 3, 1, 1, 1),
+
+('Puerta Balconera de Aluminio Línea Herrero', 210000.00, 'Puerta balconera con marco reforzado y cierre de presión, ideal para uso doméstico.', '/uploads/imagenes/abercom-balconera-herrero.jpg', 20, 9,
+ 2, 2, 1, 'APB-02', true, 3, 3, 3, 2, 2, 2),
+
+-- Puertas de ingreso
+('Puerta de Ingreso PVC Reforzada', 250000.00, 'Puerta de ingreso en PVC reforzada con alma de acero, bisagras ajustables y burletes perimetrales.', '/uploads/imagenes/abercom-puerta-reforzada.jpg', 10, 9,
+ 3, 2, 1, 'API-01', true, 4, 3, 3, 1, 1, 3),
+
+('Puerta de Ingreso de Aluminio Línea A40', 238000.00, 'Puerta de aluminio con panel ciego, bisagras de alta resistencia y cerradura de seguridad.', '/uploads/imagenes/abercom-puerta-a40.jpg', 12, 9,
+ 3, 1, 1, 'API-02', true, 4, 3, 3, 2, 2, 2),
+
+-- Ventanas oscilobatientes
+('Ventana Oscilobatiente PVC Abercom Elite', 205000.00, 'Ventana oscilobatiente con apertura lateral y superior, sistema hermético europeo.', '/uploads/imagenes/abercom-oscilobatiente-elite.jpg', 20, 9,
+ 1, 2, 1, 'AOB-01', true, 5, 2, 2, 1, 1, 1),
+
+('Ventana Oscilobatiente de Aluminio A30', 192000.00, 'Ventana oscilobatiente en aluminio con rotura de puente térmico.', '/uploads/imagenes/abercom-oscilobatiente-a30.jpg', 15, 9,
+ 1, 1, 1, 'AOB-02', true, 5, 3, 3, 2, 2, 2),
+
+-- Paños fijos
+('Paño Fijo de PVC Abercom Clásico', 145000.00, 'Paño fijo en PVC con vidrio laminado de seguridad, ideal para iluminación natural.', '/uploads/imagenes/abercom-pano-fijo.jpg', 22, 9,
+ 1, 3, 1, 'APF-01', true, 6, 2, 2, 1, 1, 1),
+
+('Paño Fijo de Aluminio Línea Modena', 132000.00, 'Paño fijo de aluminio anodizado con terminación brillante.', '/uploads/imagenes/abercom-pano-fijo-aluminio.jpg', 25, 9,
+ 1, 3, 1, 'APF-02', true, 6, 3, 3, 2, 2, 2),
+
+-- Ventanas corredizas con DVH
+('Ventana Corrediza DVH Línea Termica', 195000.00, 'Ventana corrediza con doble vidrio hermético (DVH), mejora el confort térmico y acústico.', '/uploads/imagenes/abercom-corrediza-dvh.jpg', 18, 9,
+ 1, 3, 1, 'ACV-03', true, 1, 2, 2, 1, 1, 1),
+
+('Ventana Corrediza Aluminio RPT', 205000.00, 'Ventana corrediza de aluminio con rotura de puente térmico, máxima eficiencia energética.', '/uploads/imagenes/abercom-corrediza-rpt.jpg', 16, 9,
+ 1, 2, 1, 'ACV-04', true, 1, 3, 3, 2, 2, 2),
+
+-- Puertas corredizas
+('Puerta Corrediza de PVC Línea Panorama', 240000.00, 'Puerta corrediza de PVC con guías de acero y vidrios DVH, amplia visión panorámica.', '/uploads/imagenes/abercom-puerta-panorama.jpg', 12, 9,
+ 2, 2, 1, 'APC-01', true, 7, 3, 3, 1, 1, 1),
+
+('Puerta Corrediza de Aluminio Premium', 230000.00, 'Puerta corrediza de aluminio reforzado, sistema de cierre hermético y rodamientos de acero inoxidable.', '/uploads/imagenes/abercom-puerta-aluminio-premium.jpg', 10, 9,
+ 2, 1, 1, 'APC-02', true, 7, 3, 3, 2, 2, 2),
+
+-- Ventanas tipo banderola
+('Ventana Banderola Abercom PVC', 178000.00, 'Ventana banderola con apertura superior, ideal para baños y cocinas.', '/uploads/imagenes/abercom-banderola.jpg', 14, 9,
+ 1, 1, 1, 'AVB-01', true, 8, 2, 2, 1, 1, 1),
+
+('Ventana Banderola de Aluminio', 160000.00, 'Ventana banderola de aluminio liviano, fácil mantenimiento y excelente ventilación.', '/uploads/imagenes/abercom-banderola-aluminio.jpg', 15, 9,
+ 1, 1, 1, 'AVB-02', true, 8, 3, 3, 2, 2, 2),
+
+-- Mosquiteros
+('Mosquitero de PVC para Ventana Corrediza', 85000.00, 'Mosquitero corredizo compatible con línea Europa, marco de PVC resistente.', '/uploads/imagenes/abercom-mosquitero.jpg', 30, 9,
+ 4, 3, 1, 'AMO-01', true, NULL, 2, 2, 1, NULL, 1),
+
+('Mosquitero de Aluminio Reforzado', 95000.00, 'Mosquitero fijo con marco de aluminio y tejido de fibra de vidrio.', '/uploads/imagenes/abercom-mosquitero-aluminio.jpg', 28, 9,
+ 4, 3, 1, 'AMO-02', true, NULL, 3, 3, 2, NULL, 2);
+
+
+ --DEUCEUNINCK
+ INSERT INTO Producto (
+    nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
     tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
     tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
 ) VALUES
--- Puerta PVC igual a otro proveedor pero color distinto
-(17, 'Puerta de PVC', 16800.00, 'Puerta de PVC con acabado brillante', '/uploads/imagenes/puerta-pvc-brillante.jpg', 22, 6,
- 1, 3, 1, 'PVP-03', true,
- NULL, NULL, NULL, 2, NULL, 2), -- gris
+-- 1
+('Ventana PVC Deceuninck 7000 Corrediza', 24000.00, 'Ventana de PVC Deceuninck serie 7000, perfil multicámara, vidrio doble hermético, excelente aislamiento térmico y acústico.', '/uploads/imagenes/deceuninck-ventana-7000-corrediza.jpg', 18, 11,
+ 2, 1, 3, 'DCK-7000-COR', true,
+ 1, 6, 10, 2, 2, 1),
 
--- Ventana corrediza económica
-(18, 'Ventana de Aluminio Económica', 8900.00, 'Ventana corrediza simple económica', '/uploads/imagenes/ventana-aluminio-economica.jpg', 30, 6,
- 2, 2, 2, 'VAL-04', true,
- 1, 10, 10, 1, 1, 1), -- vidrio simple, blanco
+-- 2
+('Ventana PVC Deceuninck 7000 Oscilobatiente', 26000.00, 'Ventana de PVC Deceuninck serie 7000 con apertura oscilobatiente, junta triple y herraje europeo integrado, para máxima estanqueidad.', '/uploads/imagenes/deceuninck-ventana-7000-osc.jpg', 14, 11,
+ 2, 1, 3, 'DCK-7000-OSC', true,
+ 2, 7, 11, 2, 2, 1),
 
--- Nuevo producto de techos
-(19, 'Techo galvanizado premium', 32000.00, 'Techo galvanizado con recubrimiento anticorrosivo', '/uploads/imagenes/techo-galvanizado-premium.jpg', 10, 6,
- 3, 3, 3, 'TCH-GP', false,
- NULL, NULL, NULL, NULL, NULL, 2);
+-- 3
+('Ventana PVC Deceuninck 6000 Paño Fijo', 19000.00, 'Paño fijo de PVC Deceuninck serie 6000, perfilería delgada, gran superficie de vidrio, ideal para iluminación y vistas amplias.', '/uploads/imagenes/deceuninck-pano-fijo-6000.jpg', 22, 11,
+ 2, 2, 3, 'DCK-6000-FIX', true,
+ 3, 9, 18, 2, 2, 1),
 
+-- 4
+('Puerta de Entrada PVC/Aluminio Deceuninck Premium', 42000.00, 'Puerta de entrada combinada PVC-aluminio Deceuninck, herraje de seguridad multipunto, doble vidriado, acabado de alta gama.', '/uploads/imagenes/deceuninck-puerta-entrada-premium.jpg', 7, 11,
+ 1, 2, 3, 'DCK-PEN-01', true,
+ 6, 10, 20, 2, 2, 3),
 
+-- 5
+('Ventana Aluminio Deceuninck A-Line Corrediza', 23000.00, 'Ventana corrediza de aluminio Deceuninck A-Line, diseño minimalista con riel escondido y gran transparencia.', '/uploads/imagenes/deceuninck-alu-aline-corrediza.jpg', 20, 11,
+ 2, 1, 3, 'DCK-ALU-COR', true,
+ 1, 8, 11, 1, 1, 2),
+
+-- 6
+('Ventana Aluminio Deceuninck A-Line Oscilobatiente', 24500.00, 'Ventana oscilobatiente de aluminio Deceuninck A-Line, con rotura de puente térmico, herraje oculto y gran durabilidad.', '/uploads/imagenes/deceuninck-alu-aline-osc.jpg', 15, 11,
+ 2, 1, 3, 'DCK-ALU-OSC', true,
+ 2, 8, 12, 1, 1, 2),
+
+-- 7
+('Puerta Balcón PVC Deceuninck Vision', 38000.00, 'Puerta-balcony de PVC Deceuninck serie Vision, hojas corredizas/plegables, vidrio DVH, acabado en blanco o color.', '/uploads/imagenes/deceuninck-puerta-balcon-vision.jpg', 9, 11,
+ 1, 3, 3, 'DCK-PB-VISION', true,
+ 4, 10, 15, 2, 2, 1),
+
+-- 8
+('Ventana Plegable PVC Deceuninck Panorama', 50000.00, 'Ventana plegable de PVC Deceuninck Panorama, múltiples hojas que se pliegan completamente para abrir el espacio, ideal para terrazas.', '/uploads/imagenes/deceuninck-ventana-plegable-panorama.jpg', 5, 11,
+ 2, 3, 3, 'DCK-PAN-PLEG', true,
+ 5, 10, 15, 2, 2, 1),
+
+-- 9
+('Puerta Abatible PVC Deceuninck Urban', 31000.00, 'Puerta abatible de PVC Deceuninck Urban, vidrio templado, herraje multipunto, acabado imitación madera.', '/uploads/imagenes/deceuninck-puerta-abatible-urban.jpg', 11, 11,
+ 1, 2, 3, 'DCK-PA-URB', true,
+ 4, 8, 20, 2, 4, 3),
+
+-- 10
+('Ventana Doble Aluminio Deceuninck Silence', 27000.00, 'Ventana doble de aluminio Deceuninck Silence, vidrio laminado acústico, ideal para zonas ruidosas, perfilería robusta.', '/uploads/imagenes/deceuninck-ventana-doble-silence.jpg', 8, 11,
+ 2, 2, 3, 'DCK-ALU-DBL', true,
+ 8, 8, 12, 1, 3, 2),
+
+-- 11
+('Paño Fijo Aluminio Deceuninck Slim', 21000.00, 'Paño fijo de aluminio Deceuninck Slim, perfil ultra-delgado, gran transparencia, acabado anodizado natural.', '/uploads/imagenes/deceuninck-pano-fijo-slim.jpg', 14, 11,
+ 2, 1, 3, 'DCK-ALU-FIX', true,
+ 6, 7, 16, 1, 1, 2),
+
+-- 12
+('Ventana Simple PVC Deceuninck Eco', 18000.00, 'Ventana simple de PVC Deceuninck línea Eco, perfil básico para renovación, color blanco, vidrio sencillo, excelente relación calidad-precio.', '/uploads/imagenes/deceuninck-ventana-eco.jpg', 17, 11,
+ 2, 1, 3, 'DCK-PVC-ECO', true,
+ 1, 6, 10, 2, 1, 1),
+
+-- 13
+('Puerta Doble Madera-Aluminio Deceuninck Premium', 46000.00, 'Puerta doble combinada madera-aluminio Deceuninck Premium de entrada principal, herraje oculto, lacado UV, diseño simétrico.', '/uploads/imagenes/deceuninck-puerta-doble-premium.jpg', 6, 11,
+ 1, 3, 3, 'DCK-PD-PREM', true,
+ 8, 12, 20, 3, 1, 3),
+
+-- 14
+('Puerta Corrediza PVC Deceuninck Horizon', 34000.00, 'Puerta corrediza de PVC Deceuninck Horizon, hojas de gran tamaño, guías de acero, vidrio DVH, amplio acceso a exteriores.', '/uploads/imagenes/deceuninck-puerta-corrediza-horizon.jpg', 7, 11,
+ 1, 3, 3, 'DCK-PC-HOR', true,
+ 7, 10, 15, 2, 2, 1),
+
+-- 15
+('Ventana Templada PVC-Aluminio Deceuninck Hybrid', 29000.00, 'Ventana híbrida PVC-aluminio Deceuninck Hybrid, hoja semiempotrada, vidrio templado 6 mm + cámara, junta triple, diseño minimalista.', '/uploads/imagenes/deceuninck-ventana-hybrid.jpg', 10, 11,
+ 2, 2, 3, 'DCK-HYB-01', true,
+ 8, 7, 11, 2, 4, 2),
+
+-- 16
+('Puerta Exterior Reforzada Madera-PVC Deceuninck Elite', 62000.00, 'Puerta exterior reforzada de madera-PVC Deceuninck Elite, perfilería avanzada, aislamiento térmico, cámara de aire, herraje de seguridad, ideal para viviendas de alto estándar.', '/uploads/imagenes/deceuninck-puerta-ext-elite.jpg', 4, 11,
+ 1, 2, 3, 'DCK-PE-ELT', true,
+ 6, 12, 21, 3, 2, 3);
 
 
 -- COTIZACIONES DE PRUEBA

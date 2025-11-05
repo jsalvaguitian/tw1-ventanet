@@ -32,11 +32,11 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
                         "JOIN FETCH c.cliente " +
                         "JOIN FETCH c.proveedor " +
                         "LEFT JOIN FETCH c.items i " +
-                        "LEFT JOIN FETCH i.producto " +                        
+                        "LEFT JOIN FETCH i.producto " +
                         "WHERE c.id = :id",
                 Cotizacion.class);
         query.setParameter("id", id);
-        return query.uniqueResult();      
+        return query.uniqueResult();
     }
 
     @Override
@@ -73,6 +73,13 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
         return true;
     }
 
+    @Override
+    public Cotizacion guardar(Cotizacion cotizacion) {
+        final Session session = sessionFactory.getCurrentSession();
+        session.save(cotizacion);
+        return cotizacion;
+    }
+
     public List<Cotizacion> obtenerPorIdCliente(Long clienteId) {
         var session = sessionFactory.getCurrentSession();
         var query = session.createQuery(
@@ -87,5 +94,6 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
         query.setParameter("clienteId", clienteId);
         return query.getResultList();
     }
+
 }
 

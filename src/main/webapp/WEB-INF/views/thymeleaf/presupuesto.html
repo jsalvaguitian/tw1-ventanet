@@ -26,94 +26,144 @@
 
     <form id="formPresupuesto" onsubmit="return enviarSolicitud(event)" class="row g-4">
 
-      <!-- 1. Tipo de ventana -->
-      <div class="col-md-6">
-        <label for="tipoVentana" class="form-label">Tipo de ventana</label>
-        <select class="form-select" id="tipoVentana">
+      <div class="col-md-4">
+        <label for="provincia" class="form-label">Provincias</label>
+        <select class="form-select" id="provincia" name="provincia">
           <option value="">Seleccione...</option>
-          <option value="1">Corrediza</option>
-          <option value="2">Oscilobatiente</option>
-          <option value="3">Paño fijo</option>
-          <option value="4">Abatible</option>
-          <option value="5">Plegable</option>
+          <th:block th:each="pv : ${provincias}">
+            <option th:value="${pv.id_provincia}" th:text="${pv.nombre}"></option>
+          </th:block>
         </select>
       </div>
-      <div class="col-md-6 d-flex justify-content-center align-items-center">
-        <!-- <img id="imagenVentana" th:src="@{/img/}" alt="Vista previa" class="img-fluid rounded shadow"
-          style="max-height:200px; display:none;"> -->
+
+
+      <div class="col-md-4">
+        <label for="localidad" class="form-label">Localidad</label>
+        <select class="form-select" id="localidad" name="localidad">
+          <option value="">Seleccione...</option>
+        </select>
       </div>
+
+      <div class="col-md-4">
+        <label for="partido" class="form-label">Partido</label>
+        <select class="form-select" id="partido" name="partido">
+          <option value="">Seleccione...</option>
+        </select>
+      </div>
+
+
+
+
+      <!-- Tipo de producto (consume tipos desde el servidor) -->
+      <div class="col-md-3">
+        <label for="tipoProducto" class="form-label">Tipo de producto</label>
+        <select class="form-select" id="tipoProducto" name="tipoProducto">
+          <option value="">Seleccione...</option>
+          <th:block th:each="tp : ${tiposProducto}">
+            <option th:value="${tp.id}" th:text="${tp.nombre}"></option>
+          </th:block>
+        </select>
+      </div>
+
+      <!-- 1. Tipo de ventana -->
+      <div class="col-md-3">
+        <label for="tipoVentana" class="form-label">Categoria</label>
+        <select class="form-select" id="tipoVentana" required onchange="mostrarImagen()">
+          <option value="">Seleccione...</option>
+        </select>
+      </div>
+
+      <div class="col-md-6 d-flex justify-content-center align-items-center">
+        <img id="imagenVentana" th:src="@{/img/}" alt="Vista previa" class="img-fluid rounded shadow"
+          style="max-height:200px; display:none;">
+      </div>
+
+
 
       <!-- 2. Medidas -->
       <div class="col-md-6">
         <label for="ancho" class="form-label">Ancho (m)</label>
-        <select class="form-select" id="ancho">
-          <option value="">Seleccione...</option>          
-          <option value="1">0.5 m</option>
-          <option value="2">0.6 m</option>
-          <option value="3">0.7 m</option>
-          <option value="4">0.8 m</option>
-          <option value="5">0.9 m</option>
-          <option value="6">1.0 m</option>
-          <option value="7">1.2 m</option>
-          <option value="8">1.3 m</option>
-          <option value="9">1.4 m</option>
-          <option value="10">1.5 m</option>
-          <option value="11">1.6 m</option>
-          <option value="12">1.7 m</option>
-          <option value="13">1.8 m</option>
-          <option value="14">1.9 m</option>
-          <option value="15">2.0 m</option>
-          <option value="16">2.2 m</option>
-          <option value="17">2.3 m</option>
-          <option value="18">2.4 m</option>
-          <option value="19">2.5 m</option>
-          <option value="20">2.6 m</option>
-          <option value="21">2.7 m</option>
-          <option value="19">2.8 m</option>
-          <option value="20">2.9 m</option>
-
+        <select class="form-select" id="ancho" required name="ancho">
+          <option value="">Seleccione...</option>
+          <th:block th:each="a : ${anchos}">
+            <option th:value="${a.id}" th:text="${a.nombre}"></option>
+          </th:block>
         </select>
       </div>
       <div class="col-md-6">
         <label for="alto" class="form-label">Alto (m)</label>
-        <select class="form-select" id="alto">
+        <select class="form-select" id="alto" required name="alto">
           <option value="">Seleccione...</option>
-              <option value="1">0.5 m</option>
-              <option value="2">0.6 m</option>
-              <option value="3">0.7 m</option>
-              <option value="4">0.8 m</option>
-              <option value="5">0.9 m</option>
-              <option value="6">1.0 m</option>
-              <option value="7">1.2 m</option>
-              <option value="8">1.3 m</option>
-              <option value="9">1.4 m</option>
-              <option value="10">1.5 m</option>
-              <option value="11">1.6 m</option>
-              <option value="12">1.7 m</option>
-              <option value="13">1.8 m</option>
-              <option value="14">1.9 m</option>
-              <option value="15">2.0 m</option>
-              <option value="16">2.2 m</option>
-              <option value="17">2.3 m</option>
-              <option value="18">2.4 m</option>
-              <option value="19">2.5 m</option>
-              <option value="20">2.6 m</option>
-              <option value="21">2.7 m</option>
-              <option value="19">2.8 m</option>
-              <option value="20">2.9 m</option>
+          <th:block th:each="h : ${altos}">
+            <option th:value="${h.id}" th:text="${h.nombre}"></option>
+          </th:block>
         </select>
       </div>
 
       <!-- 3. Material -->
       <div class="col-md-6">
         <label for="material" class="form-label">Material de perfil</label>
-        <select class="form-select" id="material">
+        <select class="form-select" id="material" required>
           <option value="">Seleccione...</option>
-              <option value="1">Aluminio</option>
-              <option value="2">PVC</option>
-              <option value="3">Madera</option>
+          <th:block th:each="h : ${materiales}">
+            <option th:value="${h.id}" th:text="${h.nombre}"></option>
+          </th:block>
+          <!--<option value="aluminio">Aluminio</option>
+        <option value="pvc">PVC</option>
+        <option value="madera">Madera</option>-->
         </select>
       </div>
+
+      <!-- 4. Vidrio -->
+      <div class="col-md-6">
+        <label for="vidrio" class="form-label">Tipo de vidrio</label>
+        <select class="form-select" id="vidrio" required>
+          <option value="">Seleccione...</option>
+          <option value="simple">Simple (flotado)</option>
+          <option value="dvh">Doble (DVH)</option>
+          <option value="laminado">Laminado</option>
+          <option value="templado">Templado</option>
+        </select>
+      </div>
+
+      <!-- 5. Color -->
+      <div class="col-md-6">
+        <label for="color" class="form-label">Color</label>
+        <select class="form-select" id="color" required>
+          <option value="">Seleccione...</option>
+          <th:block th:each="h : ${colores}">
+            <option th:value="${h.id}" th:text="${h.nombre}"></option>
+          </th:block>
+          <!--<option value="blanco">Blanco</option>
+        <option value="gris">Gris</option>
+        <option value="marron">Marrón</option>
+        <option value="negro">Negro</option>
+      -->
+        </select>
+      </div>
+
+
+      <!-- 6. Opciones extra -->
+      <div class="col-md-6 d-flex flex-column">
+        <label class="form-label">Opciones adicionales</label>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="premarco">
+          <label class="form-check-label" for="premarco">Con premarco</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="barrotillos">
+          <label class="form-check-label" for="barrotillos">Con barrotillos</label>
+        </div>
+      </div>
+
+      <!-- 7. Boton -->
+      <div class="col-12 text-center mt-4">
+        <div class="d-flex justify-content-center gap-2">
+          <button type="button" class="btn btn-secondary px-4 py-2" id="btnAdd" onclick="addItem()">Añadir</button>
+          <button type="submit" class="btn btn-primary px-5 py-2">Solicitar presupuesto</button>
+        </div>
+      </div>
+    </form>
 
       <!-- 4. Vidrio -->
       <div class="col-md-6">
@@ -126,6 +176,31 @@
               <option value="4">Templado</option>
         </select>
       </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer py-5">
+    <div class="container">
+      <div class="row text-center text-md-start">
+
+        <!-- Columna Izquierda: Redes sociales -->
+        <div class="col-md-4">
+          <p class="mb-1">2025 © Ventanet</p>
+          <p class="mb-1">
+            <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
+            <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
+          </p>
+        </div>
+
+        <!-- Columna Medio: Navegación -->
+        <div class="col-md-4 mb-4 mb-md-0">
+          <ul class="list-unstyled">
+            <li><a href="#productos" class="footer-link">Productos</a></li>
+            <li><a href="login.html" class="footer-link">Ingreso</a></li>
+            <li><a href="nuevo-usuario.html" class="footer-link">Registro</a></li>
+          </ul>
+        </div>
 
       <!-- 5. Color -->
       <div class="col-md-6">

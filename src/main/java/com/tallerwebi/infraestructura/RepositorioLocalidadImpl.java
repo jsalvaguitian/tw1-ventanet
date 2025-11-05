@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.tallerwebi.dominio.entidades.Localidad;
+
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioGenerico;
 
 
@@ -58,5 +59,12 @@ public class RepositorioLocalidadImpl implements RepositorioGenerico<Localidad> 
         if (presentacion != null) {
             sessionFactory.getCurrentSession().remove(presentacion);
         }
+    }
+
+    public List<Localidad> obtenerPorIdDeProvincia(Long provincia_id) {
+        return sessionFactory.getCurrentSession()
+                .createQuery("from Localidad where provincia_id = :provincia_id", Localidad.class)
+                .setParameter("provincia_id", provincia_id)
+                .list();
     }
 }
