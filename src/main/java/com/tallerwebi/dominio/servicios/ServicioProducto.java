@@ -9,14 +9,32 @@ import com.tallerwebi.dominio.excepcion.ProductoExistente;
 
 public interface ServicioProducto {
     List<Producto> obtener();
-    void crearProducto(Producto producto)throws ProductoExistente;
+
+    void crearProducto(Producto producto) throws ProductoExistente;
+
     Producto obtenerPorId(Long id);
+
     void actualizar(Producto producto);
+
     void eliminar(Long id);
+
     List<Producto> buscarConFiltros(Long tipoProductoId);
+
     List<Producto> buscarPorProveedorId(Long proveedorId);
     List<Producto> obtenerProductosFiltrados(Long idProveedor, String busqueda, Long tipoProductoId,
             Long tipoVentanaId);
     List<TipoProducto> obtenerTiposProductos(Long idProveedor);
     List<TipoVentana> obtenerTiposVentanas(Long idProveedor);
+
+    List<Producto> buscarProductosParaCotizacion(
+            Long tipoVentanaId,
+            Long anchoId,
+            Long altoId,
+            Long materialId,
+            Long vidrioId,
+            Long colorId,
+            Boolean premarco,
+            Boolean barrotillos);
+
+    List<Producto> obtenertodosPorListadoId(List<Long> productosIds);
 }
