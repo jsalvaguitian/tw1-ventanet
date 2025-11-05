@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Items de Presupuesto</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+</head>
+<body>
+<div class="container mt-4">
+    <div th:if="${error}">
+        <div class="alert alert-danger" th:text="${error}"></div>
+    </div>
+
+    <div th:if="${presupuesto != null}">
+        <h2>Presupuesto <span th:text="${presupuesto.id}"></span></h2>
+        <p th:if="${presupuesto.provincia}">Provincia: <span th:text="${presupuesto.provincia.nombre}"></span></p>
+        <p th:if="${presupuesto.localidad}">Localidad: <span th:text="${presupuesto.localidad.nombre}"></span></p>
+        <p th:if="${presupuesto.partido}">Partido: <span th:text="${presupuesto.partido.nombre}"></span></p>
+
+        <div th:if="${items != null and #lists.size(items) > 0}">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Producto</th>
+                        <th>Tipo Ventana</th>
+                        <th>Ancho</th>
+                        <th>Alto</th>
+                        <th>Material</th>
+                        <th>Color</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="it, iterStat : ${items}">
+                        <td th:text="${iterStat.index + 1}"></td>
+                        <td th:text="${it.tipoProducto != null ? it.tipoProducto.nombre : '-'}"></td>
+                        <td th:text="${it.tipoVentana != null ? it.tipoVentana.nombre : '-'}"></td>
+                        <td th:text="${it.ancho != null ? it.ancho.nombre : '-'}"></td>
+                        <td th:text="${it.alto != null ? it.alto.nombre : '-'}"></td>
+                        <td th:text="${it.material != null ? it.material.nombre : '-'}"></td>
+                        <td th:text="${it.color != null ? it.color.nombre : '-'}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${items == null or #lists.size(items) == 0}">
+            <p>No hay items para este presupuesto.</p>
+        </div>
+    </div>
+
+    <div th:if="${presupuesto == null and error == null}">
+        <div class="alert alert-warning">Presupuesto no encontrado</div>
+    </div>
+
+    <a th:href="@{/cliente/dashboard}" class="btn btn-secondary">Volver</a>
+</div>
+</body>
+</html>
