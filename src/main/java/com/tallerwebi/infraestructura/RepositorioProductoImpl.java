@@ -173,12 +173,16 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         return query.getResultList();
     }
 
-    public List<TipoVentana> obtenerTiposVentanasPorProveedor(Long idProveedor) {
+     public List<TipoVentana> obtenerTiposVentanasPorProveedor(Long idProveedor) {
          Session session = sessionFactory.getCurrentSession();
 
         String hql = "SELECT DISTINCT p.tipoVentana FROM Producto p WHERE p.proveedor.id =: idProveedor AND p.tipoVentana IS NOT NULL";
         org.hibernate.Query<TipoVentana> query = session.createQuery(hql, TipoVentana.class);
         query.setParameter("idProveedor", idProveedor);
+
+        return query.getResultList();
+    }
+    
     public List<Producto> buscarProductosParaCotizacion(           
             Long tipoVentanaId,
             Long anchoId,
