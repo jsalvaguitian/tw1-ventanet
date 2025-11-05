@@ -107,6 +107,8 @@
         var events = [];
         try {
             var raw = /*[[${presupuestosJson}]]*/ '[]';
+            // base url (context path) injected by Thymeleaf so links work under any context
+            var baseUrl = /*[[@{/}]]*/ '/';
             if (raw == null || raw === '') raw = '[]';
             events = (typeof raw === 'string') ? JSON.parse(raw) : raw;
             if (!Array.isArray(events)) events = [];
@@ -146,6 +148,7 @@
 
             list.forEach((c, i) => {
                 const row = document.createElement('tr');
+                const detailHref = baseUrl + 'presupuesto/' + c.id + '/items';
                 row.innerHTML = `
             <td>${i + 1}</td>
             <td>${c.fecha}</td>
@@ -153,9 +156,9 @@
             <td>${c.localidad}</td>
             <td>${c.partido}</td>
             <td class="text-center">
-                <button class='btn btn-primary btn-sm' data-index='${i}' data-bs-toggle='modal' data-bs-target='#eventModal'>
+                <a class='btn btn-primary btn-sm' href="${detailHref}">
                     <i class="fa fa-eye"></i>
-                </button>
+                </a>
             </td>`;
                 tbody.appendChild(row);
             });

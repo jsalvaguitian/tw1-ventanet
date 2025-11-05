@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -588,5 +590,40 @@ public class ControladorPresupuesto {
             int itemCount = (p.getItems() != null) ? p.getItems().size() : 0;
             return "redirect:/presupuesto?error=save_failed&provincia=" + provId + "&localidad=" + locId + "&partido=" + partId + "&items=" + itemCount;
         }
+
+    }
+
+    @GetMapping("/presupuesto/{id}/items")
+    public ModelAndView verItemsPresupuesto(@org.springframework.web.bind.annotation.PathVariable("id") Long id,
+            HttpServletRequest request) {
+        ModelMap datos = new ModelMap();
+        try {
+            System.out.println("[ControladorPresupuesto] verItemsPresupuesto id=" + id);
+            Presupuesto p = servicioPresupuesto.obtenerPorId(id);
+            if (p == null) {
+                System.out.println("[ControladorPresupuesto] presupuesto nulo para id=" + id);
+                datos.put("error", "Presupuesto no encontrado");
+                return new ModelAndView("presupuesto_items", datos);
+            }
+            int itemCount = (p.getItems() == null) ? 0 : p.getItems().size();
+            System.out.println("[ControladorPresupuesto] presupuesto encontrado id=" + p.getId() + ", items=" + itemCount);
+            datos.put("presupuesto", p);
+            datos.put("items", p.getItems() == null ? new java.util.ArrayList<>() : p.getItems());
+            datos.put("fecha", p.getFechaCreacion() == null ? null : p.getFechaCreacion().toString());
+            return new ModelAndView("presupuesto_items", datos);
+        } catch (Exception e) {
+            System.out.println("[ControladorPresupuesto] error recuperando presupuesto id=" + id + ": " + e.getMessage());
+            e.printStackTrace();
+            datos.put("error", "Error al recuperar presupuesto");
+            return new ModelAndView("presupuesto_items", datos);
+        }
+    }
+
+    // tolerant mapping: sometimes requests to '/presupuestO' or different context path
+    // or to '/presupuesto/{id}/items' via direct URL may not resolve; provide a simple
+    // redirect endpoint with different casing/variations if necessary.
+    @GetMapping("/presupuestO/{id}/items")
+    public String redirectPresupuestoTypo(@org.springframework.web.bind.annotation.PathVariable("id") Long id) {
+        return "redirect:/presupuesto/" + id + "/items";
     }
 }
