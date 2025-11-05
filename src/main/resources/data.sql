@@ -572,6 +572,8 @@ VALUES
 (15, 6, 2, 4, 10000.00),  -- Ventana de Aluminio x4
 (16, 6, 3, 1, 25000.00);  -- Techo de chapa x1
 
+
+
 INSERT INTO Provincia (id_provincia, nombre)
 VALUES
 (1,'BUENOS AIRES'),
@@ -14656,3 +14658,14 @@ VALUES
 (13519,'ICHIPUCA',527,24),
 (13520,'TACO RODEO',527,24),
 (13521,'CASAS VIEJAS',527,24);
+
+
+INSERT INTO Presupuesto (id, fecha_creacion,cliente_id,provincia_id, localidad_id, partido_id)
+VALUES
+(1, CURRENT_DATE, 2, 2, 4, 1);
+
+INSERT INTO PresupuestoItem (id, alto_id, ancho_id, color_id, material_id, presupuesto_id, tipo_producto_id, tipo_ventana_id,usuario_id)
+VALUES
+(1,	6,	3,	2,	3,	1,	2,	3,	2),
+(2,	16,	11,	1,	3,	1,	2,	1,	2),
+(3,	7,	10,	3,	3,	1,	1,	6,	2);
