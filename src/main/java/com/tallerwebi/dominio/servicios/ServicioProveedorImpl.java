@@ -14,10 +14,12 @@ import com.tallerwebi.dominio.repositorios_interfaces.RepositorioProveedor;
 public class ServicioProveedorImpl implements ServicioProveedorI{
     @Autowired
     private RepositorioProveedor repositorioProveedor;
+    private ServicioEmail servicioEmail;
     
 
-    public ServicioProveedorImpl(RepositorioProveedor repositorioProveedor) {
+    public ServicioProveedorImpl(RepositorioProveedor repositorioProveedor,ServicioEmail servicioEmail) {
         this.repositorioProveedor = repositorioProveedor;
+        this.servicioEmail = servicioEmail;
     }
 
 

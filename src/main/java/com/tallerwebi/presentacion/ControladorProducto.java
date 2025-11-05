@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -225,6 +227,44 @@ public class ControladorProducto implements ServletContextAware {
             redirectAttrs.addFlashAttribute("error", "Producto no encontrado");
         }
         return "redirect:/producto/listado";
+    }
+
+    @GetMapping("/buscar")
+    @ResponseBody
+    public List<Producto> buscarProductos(            
+            @RequestParam(required = false) Long tipoVentanaId,
+            @RequestParam(required = false) Long anchoId,
+            @RequestParam(required = false) Long altoId,
+            @RequestParam(required = false) Long materialDePerfilId,
+            @RequestParam(required = false) Long tipoDeVidrioId,
+            @RequestParam(required = false) Long colorId,
+            @RequestParam(required = false) Boolean conPremarco,
+            @RequestParam(required = false) Boolean conBarrotillos,
+            Model model) {
+
+        List<Producto> productos = servicioProducto.buscarProductosParaCotizacion(                
+                tipoVentanaId,
+                anchoId,
+                altoId,
+                materialDePerfilId,
+                tipoDeVidrioId,
+                colorId,
+                conPremarco,
+                conBarrotillos);
+
+        // model.addAttribute("productos", productos);
+
+        // // Si querés volver a mostrar el formulario con los valores seleccionados        
+        // model.addAttribute("tipoVentanaId", tipoVentanaId);
+        // model.addAttribute("anchoId", anchoId);
+        // model.addAttribute("altoId", altoId);
+        // model.addAttribute("materialDePerfilId", materialDePerfilId);
+        // model.addAttribute("tipoDeVidrioId", tipoDeVidrioId);
+        // model.addAttribute("colorId", colorId);
+        // model.addAttribute("conPremarco", conPremarco);
+        // model.addAttribute("conBarrotillos", conBarrotillos);
+
+        return productos; // tu vista .html o .mustache donde se muestra el listado
     }
 
     /**

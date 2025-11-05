@@ -19,20 +19,25 @@ import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 
 public interface ServicioUsuario {
 
-    Usuario iniciarSesion(String email, String password) throws UsuarioInexistenteException, CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException;
+        Usuario iniciarSesion(String email, String password)
+                        throws UsuarioInexistenteException, CuentaNoActivaException,
+                        CuentaPendienteException, CuentaRechazadaException;
 
-    void registrar(Cliente cliente) throws UsuarioExistente, ContraseniaInvalida, EmailInvalido;
+        void registrar(Cliente cliente) throws UsuarioExistente, ContraseniaInvalida, EmailInvalido;
 
-    void registrarProveedor(Proveedor proveedor, MultipartFile documento)
-            throws UsuarioExistente, ContraseniaInvalida, CuitInvalido, IOException;
+        void registrarProveedor(Proveedor proveedor, MultipartFile documento)
+                        throws UsuarioExistente, ContraseniaInvalida, CuitInvalido, IOException;
 
-    Usuario buscarPorMail(String email) throws UsuarioInexistenteException;
-    
+        Usuario buscarPorMail(String email) throws UsuarioInexistenteException;
 
-    boolean verificarToken(String token);
+        boolean verificarToken(String token);
 
-    Integer contarUsuarios();
+        Integer contarUsuarios();
 
-    List<Usuario> obtenerTodosLosUsuarios();
+        List<Usuario> obtenerTodosLosUsuarios();
+
+        Usuario buscarPorId(Long id) throws UsuarioInexistenteException;
+
+        void eliminarUsuario(Usuario usuario);
 
 }

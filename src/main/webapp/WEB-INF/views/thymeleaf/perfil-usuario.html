@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" th:href="@{/css/perfil-usuario.css}">
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <title>Perfil de Usuario</title>
+</head>
+<div th:replace="fragments/header :: header"></div>
+<body class="bg-light">
+    <main class="container py-5 d-flex flex-column align-items-center">
+        <div class="card2 shadow-lg p-4 text-center" style="max-width: 400px; width: 100%;">
+            <div class="card-header bg-transparent border-0">
+                <img th:src="${fotoPerfil}" alt="Foto de perfil" class="foto-perfil mx-auto d-block">
+                <form th:action="@{/usuarios/cambiar-foto}" method="post" enctype="multipart/form-data" class="cambiar-foto">
+                <input type="file" id="input-foto" name="foto" accept="image/*" class="form-control mb-2" hidden>
+                  <label for="input-foto" class="cambiar-foto bg-primary text-white">
+            <i class="bi bi-camera"></i> <!-- icono del Bootstrap -->
+            </label>
+            </form>
+            </div>
+            <div class="card-body">
+                <h2 class="profile-username mb-3" th:text="${usuario.username}"></h2>
+                <div class="profile-info text-start">
+                    <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}" accept-charset="UTF-8"></span></p>
+                    <p><strong>Apellido:</strong> <span th:text="${usuario.apellido}" accept-charset="UTF-8"></span></p>
+                    <p><strong>Email:</strong> <span th:text="${usuario.email}" accept-charset="UTF-8"></span></p>
+                    <p><strong>Dirección:</strong> <span th:text="${usuario.direccion}" accept-charset="UTF-8"></span></p>
+                    <p><strong>Teléfono:</strong> <span th:text="${usuario.telefono}" accept-charset="UTF-8"></span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-config mt-4 text-center">
+            <a th:href="@{/cambiar-password-perfil}" class="btn me-2">Cambiar contraseña</a>
+            <a th:href="@{/usuarios/editar}" class="btn me-2">Editar perfil</a>
+            <!-- Modal Trigger -->
+            <button id="modal-abrir" class="btn modal-trigger">Eliminar Cuenta</button>
+
+  <!-- Modal Structure -->
+            <div class="modal-container" id="modal-container">
+                <div class="modal-content">
+                    <h1>Eliminar Cuenta</h1>
+                    <p class="text-danger">Esta acción es irreversible</p>
+                    <form th:action="@{/usuarios/eliminar}" method="post">
+                        <button type="submit" class="mb-2 mx-2 bg-danger text-white">Eliminar</button>
+                        <button type="button" class="mx-2 bg-secondary text-white" id="modal-cerrar">Cancelar</button>
+                    </form>
+                   
+                </div>
+            </div>
+        </div>
+         <p class="text-danger mt-3" th:if="${error}" th:text="${error}"></p>
+    </main>
+</body>
+<script type="module" th:src="@{/js/perfil.js}"></script>
+</html>

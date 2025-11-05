@@ -174,7 +174,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         return query.getResultList();
     }
 
-    public List<TipoVentana> obtenerTiposVentanasPorProveedor(Long idProveedor) {
+     public List<TipoVentana> obtenerTiposVentanasPorProveedor(Long idProveedor) {
          Session session = sessionFactory.getCurrentSession();
 
         String hql = "SELECT DISTINCT p.tipoVentana FROM Producto p WHERE p.proveedor.id =: idProveedor AND p.tipoVentana IS NOT NULL";
@@ -183,8 +183,80 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
 
         return query.getResultList();
     }
+    
+    public List<Producto> buscarProductosParaCotizacion(           
+            Long tipoVentanaId,
+            Long anchoId,
+            Long altoId,
+            Long materialDePerfilId,
+            Long tipoDeVidrioId,
+            Long colorId,
+            Boolean conPremarco,
+            Boolean conBarrotillos) {
 
-    public List<ProductoGenericoDTO> obtenerProductosGenericos() {
+        StringBuilder hql = new StringBuilder("FROM Producto p WHERE 1=1");
+        Map<String, Object> params = new HashMap<>();
+
+        // Filtros dinámicos        
+
+        if (tipoVentanaId != null) {
+            hql.append(" AND p.tipoVentana.id = :tipoVentanaId");
+            params.put("tipoVentanaId", tipoVentanaId);
+        }
+
+        if (anchoId != null) {
+            hql.append(" AND p.ancho.id = :anchoId");
+            params.put("anchoId", anchoId);
+        }
+
+        if (altoId != null) {
+            hql.append(" AND p.alto.id = :altoId");
+            params.put("altoId", altoId);
+        }
+
+        if (materialDePerfilId != null) {
+            hql.append(" AND p.materialDePerfil.id = :materialDePerfilId");
+            params.put("materialDePerfilId", materialDePerfilId);
+        }
+
+        if (tipoDeVidrioId != null) {
+            hql.append(" AND p.tipoDeVidrio.id = :tipoDeVidrioId");
+            params.put("tipoDeVidrioId", tipoDeVidrioId);
+        }
+
+        if (colorId != null) {
+            hql.append(" AND p.color.id = :colorId");
+            params.put("colorId", colorId);
+        }
+
+        // Opciones adicionales (si las tenés en Producto)
+        if (conPremarco != null && conPremarco) {
+            hql.append(" AND p.dimensiones.conPremarco = true");
+        }
+
+        if (conBarrotillos != null && conBarrotillos) {
+            hql.append(" AND p.dimensiones.conBarrotillos = true");
+        }
+
+        // Crear query dinámica
+        Query query = sessionFactory.getCurrentSession().createQuery(hql.toString(), Producto.class);
+
+        // Seteo dinámico de parámetros
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            query.setParameter(entry.getKey(), entry.getValue());
+        }
+
+        return query.getResultList();
+    }
+
+    public List<Producto> obtenertodosPorListadoId(List<Long> productosIds) {
+        String hql = "FROM Producto p WHERE p.id IN :ids";
+        Query query = sessionFactory.getCurrentSession().createQuery(hql, Producto.class);
+        query.setParameter("ids", productosIds);
+        return query.getResultList();
+    }
+
+     public List<ProductoGenericoDTO> obtenerProductosGenericos() {
         Session session = sessionFactory.getCurrentSession();
 
         String hql = "SELECT new com.tallerwebi.presentacion.dto.ProductoGenericoDTO(" +

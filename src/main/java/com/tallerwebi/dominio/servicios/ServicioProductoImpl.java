@@ -94,4 +94,29 @@ public class ServicioProductoImpl implements ServicioProducto {
         return productoRepository.obtenerProductosGenericos();
     }    
 
+    @Override
+   public List<Producto> buscarProductosParaCotizacion
+    (Long tipoVentanaId,
+     Long anchoId,
+     Long altoId,
+     Long materialId,
+     Long vidrioId,
+     Long colorId,
+     Boolean premarco,
+     Boolean barrotillos) {
+        return productoRepository.buscarProductosParaCotizacion(         
+         tipoVentanaId,
+         anchoId,
+         altoId,
+         materialId,
+         vidrioId,
+         colorId,
+         premarco,
+         barrotillos);
+    }
+
+    @Override
+    public List<Producto> obtenertodosPorListadoId(List<Long> productosIds) {
+       return productoRepository.obtenertodosPorListadoId(productosIds);
+    }
 }
