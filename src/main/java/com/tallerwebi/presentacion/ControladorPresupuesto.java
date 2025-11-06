@@ -69,7 +69,7 @@ public class ControladorPresupuesto {
         this.servicioUsuario = servicioUsuario;
         this.servicioPresupuesto = servicioPresupuesto;
     }
-
+    
     @GetMapping("/presupuesto")
     public String mostrarFormulario(Model model) {
         // agregar tipos de producto al modelo para llenar el select
