@@ -48,3 +48,18 @@ function drawTable(usuarios) {
     const table = new google.visualization.Table(document.getElementById('tabla_usuarios'));
     table.draw(data, { showRowNumber: true, width: '100%', height: 'auto' });
 }
+//export pdf luego usar dompdf
+document.getElementById("btnExportarPDF").addEventListener("click", async () => {
+    const { jsPDF } = window.jspdf;
+
+    const elemento = document.getElementById("pdf-content");
+    const canvas = await html2canvas(elemento, { scale: 2 });
+    const imgData = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgWidth = 190;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+    pdf.save('dashboard.pdf');
+});

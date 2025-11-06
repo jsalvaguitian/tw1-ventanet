@@ -20,8 +20,9 @@ h1 {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    padding: 30px;
-    gap: 20px;
+    padding: 10px;
+    gap: 10px;
+    width: 100%;
 }
 
 .card {
@@ -41,6 +42,12 @@ h1 {
     height: auto;
 }
 .event-table{
-    width: 70%;
     margin: 0 auto;
+}
+.dashboard{
+    padding-left: 30px;
+    padding-right: 30px;
+}
+#btnExportarPDF{
+    margin: 20px;
 }
