@@ -11,7 +11,7 @@
 </head>
 
 <body class="bg-light">
-  <div th:replace="fragments/header :: header"></div>
+    <div th:replace="fragments/header :: header"></div>
 
     <div class="container py-5">
         <h1 class="text-center mb-4">Explorar por Proveedor</h1>
@@ -92,10 +92,15 @@
                             } else {
                                 data.forEach(p => {
                                     contenedor.innerHTML += `
-                <div class="text-center proveedor-card">
-                  <img src="/spring/${p.logoPath}" class="img-fluid rounded" style="width:120px; height:auto; object-fit:contain;">
-                  <p class="mt-2">${p.razonSocial}</p>
-                </div>`;
+    <div class="col-6 col-md-4 col-lg-3 text-center proveedor-card p-3 g-4">
+      <a href="/spring/catalogo/${p.id}">
+        <div>
+          <img src="/spring/${p.logoPath}" class="img-fluid rounded" style="width:120px; height:auto; object-fit:contain;">
+          <p class="mt-2">${p.razonSocial}</p>
+        </div>
+      </a>
+    </div>`;
+
                                 });
                             }
 
