@@ -27,6 +27,7 @@ public interface ServicioProducto {
     List<TipoVentana> obtenerTiposVentanas(Long idProveedor);
 
     List<Producto> buscarProductosParaCotizacion(
+            Long tipoProductoId,
             Long tipoVentanaId,
             Long anchoId,
             Long altoId,

@@ -183,7 +183,8 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         return query.getResultList();
     }
     
-    public List<Producto> buscarProductosParaCotizacion(           
+    public List<Producto> buscarProductosParaCotizacion(
+            Long tipoProductoId,           
             Long tipoVentanaId,
             Long anchoId,
             Long altoId,
@@ -197,6 +198,11 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         Map<String, Object> params = new HashMap<>();
 
         // Filtros dinámicos        
+
+        if (tipoProductoId != null) {
+            hql.append(" AND p.tipoProducto.id = :tipoProductoId");
+            params.put("tipoProductoId", tipoProductoId);
+        }
 
         if (tipoVentanaId != null) {
             hql.append(" AND p.tipoVentana.id = :tipoVentanaId");

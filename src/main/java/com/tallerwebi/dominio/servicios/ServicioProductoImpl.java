@@ -90,7 +90,7 @@ public class ServicioProductoImpl implements ServicioProducto {
 
     @Override
    public List<Producto> buscarProductosParaCotizacion
-    (Long tipoVentanaId,
+    (Long tipoProductoId, Long tipoVentanaId,
      Long anchoId,
      Long altoId,
      Long materialId,
@@ -98,7 +98,8 @@ public class ServicioProductoImpl implements ServicioProducto {
      Long colorId,
      Boolean premarco,
      Boolean barrotillos) {
-        return productoRepository.buscarProductosParaCotizacion(         
+        return productoRepository.buscarProductosParaCotizacion( 
+            tipoProductoId,        
          tipoVentanaId,
          anchoId,
          altoId,
