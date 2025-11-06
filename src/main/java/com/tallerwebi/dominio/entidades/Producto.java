@@ -3,6 +3,7 @@ package com.tallerwebi.dominio.entidades;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,7 +24,7 @@ public class Producto {
     private int stock;
     
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tipo_producto_id", nullable = false)
     private TipoProducto tipoProducto;
 

@@ -18,7 +18,8 @@ public class TipoVentana extends BaseCatalogo {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    //@ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "tipo_producto_id", nullable = false)
     private TipoProducto tipoProducto;
 
