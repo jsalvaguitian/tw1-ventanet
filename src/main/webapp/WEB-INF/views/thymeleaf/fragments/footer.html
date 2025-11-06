@@ -1,47 +1,60 @@
 <!DOCTYPE html>
-  <div th:fragment="footer">
-    <!-- FOOTER -->
-    <footer class="site-footer py-5">
-      <div class="container">
-        <div class="row text-center text-md-start">
+<!-- FOOTER COMÚN -->
+<div th:fragment="footer-comun">
+  <footer class="site-footer py-5">
+    <div class="container">
+      <div class="row text-center text-md-start">
 
-          <!-- Columna Izquierda: Redes sociales -->
-          <div class="col-md-4">
-            <p class="mb-1">2025 © Ventanet</p>
-            <p class="mb-1">
-              <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
-              <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
-            </p>
-          </div>
-
-          <!-- Columna Medio: Navegación -->
-          <div class="col-md-4 mb-4 mb-md-0">
-            <ul class="list-unstyled">
-              <li><a th:href="@{/catalogo}" class="footer-link">Productos</a></li>
-              <li><a th:href="@{/login}" class="footer-link">Ingreso</a></li>
-              <li><a th:href="@{/nuevo-usuario}" class="footer-link">Registro</a></li>
-            </ul>
-          </div>
-
-          <!-- Columna Derecha: Datos Empresa -->
-          <div class="col-md-4 mb-4 mb-md-0">
-            <h5 class="mb-3">Seguinos en:</h5>
-            <div class="d-flex justify-content-center justify-content-md-start gap-3">
-              <a href="https://facebook.com"><img th:src="@{/img/rrss1.png}" alt="Facebook" width="30"></a>
-              <a href="https://instagram.com"><img th:src="@{/img/rrss2.png}" alt="Instagram" width="30"></a>
-              <a href="https://linkedin.com"><img th:src="@{/img/rrss3.png}" alt="Linkedin" width="30"></a>
-            </div>
-          </div>
-
+        <!-- Columna Izquierda: Contacto -->
+        <div class="col-md-4">
+          <p class="mb-1">2025 © Ventanet</p>
+          <p class="mb-1">
+            <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
+            <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
+          </p>
         </div>
+
+        <!-- Columna Medio: Navegación -->
+        <div class="col-md-4 mb-4 mb-md-0">
+          <ul class="list-unstyled">
+            <li><a th:href="@{/menu-catalogo}" class="footer-link">Productos</a></li>
+            <li><a th:href="@{/login}" class="footer-link">Ingreso</a></li>
+            <li><a th:href="@{/nuevo-usuario}" class="footer-link">Registro</a></li>
+          </ul>
+        </div>
+
+        <!-- Columna Derecha: Redes sociales -->
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5 class="mb-3">Seguinos en:</h5>
+          <div class="d-flex justify-content-center justify-content-md-start gap-3">
+            <a href="https://facebook.com"><img th:src="@{/img/rrss1.png}" alt="Facebook" width="30"></a>
+            <a href="https://instagram.com"><img th:src="@{/img/rrss2.png}" alt="Instagram" width="30"></a>
+            <a href="https://linkedin.com"><img th:src="@{/img/rrss3.png}" alt="Linkedin" width="30"></a>
+          </div>
+        </div>
+
       </div>
-      
+    </div>
+
+    <div class="text-center mt-3 text-muted small">
+      <span th:if="${dolarData.oficial != null}">
+        Dólar Oficial | Compra: $<span th:text="${dolarData.oficial.compra}"></span>
+        | Venta: $<span th:text="${dolarData.oficial.venta}"></span>
+      </span>
+    </div>
+  </footer>
+</div>
+
+<!-- FOOTER PARA DASHBOARD -->
+<div th:fragment="footer-dashboard">
+  <footer class="site-footer py-5">
+    <div class="container">
       <div class="text-center mt-3 text-muted small">
         <span th:if="${dolarData.oficial != null}">
           Dólar Oficial | Compra: $<span th:text="${dolarData.oficial.compra}"></span>
           | Venta: $<span th:text="${dolarData.oficial.venta}"></span>
         </span>
       </div>
-
-    </footer>
-  </div>
+    </div>
+  </footer>
+</div>
