@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<div th:fragment="header-dashboard">
+  <!-- HEADER -->
+  <header class="site-header header-common">
+    <div class="header-inner d-flex justify-content-between align-items-center px-3 py-2">
+
+      <!-- LOGO -->
+      <a th:href="@{/}" class="logo d-flex align-items-center text-white text-decoration-none">
+        <span class="brand ms-2 fw-bold">Ventanet</span>
+      </a>
+
+      <!-- MENÚ DEL USUARIO (solo si está logueado) -->
+      <nav th:if="${usuarioLogueado != null}" class="ms-auto">
+        <ul class="nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center"
+               href="#"
+               id="userDropdown"
+               role="button"
+               data-bs-toggle="dropdown"
+               aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i>
+              <span th:text="${usuarioLogueado.nombre}">Usuario</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li>
+                <a class="dropdown-item"
+                   th:href="${usuarioLogueado.rol == 'PROVEEDOR'} ? @{/proveedor/dashboard-proveedor} : @{/cliente/dashboard}">
+                  Dashboard
+                </a>
+              </li>
+              <li><a class="dropdown-item" th:href="@{/usuarios/perfil-usuario}">Editar perfil</a></li>
+              <li><a class="dropdown-item" th:href="@{/logout}">Cerrar sesión</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Si no hay usuario logueado -->
+      <div th:if="${usuarioLogueado == null}" class="ms-auto">
+        <a class="btn btn-outline-light" th:href="@{/login}">Iniciar sesión</a>
+      </div>
+
+    </div>
+  </header>
+</div>
+</body>
+</html>
