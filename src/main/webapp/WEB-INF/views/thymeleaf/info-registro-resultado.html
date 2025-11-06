@@ -99,7 +99,7 @@
 
     <main class="container-box">
         <div class="card">
-            <img src="/img/check-icon.png" alt="Éxito"> <!-- ícono de check -->
+            <img th:src="@{/img/check-icon.jpg}" alt="Éxito">
             <h3>¡Registro exitoso!</h3>
             <p th:text="${mensaje}">Revisá tu mail para terminar el proceso de activación de cuenta.</p>
             <a th:href="@{/login}" class="btn btn-primary">

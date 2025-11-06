@@ -4,20 +4,376 @@
 <head>
     <title>Catálogo</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
     <!-- estilo para el header -->
     <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 
 <body>
-  <!-- HEADER -->
-  <div th:replace="fragments/header :: header"></div>
+    <!-- HEADER -->
+    <div th:replace="fragments/header :: header"></div>
 
     <div class="container-fluid mt-3">
         <div class="row">
             <!-- FILTROS -->
             <div class="col-md-3">
                 <form method="get" th:action="@{/ver-productos}">
-<!--
+
+                    <div class="mb-2">
+                        <select name="tipoProductoId" id="tipoProducto" class="form-select">
+                            <option value="">Seleccione un tipo de producto</option>
+                            <!-- Cargados desde el modelo -->
+                            <option th:each="tp : ${tiposProducto}" th:value="${tp.id}" th:text="${tp.nombre}"></option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <select name="tipoVentanaId" id="tipoVentana" class="form-select">
+                            <option value="">Seleccione un tipo de ventana</option>
+                        </select>
+                    </div>
+
+
+                    <!--DIMENSION ANCHO Y ALTO-->
+                    <div class="mb-2 row g-2 align-items-center">
+                        <div class="col-auto">
+                            <select name="altoId" id="alto" class="form-select">
+                                <option value="">Alto</option>
+                                <option th:each="alto : ${alturas}" th:value="${alto.id}" th:text="${alto.nombre}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-auto align-self-end">
+                            <span class="fs-5">×</span>
+                        </div>
+
+                        <div class="col-auto">
+                            <select name="anchoId" id="ancho" class="form-select">
+                                <option value="">Ancho</option>
+                                <option th:each="ancho : ${anchos}" th:value="${ancho.id}" th:text="${ancho.nombre}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!--Material de perfil-->
+                    <div class="mb-2">
+                        <select name="materialPerfilId" id="materialPerfil" class="form-select">
+                            <option value="">Seleccione tipo de material</option>
+                            <option th:each="mp : ${materialesPerfil}" th:value="${mp.id}" th:text="${mp.nombre}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!--Color-->
+                    <div class="mb-2">
+                        <select name="colorId" id="color" class="form-select">
+                            <option value="">Seleccione color</option>
+                            <option th:each="c : ${colores}" th:value="${c.id}" th:text="${c.nombre}"></option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-9">
+            <!-- RESULTADOS 
+
+                <div class="input-group mb-3">
+                    <input type="text" name="nombre" class="form-control" placeholder="Buscar producto..."
+                        th:value="${param.nombre}">
+                    <button class="btn btn-outline-secondary" type="submit"> <i class="bi bi-search"></i></button>
+                </div>-->
+
+                <div class="row">
+                    <p class="mensaje" th:if="${mensaje !=null}" th:text="${mensaje}"></p>
+
+                </div>
+                <div class="row" th:each="p : ${productos}">
+                    <div class="col-md-12 mb-3">
+                        <div class="card">
+                            <div class="row g-0">
+                                <div class="col-md-3">
+                                    <img th:src="@{${p.imagenUrl}}" class="img-fluid rounded-start" alt="...">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card-body">
+                                        <h5 class="card-title" th:text="${p.nombre}"></h5>
+                                        <p class="card-text" th:text="${p.descripcion}"></p>
+                                        <p class="card-text"><strong th:text="${p.nombreProveedor}"></strong></p>
+
+                                        <span class="badge bg-primary" th:text="${p.tipoProducto}"></span>
+                                        <span class="badge bg-secondary" th:text="${p.marca}"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 d-flex flex-column justify-content-center align-items-center">
+                                    <!--<p class="fw-bold" th:text="${'$' + p.precio}"></p>- th:href="@{'/solicitar-cotizacion/' + ${p.id}}" -->
+                                    <a th:href="@{'/detalle-producto/' + ${p.id}}" class="btn btn-outline-primary mb-2">
+                                        Ver más
+                                    </a>
+                                    <a class="solicitar-cotizacion btn btn-dark"
+                                        th:attr="data-producto-id=${p.id}, data-producto-nombre=${p.nombre}, data-proveedor = ${p.nombreProveedor}">
+                                        Solicitar cotización
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div th:replace="fragments/footer :: footer"></div>
+    <!-- Botón para abrir el carrito -->
+    <button class="btn btn-primary position-fixed bottom-0 end-0 m-4" type="button" data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasCarrito">
+        🛒 Ver cotización
+    </button>
+
+    <!-- Carrito lateral -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCarrito">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Mi cotización</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body" id="carritoContenido">
+            <p class="text-muted">Aún no agregaste productos.</p>
+        </div>
+        <div class="p-3 border-top">
+            <button id="btnEnviarCotizacion" class="btn btn-success w-100" disabled>Enviar cotización</button>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="modalCotizacion" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Solicitar cotización</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="productoNombre"></p>
+                    <input type="hidden" id="productoId">
+                    <div class="mb-3">
+                        <label for="cantidad" class="form-label">Cantidad:</label>
+                        <input type="number" id="cantidad" class="form-control" min="1" value="1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Seguir buscando</button>
+                    <button type="button" class="btn btn-primary" id="btnCotizar">Cotizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const botones = document.querySelectorAll(".solicitar-cotizacion");
+            const carritoContenido = document.getElementById("carritoContenido");
+            const btnEnviarCotizacion = document.getElementById("btnEnviarCotizacion");
+            const offcanvas = new bootstrap.Offcanvas(document.getElementById("offcanvasCarrito"));
+
+            // Guardamos productos en memoria (se sincronizan con sesión por fetch)
+            let carrito = {}; // { proveedorId: { proveedorNombre, productos: [ {id, nombre, cantidad} ] } }
+
+            // Función para renderizar el carrito lateral
+            function renderizarCarrito() {
+                if (Object.keys(carrito).length === 0) {
+                    carritoContenido.innerHTML = "<p class='text-muted'>Aún no agregaste productos.</p>";
+                    btnEnviarCotizacion.disabled = true;
+                    return;
+                }
+
+                let html = "";
+                for (const proveedorId in carrito) {
+                    const grupo = carrito[proveedorId];
+                    html += `<h6 class="fw-bold mt-2">${grupo.proveedorNombre}</h6><ul class="list-group mb-3">`;
+
+                    grupo.productos.forEach(p => {
+                        html += `
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            ${p.nombre}
+            <input type="number" min="1" value="${p.cantidad}" data-producto-id="${p.id}"
+              class="form-control form-control-sm w-25 cantidad-input">
+          </li>
+        `;
+                    });
+                    html += `</ul>`;
+                }
+
+                carritoContenido.innerHTML = html;
+                btnEnviarCotizacion.disabled = false;
+            }
+
+            // Agregar producto al carrito
+            botones.forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    e.preventDefault();
+
+                    if (!estaLogueado) {
+                        alert("Se requiere estar logueado para solicitar una cotización.");
+                        return;
+                    }
+
+                    const card = btn.closest(".card");
+                    const productoId = card.dataset.productoId;
+                    const productoNombre = card.querySelector(".card-title").textContent;
+                    const proveedorId = card.dataset.proveedorId;
+                    const proveedorNombre = card.dataset.proveedorNombre;
+
+                    // Estructura de agrupación
+                    if (!carrito[proveedorId]) {
+                        carrito[proveedorId] = { proveedorNombre, productos: [] };
+                    }
+
+                    const grupo = carrito[proveedorId];
+                    const existente = grupo.productos.find(p => p.id == productoId);
+                    if (existente) {
+                        existente.cantidad++;
+                    } else {
+                        grupo.productos.push({ id: productoId, nombre: productoNombre, cantidad: 1 });
+                    }
+
+                    // Actualizar vista
+                    renderizarCarrito();
+
+                    // Mostrar carrito
+                    offcanvas.show();
+
+                    // Guardar en sesión
+                    fetch("/spring/agregar-item", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: `productoId=${productoId}&cantidad=1`
+                    });
+                });
+            });
+
+            // Enviar cotización al backend
+            btnEnviarCotizacion.addEventListener("click", () => {
+                if (confirm("¿Deseas confirmar esta cotización?")) {
+                    fetch("/spring/confirmar", { method: "POST" })
+                        .then(r => {
+                            if (r.ok) {
+                                alert("Cotización registrada con estado PENDIENTE");
+                                carrito = {};
+                                renderizarCarrito();
+                                offcanvas.hide();
+                            } else {
+                                alert("Error al registrar cotización");
+                            }
+                        });
+                }
+            });
+        });
+
+    </script>
+    <!-- Script con Thymeleaf para pasar el valor desde el backend -->
+    <script th:inline="javascript">
+        const estaLogueado = /*[[${estaLogueado}]]*/ false;
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const botones = document.querySelectorAll(".solicitar-cotizacion");
+            const modal = new bootstrap.Modal(document.getElementById("modalCotizacion"));
+            const productoIdInput = document.getElementById("productoId");
+            const productoNombre = document.getElementById("productoNombre");
+
+            botones.forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    if (!estaLogueado) {
+                        alert("Se requiere estar logueado para solicitar una cotización.");
+                        return;
+                    }
+
+                    const id = btn.dataset.productoId;
+                    const nombre = btn.dataset.productoNombre;
+                    const proveedorNombre = btn.dataset.proveedor;
+
+                    productoIdInput.value = id;
+                    productoNombre.textContent = "Producto: " + nombre;
+                    modal.show();
+                });
+            });
+
+            document.getElementById("btnCotizar").addEventListener("click", () => {
+                const productoId = productoIdInput.value;
+                const cantidad = document.getElementById("cantidad").value;
+
+                fetch("/spring/agregar-item", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `productoId=${productoId}&cantidad=${cantidad}`
+                })
+                    .then(r => {
+                        if (!r.ok) throw new Error("Error al registrar cotización");
+                        return r.text();
+                    })
+                    .then(msg => {
+                        alert(msg);
+                        modal.hide();
+                    })
+                    .catch(err => alert(err.message));
+            });
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const tipoProductoSelect = document.getElementById("tipoProducto");
+            const tipoVentanaSelect = document.getElementById("tipoVentana");
+
+            tipoProductoSelect.addEventListener("change", () => {
+                const tipoProductoId = tipoProductoSelect.value;
+
+                // Limpiar el segundo select
+                tipoVentanaSelect.innerHTML = '<option value="">Seleccione un tipo de ventana</option>';
+
+                if (tipoProductoId) {
+                    // Hace la llamada al endpoint que devuelve JSON
+                    fetch(`/spring/tiposVentana/${tipoProductoId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al obtener tipos de ventana");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Cargar opciones en el select
+                            data.forEach(tv => {
+                                const option = document.createElement("option");
+                                option.value = tv.id;
+                                option.textContent = tv.nombre;
+                                tipoVentanaSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
+            });
+        });
+
+
+    </script>
+    <!--
                     <div class="mb-2">
                         <select name="proveedorId" class="form-select">
                             <option value="">Todos los proveedores</option>
@@ -36,67 +392,6 @@
                         </select>
                     </div>
                 -->
-                    <div class="mb-2">
-                        <select name="tipoProductoId" class="form-select">
-                            <option value="">Todos los tipos</option>
-                            <option th:each="tp : ${tiposProducto}" th:value="${tp.id}" th:text="${tp.nombre}"></option>
-                        </select>
-                    </div>
-
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="aceptaEnvio" value="true" id="envio">
-                        <label class="form-check-label" for="envio">Envío</label>
-                    </div>
-                    <div class="mb-2">
-                        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- RESULTADOS -->
-            <div class="col-md-9">
-                <!--
-                <div class="input-group mb-3">
-                    <input type="text" name="nombre" class="form-control" placeholder="Buscar producto..."
-                        th:value="${param.nombre}">
-                    <button class="btn btn-outline-secondary" type="submit">🔍</button>
-                </div>
-
-                <div class="row">
-                    <p class="mensaje" th:if="${mensaje !=null}" th:text="${mensaje}"></p>
-
-                </div>-->
-                <div class="row" th:each="p : ${productos}">
-                    <div class="col-md-12 mb-3">
-                        <div class="card">
-                            <div class="row g-0">
-                                <div class="col-md-3">
-                                    <img th:src="@{${p.imagenUrl}}" class="img-fluid rounded-start" alt="...">
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card-body">
-                                        <h5 class="card-title" th:text="${p.nombre}"></h5>
-                                        <p class="card-text" th:text="${p.descripcion}"></p>
-                                        <span class="badge bg-primary" th:text="${p.tipoProducto}"></span>
-                                        <span class="badge bg-secondary" th:text="${p.marca}"></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 d-flex flex-column justify-content-center align-items-center">
-                                    <!--<p class="fw-bold" th:text="${'$' + p.precio}"></p>-->
-                                    <a href="#" class="btn btn-outline-primary mb-2">Ver más</a>
-                                    <a href="#" class="btn btn-dark">Solicitar cotización</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- FOOTER -->
-    <div th:replace="fragments/footer :: footer"></div>
-
 </body>
+
 </html>

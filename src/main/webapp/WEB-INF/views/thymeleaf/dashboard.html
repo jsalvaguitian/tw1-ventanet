@@ -27,7 +27,7 @@
     </nav>
 
     <div class="sidebar" id="sidebar">
-        <h2>Ventanet</h2>
+         <a th:href="@{/}" ><h2>Ventanet</h2></a>
         <ul>
             <li class="active">Dashboard</li>
         </ul>
@@ -235,6 +235,9 @@
     </script>
 
     <!-- Crear Cotización navega a /presupuesto (formulario completo) -->
-</body>
 
+    <!-- FOOTER -->
+    <div th:replace="fragments/footer :: footer-dashboard"></div>
+    
+</body>
 </html>
