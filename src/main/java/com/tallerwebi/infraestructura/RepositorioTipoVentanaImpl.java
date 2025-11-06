@@ -35,10 +35,11 @@ public class RepositorioTipoVentanaImpl implements RepositorioGenerico<TipoVenta
                 .list();
     }
 
-    public List<TipoVentana> obtenerPorIdTipoProducto(Long id_tipo_producto) {
+    public List<TipoVentana> obtenerPorIdTipoProducto(Long idTipoProducto) {
         return sessionFactory.getCurrentSession()
-                .createQuery("from TipoVentana where tipo_producto_id = :tipo_producto_id", TipoVentana.class)
-                .setParameter("tipo_producto_id", id_tipo_producto)
+                .createQuery("select v from TipoVentana v join fetch v.tipoProducto tp where tp.id = :idTipoProducto",
+                        TipoVentana.class)
+                .setParameter("idTipoProducto", idTipoProducto)
                 .list();
     }
 

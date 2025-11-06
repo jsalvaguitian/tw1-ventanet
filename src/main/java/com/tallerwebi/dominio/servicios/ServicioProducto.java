@@ -6,6 +6,7 @@ import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.TipoProducto;
 import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
+import com.tallerwebi.presentacion.dto.ProductoDTO;
 import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
 
 public interface ServicioProducto {
@@ -39,4 +40,7 @@ public interface ServicioProducto {
             Boolean barrotillos);
 
     List<Producto> obtenertodosPorListadoId(List<Long> productosIds);
+
+    List<Producto> filtrarProductos(Long tipoProductoId, Long tipoVentanaId, Long anchoId, Long altoId,
+            Long materialPerfilId, Long colorId);
 }

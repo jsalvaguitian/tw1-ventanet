@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,16 +15,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.tallerwebi.dominio.entidades.Alto;
+import com.tallerwebi.dominio.entidades.Ancho;
+import com.tallerwebi.dominio.entidades.Color;
 import com.tallerwebi.dominio.entidades.Marca;
+import com.tallerwebi.dominio.entidades.MaterialDePerfil;
 import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.TipoProducto;
 import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.enums.Rubro;
+import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.servicios.ServicioMarca;
 import com.tallerwebi.dominio.servicios.ServicioProducto;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
+import com.tallerwebi.dominio.servicios.ServicioTablas;
 import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
+import com.tallerwebi.dominio.servicios.ServicioTipoVentana;
 import com.tallerwebi.presentacion.dto.ProductoDTO;
 import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
@@ -37,14 +45,19 @@ public class ControladorCatalogo {
     private ServicioProveedorI servicioProveedor;
     private ServicioTipoProducto servicioTipoProducto;
     private ServicioMarca servicioMarca;
+    private ServicioTipoVentana servicioTipoVentana;
+    private ServicioTablas servicioTablas;
 
     @Autowired
     public ControladorCatalogo(ServicioProducto servicioProducto, ServicioProveedorI servicioProveedor,
-            ServicioTipoProducto servicioTipoProducto, ServicioMarca servicioMarca) {
+            ServicioTipoProducto servicioTipoProducto, ServicioMarca servicioMarca,
+            ServicioTipoVentana servicioTipoVentana, ServicioTablas servicioTablas) {
         this.servicioProducto = servicioProducto;
         this.servicioProveedor = servicioProveedor;
         this.servicioTipoProducto = servicioTipoProducto;
         this.servicioMarca = servicioMarca;
+        this.servicioTipoVentana = servicioTipoVentana;
+        this.servicioTablas = servicioTablas;
     }
 
     @GetMapping("/menu-catalogo")
@@ -157,37 +170,50 @@ public class ControladorCatalogo {
     // si el cliente no esta logueado solicitar q se loguee
     // si lo esta, se notifica N proveedores que tiene ese producto
 
+    /*
+     * @GetMapping("/ver-productos")
+     * public ModelAndView verCatalogoPorProductosGenericos(){
+     * ModelMap modelMap = new ModelMap();
+     * List<ProductoGenericoDTO> productosGenericos =
+     * servicioProducto.obtenerProductosGenericos();
+     * modelMap.put("productosGenericos", productosGenericos);
+     * return new ModelAndView("catalogo-producto-generico", modelMap);
+     * 
+     * }
+     */
+
     @GetMapping("/ver-productos")
-    public ModelAndView verCatalogoPorProductosGenericos(){
-        ModelMap modelMap = new ModelMap();
-        List<ProductoGenericoDTO> productosGenericos = servicioProducto.obtenerProductosGenericos();
-        modelMap.put("productosGenericos", productosGenericos);
-        return new ModelAndView("catalogo-producto-generico", modelMap);
-
-    }
-    
-    /*@GetMapping("/ver-productos")
     public ModelAndView verCatalogo(HttpServletRequest request,
-            @RequestParam(required = false) Long proveedorId,
-            @RequestParam(required = false) Long tipoProductoId) {
+            @RequestParam(required = false) Long tipoProductoId,
+            @RequestParam(required = false) Long tipoVentanaId,
+            @RequestParam(required = false) Long anchoId,
+            @RequestParam(required = false) Long altoId,
+            @RequestParam(required = false) Long materialPerfilId,
+            @RequestParam(required = false) Long colorId) {
 
         ModelMap modelMap = new ModelMap();
-
-        List<Proveedor> proveedores = servicioProveedor.obtenerTodosLosProveedoresActivos();
-        List<UsuarioProvDTO> provFiltroDTOs = convertirProveedoresADtosFiltro(proveedores);
 
         List<TipoProducto> tiposProductos = servicioTipoProducto.obtener();
-
-        modelMap.put("proveedores", provFiltroDTOs);
         modelMap.put("tiposProducto", tiposProductos);
 
-        // List<Producto> productos = servicioProducto.obtener();// por el momento 15
-        // productos tendra la
-        List<Producto> productos = servicioProducto.buscarConFiltros(tipoProductoId);// despues agregar mas filtros
+        List<Alto>alturas = servicioTablas.obtenerAltos();
+        modelMap.put("alturas", alturas);
+
+        List<Ancho> anchos = servicioTablas.obtenerAnchos();
+        modelMap.put("anchos", anchos);
+
+        List<MaterialDePerfil>materialesPerfil = servicioTablas.obtenerMateriales();
+        modelMap.put("materialesPerfil", materialesPerfil);
+
+        List<Color>colores = servicioTablas.obtenerColores();
+        modelMap.put("colores", colores);
+
+        List<Producto> productos = servicioProducto.filtrarProductos(tipoProductoId, tipoVentanaId, anchoId, altoId, materialPerfilId,
+                colorId);
 
         // bbdd
 
-        if (productos == null) {
+        if (productos == null || productos.isEmpty())  {
             modelMap.put("mensaje", "No hay productos cargados");
             return new ModelAndView("catalogo", modelMap);
         }
@@ -198,7 +224,35 @@ public class ControladorCatalogo {
 
         return new ModelAndView("catalogo", modelMap);
         // luego preguntar si un cliente inicio sesion
-    }*/
+    }
+
+    @GetMapping("/tiposVentana/{tipoProductoId}")
+    @ResponseBody
+    public List<TipoVentana> obtenerTiposDeVentana(@PathVariable Long tipoProductoId) {
+        try {
+            return servicioTipoVentana.obtenerPorIdTipoProducto(tipoProductoId);
+
+        } catch (NoHayProductoExistente e) {
+            return Collections.emptyList();
+        }
+
+    }
+
+    @GetMapping("/detalle-producto/{productoId}")
+    public ModelAndView verDetalleProducto(@PathVariable Long productoId) {
+          ModelMap modelMap = new ModelMap();
+
+       
+        Producto producto = servicioProducto.obtenerPorId(productoId);
+        if (producto == null) {
+            modelMap.put("mensaje", "El producto no existe.");
+            return new ModelAndView("detalle-producto", modelMap);
+        }
+
+        modelMap.put("producto", producto);
+
+        return new ModelAndView("detalle-producto", modelMap);
+    }
 
     // -------------------------------------------------------------------------------------------------
     private List<UsuarioProvDTO> convertirProveedoresADtosFiltro(List<Proveedor> proveedores) {

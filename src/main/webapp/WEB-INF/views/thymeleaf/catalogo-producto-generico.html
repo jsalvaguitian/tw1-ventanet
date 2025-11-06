@@ -9,44 +9,26 @@
 </head>
 
 <body>
-  <!-- HEADER -->
-  <div th:replace="fragments/header :: header"></div>
+    <!-- HEADER -->
+    <div th:replace="fragments/header :: header"></div>
 
     <div class="container-fluid mt-3">
         <div class="row">
             <!-- FILTROS -->
             <div class="col-md-3">
                 <form method="get" th:action="@{/ver-productos}">
-<!--
-                    <div class="mb-2">
-                        <select name="proveedorId" class="form-select">
-                            <option value="">Todos los proveedores</option>
-                            <th:block th:each="prov : ${proveedores}">
-                                <option th:value="${prov.id}" th:text="${prov.razonSocial}"></option>
-                            </th:block>
-                        </select>
-                    </div>
-
-                    <div class="mb-2">
-                        <label>Rubro</label>
-                        <select name="rubro" class="form-select">
-                            <option value="">Todos</option>
-                            <option th:each="r : ${T(com.tallerwebi.dominio.enums.Rubro).values()}" th:value="${r}"
-                                th:text="${r.descripcion}"></option>
-                        </select>
-                    </div>
-                -->
+                   
                     <div class="mb-2">
                         <select name="tipoProductoId" class="form-select">
                             <option value="">Todos los tipos</option>
                             <option th:each="tp : ${tiposProducto}" th:value="${tp.id}" th:text="${tp.nombre}"></option>
                         </select>
                     </div>
-
+<!--
                     <div class="form-check mb-2">
                         <input class="form-check-input" type="checkbox" name="aceptaEnvio" value="true" id="envio">
                         <label class="form-check-label" for="envio">Envío</label>
-                    </div>
+                    </div>-->
                     <div class="mb-2">
                         <button type="submit" class="btn btn-primary w-100">Filtrar</button>
                     </div>
@@ -55,7 +37,7 @@
 
             <!-- RESULTADOS -->
             <div class="col-md-9">
-                
+
                 <div class="input-group mb-3">
                     <input type="text" name="nombre" class="form-control" placeholder="Buscar producto..."
                         th:value="${param.nombre}">
@@ -73,17 +55,22 @@
                         <div class="card">
                             <div class="row g-0">
                                 <div class="col-md-3">
-                                    <img th:src="@{${p.imagenUrl}}" class="img-fluid rounded-start" alt="...">
+                                    <img th:src="@{/img/${p.tipoProducto}.png}" class="img-fluid rounded-start"
+                                        alt="...">
                                 </div>
                                 <div class="col-md-6">
                                     <div class="card-body">
-                                        <h5 class="card-title" th:text="${p.tipoProducto} + ' ' + ${p.tipoVentana}"></h5>
-                                        <p class="card-text" th:text="${p.descripcion}"></p>
+                                        <h5 class="card-title" th:text="${p.tipoProducto} + ' ' + ${p.tipoVentana}">
+                                        </h5>
+                                        <p class="card-text"
+                                            th:text="${p.tipoProducto} + ' ' + ${p.tipoVentana} + ' ' +${p.tipoVidrio} + ' ' + ${p.materialPerfil} + ' ' + ${p.dimensiones}">
+                                        </p>
+                                        <p th:text="'Disponible en ' + ${p.cantidadProveedores} + ' proveedor(es)'"></p>
+
                                         <span class="badge bg-primary" th:text="${p.tipoProducto}"></span>
                                     </div>
                                 </div>
                                 <div class="col-md-3 d-flex flex-column justify-content-center align-items-center">
-                                    <!--<p class="fw-bold" th:text="${'$' + p.precio}"></p>-->
                                     <a href="#" class="btn btn-outline-primary mb-2">Ver más</a>
                                     <a href="#" class="btn btn-dark">Solicitar cotización</a>
                                 </div>
@@ -100,6 +87,7 @@
     <div th:replace="fragments/footer :: footer"></div>
 
 </body>
+
 </html>
 
 

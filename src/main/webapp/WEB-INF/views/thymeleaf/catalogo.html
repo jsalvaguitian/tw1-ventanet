@@ -4,20 +4,167 @@
 <head>
     <title>Catálogo</title>
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
     <!-- estilo para el header -->
     <link rel="stylesheet" th:href="@{/css/main.css}" />
 </head>
 
 <body>
-  <!-- HEADER -->
-  <div th:replace="fragments/header :: header"></div>
+    <!-- HEADER -->
+    <div th:replace="fragments/header :: header"></div>
 
     <div class="container-fluid mt-3">
         <div class="row">
             <!-- FILTROS -->
             <div class="col-md-3">
                 <form method="get" th:action="@{/ver-productos}">
-<!--
+
+                    <div class="mb-2">
+                        <select name="tipoProductoId" id="tipoProducto" class="form-select">
+                            <option value="">Seleccione un tipo de producto</option>
+                            <!-- Cargados desde el modelo -->
+                            <option th:each="tp : ${tiposProducto}" th:value="${tp.id}" th:text="${tp.nombre}"></option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <select name="tipoVentanaId" id="tipoVentana" class="form-select">
+                            <option value="">Seleccione un tipo de ventana</option>
+                        </select>
+                    </div>
+
+
+                    <!--DIMENSION ANCHO Y ALTO-->
+                    <div class="mb-2 row g-2 align-items-center">
+                        <div class="col-auto">
+                            <select name="altoId" id="alto" class="form-select">
+                                <option value="">Alto</option>
+                                <option th:each="alto : ${alturas}" th:value="${alto.id}" th:text="${alto.nombre}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-auto align-self-end">
+                            <span class="fs-5">×</span>
+                        </div>
+
+                        <div class="col-auto">
+                            <select name="anchoId" id="ancho" class="form-select">
+                                <option value="">Ancho</option>
+                                <option th:each="ancho : ${anchos}" th:value="${ancho.id}" th:text="${ancho.nombre}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!--Material de perfil-->
+                    <div class="mb-2">
+                        <select name="materialPerfilId" id="materialPerfil" class="form-select">
+                            <option value="">Seleccione tipo de material</option>
+                            <option th:each="mp : ${materialesPerfil}" th:value="${mp.id}" th:text="${mp.nombre}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <!--Color-->
+                    <div class="mb-2">
+                        <select name="colorId" id="color" class="form-select">
+                            <option value="">Seleccione color</option>
+                            <option th:each="c : ${colores}" th:value="${c.id}" th:text="${c.nombre}"></option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- RESULTADOS -->
+            <div class="col-md-9">
+
+                <div class="input-group mb-3">
+                    <input type="text" name="nombre" class="form-control" placeholder="Buscar producto..."
+                        th:value="${param.nombre}">
+                    <button class="btn btn-outline-secondary" type="submit"> <i class="bi bi-search"></i></button>
+                </div>
+
+                <div class="row">
+                    <p class="mensaje" th:if="${mensaje !=null}" th:text="${mensaje}"></p>
+
+                </div>
+                <div class="row" th:each="p : ${productos}">
+                    <div class="col-md-12 mb-3">
+                        <div class="card">
+                            <div class="row g-0">
+                                <div class="col-md-3">
+                                    <img th:src="@{${p.imagenUrl}}" class="img-fluid rounded-start" alt="...">
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card-body">
+                                        <h5 class="card-title" th:text="${p.nombre}"></h5>
+                                        <p class="card-text" th:text="${p.descripcion}"></p>
+                                        <span class="badge bg-primary" th:text="${p.tipoProducto}"></span>
+                                        <span class="badge bg-secondary" th:text="${p.marca}"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 d-flex flex-column justify-content-center align-items-center">
+                                    <!--<p class="fw-bold" th:text="${'$' + p.precio}"></p>-->
+                                    <a th:href="@{'/detalle-producto/' + ${p.id}}"
+                                        class="btn btn-outline-primary mb-2">
+                                        Ver más
+                                    </a>
+                                    <a href="#" class="btn btn-dark">Solicitar cotización</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div th:replace="fragments/footer :: footer"></div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const tipoProductoSelect = document.getElementById("tipoProducto");
+            const tipoVentanaSelect = document.getElementById("tipoVentana");
+
+            tipoProductoSelect.addEventListener("change", () => {
+                const tipoProductoId = tipoProductoSelect.value;
+
+                // Limpiar el segundo select
+                tipoVentanaSelect.innerHTML = '<option value="">Seleccione un tipo de ventana</option>';
+
+                if (tipoProductoId) {
+                    // Hace la llamada al endpoint que devuelve JSON
+                    fetch(`/spring/tiposVentana/${tipoProductoId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al obtener tipos de ventana");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Cargar opciones en el select
+                            data.forEach(tv => {
+                                const option = document.createElement("option");
+                                option.value = tv.id;
+                                option.textContent = tv.nombre;
+                                tipoVentanaSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                }
+            });
+        });
+    </script>
+    <!--
                     <div class="mb-2">
                         <select name="proveedorId" class="form-select">
                             <option value="">Todos los proveedores</option>
@@ -36,67 +183,6 @@
                         </select>
                     </div>
                 -->
-                    <div class="mb-2">
-                        <select name="tipoProductoId" class="form-select">
-                            <option value="">Todos los tipos</option>
-                            <option th:each="tp : ${tiposProducto}" th:value="${tp.id}" th:text="${tp.nombre}"></option>
-                        </select>
-                    </div>
-
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="aceptaEnvio" value="true" id="envio">
-                        <label class="form-check-label" for="envio">Envío</label>
-                    </div>
-                    <div class="mb-2">
-                        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- RESULTADOS -->
-            <div class="col-md-9">
-                <!--
-                <div class="input-group mb-3">
-                    <input type="text" name="nombre" class="form-control" placeholder="Buscar producto..."
-                        th:value="${param.nombre}">
-                    <button class="btn btn-outline-secondary" type="submit">🔍</button>
-                </div>
-
-                <div class="row">
-                    <p class="mensaje" th:if="${mensaje !=null}" th:text="${mensaje}"></p>
-
-                </div>-->
-                <div class="row" th:each="p : ${productos}">
-                    <div class="col-md-12 mb-3">
-                        <div class="card">
-                            <div class="row g-0">
-                                <div class="col-md-3">
-                                    <img th:src="@{${p.imagenUrl}}" class="img-fluid rounded-start" alt="...">
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card-body">
-                                        <h5 class="card-title" th:text="${p.nombre}"></h5>
-                                        <p class="card-text" th:text="${p.descripcion}"></p>
-                                        <span class="badge bg-primary" th:text="${p.tipoProducto}"></span>
-                                        <span class="badge bg-secondary" th:text="${p.marca}"></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 d-flex flex-column justify-content-center align-items-center">
-                                    <!--<p class="fw-bold" th:text="${'$' + p.precio}"></p>-->
-                                    <a href="#" class="btn btn-outline-primary mb-2">Ver más</a>
-                                    <a href="#" class="btn btn-dark">Solicitar cotización</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- FOOTER -->
-    <div th:replace="fragments/footer :: footer"></div>
-
 </body>
+
 </html>

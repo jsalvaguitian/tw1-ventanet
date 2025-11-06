@@ -11,6 +11,7 @@ import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
 import com.tallerwebi.infraestructura.RepositorioProductoImpl;
+import com.tallerwebi.presentacion.dto.ProductoDTO;
 import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
 
 @Service("servicioProducto")
@@ -118,5 +119,11 @@ public class ServicioProductoImpl implements ServicioProducto {
     @Override
     public List<Producto> obtenertodosPorListadoId(List<Long> productosIds) {
        return productoRepository.obtenertodosPorListadoId(productosIds);
+    }
+
+    @Override
+    public List<Producto> filtrarProductos(Long tipoProductoId, Long tipoVentanaId, Long anchoId, Long altoId,
+            Long materialPerfilId, Long colorId) {
+        return productoRepository.filtrarProductos(tipoProductoId,tipoVentanaId,anchoId,altoId, materialPerfilId, colorId);
     }
 }

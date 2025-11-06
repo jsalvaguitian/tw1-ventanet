@@ -204,52 +204,52 @@ INSERT INTO Producto (
     tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
 ) VALUES
 -- Puerta de madera
-('Puerta de Madera', 15000.00, 'Puerta maciza de madera', '/uploads/imagenes/puerta-madera.jpg', 20, 3,
+('Puerta de Madera', 15000.00, 'Puerta maciza de madera', 'uploads/imagenes/puerta-madera.jpg', 20, 3,
  1, 1, 1, 'PMA-01', true,
  NULL, NULL, NULL, NULL, NULL, 3), -- color marrón
 
 -- Ventana de aluminio
-('Ventana de Aluminio', 10000.00, 'Ventana corrediza de aluminio', '/uploads/imagenes/ventana-aluminio.jpg', 30, 3,
+('Ventana de Aluminio', 10000.00, 'Ventana corrediza de aluminio', 'uploads/imagenes/ventana-aluminio.jpg', 30, 3,
  2, 2, 2, 'VAL-01', true,
  1, 10, 10, 1, 1, 1), -- corrediza, 1.5x1.5m, aluminio, vidrio simple, blanco
 
 -- Techo de chapa
-('Techo de chapa', 25000.00, 'Techo acanalado galvanizado', '/uploads/imagenes/techo-chapa.jpeg', 15, 3,
+('Techo de chapa', 25000.00, 'Techo acanalado galvanizado', 'uploads/imagenes/techo-chapa.jpeg', 15, 3,
  3, 3, 3, 'TCH-01', false,
  NULL, NULL, NULL, NULL, NULL, 2), -- gris
 
 -- Puerta económica
-('Puerta económica', 14500.00, 'Puerta igual pero de otro proveedor', '/uploads/imagenes/puerta-madera.jpg', 10, 4,
+('Puerta económica', 14500.00, 'Puerta igual pero de otro proveedor', 'uploads/imagenes/puerta-madera.jpg', 10, 4,
  1, 1, 1, 'PMA-02', true,
  NULL, NULL, NULL, NULL, NULL, 3), -- marrón
 
 -- Ventana de aluminio reforzada
-('Ventana de Aluminio reforzada', 12000.00, 'Ventana igual de otro proveedor', '/uploads/imagenes/ventana-aluminio-2.jpg', 25, 4,
+('Ventana de Aluminio reforzada', 12000.00, 'Ventana igual de otro proveedor', 'uploads/imagenes/ventana-aluminio-2.jpg', 25, 4,
  2, 2, 2, 'VAL-02', true,
  1, 12, 12, 1, 2, 1), -- corrediza, 1.7x1.7m, aluminio, doble vidrio, blanco
 
 -- Pintura blanca
-('Pintura blanca', 5000.00, 'Pintura para interiores', '/uploads/imagenes/pintura-blanca.jpg', 40, 5,
+('Pintura blanca', 5000.00, 'Pintura para interiores', 'uploads/imagenes/pintura-blanca.jpg', 40, 5,
  3, 2, 2, 'PIN-BL', true,
  NULL, NULL, NULL, NULL, NULL, 1), -- blanco
 
 -- Puerta de PVC
-('Puerta de PVC', 17000.00, 'Puerta plástica económica', '/uploads/imagenes/puerta-pvc.jpeg', 20, 5,
+('Puerta de PVC', 17000.00, 'Puerta plástica económica', 'uploads/imagenes/puerta-pvc.jpeg', 20, 5,
  1, 3, 1, 'PVP-02', true,
  NULL, NULL, NULL, 2, NULL, 1), -- material PVC, color blanco
 
 -- Techo aislante
-('Techo aislante', 30000.00, 'Techo con aislante térmico', '/uploads/imagenes/techo-aislante.jpg', 10, 6,
+('Techo aislante', 30000.00, 'Techo con aislante térmico', 'uploads/imagenes/techo-aislante.jpg', 10, 6,
  3, 2, 3, 'TCH-A2', false,
  NULL, NULL, NULL, NULL, NULL, 2), -- gris
 
 -- Ventana doble vidrio
-('Ventana doble vidrio', 20000.00, 'Ventana doble vidrio templado', '/uploads/imagenes/ventana-doble-vidrio.jpg', 5, 6,
+('Ventana doble vidrio', 20000.00, 'Ventana doble vidrio templado', 'uploads/imagenes/ventana-doble-vidrio.jpg', 5, 6,
  2, 1, 2, 'VDV-01', true,
  2, 15, 15, 1, 4, 1), -- oscilobatiente, 2.0x2.0m, aluminio, vidrio templado, blanco
 
 -- Puerta blindada
-('Puerta blindada', 45000.00, 'Puerta de seguridad', '/uploads/imagenes/puerta-blindada.jpg', 8, 6,
+('Puerta blindada', 45000.00, 'Puerta de seguridad', 'uploads/imagenes/puerta-blindada.jpg', 8, 6,
  1, 3, 1, 'PB-02', false,
  NULL, NULL, NULL, 1, NULL, 4); -- aluminio, color negro
 
