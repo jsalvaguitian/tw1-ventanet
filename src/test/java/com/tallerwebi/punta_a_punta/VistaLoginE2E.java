@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Paths;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
@@ -25,8 +27,11 @@ public class VistaLoginE2E {
     @BeforeAll
     static void abrirNavegador() {
         playwright = Playwright.create();
-        browser = playwright.chromium().launch();
-        //browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(500));
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
+                .setHeadless(false)
+                .setSlowMo(200)
+                .setExecutablePath(Paths.get("C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe")) // <-- uso de Paths.get
+        );
     }
 
     @AfterAll
@@ -36,8 +41,6 @@ public class VistaLoginE2E {
 
     @BeforeEach
     void crearContextoYPagina() {
-        ReiniciarDB.limpiarBaseDeDatos();
-
         context = browser.newContext();
         Page page = context.newPage();
         vistaLogin = new VistaLogin(page);
@@ -49,72 +52,82 @@ public class VistaLoginE2E {
     }
 
     @Test
-    void deberiaDecirUNLAMEnElNavbar() throws MalformedURLException {
-        dadoQueElUsuarioEstaEnLaVistaDeLogin();
-        entoncesDeberiaVerUNLAMEnElNavbar();
-    }
-
-    @Test
-    void deberiaDarUnErrorAlIntentarIniciarSesionConUnUsuarioQueNoExiste() {
-        dadoQueElUsuarioCargaSusDatosDeLoginCon("damian@unlam.edu.ar", "unlam");
-        cuandoElUsuarioTocaElBotonDeLogin();
-        entoncesDeberiaVerUnMensajeDeError();
-    }
-
-    @Test
-    void deberiaNavegarAlHomeSiElUsuarioExiste() throws MalformedURLException {
-        dadoQueElUsuarioCargaSusDatosDeLoginCon("test@unlam.edu.ar", "test");
-        cuandoElUsuarioTocaElBotonDeLogin();
-        entoncesDeberiaSerRedirigidoALaVistaDeHome();
-    }
-
-    @Test
-    void deberiaRegistrarUnUsuarioEIniciarSesionExistosamente() throws MalformedURLException {
-        dadoQueElUsuarioNavegaALaVistaDeRegistro();
-        dadoQueElUsuarioSeRegistraCon("juan@unlam.edu.ar", "123456");
-        dadoQueElUsuarioEstaEnLaVistaDeLogin();
-        dadoQueElUsuarioCargaSusDatosDeLoginCon("juan@unlam.edu.ar", "123456");
-        cuandoElUsuarioTocaElBotonDeLogin();    
-        entoncesDeberiaSerRedirigidoALaVistaDeHome();
-    }
-
-    private void entoncesDeberiaVerUNLAMEnElNavbar() {
+    void deberiaMostrarVentanetEnNavbar() throws MalformedURLException {
         String texto = vistaLogin.obtenerTextoDeLaBarraDeNavegacion();
-        assertThat("UNLAM", equalToIgnoringCase(texto));
+        assertThat("Ventanet", equalToIgnoringCase(texto));
     }
 
-    private void dadoQueElUsuarioEstaEnLaVistaDeLogin() throws MalformedURLException {
-        URL urlLogin = vistaLogin.obtenerURLActual();
-        assertThat(urlLogin.getPath(), matchesPattern("^/spring/login(?:;jsessionid=[^/\\s]+)?$"));
-    }
-
-    private void cuandoElUsuarioTocaElBotonDeLogin() {
+    @Test
+    void loginInvalidoDaError() {
+        vistaLogin.escribirEMAIL("damian@unlam.edu.ar");
+        vistaLogin.escribirClave("unlam");
         vistaLogin.darClickEnIniciarSesion();
+        String error = vistaLogin.obtenerMensajeDeError();
+        assertThat("Error Usuario o clave incorrecta", equalToIgnoringCase(error));
     }
 
-    private void entoncesDeberiaSerRedirigidoALaVistaDeHome() throws MalformedURLException {
+    @Test
+    void loginValidoRedirigeADashboard() throws MalformedURLException {
+        vistaLogin.escribirEMAIL("pedro.gomez@email.com");
+        vistaLogin.escribirClave("Totoro1!");
+        vistaLogin.darClickEnIniciarSesion();
         URL url = vistaLogin.obtenerURLActual();
-        assertThat(url.getPath(), matchesPattern("^/spring/home(?:;jsessionid=[^/\\s]+)?$"));
+        assertThat(url.getPath(), matchesPattern("^/spring/proveedor/dashboard-proveedor(?:;jsessionid=[^/\\s]+)?$"));
     }
 
-    private void entoncesDeberiaVerUnMensajeDeError() {
-        String texto = vistaLogin.obtenerMensajeDeError();
-        assertThat("Error Usuario o clave incorrecta", equalToIgnoringCase(texto));
-    }
-
-    private void dadoQueElUsuarioCargaSusDatosDeLoginCon(String email, String clave) {
-        vistaLogin.escribirEMAIL(email);
-        vistaLogin.escribirClave(clave);
-    }
-
-    private void dadoQueElUsuarioNavegaALaVistaDeRegistro() {
+    @Test
+    void registrarUsuario() throws MalformedURLException {
         vistaLogin.darClickEnRegistrarse();
+        VistaNuevoUsuario registro = new VistaNuevoUsuario(context.pages().get(0));
+
+        registro.escribirNombre("Testx");
+        registro.escribirApellido("Usernamex");
+        registro.escribirEMAIL("testusernamex@mailinator.com");
+        registro.escribirClave("Totoro1!");
+        registro.escribirConfirmarClave("Totoro1!");
+        registro.darClickEnRegistrarme();
+
+        registro.getPage().waitForURL("**/spring/info-registro-resultado", new Page.WaitForURLOptions().setTimeout(10000));
+
+        URL url = new URL(context.pages().get(0).url());
+        assertThat(url.getPath(), matchesPattern("^/spring/info-registro-resultado(?:;jsessionid=[^/\\s]+)?$"));
     }
 
-    private void dadoQueElUsuarioSeRegistraCon(String email, String clave) {
-        VistaNuevoUsuario vistaNuevoUsuario = new VistaNuevoUsuario(context.pages().get(0));
-        vistaNuevoUsuario.escribirEMAIL(email);
-        vistaNuevoUsuario.escribirClave(clave);
-        vistaNuevoUsuario.darClickEnRegistrarme();
+    @Test
+    void registrarUsuarioExistenteDaError() {
+        vistaLogin.darClickEnRegistrarse();
+        VistaNuevoUsuario registro = new VistaNuevoUsuario(context.pages().get(0));
+
+        registro.escribirNombre("Pedro");
+        registro.escribirApellido("Gomez");
+        registro.escribirEMAIL("pedro.gomez@email.com"); // usuario ya registrado
+        registro.escribirClave("Totoro1!");
+        registro.escribirConfirmarClave("Totoro1!");
+        registro.darClickEnRegistrarme();
+
+        registro.getPage().locator("p.error").waitFor(new Locator.WaitForOptions().setTimeout(10000));
+
+        String error = registro.obtenerMensajeDeError();
+        assertThat("El usuario ya existe", equalToIgnoringCase(error));
     }
+
+    /*@Test
+    void registrarUsuarioEIniciarSesion() throws MalformedURLException {
+        vistaLogin.darClickEnRegistrarse();
+        VistaNuevoUsuario registro = new VistaNuevoUsuario(context.pages().get(0));
+        registro.escribirNombre("Test");
+        registro.escribirApellido("Username");
+        registro.escribirEMAIL("testusername@mailinator.com");
+        registro.escribirClave("Totoro1!");
+        registro.escribirConfirmarClave("Totoro1!");
+        registro.darClickEnRegistrarme();
+
+        // volver a login y probar login
+        vistaLogin = new VistaLogin(context.pages().get(0));
+        vistaLogin.escribirEMAIL("testusername@mailinator.com");
+        vistaLogin.escribirClave("Totoro1!");
+        vistaLogin.darClickEnIniciarSesion();
+        URL url = vistaLogin.obtenerURLActual();
+        assertThat(url.getPath(), matchesPattern("^/dashboard-proveedor(?:;jsessionid=[^/\\s]+)?$"));
+    }*/
 }

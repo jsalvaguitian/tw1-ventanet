@@ -36,7 +36,9 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.tallerwebi.dominio.entidades.Presupuesto;
+import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
+import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.presentacion.dto.PresupuestoRequest;
 import com.tallerwebi.presentacion.dto.PresupuestoItemRequest;
 import com.tallerwebi.dominio.entidades.PresupuestoItem;
@@ -71,18 +73,53 @@ public class ControladorPresupuesto {
     }
     
     @GetMapping("/presupuesto")
-    public String mostrarFormulario(Model model) {
-        // agregar tipos de producto al modelo para llenar el select
-        model.addAttribute("tiposProducto", servicioTipoProducto.obtener());
-        model.addAttribute("colores", servicioTablas.obtenerColores());
-        model.addAttribute("materiales", servicioTablas.obtenerMateriales());
-        model.addAttribute("altos", servicioTablas.obtenerAltos());
-        model.addAttribute("anchos", servicioTablas.obtenerAnchos());
-        model.addAttribute("provincias", servicioTablas.obtenerProvincias());
+    public String mostrarFormulario(Model model, HttpServletRequest request) {
+        // Validar si el usuario está logueado
+        UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+        if (usuarioSesion == null) {
+            return "redirect:/login";
+        }
 
-        // tipoVentana will be loaded dynamically based on the selected tipoProducto via
-        // AJAX
-        return "presupuesto";
+        try {
+            // Buscar usuario por email
+            var usuario = servicioUsuario.buscarPorMail(usuarioSesion.getUsername());
+
+            // Solo los clientes pueden acceder
+            if (usuario == null || !(usuario instanceof Cliente)) {
+                return "redirect:/home";
+            }
+
+            // Cargar datos del formulario
+            model.addAttribute("tiposProducto", servicioTipoProducto.obtener());
+            model.addAttribute("colores", servicioTablas.obtenerColores());
+            model.addAttribute("materiales", servicioTablas.obtenerMateriales());
+            model.addAttribute("altos", servicioTablas.obtenerAltos());
+            model.addAttribute("anchos", servicioTablas.obtenerAnchos());
+            model.addAttribute("provincias", servicioTablas.obtenerProvincias());
+
+            // Cargar presupuestos del cliente logueado
+            List<Presupuesto> presupuestos = servicioPresupuesto.obtenerPresupuestosPorIdUsuario(usuario.getId());
+            model.addAttribute("presupuestos", presupuestos);
+
+            return "presupuesto";
+
+        } catch (UsuarioInexistenteException e) {
+            // Usuario no encontrado → redirigir al login
+            return "redirect:/login";
+
+        } catch (NoHayProductoExistente e) {
+            // No hay productos o presupuestos → pasar listas vacías y mensaje
+            model.addAttribute("tiposProducto", new ArrayList<>());
+            model.addAttribute("colores", new ArrayList<>());
+            model.addAttribute("materiales", new ArrayList<>());
+            model.addAttribute("altos", new ArrayList<>());
+            model.addAttribute("anchos", new ArrayList<>());
+            model.addAttribute("provincias", new ArrayList<>());
+            model.addAttribute("presupuestos", new ArrayList<>());
+            model.addAttribute("errorProductos", "Todavía no hay productos o presupuestos disponibles.");
+
+            return "presupuesto";
+        }
     }
 
     /**

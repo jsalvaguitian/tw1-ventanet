@@ -24,7 +24,7 @@
       <h1 class="display-4">Aberturas de Calidad</h1>
       <div class="hero-content">
         <p class="lead">Presupuestos optimizados para tus productos</p>
-        <a href="presupuesto.html" class="btn btn-primary btn-lg">Cotizar Presupuesto</a>
+        <a th:href="@{${usuarioLogueado != null ? '/presupuesto' : '/login'}}" class="btn btn-primary btn-lg shadow-sm hero-btn">Cotizar Presupuesto</a>
       </div>
     </div>
   </header>
