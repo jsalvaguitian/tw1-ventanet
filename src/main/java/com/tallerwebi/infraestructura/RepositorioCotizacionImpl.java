@@ -2,11 +2,8 @@ package com.tallerwebi.infraestructura;
 
 import java.util.List;
 
-import javax.persistence.criteria.JoinType;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

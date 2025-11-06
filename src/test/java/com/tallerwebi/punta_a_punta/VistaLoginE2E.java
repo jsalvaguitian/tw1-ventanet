@@ -80,9 +80,9 @@ public class VistaLoginE2E {
         vistaLogin.darClickEnRegistrarse();
         VistaNuevoUsuario registro = new VistaNuevoUsuario(context.pages().get(0));
 
-        registro.escribirNombre("Testx");
-        registro.escribirApellido("Usernamex");
-        registro.escribirEMAIL("testusernamex@mailinator.com");
+        registro.escribirNombre("Test56");
+        registro.escribirApellido("Username56");
+        registro.escribirEMAIL("testusername56@mailinator.com");
         registro.escribirClave("Totoro1!");
         registro.escribirConfirmarClave("Totoro1!");
         registro.darClickEnRegistrarme();

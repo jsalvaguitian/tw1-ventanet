@@ -1,53 +1,53 @@
 package com.tallerwebi.presentacion;
 
-import java.util.stream.Collectors;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.tallerwebi.dominio.entidades.Localidad;
-import com.tallerwebi.dominio.entidades.Partido;
-import com.tallerwebi.dominio.entidades.TipoVentana;
-import com.tallerwebi.dominio.servicios.ServicioTablas;
-import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
-import com.tallerwebi.dominio.servicios.ServicioTipoVentana;
-import com.tallerwebi.dominio.servicios.ServicioProducto;
-import com.tallerwebi.dominio.servicios.ServicioCotizacion;
-import com.tallerwebi.dominio.servicios.ServicioUsuario;
-import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
+import com.tallerwebi.dominio.entidades.Alto;
+import com.tallerwebi.dominio.entidades.Ancho;
+import com.tallerwebi.dominio.entidades.Cliente;
+import com.tallerwebi.dominio.entidades.Color;
+// TipoVentana import removed (duplicate)
 import com.tallerwebi.dominio.entidades.Cotizacion;
 import com.tallerwebi.dominio.entidades.CotizacionItem;
-import com.tallerwebi.dominio.entidades.Producto;
-import com.tallerwebi.dominio.entidades.Cliente;
-import com.tallerwebi.dominio.enums.EstadoCotizacion;
-import java.time.LocalDate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import java.util.ArrayList;
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.tallerwebi.dominio.entidades.Localidad;
+import com.tallerwebi.dominio.entidades.MaterialDePerfil;
+import com.tallerwebi.dominio.entidades.Partido;
 import com.tallerwebi.dominio.entidades.Presupuesto;
+import com.tallerwebi.dominio.entidades.PresupuestoItem;
+import com.tallerwebi.dominio.entidades.Producto;
+import com.tallerwebi.dominio.entidades.TipoProducto;
+import com.tallerwebi.dominio.entidades.TipoVentana;
+import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
-import com.tallerwebi.presentacion.dto.PresupuestoRequest;
+import com.tallerwebi.dominio.servicios.ServicioCotizacion;
+import com.tallerwebi.dominio.servicios.ServicioProducto;
+import com.tallerwebi.dominio.servicios.ServicioTablas;
+import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
+import com.tallerwebi.dominio.servicios.ServicioTipoVentana;
+import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.PresupuestoItemRequest;
-import com.tallerwebi.dominio.entidades.PresupuestoItem;
-import com.tallerwebi.dominio.entidades.TipoProducto;
-import com.tallerwebi.dominio.entidades.Ancho;
-import com.tallerwebi.dominio.entidades.Alto;
-import com.tallerwebi.dominio.entidades.MaterialDePerfil;
-import com.tallerwebi.dominio.entidades.Color;
-// TipoVentana import removed (duplicate)
+import com.tallerwebi.presentacion.dto.PresupuestoRequest;
+import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 @Controller
 public class ControladorPresupuesto {
