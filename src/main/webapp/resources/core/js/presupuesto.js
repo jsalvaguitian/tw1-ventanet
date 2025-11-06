@@ -1,6 +1,7 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     const filtros = [
+        "tipoProducto",
         "tipoVentana",
         "ancho",
         "alto",
@@ -19,13 +20,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    listenerProvincia();
+    listenerLocalidad();
+
     // Llamar búsqueda inicial al cargar
     buscarProductos();
 });
 
 let productosACotizar = [];
 
+
+
 async function buscarProductos() {
+    const tipoProductoId = document.getElementById("tipoProducto").value || "";
     const tipoVentanaId = document.getElementById("tipoVentana").value || "";
     const anchoId = document.getElementById("ancho").value || "";
     const altoId = document.getElementById("alto").value || "";
@@ -35,7 +42,9 @@ async function buscarProductos() {
     const conPremarco = document.getElementById("premarco").checked;
     const conBarrotillos = document.getElementById("barrotillos").checked;
 
+
     const params = new URLSearchParams({
+        tipoProductoId,
         tipoVentanaId,
         anchoId,
         altoId,
@@ -53,9 +62,6 @@ async function buscarProductos() {
         contenedor.innerHTML = "";
 
         if (productos.length === 0) {
-
-            let cardHTML = '<div class="row">';           
-
             contenedor.innerHTML = `
                 <div class="col-12 text-center">
                     <p class="text-muted">No se encontraron productos</p>
@@ -63,90 +69,52 @@ async function buscarProductos() {
             return;
         }
 
-        productos.forEach((p, index) => {
+        // 🔹 Contenedor flexible y responsivo
+        const rowContainer = document.createElement("div");
+        rowContainer.className = "row justify-content-center text-center";
 
+        productos.forEach(p => {
             const cotizado = isCotizado(p.id);
             const btnClass = cotizado ? 'btn-secondary' : 'btn-primary';
             const btnText = cotizado ? 'Quitar' : 'Cotizar';
             const checkClass = cotizado ? '' : 'd-none';
 
-            console.log('imagen', p.imagenUrl);
-
-            // const cardHTML = `
-            //     <div class="col-md-6 mb-4">
-            //         <div class="card shadow-sm">
-            //             <div class="row g-0">
-            //                 <div class="col-md-3">
-            //                     <img th:src="@{${p.imagenUrl}}" class="img-fluid rounded-start" th:alt="${p.nombre}">
-            //                 </div>
-            //                 <div class="col-md-6">
-            //                     <div class="card-body">
-            //                         <h5 class="card-title">${p.nombre}</h5>
-            //                         <p class="card-text">${p.descripcion || ''}</p>
-            //                         <span class="badge bg-primary">${p.tipoProducto?.nombre || ''}</span>
-            //                         <span class="badge bg-secondary">${p.marca?.nombre || ''}</span>
-            //                     </div>
-            //                 </div>
-            //                 <div class="col-md-3 d-flex flex-column justify-content-center align-items-center">
-                               
-            //                     <button class="btn btn-sm btn-cotizar ${btnClass}" 
-            //                                     data-producto-id="${p.id}" 
-            //                                     onclick="cotizarProducto(this, ${p.id}, '${p.nombre}')">
-            //                                 ${btnText}
-            //                             </button>
-                                        
-            //                             <span class="cotizado-check ms-3 text-success ${checkClass}">
-            //                                 <i class="fas fa-check-circle fa-lg"></i>
-            //                             </span>
-            //                 </div>
-            //             </div>
-            //         </div>
-            //     </div>
-            // `;
-            let cardHTML = `
-            <div class="col-md-5 mb-4 d-flex justify-content-center">
-                    <div class="card producto-card h-100 shadow-sm" data-id="${p.id}">
-                        <div class="row g-0">
-                            <div class="col-md-5 d-flex align-items-center">
-                                <img src="/spring${p.imagenUrl}" 
-                                     class="img-fluid rounded-start mx-auto" 
-                                     alt="${p.nombre}">
+            const cardHTML = `
+                <div class="col-12 col-sm-6 col-md-4 d-flex justify-content-center mb-4">
+                    <div class="card producto-card h-100 shadow-sm w-100" data-id="${p.id}">
+                        <img src="/spring${p.imagenUrl}" 
+                             class="card-img-top img-fluid rounded-top" 
+                             alt="${p.nombre}" 
+                             style="object-fit: cover; height: 200px;">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <h5 class="card-title">${p.nombre}</h5>
+                                <p class="card-text">${p.descripcion}</p>
                             </div>
-                            <div class="col-md-7">
-                                <div class="card-body d-flex flex-column justify-content-between">
-                                    <div>
-                                        <h5 class="card-title">${p.nombre}</h5>
-                                        <p class="card-text">${p.descripcion}</p>
-                                    </div>
-                                    <div class="mt-auto d-flex justify-content-between align-items-center">
-                                        
-                                        <button type="button" class="btn btn-sm btn-cotizar ${btnClass}" 
-                                                data-producto-id="${p.id}" 
-                                                onclick="cotizarProducto(this, ${p.id}, '${p.nombre}')">
-                                            ${btnText}
-                                        </button>
-                                        
-                                        <span class="cotizado-check ms-3 text-success ${checkClass}">
-                                            <i class="fas fa-check-circle fa-lg"></i>
-                                        </span>
-                                    </div>
-                                </div>
+                            <div class="mt-auto d-flex justify-content-between align-items-center gap-2">
+                                <button type="button" 
+                                        class="btn btn-sm ${btnClass}" 
+                                        data-producto-id="${p.id}" 
+                                        onclick="cotizarProducto(this, ${p.id}, '${p.nombre}')">
+                                    ${btnText}
+                                </button>
+                                <span class="cotizado-check ms-3 text-success ${checkClass}">
+                                    <i class="fas fa-check-circle fa-lg"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
-            // Cierra la fila después de cada dos elementos (índices 1, 3, 5, etc.)
-            if ((index + 1) % 2 === 0) {
-                cardHTML += '</div><div class="row">';
-            }
-            contenedor.insertAdjacentHTML("beforeend", cardHTML);
+                </div>`;
+            rowContainer.insertAdjacentHTML("beforeend", cardHTML);
         });
+
+        contenedor.appendChild(rowContainer);
 
     } catch (error) {
         console.error("Error al obtener productos:", error);
     }
 }
+
 
 function mostrarImagen() {
     const tipoVentana = document.getElementById("tipoVentana").value;
@@ -167,8 +135,9 @@ function isCotizado(id) {
 
 function cotizarProducto(button, productoId, nombreProducto) {
     const cardBody = button.closest('.card-body');
-    const checkIcon = cardBody.querySelector('.cotizado-check');    
-    const productoIndex = productosACotizar.findIndex(item => item.id === productoId);     
+    const checkIcon = cardBody.querySelector('.cotizado-check');
+    //const productoIndex = productosACotizar.findIndex(item => item.id === productoId);     
+    const productoIndex = productosACotizar.indexOf(productoId);
 
     if (productoIndex !== -1) {
         productosACotizar.splice(productoIndex, 1);
@@ -186,38 +155,6 @@ function cotizarProducto(button, productoId, nombreProducto) {
     }
 
     console.log("Productos agregados:", productosACotizar);
-    // Aquí puedes llamar a una función para actualizar el contador de items en el menú.
-    // actualizarContadorCotizacion(); 
-}
-
-async function enviarSolicitudOld(event) {
-    event.preventDefault(); // evita el submit tradicional
-
-    console.log('Enviando productos para cotización:', productosACotizar);
-    if (productosACotizar.length === 0) {
-        alert("Debe seleccionar al menos un producto para cotizar.");
-        return false;
-    }
-
-    try {
-        const response = await fetch("/spring/cotizacion/previsualizar", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(productosACotizar)
-        });
-
-        if (!response.ok) throw new Error("Error al enviar cotización");
-
-        // Redirigir a la pantalla de detalle de cotización
-        const cotizacion = await response.json();
-        window.location.href = `/spring/cotizacion/detalle/${cotizacion.id}`;
-
-    } catch (error) {
-        console.error("Error al enviar la solicitud:", error);
-        alert("Ocurrió un error al generar la cotización.");
-    }
 }
 
 async function enviarSolicitud(event) {
@@ -233,18 +170,16 @@ async function enviarSolicitud(event) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
-            },            
+            },
             body: JSON.stringify({ productosIds: productosACotizar })
         });
 
         console.log('Response after sending cotization request:', response);
         if (response.ok) {
             const cotizaciones = await response.json();
-             // 🚀 CLAVE: Usamos la URL final del seguimiento
-             window.location.href = "/spring/cotizacion/previsualizar";
-             //window.location.href = response.url;
-             return;
-        }else{
+            window.location.href = "/spring/cotizacion/previsualizar";
+            return;
+        } else {
             throw new Error("Error al enviar cotización");
         }
 
@@ -252,6 +187,68 @@ async function enviarSolicitud(event) {
         console.error("Error al enviar la solicitud:", error);
         alert("Ocurrió un error al generar la cotización.");
     }
+}
+
+function listenerProvincia() {
+    const provinciaEl = document.getElementById('provincia');
+    const localidadEl = document.getElementById('localidad');
+    provinciaEl.addEventListener('change', function () {
+        const provId = this.value;
+        // limpiar opciones
+        localidadEl.innerHTML = '<option value="">Seleccione...</option>';
+        if (!provId) return;
+        // Llamada al endpoint que retorna JSON
+        fetch('/spring/presupuesto/provincia?provinciaId=' + encodeURIComponent(provId))
+            .then(resp => {
+                if (!resp.ok) throw new Error('Error en la respuesta');
+                return resp.json();
+            })
+            .then(list => {
+                list.forEach(it => {
+                    const opt = document.createElement('option');
+                    opt.value = it.id_localidad;
+                    opt.textContent = it.nombre;
+                    localidadEl.appendChild(opt);
+                });
+            })
+            .catch(err => {
+                console.error('No se pudieron cargar las localidades', err);
+                showToast('No se pudieron cargar las localidades para la provincia seleccionada.');
+            });
+    });
+
+
+}
+
+function listenerLocalidad() {
+    const localidadEl = document.getElementById('localidad');
+    const partidoEl = document.getElementById('partido');
+
+    localidadEl.addEventListener('change', function () {
+        const localidadId = this.value;
+        // limpiar opciones
+        partidoEl.innerHTML = '<option value="">Seleccione...</option>';
+        if (!localidadId) return;
+        // Llamada al endpoint que retorna JSON
+        fetch('/spring/presupuesto/localidad?localidadId=' + encodeURIComponent(localidadId))
+            .then(resp => {
+                if (!resp.ok) throw new Error('Error en la respuesta');
+                return resp.json();
+            })
+            .then(list => {
+                list.forEach(it => {
+                    const opt = document.createElement('option');
+                    opt.value = it.id_partido;
+                    opt.textContent = it.nombre;
+                    partidoEl.appendChild(opt);
+                });
+            })
+            .catch(err => {
+                console.error('No se pudieron cargar los partidos', err);
+                showToast('No se pudieron cargar los partidos para la localidad seleccionada.');
+            });
+
+    });
 }
 
 
