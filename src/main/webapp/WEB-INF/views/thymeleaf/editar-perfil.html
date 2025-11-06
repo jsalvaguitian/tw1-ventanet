@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/perfil-usuario.css}">
+    <title>editar Perfil</title>
+</head>
+    <body>
+        <div th:replace="fragments/header :: header"></div>
+        <main>
+        <div class="fondo">
+        <form th:action="@{/usuarios/editar}" method="post" class="form-editar-perfil">
+        <h2>Editar Perfil</h2>
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" id="nombre" name="nombre" th:value="${usuario.nombre}" class="form-control" required accept-charset="UTF-8">
+        </div>
+
+        <div class="mb-3">
+            <label for="apellido" class="form-label">Apellido</label>
+            <input type="text" id="apellido" name="apellido" th:value="${usuario.apellido}" class="form-control" required accept-charset="UTF-8">
+        </div>
+
+        <div class="mb-3">
+            <label for="nombreUsuario" class="form-label">Nombre de usuario</label>
+            <input type="text" id="nombreUsuario" name="nombreUsuario" th:value="${usuario.username}" class="form-control" required accept-charset="UTF-8">
+        </div>
+
+        <div class="mb-3">
+            <label for="telefono" class="form-label">Teléfono</label>
+            <input type="text" id="telefono" name="telefono" th:value="${usuario.telefono}" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label for="direccion" class="form-label">Dirección</label>
+            <input type="text" id="direccion" name="direccion" th:value="${usuario.direccion}" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a th:href="@{/usuarios/perfil-usuario}" class="ml-3 cancelar btn-secondary">Cancerlar</a>
+    </form>
+    </div>
+    </main>
+</body>
+</html>
+
+
+

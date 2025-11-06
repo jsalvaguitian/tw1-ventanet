@@ -1,208 +1,243 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Ventanet Dashboard</title>
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+        <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" 
+          integrity="sha512-..." 
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
 </head>
+
 <body>
-<nav class="navbar d-md-none px-3" style="box-shadow:0 2px 8px rgba(0,0,0,0.04);">
-    <span class="navbar-title">Ventanet</span>
-    <button class="hamburger btn me-2" id="menuBtn">&#9776;</button>
-    <div class="dropdown" id="dropdownMenu" style="display:none;position:absolute;top:56px;left:0;width:100%;z-index:1200;">
-        <div class="desplegable shadow p-2">
-            <a class="dropdown-item active" href="#">Dashboard</a>
+    <nav class="navbar d-md-none px-3" style="box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <span class="navbar-title">Ventanet</span>
+        <button class="hamburger btn me-2" id="menuBtn">&#9776;</button>
+        <div class="dropdown" id="dropdownMenu"
+            style="display:none;position:absolute;top:56px;left:0;width:100%;z-index:1200;">
+            <div class="desplegable shadow p-2">
+                <a class="dropdown-item active" href="#">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+         <a th:href="@{/}" ><h2>Ventanet</h2></a>
+        <ul>
+            <li class="active">Dashboard</li>
+        </ul>
+    </div>
+
+    <div class="main" id="mainContent">
+        <div class="header row align-items-center mb-4">
+            <!-- Buscador -->
+            <div class="col-12 col-md-8 mb-2 mb-md-0">
+                <input type="text" class="form-control" placeholder="Buscar por cotización, Ubicación, Fecha, etc."
+                    id="searchInput">
+            </div>
+            <div class="col-12 col-md-4 d-flex align-items-center justify-content-md-end">
+                <div class="profile-section">
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop&crop=face"
+                        alt="Cliente" class="profile-img">
+                    <div class="profile-info">
+                        <h3><span th:text="${apellidoCliente}"></span>, <span th:text="${nombreCliente}"></span></h3>
+                        <p><span th:text="${rolCliente}"></span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="stats mt-3 mb-3 d-flex justify-content-around">
+                <div class="stat text-center">
+                    <span class="number" th:text="${presupuestos.size()}"></span><br>
+                    <span class="label">Total de Presupuestos</span>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filters mb-3 d-flex flex-wrap align-items-center">
+                <select id="dateFilter" class="form-select w-auto me-2 mb-2 mb-md-0">
+                    <option value="all">Todos</option>
+                    <option value="today">Hoy</option>
+                    <option value="yesterday">Ayer</option>
+                    <option value="last7">Últimos 7 días</option>
+                    <option value="last30">Últimos 30 días</option>
+                    <option value="month">Este Mes</option>
+                </select>
+                <button id="applyFilter" class="btn btn-primary me-2 mb-2 mb-md-0">Aplicar</button>
+                <a class="btn btn-success mb-2 mb-md-0" th:href="@{/presupuesto}">Crear Cotización</a>
+            </div>
+        </div>
+
+        <!-- Grilla de cotizaciones -->
+        <!-- Grilla de cotizaciones -->
+        <div class="events-table">
+            <div id="eventsGrid" class="events-grid"></div>
         </div>
     </div>
-</nav>
 
-<div class="sidebar" id="sidebar">
-    <h2>Ventanet</h2>
-    <ul>
-        <li class="active">Dashboard</li>
-    </ul>
-</div>
-
-<div class="main" id="mainContent">
-    <div class="header row align-items-center mb-4">
-        <!-- Buscador -->
-        <div class="col-12 col-md-8 mb-2 mb-md-0">
-            <input type="text" class="form-control" placeholder="Buscar por cotización, Ubicación, Fecha, etc." id="searchInput">
-        </div>
-        <div class="col-12 col-md-4 d-flex align-items-center justify-content-md-end">
-            <div class="profile-section">
-                <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop&crop=face"
-                     alt="Cliente" class="profile-img">
-                <div class="profile-info">
-                    <h3><span th:text="${apellidoCliente}"></span>, <span th:text="${nombreCliente}"></span></h3>
-                    <p><span th:text="${rolCliente}"></span></p>
+    <!-- Modal para detalles -->
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalle de la Cotización</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="eventModalBody">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
-
-        <!-- Estadísticas -->
-        <div class="stats mt-3 mb-3 d-flex justify-content-around">
-            <div class="stat text-center">
-                <span class="number" th:text="${cotizaciones.size()}"></span><br>
-                <span class="label">Total de Cotizaciones</span>
-            </div>
-        </div>
-
-        <!-- Filtros -->
-        <div class="filters mb-3 d-flex flex-wrap align-items-center">
-            <select id="dateFilter" class="form-select w-auto me-2 mb-2 mb-md-0">
-                <option value="all">Todos</option>
-                <option value="today">Hoy</option>
-                <option value="yesterday">Ayer</option>
-                <option value="last7">Últimos 7 días</option>
-                <option value="last30">Últimos 30 días</option>
-                <option value="month">Este Mes</option>
-            </select>
-            <button id="applyFilter" class="btn btn-primary me-2 mb-2 mb-md-0">Aplicar</button>
-            <a class="btn btn-success mb-2 mb-md-0" th:href="@{/presupuesto}">Crear Cotización</a>
-        </div>
     </div>
 
-    <!-- Grilla de cotizaciones -->
-    <!-- Grilla de cotizaciones -->
-    <div class="events-table">
-        <div id="eventsGrid" class="events-grid"></div>
-    </div>
-</div>
 
-<!-- Modal para detalles -->
-<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Detalle de la Cotización</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="eventModalBody">
-                <!-- Se llenará dinámicamente -->
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-    </div>
-</div>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var events = [];
+        try {
+            var raw = /*[[${presupuestosJson}]]*/ '[]';
+            if (raw == null || raw === '') raw = '[]';
+            events = (typeof raw === 'string') ? JSON.parse(raw) : raw;
+            if (!Array.isArray(events)) events = [];
+        } catch (e) {
+            console.error('Error parsing presupuestosJson', e);
+            events = [];
+        }
+        function renderGrid(list) {
+            const grid = document.getElementById('eventsGrid');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+
+            if (!list || list.length === 0) {
+                grid.innerHTML = '<div class="p-3">No hay presupuestos.</div>';
+                return;
+            }
+
+            // Crear tabla
+            const table = document.createElement('table');
+            table.className = 'table table-striped table-hover';
+
+            table.innerHTML = `
+        <thead>
+            <tr>
+                <th>Presupuesto</th>
+                <th>Fecha</th>
+                <th>Provincia</th>
+                <th>Localidad</th>
+                <th>Partido</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>`;
+
+            const tbody = table.querySelector('tbody');
+
+            list.forEach((c, i) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${c.fecha}</td>
+            <td>${c.provincia}</td>
+            <td>${c.localidad}</td>
+            <td>${c.partido}</td>
+            <td class="text-center">
+                <button class='btn btn-primary btn-sm' data-index='${i}' data-bs-toggle='modal' data-bs-target='#eventModal'>
+                    <i class="fa fa-eye"></i>
+                </button>
+            </td>`;
+                tbody.appendChild(row);
+            });
+
+            grid.appendChild(table);
+        }
 
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script th:inline="javascript">
-/*<![CDATA[*/
-var events = [];
-try {
-    var raw = /*[[${cotizacionesJson}]]*/ '[]';
-    if (raw == null || raw === '') raw = '[]';
-    events = (typeof raw === 'string') ? JSON.parse(raw) : raw;
-    if (!Array.isArray(events)) events = [];
-} catch (e) {
-    console.error('Error parsing cotizacionesJson', e);
-    events = [];
-}
-function renderGrid(list) {
-    const grid = document.getElementById('eventsGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    if (!list || list.length === 0) {
-        grid.innerHTML = '<div class="p-3">No hay cotizaciones.</div>';
-        return;
-    }
-    list.forEach((c, i) => {
-        const card = document.createElement('div');
-        card.className = 'event-card col-12 col-sm-6 col-lg-4 mb-3';
-        card.innerHTML = `
-            <div class='event-header'>Cotización #${i+1}</div>
-            <div class='event-body'>
-                <div><strong>Monto:</strong> $${c.monto}</div>
-                <div><strong>Estado:</strong> ${c.estado}</div>
-                
-                <div><strong>Fecha:</strong> ${c.fecha}</div>
-                <div><strong>Items:</strong> ${c.items ? c.items.length : 0}</div>
-            </div>
-            <div class='event-actions'>
-                <button class='action-btn btn btn-primary' data-index='${i}' data-bs-toggle='modal' data-bs-target='#eventModal'>Ver</button>
-            </div>`;
-        grid.appendChild(card);
-    });
-}
-//<div><strong>Proveedor:</strong> ${c.proveedor}</div>
+        // Inicializar grilla si existe
+        if (document.getElementById('eventsGrid')) renderGrid(events);
 
-// Inicializar grilla si existe
-if (document.getElementById('eventsGrid')) renderGrid(events);
-
-// Buscador
-var searchEl = document.getElementById('searchInput');
-if (searchEl) searchEl.addEventListener('input', function() {
-    const query = this.value.toLowerCase();
-    const filtered = events.filter(ev =>
-        (ev.proveedor && ev.proveedor.toLowerCase().includes(query)) ||
-        (ev.estado && ev.estado.toLowerCase().includes(query)) ||
-        (ev.fecha && ev.fecha.toLowerCase().includes(query))
-    );
-    renderGrid(filtered);
-});
-
-// Filtro de fechas (simple: compara strings yyyy-MM-dd)
-var applyFilterBtn = document.getElementById('applyFilter');
-if (applyFilterBtn) applyFilterBtn.onclick = function() {
-    const filter = document.getElementById('dateFilter').value;
-    const today = new Date();
-    function parseDate(str) {
-        if (!str) return new Date();
-        const parts = str.split('-');
-        return new Date(parts[0], parts[1]-1, parts[2]);
-    }
-    let filtered = events;
-    if (filter === 'today') {
-        const s = today.toISOString().slice(0,10);
-        filtered = events.filter(ev => ev.fecha === s);
-    } else if (filter === 'yesterday') {
-        const yesterday = new Date(today);
-        yesterday.setDate(today.getDate() - 1);
-        const s = yesterday.toISOString().slice(0,10);
-        filtered = events.filter(ev => ev.fecha === s);
-    } else if (filter === 'last7') {
-        const weekAgo = new Date(today);
-        weekAgo.setDate(today.getDate() - 7);
-        filtered = events.filter(ev => parseDate(ev.fecha) >= weekAgo && parseDate(ev.fecha) <= today);
-    } else if (filter === 'last30') {
-        const monthAgo = new Date(today);
-        monthAgo.setDate(today.getDate() - 30);
-        filtered = events.filter(ev => parseDate(ev.fecha) >= monthAgo && parseDate(ev.fecha) <= today);
-    } else if (filter === 'month') {
-        filtered = events.filter(ev => {
-            const d = parseDate(ev.fecha);
-            return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
+        // Buscador
+        var searchEl = document.getElementById('searchInput');
+        if (searchEl) searchEl.addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            const filtered = events.filter(ev =>
+                (ev.proveedor && ev.proveedor.toLowerCase().includes(query)) ||
+                (ev.estado && ev.estado.toLowerCase().includes(query)) ||
+                (ev.fecha && ev.fecha.toLowerCase().includes(query))
+            );
+            renderGrid(filtered);
         });
-    }
-    renderGrid(filtered);
-};
 
-// Modal: mostrar detalles
-document.addEventListener('click', function(e){
-    if(e.target && e.target.classList.contains('action-btn')){
-        const idx = e.target.getAttribute('data-index');
-        const c = events[idx];
-        const body = document.getElementById('eventModalBody');
-        body.innerHTML = `
+        // Filtro de fechas (simple: compara strings yyyy-MM-dd)
+        var applyFilterBtn = document.getElementById('applyFilter');
+        if (applyFilterBtn) applyFilterBtn.onclick = function () {
+            const filter = document.getElementById('dateFilter').value;
+            const today = new Date();
+            function parseDate(str) {
+                if (!str) return new Date();
+                const parts = str.split('-');
+                return new Date(parts[0], parts[1] - 1, parts[2]);
+            }
+            let filtered = events;
+            if (filter === 'today') {
+                const s = today.toISOString().slice(0, 10);
+                filtered = events.filter(ev => ev.fecha === s);
+            } else if (filter === 'yesterday') {
+                const yesterday = new Date(today);
+                yesterday.setDate(today.getDate() - 1);
+                const s = yesterday.toISOString().slice(0, 10);
+                filtered = events.filter(ev => ev.fecha === s);
+            } else if (filter === 'last7') {
+                const weekAgo = new Date(today);
+                weekAgo.setDate(today.getDate() - 7);
+                filtered = events.filter(ev => parseDate(ev.fecha) >= weekAgo && parseDate(ev.fecha) <= today);
+            } else if (filter === 'last30') {
+                const monthAgo = new Date(today);
+                monthAgo.setDate(today.getDate() - 30);
+                filtered = events.filter(ev => parseDate(ev.fecha) >= monthAgo && parseDate(ev.fecha) <= today);
+            } else if (filter === 'month') {
+                filtered = events.filter(ev => {
+                    const d = parseDate(ev.fecha);
+                    return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
+                });
+            }
+            renderGrid(filtered);
+        };
+
+        // Modal: mostrar detalles
+        document.addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('action-btn')) {
+                const idx = e.target.getAttribute('data-index');
+                const c = events[idx];
+                const body = document.getElementById('eventModalBody');
+                body.innerHTML = `
 
             <p><strong>Monto:</strong> $${c.monto}</p>
             <p><strong>Fecha:</strong> ${c.fecha}</p>
-            <div><strong>Items:</strong><ul>${(c.items||[]).map(it=>`<li>${it.producto} - Cant: ${it.cantidad} - Precio: $${it.precio}</li>`).join('')}</ul></div>
+            <div><strong>Items:</strong><ul>${(c.items || []).map(it => `<li>${it.producto} - Cant: ${it.cantidad} - Precio: $${it.precio}</li>`).join('')}</ul></div>
         `;
-    }
-});
-//            <p><strong>Proveedor:</strong> ${c.proveedor}</p>
-/*]]>*/
+            }
+        });
+        //            <p><strong>Proveedor:</strong> ${c.proveedor}</p>
+        /*]]>*/
 
-</script>
+    </script>
 
-<!-- Crear Cotización navega a /presupuesto (formulario completo) -->
+    <!-- Crear Cotización navega a /presupuesto (formulario completo) -->
+
+    <!-- FOOTER -->
+    <div th:replace="fragments/footer :: footer-dashboard"></div>
+    
 </body>
 </html>

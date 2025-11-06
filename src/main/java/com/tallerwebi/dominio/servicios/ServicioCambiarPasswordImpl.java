@@ -42,4 +42,18 @@ public class ServicioCambiarPasswordImpl implements ServicioCambiarPassword {
         return true;
     }
 
+    @Override
+    @Transactional
+    public boolean cambiarPasswordUsuarioLogueado(String nuevaPassword, Long idUsuario) {
+        Usuario usuario = repositorioUsuario.buscarPorId(idUsuario);
+        if (usuario == null)
+            return false;
+
+        String contraseniaHasheada = "";
+        contraseniaHasheada = PasswordUtil.hashear(nuevaPassword);
+        usuario.setPassword(contraseniaHasheada);
+        repositorioUsuario.modificar(usuario);
+        return true;
+    }
+
 }
