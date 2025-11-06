@@ -57,9 +57,9 @@
             </p>
 
             <p><strong>Stock:</strong> <span th:text="${producto.stock}"></span> unidades</p>
-            <p class="precio">Precio: $<span th:text="${producto.precio}"></span></p>
+            <p th:if="${proveedor != null}" class="precio">Precio: $<span th:text="${producto.precio}"></span></p>
 
-            <a th:href="@{'/catalogo/' + ${proveedor.id}}" class="btn btn-secondary volver-btn"> Volver al catálogo</a>
+            <a th:if="${proveedor != null}" th:href="@{'/catalogo/' + ${proveedor.id}}" class="btn btn-secondary volver-btn"> Volver al catálogo</a>
         </div>
     </div>
 </div>

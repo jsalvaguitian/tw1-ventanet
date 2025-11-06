@@ -3,7 +3,6 @@ package com.tallerwebi.dominio.entidades;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -78,7 +77,7 @@ public class Producto {
     private String modelo;
 
     @ManyToOne
-    private TipoMaterial TipoMaterial;
+    private TipoMaterial tipoMaterial;
 
     private Boolean aceptaEnvio;
     
@@ -100,11 +99,11 @@ public class Producto {
     }
 
     public TipoMaterial getTipoMaterial() {
-        return TipoMaterial;
+        return tipoMaterial;
     }
 
     public void setTipoMaterial(TipoMaterial tipoMaterial) {
-        TipoMaterial = tipoMaterial;
+        tipoMaterial = tipoMaterial;
     }
 
     public Boolean getAceptaEnvio() {
