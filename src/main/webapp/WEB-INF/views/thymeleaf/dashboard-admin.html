@@ -10,11 +10,29 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" th:href="@{/css/dashboard-admin.css}">
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.dashboardData = {
+            usuarios: [[${ usuariosJson }]],
+            totalClientes: [[${ totalClientes }]],
+            totalProveedores: [[${ totalProveedores }]],
+            totalUsuarios: [[${ totalUsuarios }]]
+        };
+        /*]]>*/
+    </script>
+
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script th:src="@{/js/dashboard-admin.js}" defer></script>
+
 </head>
 
 <body>
     <div th:replace="navbar-admin :: navbar"></div>
     <main>
+
+
+
         <div class="d-flex">
             <div class="content p-4 w-100">
 
@@ -42,7 +60,10 @@
                 </div>
             </div>
         </div>
-
+        <section class="dashboard-container">
+            <div id="grafico_usuarios" class="card"></div>
+            <!-- <div id="tabla_usuarios" class="card"></div>-->
+        </section>
         <div class="events-table">
             <table class="table table-striped">
                 <thead>
@@ -62,8 +83,10 @@
                     </tr>
                 </tbody>
             </table>
-                
+
         </div>
+
+
     </main>
 </body>
 
