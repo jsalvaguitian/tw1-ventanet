@@ -144,7 +144,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
             hql += "AND LOWER(p.nombre) LIKE LOWER(:busqueda) ";
 
         if (tipoProductoId != null)
-            hql += "AND p.tipoProducto.id =:tipoProductoId";
+            hql += "AND p.tipoProducto.id =:tipoProductoId ";
 
         if (tipoVentanaId != null)
             hql += "AND p.tipoVentana.id =: tipoVentanaId";
