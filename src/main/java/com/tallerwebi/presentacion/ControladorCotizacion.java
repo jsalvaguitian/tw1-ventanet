@@ -102,15 +102,38 @@ public class ControladorCotizacion {
 
     @PostMapping("/{id}/cambiar-estado/{nuevoEstado}")
     @ResponseBody
-    public ModelAndView cambiarEstadoCotizacion(@PathVariable Long id, @PathVariable String nuevoEstado)
+    public ModelAndView cambiarEstadoCotizacion(@PathVariable Long id, @PathVariable String nuevoEstado,
+            HttpServletRequest request)
             throws CotizacionesExistente {
 
+        UsuarioSesionDto usuarioSesionDto = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+        String rol_admin = "ADMIN";
+        String rol_cliente = "CLIENTE";
+        String rol_proveedor = "PROVEEDOR";
+
         if (nuevoEstado == null || nuevoEstado.isEmpty()) {
-            return new ModelAndView("redirect:/proveedor/dashboard-proveedor");
+            if (usuarioSesionDto == null) {
+                return new ModelAndView("redirect:/login");
+            } else {
+                if (rol_admin.equalsIgnoreCase(usuarioSesionDto.getRol())) {
+                    return new ModelAndView("redirect:/admin/dashboard-admin");
+                } else if (rol_cliente.equalsIgnoreCase(usuarioSesionDto.getRol())) {
+                    return new ModelAndView("redirect:/cliente/dashboard");
+                } else if (rol_proveedor.equalsIgnoreCase(usuarioSesionDto.getRol())) {
+                    return new ModelAndView("redirect:/proveedor/dashboard-proveedor");
+                }
+            }
         }
         EstadoCotizacion estado = EstadoCotizacion.valueOf(nuevoEstado);
         servicioCotizacion.actualizarEstado(id, estado);
-        return new ModelAndView("redirect:/proveedor/dashboard-proveedor");
+        if (rol_admin.equalsIgnoreCase(usuarioSesionDto.getRol())) {
+            return new ModelAndView("redirect:/admin/dashboard-admin");
+        } else if (rol_cliente.equalsIgnoreCase(usuarioSesionDto.getRol())) {
+            return new ModelAndView("redirect:/cliente/dashboard");
+        } else if (rol_proveedor.equalsIgnoreCase(usuarioSesionDto.getRol())) {
+            return new ModelAndView("redirect:/proveedor/dashboard-proveedor");
+        }
+        return null;
     }
 
     @PostMapping("/datos-previsualizar")
