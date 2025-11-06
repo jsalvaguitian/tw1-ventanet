@@ -193,7 +193,7 @@ INSERT INTO Proveedor (
 (14, 'Chapaferro S.A.', '30999999999', 'HIERROS_ESTRUCTURAS', 'https://www.chapaferro.com.ar', NULL, 'Rosario', -32.96, -60.65, '/img/logo-chapaferro.png'),
 (15, 'Tejas Fantini', '30101010101', 'MATERIALES_OBRA', 'https://www.tejasfantini.com.ar', NULL, 'Córdoba', -31.41, -64.19, 'img/logo-tejas-fantini.png'),
 (16, 'Adramet S.R.L.', '30202020202', 'HIERROS_ESTRUCTURAS', 'https://www.adramet.com.ar', NULL, 'Avellaneda', -34.67, -58.36, 'img/logo-adramet.jpg'),
-(17, 'El Ítalo Construcciones', '30303030303', 'MATERIALES_OBRA', 'https://www.elitalo.com.ar', NULL, 'San Miguel', -34.53, -58.70, 'img/logo-elitalo.png');
+(17, 'El Italo Construcciones', '30303030303', 'MATERIALES_OBRA', 'https://www.elitalo.com.ar', NULL, 'San Miguel', -34.53, -58.70, 'img/logo-elitalo.png');
 
 -- ===============================================
 -- PRODUCTOS (las FK deben existir antes)
