@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.servicios.ServicioClienteI;
+import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 public class ControladorClienteTest {
@@ -20,11 +21,13 @@ public class ControladorClienteTest {
     private ServicioClienteI servicioClienteI;
     private HttpServletRequest requestMock;
     private HttpSession sessionMock;
+    private ServicioCotizacion servicioCotizacion;
 
     @BeforeEach
     public void init() {
         servicioClienteI = mock(ServicioClienteI.class);
-        controladorCliente = new ControladorCliente(servicioClienteI, null);
+        servicioCotizacion = mock(ServicioCotizacion.class);
+        controladorCliente = new ControladorCliente(servicioClienteI, null,servicioCotizacion);
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);
     }

@@ -10,9 +10,12 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.tallerwebi.dominio.entidades.Cotizacion;
 import com.tallerwebi.dominio.entidades.Presupuesto;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.servicios.ServicioClienteI;
+import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 import com.tallerwebi.dominio.servicios.ServicioPresupuesto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
@@ -23,11 +26,14 @@ public class ControladorCliente {
 
     private final ServicioClienteI servicioClienteI;
     private final ServicioPresupuesto servicioPresupuesto; // inyección correcta
+    private ServicioCotizacion servicioCotizacion;
 
     // Constructor que Spring usa para inyección
-    public ControladorCliente(ServicioClienteI servicioClienteI, ServicioPresupuesto servicioPresupuesto) {
+    public ControladorCliente(ServicioClienteI servicioClienteI, ServicioPresupuesto servicioPresupuesto,
+    ServicioCotizacion servicioCotizacion) {
         this.servicioClienteI = servicioClienteI;
         this.servicioPresupuesto = servicioPresupuesto;
+        this.servicioCotizacion = servicioCotizacion;
     }
 
     @GetMapping("/dashboard")
@@ -51,9 +57,19 @@ public class ControladorCliente {
 
         try {
             List<Presupuesto> presupuestos = servicioPresupuesto.obtenerPresupuestosPorIdUsuario(usuarioSesion.getId());
+            List<Cotizacion> todasLasCotizaciones = servicioCotizacion.obtenerCotizacionPorIdCliente(usuarioSesion.getId());
+
+            
             if (presupuestos == null) {
                 presupuestos = new ArrayList<>();
             }
+
+            if(todasLasCotizaciones == null) {
+                todasLasCotizaciones = new ArrayList<>();
+            }
+
+            datosModelado.put("cotizaciones", todasLasCotizaciones);
+
             datosModelado.put("presupuestos", presupuestos);
             datosModelado.put("mensaje",
                     presupuestos.isEmpty() ? "No hay presupuestos" : "Hay presupuestos disponibles");
@@ -78,6 +94,7 @@ public class ControladorCliente {
                 datosModelado.put("presupuestosJson", "[]");
             }
         } catch (NoHayProductoExistente e) {
+            datosModelado.put("cotizaciones", new ArrayList<>());
             datosModelado.put("presupuestos", new ArrayList<>());
             datosModelado.put("error", "No hay presupuestos disponibles");
         }
