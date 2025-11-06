@@ -82,7 +82,7 @@ async function buscarProductos() {
             const cardHTML = `
                 <div class="col-12 col-sm-6 col-md-4 d-flex justify-content-center mb-4">
                     <div class="card producto-card h-100 shadow-sm w-100" data-id="${p.id}">
-                        <img src="/spring${p.imagenUrl}" 
+                        <img src="/spring/${p.imagenUrl}" 
                              class="card-img-top img-fluid rounded-top" 
                              alt="${p.nombre}" 
                              style="object-fit: cover; height: 200px;">
