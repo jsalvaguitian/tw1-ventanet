@@ -1,12 +1,12 @@
-package com.tallerwebi.config;
+package com.tallerwebi.infraestructura.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class RestTemplateConfig {
-    
+public class RestTemplateTestConfig {
+
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
