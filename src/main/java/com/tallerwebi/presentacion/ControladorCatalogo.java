@@ -2,15 +2,21 @@ package com.tallerwebi.presentacion;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,7 +41,9 @@ import com.tallerwebi.dominio.servicios.ServicioTipoVentana;
 import com.tallerwebi.presentacion.dto.ProductoDTO;
 import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
-
+import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
+import com.tallerwebi.dominio.servicios.ServicioCotizacion;
+import com.tallerwebi.dominio.entidades.Cliente;
 import jakarta.mail.Session;
 
 @Controller
@@ -47,6 +55,7 @@ public class ControladorCatalogo {
     private ServicioMarca servicioMarca;
     private ServicioTipoVentana servicioTipoVentana;
     private ServicioTablas servicioTablas;
+    private ServicioCotizacion servicioCotizacion;
 
     @Autowired
     public ControladorCatalogo(ServicioProducto servicioProducto, ServicioProveedorI servicioProveedor,
@@ -193,28 +202,34 @@ public class ControladorCatalogo {
 
         ModelMap modelMap = new ModelMap();
 
+        UsuarioSesionDto sesionDto = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+        boolean estaLogueado = (sesionDto!=null);
+
+        modelMap.put("estaLogueado", estaLogueado);
+
         List<TipoProducto> tiposProductos = servicioTipoProducto.obtener();
         modelMap.put("tiposProducto", tiposProductos);
 
-        List<Alto>alturas = servicioTablas.obtenerAltos();
+        List<Alto> alturas = servicioTablas.obtenerAltos();
         modelMap.put("alturas", alturas);
 
         List<Ancho> anchos = servicioTablas.obtenerAnchos();
         modelMap.put("anchos", anchos);
 
-        List<MaterialDePerfil>materialesPerfil = servicioTablas.obtenerMateriales();
+        List<MaterialDePerfil> materialesPerfil = servicioTablas.obtenerMateriales();
         modelMap.put("materialesPerfil", materialesPerfil);
 
-        List<Color>colores = servicioTablas.obtenerColores();
+        List<Color> colores = servicioTablas.obtenerColores();
         modelMap.put("colores", colores);
 
-        List<Producto> productos = servicioProducto.filtrarProductos(tipoProductoId, tipoVentanaId, anchoId, altoId, materialPerfilId,
+        List<Producto> productos = servicioProducto.filtrarProductos(tipoProductoId, tipoVentanaId, anchoId, altoId,
+                materialPerfilId,
                 colorId);
 
         // bbdd
 
-        if (productos == null || productos.isEmpty())  {
-            modelMap.put("mensaje", "No hay productos disponibles.");
+        if (productos == null || productos.isEmpty()) {
+            modelMap.put("mensaje", "No hay productos disponibles. Queres hacer una licitacion?");
             return new ModelAndView("catalogo", modelMap);
         }
 
@@ -240,9 +255,8 @@ public class ControladorCatalogo {
 
     @GetMapping("/detalle-producto/{productoId}")
     public ModelAndView verDetalleProducto(@PathVariable Long productoId) {
-          ModelMap modelMap = new ModelMap();
+        ModelMap modelMap = new ModelMap();
 
-       
         Producto producto = servicioProducto.obtenerPorId(productoId);
         if (producto == null) {
             modelMap.put("mensaje", "El producto no existe.");
@@ -254,8 +268,44 @@ public class ControladorCatalogo {
         return new ModelAndView("detalle-producto", modelMap);
     }
 
-    
 
+    @PostMapping("/agregar-item")
+    public ResponseEntity<String> agregarItem(@RequestParam Long productoId,
+                                              @RequestParam Integer cantidad,
+                                              HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Map<Long, Integer> cotizacionItems = (Map<Long, Integer>) session.getAttribute("cotizacionItems");
+
+        if (cotizacionItems == null) {
+            cotizacionItems = new HashMap<>();
+        }
+
+        cotizacionItems.merge(productoId, cantidad, Integer::sum); // si ya existe, suma
+
+        session.setAttribute("cotizacionItems", cotizacionItems);
+        return ResponseEntity.ok("Producto agregado a cotización");
+    }
+
+    @PostMapping("/confirmar")
+    public ResponseEntity<String> confirmarCotizacion(HttpServletRequest request) {
+        UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+
+        if (usuarioSesion == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Debe iniciar sesión");
+        }
+
+        Cliente cliente = new Cliente();
+        cliente.setId(usuarioSesion.getId());
+
+        Map<Long, Integer> cotizacionItems =
+                (Map<Long, Integer>) request.getSession().getAttribute("cotizacionItems");
+
+        servicioCotizacion.registrarCotizacion(cliente, cotizacionItems);
+
+        request.getSession().removeAttribute("cotizacionItems");
+
+        return ResponseEntity.ok("Cotización registrada con éxito");
+    }
     // -------------------------------------------------------------------------------------------------
     private List<UsuarioProvDTO> convertirProveedoresADtosFiltro(List<Proveedor> proveedores) {
         List<UsuarioProvDTO> usuarioProvDTOs = new ArrayList<>();
@@ -299,7 +349,5 @@ public class ControladorCatalogo {
         return productoDTOs;
 
     }
-
-
 
 }
