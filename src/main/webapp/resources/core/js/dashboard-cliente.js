@@ -32,6 +32,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 
+window.mostrarDetalleCotizacion = mostrarDetalleCotizacion;
+window.manejarAccionCotizacion = manejarAccionCotizacion;
+window.getEstadoHTML = getEstadoHTML;
+
 function mostrarDetalleCotizacion(id) {
     const url = '/spring/cotizacion/detalle/' + id;
 
@@ -148,15 +152,19 @@ function manejarAccionCotizacion(id, accion) {
                 // Puedes agregar headers si es necesario
             })
                 .then(response => {
+                    console.log('respuesta cambio estado',response);
                     if (!response.ok) {
+                        Swal.fire('¡Érror!', `Cotización #${id} no se pudo cambiar el estado a ${accion} correctamente.`, 'error');
                         throw new Error(`Error al cambiar estado: ${response.status}`);
                     }
-                    return response.json(); // O simplemente response.text()
+                    Swal.fire('¡Éxito!', `Cotización #${id} se cambió a ${accion} correctamente.`, 'success');
+                    location.reload(); 
+                   // return response.json(); // O simplemente response.text()
                 })
                 .then(data => {
                     Swal.fire('¡Éxito!', `Cotización #${id} ${accion} correctamente.`, 'success');
                     // 4. Recargar la tabla o el dashboard para reflejar el cambio
-                    // location.reload(); 
+                     location.reload(); 
                 })
                 .catch(error => {
                     Swal.fire('Error', error.message, 'error');
