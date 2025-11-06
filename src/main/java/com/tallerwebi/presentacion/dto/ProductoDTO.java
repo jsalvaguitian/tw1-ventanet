@@ -1,7 +1,7 @@
 package com.tallerwebi.presentacion.dto;
 
 public class ProductoDTO {
-    private long id;
+    private Long id;
     private String nombre;
     private double precio;
     private String descripcion;
@@ -14,6 +14,8 @@ public class ProductoDTO {
     private String tipoProducto;
     private String marca;
     private String tipoVentana;
+    
+    private String nombreProveedor;
     
     
     public ProductoDTO() {
@@ -118,5 +120,22 @@ public class ProductoDTO {
     public Integer getPresentacionId() {
         return presentacionId;
     }
+
+    public String getTipoVentana() {
+        return tipoVentana;
+    }
+
+    public void setTipoVentana(String tipoVentana) {
+        this.tipoVentana = tipoVentana;
+    }
+
+    public String getNombreProveedor() {
+        return nombreProveedor;
+    }
+
+    public void setNombreProveedor(String nombreProveedor) {
+        this.nombreProveedor = nombreProveedor;
+    }
+    
     
 }

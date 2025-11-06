@@ -214,7 +214,7 @@ public class ControladorCatalogo {
         // bbdd
 
         if (productos == null || productos.isEmpty())  {
-            modelMap.put("mensaje", "No hay productos cargados");
+            modelMap.put("mensaje", "No hay productos disponibles.");
             return new ModelAndView("catalogo", modelMap);
         }
 
@@ -254,6 +254,8 @@ public class ControladorCatalogo {
         return new ModelAndView("detalle-producto", modelMap);
     }
 
+    
+
     // -------------------------------------------------------------------------------------------------
     private List<UsuarioProvDTO> convertirProveedoresADtosFiltro(List<Proveedor> proveedores) {
         List<UsuarioProvDTO> usuarioProvDTOs = new ArrayList<>();
@@ -278,9 +280,11 @@ public class ControladorCatalogo {
 
             productoDTO.setId(uno.getId());
 
-            TipoProducto tipoProducto = servicioTipoProducto.obtenerPorId(uno.getTipoProducto().getId());
+            TipoProducto tipoProducto = uno.getTipoProducto();
 
-            Marca marca = servicioMarca.obtenerPorId(uno.getMarca().getId());
+            Marca marca = uno.getMarca();
+
+            Proveedor proveedor = uno.getProveedor();
 
             productoDTO.setTipoProducto(tipoProducto.getNombre());
 
@@ -288,10 +292,14 @@ public class ControladorCatalogo {
 
             productoDTO.setPrecio(uno.getPrecio());
 
+            productoDTO.setNombreProveedor(proveedor.getRazonSocial());
+
             productoDTOs.add(productoDTO);
         }
         return productoDTOs;
 
     }
+
+
 
 }
