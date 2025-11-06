@@ -1,12 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const stats = document.querySelectorAll(".stat");
+    //const stats = document.querySelectorAll(".stat");
     const rows = document.querySelectorAll("#tablaCotizaciones tbody tr");
     const searchInput = document.querySelector(".form-control[placeholder^='Buscar']");
     
     let currentFilter = "TODOS"; // Filtro de estado actual
-    let searchText = "";         // Texto de búsqueda actual
+    let searchText = "";
 
-    // Función que aplica ambos filtros
     function aplicarFiltros() {
         rows.forEach(row => {
             const estado = row.children[3].textContent.trim().toUpperCase();
@@ -20,37 +19,22 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Filtro de estado
-    stats.forEach(stat => {
-        stat.addEventListener("click", () => {
-            stats.forEach(s => s.classList.remove("active"));
-            stat.classList.add("active");
-            currentFilter = stat.getAttribute("data-filter");
-            aplicarFiltros();
-        });
+    document.addEventListener('click', function(e) {
+        // Verifica si el clic ocurrió en el botón o dentro de su icono
+        let target = e.target.closest('.btn-detalle-cotizacion');
+
+        if (target) {
+            const id = target.getAttribute('data-id');
+            // Llama a la función local
+            mostrarDetalleCotizacion(id); 
+        }
     });
-
-    // Filtro de búsqueda (en tiempo real)
-    searchInput.addEventListener("input", (e) => {
-        searchText = e.target.value.toLowerCase();
-        aplicarFiltros();
-    });
-
-    // Inicializar vista por defecto (mostrar todas)
-    aplicarFiltros();
-
-    // Asegúrate de incluir jQuery y SweetAlert2/Bootstrap Modal en tu HTML
 
 });
 
 window.mostrarDetalleCotizacion = mostrarDetalleCotizacion;
 window.manejarAccionCotizacion = manejarAccionCotizacion;
 window.getEstadoHTML = getEstadoHTML;
-
-/* sacado del .html */
-function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("collapsed");
-}
 
 function mostrarDetalleCotizacion(id) {
     const url = '/spring/cotizacion/detalle/' + id;
@@ -68,8 +52,7 @@ function mostrarDetalleCotizacion(id) {
 
             if (cotizacion.estado === 'PENDIENTE') {
                 botonesAccion = `
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="btn btn-success me-3" onclick="manejarAccionCotizacion(${cotizacion.id}, 'APROBADA')">Aceptar</button>
+            <div style="margin-top: 20px; text-align: center;">                
                 <button class="btn btn-danger" onclick="manejarAccionCotizacion(${cotizacion.id}, 'RECHAZADO')">Rechazar</button>
             </div>
         `;
@@ -77,7 +60,7 @@ function mostrarDetalleCotizacion(id) {
 
 
             let htmlContent = `
-        <p><strong>Cliente:</strong> ${cotizacion.cliente.nombre} ${cotizacion.cliente.apellido} </p>
+        <p><strong>Proveedor:</strong> ${cotizacion.proveedor.razonSocial}</p>
         <p><strong>Estado:</strong> ${estadoHTML}</p> 
         <p><strong>Monto Total:</strong> $${cotizacion.montoTotal.toFixed(2)}</p>
         
@@ -169,11 +152,14 @@ function manejarAccionCotizacion(id, accion) {
                 // Puedes agregar headers si es necesario
             })
                 .then(response => {
+                    console.log('respuesta cambio estado',response);
                     if (!response.ok) {
+                        Swal.fire('¡Érror!', `Cotización #${id} no se pudo cambiar el estado a ${accion} correctamente.`, 'error');
                         throw new Error(`Error al cambiar estado: ${response.status}`);
                     }
                     Swal.fire('¡Éxito!', `Cotización #${id} se cambió a ${accion} correctamente.`, 'success');
-                    location.reload();
+                    location.reload(); 
+                   // return response.json(); // O simplemente response.text()
                 })
                 .then(data => {
                     Swal.fire('¡Éxito!', `Cotización #${id} ${accion} correctamente.`, 'success');
