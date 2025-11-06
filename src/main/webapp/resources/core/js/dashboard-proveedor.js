@@ -43,6 +43,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 
+window.mostrarDetalleCotizacion = mostrarDetalleCotizacion;
+window.manejarAccionCotizacion = manejarAccionCotizacion;
+window.getEstadoHTML = getEstadoHTML;
+
 /* sacado del .html */
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
@@ -168,12 +172,13 @@ function manejarAccionCotizacion(id, accion) {
                     if (!response.ok) {
                         throw new Error(`Error al cambiar estado: ${response.status}`);
                     }
-                    return response.json(); // O simplemente response.text()
+                    Swal.fire('¡Éxito!', `Cotización #${id} se cambió a ${accion} correctamente.`, 'success');
+                    location.reload();
                 })
                 .then(data => {
                     Swal.fire('¡Éxito!', `Cotización #${id} ${accion} correctamente.`, 'success');
                     // 4. Recargar la tabla o el dashboard para reflejar el cambio
-                    // location.reload(); 
+                     location.reload(); 
                 })
                 .catch(error => {
                     Swal.fire('Error', error.message, 'error');
