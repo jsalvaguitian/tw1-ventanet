@@ -30,6 +30,7 @@ public interface ServicioProducto {
     List<ProductoGenericoDTO> obtenerProductosGenericos();
 
     List<Producto> buscarProductosParaCotizacion(
+            Long tipoProductoId,
             Long tipoVentanaId,
             Long anchoId,
             Long altoId,

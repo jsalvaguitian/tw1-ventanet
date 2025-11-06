@@ -231,7 +231,8 @@ public class ControladorProducto implements ServletContextAware {
 
     @GetMapping("/buscar")
     @ResponseBody
-    public List<Producto> buscarProductos(            
+    public List<Producto> buscarProductos(      
+            @RequestParam(required = false) Long tipoProductoId,      
             @RequestParam(required = false) Long tipoVentanaId,
             @RequestParam(required = false) Long anchoId,
             @RequestParam(required = false) Long altoId,
@@ -242,7 +243,8 @@ public class ControladorProducto implements ServletContextAware {
             @RequestParam(required = false) Boolean conBarrotillos,
             Model model) {
 
-        List<Producto> productos = servicioProducto.buscarProductosParaCotizacion(                
+        List<Producto> productos = servicioProducto.buscarProductosParaCotizacion(
+                tipoProductoId,                
                 tipoVentanaId,
                 anchoId,
                 altoId,

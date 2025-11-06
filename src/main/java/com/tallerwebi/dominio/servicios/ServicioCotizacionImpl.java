@@ -19,13 +19,16 @@ import com.tallerwebi.dominio.entidades.*;
 @Service
 @Transactional
 public class ServicioCotizacionImpl implements ServicioCotizacion {
-     private final RepositorioCotizacion cotizacionRepository;
+    private final RepositorioCotizacion cotizacionRepository;
     private final RepositorioProductoImpl productoRepository;
+    private ServicioEmail servicioEmail;
 
      @Autowired
-    public ServicioCotizacionImpl(RepositorioCotizacionImpl cotizacionRepository, RepositorioProductoImpl repositorioProducto) {
+    public ServicioCotizacionImpl(RepositorioCotizacion cotizacionRepository, RepositorioProductoImpl repositorioProducto
+                                 ,ServicioEmail servicioEmail) {
         this.cotizacionRepository = cotizacionRepository;
         this.productoRepository= repositorioProducto;
+        this.servicioEmail = servicioEmail;
     }
 
     @Override
@@ -68,8 +71,25 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
 
     @Override
     public Cotizacion guardar(Cotizacion cotizacion) {
-        return cotizacionRepository.guardar(cotizacion);
-    }
+        Cotizacion newCotizacion = cotizacionRepository.guardar(cotizacion);
+        
+        String asunto = "VENTANET - Nueva Cotización Creada";  
+        String cuerpoProveedor = "Se ha creado una nueva cotización con ID: " + newCotizacion.getId() +
+                        "\nMonto Total: " + newCotizacion.getMontoTotal() +
+                        "\nEstado: " + newCotizacion.getEstado().name() +
+                        "\nCliente: " + newCotizacion.getCliente().getNombre() + 
+                        "\nEmail Cliente: " + newCotizacion.getCliente().getEmail();                                                    
+        
+        //servicioEmail.enviarEmail(newCotizacion.getProveedor().getEmail(), asunto, cuerpoProveedor, false);
+
+        String cuerpoCliente = "Se ha creado una nueva cotización con ID: " + newCotizacion.getId() +
+                        "\nMonto Total: " + newCotizacion.getMontoTotal() +
+                        "\nEstado: " + newCotizacion.getEstado().name() +
+                        "\nProveedor: " + newCotizacion.getProveedor().getRazonSocial() + 
+                        "\nEmail Proveedor: " + newCotizacion.getProveedor().getEmail();
+        //servicioEmail.enviarEmail(newCotizacion.getCliente().getEmail(), asunto, cuerpoCliente, false); 
+        return newCotizacion;
+    }   
 
     @Override
     public void registrarCotizacion(Cliente cliente, Map<Long, Integer> productosEnSesion) {
