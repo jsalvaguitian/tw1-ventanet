@@ -1,0 +1,53 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f8;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 15px 30px;
+}
+
+h1 {
+    font-size: 22px;
+    margin: 0;
+}
+
+.dashboard-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 10px;
+    gap: 10px;
+    width: 100%;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 45%;
+    min-width: 400px;
+}
+
+#grafico_usuarios {
+    height: 400px;
+}
+
+#tabla_usuarios {
+    height: auto;
+}
+.event-table{
+    margin: 0 auto;
+}
+.dashboard{
+    padding-left: 30px;
+    padding-right: 30px;
+}
+#btnExportarPDF{
+    margin: 20px;
+}
