@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -588,5 +590,113 @@ public class ControladorPresupuesto {
             int itemCount = (p.getItems() != null) ? p.getItems().size() : 0;
             return "redirect:/presupuesto?error=save_failed&provincia=" + provId + "&localidad=" + locId + "&partido=" + partId + "&items=" + itemCount;
         }
+
+    }
+
+    @GetMapping("/presupuesto/{id}/items")
+    public ModelAndView verItemsPresupuesto(@org.springframework.web.bind.annotation.PathVariable("id") Long id,
+            HttpServletRequest request) {
+        ModelMap datos = new ModelMap();
+        try {
+            System.out.println("[ControladorPresupuesto] verItemsPresupuesto id=" + id);
+            Presupuesto p = servicioPresupuesto.obtenerPorId(id);
+            if (p == null) {
+                System.out.println("[ControladorPresupuesto] presupuesto nulo para id=" + id);
+                datos.put("error", "Presupuesto no encontrado");
+                return new ModelAndView("presupuesto_items", datos);
+            }
+            int itemCount = (p.getItems() == null) ? 0 : p.getItems().size();
+            System.out.println("[ControladorPresupuesto] presupuesto encontrado id=" + p.getId() + ", items=" + itemCount);
+            datos.put("presupuesto", p);
+            datos.put("items", p.getItems() == null ? new java.util.ArrayList<>() : p.getItems());
+            datos.put("fecha", p.getFechaCreacion() == null ? null : p.getFechaCreacion().toString());
+            // Build product merge list: for each product in catalog, if it matches any item
+            // of the presupuesto, group it by proveedor.
+            try {
+                List<Producto> allProducts = servicioProducto.obtener();
+                java.util.List<java.util.Map<String, Object>> grupos = new java.util.ArrayList<>();
+                java.util.Map<Long, java.util.Map<String, Object>> grupoPorProveedor = new java.util.LinkedHashMap<>();
+
+                for (Producto prod : allProducts) {
+                    if (prod == null || prod.getProveedor() == null) continue;
+                    boolean matches = false;
+                    if (p.getItems() != null) {
+                        for (PresupuestoItem it : p.getItems()) {
+                            /*// Match by tipoProducto (required) and then check optional attributes
+                            if (it.getTipoProducto() == null || prod.getTipoProducto() == null) continue;
+                            if (!prod.getTipoProducto().getId().equals(it.getTipoProducto().getId())) continue;
+                            // tipoVentana
+
+                             */
+                            if (it.getTipoVentana() != null) {
+                                if (prod.getTipoVentana() == null || !prod.getTipoVentana().getId().equals(it.getTipoVentana().getId()))
+                                    continue;
+                            }
+                           /* // ancho
+                            if (it.getAncho() != null) {
+                                if (prod.getAncho() == null || !prod.getAncho().getId().equals(it.getAncho().getId())) continue;
+                            }
+                            // alto
+                            if (it.getAlto() != null) {
+                                if (prod.getAlto() == null || !prod.getAlto().getId().equals(it.getAlto().getId())) continue;
+                            }
+                                */
+                            // material
+                            if (it.getMaterial() != null) {
+                                if (prod.getMaterialDePerfil() == null || !prod.getMaterialDePerfil().getId().equals(it.getMaterial().getId())) continue;
+                            }
+                            /*
+                            // color
+                            if (it.getColor() != null) {
+                                if (prod.getColor() == null || !prod.getColor().getId().equals(it.getColor().getId())) continue;
+                            }
+ */
+                            // if we reached this point, product matches this item
+                            matches = true;
+                            break;
+                        }
+                    }
+                    if (!matches) continue;
+
+                    Long provId = prod.getProveedor().getId();
+                    java.util.Map<String, Object> grupo = grupoPorProveedor.get(provId);
+                    if (grupo == null) {
+                        grupo = new java.util.HashMap<>();
+                        grupo.put("proveedorId", provId);
+                        grupo.put("proveedorNombre", prod.getProveedor().getNombre());
+                        grupo.put("productos", new java.util.ArrayList<java.util.Map<String, Object>>() );
+                        grupoPorProveedor.put(provId, grupo);
+                    }
+                    @SuppressWarnings("unchecked")
+                    java.util.List<java.util.Map<String, Object>> lista = (java.util.List<java.util.Map<String, Object>>) grupo.get("productos");
+                    java.util.Map<String, Object> pd = new java.util.HashMap<>();
+                    pd.put("id", prod.getId());
+                    pd.put("nombre", prod.getNombre());
+                    pd.put("precio", prod.getPrecio());
+                    pd.put("stock", prod.getStock());
+                    lista.add(pd);
+                }
+
+                // move to list preserving order
+                grupoPorProveedor.values().forEach(v -> grupos.add(v));
+                datos.put("productosPorProveedor", grupos);
+            } catch (Exception ex) {
+                System.out.println("[ControladorPresupuesto] fallo al buscar productos para merge: " + ex.getMessage());
+            }
+            return new ModelAndView("presupuesto_items", datos);
+        } catch (Exception e) {
+            System.out.println("[ControladorPresupuesto] error recuperando presupuesto id=" + id + ": " + e.getMessage());
+            e.printStackTrace();
+            datos.put("error", "Error al recuperar presupuesto");
+            return new ModelAndView("presupuesto_items", datos);
+        }
+    }
+
+    // tolerant mapping: sometimes requests to '/presupuestO' or different context path
+    // or to '/presupuesto/{id}/items' via direct URL may not resolve; provide a simple
+    // redirect endpoint with different casing/variations if necessary.
+    @GetMapping("/presupuestO/{id}/items")
+    public String redirectPresupuestoTypo(@org.springframework.web.bind.annotation.PathVariable("id") Long id) {
+        return "redirect:/presupuesto/" + id + "/items";
     }
 }
