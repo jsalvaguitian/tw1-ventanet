@@ -1,5 +1,6 @@
 package com.tallerwebi.infraestructura;
 
+import com.tallerwebi.dominio.entidades.Cliente;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioUsuario;
 
@@ -75,6 +76,23 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
         Query query = this.sessionFactory.getCurrentSession().createQuery(hql);
 
         return query.getResultList();
+    }
+
+    public Usuario buscarPorId(Long id) {
+        return (Usuario) sessionFactory.getCurrentSession().createCriteria(Usuario.class)
+                .add(Restrictions.eq("id", id))
+                .uniqueResult();
+    }
+
+    @Override
+    public void eliminarUsuario(Usuario usuario) {
+        Session session = sessionFactory.getCurrentSession();
+        Usuario usuarioBorrado = session.get(Usuario.class, usuario.getId());
+
+        if (usuarioBorrado != null) {
+            session.delete(usuarioBorrado);
+        }
+
     }
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.enums.EstadoUsuario;
+import com.tallerwebi.dominio.enums.Rubro;
  
 public interface ServicioProveedorI {
     List<Proveedor> obtenerTodosLosProveedoresActivos();
@@ -14,4 +15,6 @@ public interface ServicioProveedorI {
     Proveedor obtenerPorIdUsuario(Long idUsuario);
     
     Integer contarProveedores(EstadoUsuario estado);
+    List<Rubro> obtenerRubrosActivos();
+    List<Proveedor> obtenerProveedoresPorRubro(Rubro rubro);
 }

@@ -1,0 +1,214 @@
+/* GENERAL */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* HEADER LOGIN + NAVIGATION */
+.site-header {
+    width: 100%;
+    border-bottom: 1px solid #f0edf8;
+    background: #fff;
+    padding: 10px 0;
+}
+
+.header-inner {
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Logo a la izquierda, nav a la derecha */
+}
+
+.logo { 
+    display: inline-flex; 
+    align-items: center; 
+    text-decoration: none; 
+}
+
+.brand { 
+    margin-left: 10px; 
+    color: #6a42f4; 
+    font-weight: 700; 
+    font-size: 1rem; 
+}
+
+.nav {
+    display: flex;
+    gap: 20px;
+}
+.nav-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.nav-link:hover {
+    color: #6a42f4;
+}
+.logo svg { 
+  display: block; 
+  border-radius: 50%;
+}
+
+/* Dropdown básico */
+.nav-item.dropdown {
+  position: relative;
+}
+
+/*.nav-item .dropdown-toggle::after {
+  content: ""; ▼
+  font-size: 0.6em;
+}*/
+
+/* Menú oculto por defecto */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  list-style: none;
+  padding: 6px 0;
+  min-width: 160px;
+  z-index: 10;
+}
+
+/* Mostrar menú al pasar o hacer hover */
+.nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+/* Estilo de los ítems */
+.dropdown-item {
+  display: block;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #333;
+  transition: background 0.2s, color 0.2s;
+}
+
+.dropdown-item:hover {
+  background: #f5f5f5;
+  color: #6a42f4; /* mismo tono violeta que usás */
+}
+/* FOOTER UNIFICADO */
+.site-footer {
+    background-color: #f4f4f4; 
+    color: #6a42f4; 
+}
+
+.site-footer a,
+.site-footer .footer-link {
+    color: #6a42f4 !important;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.site-footer a:hover,
+.site-footer .footer-link:hover {
+    color: #301e72;
+}
+
+.site-footer h5 {
+    color: #6a42f4;
+}
+
+.site-footer p {
+    color: #6a42f4;
+    margin-bottom: 5px;
+}
+.footer-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+.footer-link:hover {
+    color: #6a42f4;
+}
+
+/* redes sociales */
+.footer-social img {
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+  transition: transform 0.2s ease;
+}
+
+.footer-social img:hover {
+  transform: scale(1.1);
+}
+
+/* parte inferior del footer */
+.footer-bottom {
+  text-align: right;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #aaa;
+}
+
+
+/* LOGIN */
+.login-text {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.btn-register {
+    background-color: #333;  /* gris oscuro */
+    color: #fff;             /* texto blanco */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-register:hover {
+    background-color: #0d6efd; /* azul Bootstrap */
+    text-decoration: underline;
+    color: #fff;
+}
+
+/* RESPONSIVE */
+@media (max-width: 425px) {
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+
+  .hero-section p {
+    font-size: 1rem;
+  }
+
+  .socios-logos {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .socios-logos img {
+    width: 80px;
+  }
+}
+
+.map-responsive {
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 27.5%; /* relación 16:9 */
+  height: 0;
+}
+
+.map-responsive iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

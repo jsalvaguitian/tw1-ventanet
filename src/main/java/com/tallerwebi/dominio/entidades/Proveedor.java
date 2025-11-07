@@ -9,29 +9,30 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 
 import javax.persistence.CascadeType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.enums.Rubro;
 
-
 @Entity
 @DiscriminatorValue("PROVEEDOR")
-public class Proveedor extends Usuario{
-    
-    private String razonSocial;        // Nombre legal de la empresa
-    private String cuit;               // Identificador fiscal
-    
+public class Proveedor extends Usuario {
+
+    private String razonSocial; // Nombre legal de la empresa
+    private String cuit; // Identificador fiscal
+
     @Enumerated(EnumType.STRING)
-    private Rubro rubro;              
-    private String sitioWeb; 
+    private Rubro rubro;
+    private String sitioWeb;
     /*
-    @Enumerated(EnumType.STRING)
-    private EstadoUsuario estado;             // Activo, Inactivo, Suspendido
-*/
-    private String documento;        // Ruta del documento legal del proveedor
+     * @Enumerated(EnumType.STRING)
+     * private EstadoUsuario estado; // Activo, Inactivo, Suspendido
+     */
+    private String documento; // Ruta del documento legal del proveedor
 
     // @OneToMany(mappedBy = "proveedor")
     // private List<Producto> productos = new ArrayList<Producto>();
@@ -40,62 +41,56 @@ public class Proveedor extends Usuario{
     private Double latitud;
     private Double longitud;
 
+    private String logoPath;
+
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Cotizacion> cotizaciones = new ArrayList<>();
 
     public Proveedor() {
         super();
         this.estado = EstadoUsuario.PENDIENTE;
     }
 
-
     public String getRazonSocial() {
         return razonSocial;
     }
-
 
     public void setRazonSocial(String razonSocial) {
         this.razonSocial = razonSocial;
     }
 
-
     public String getCuit() {
         return cuit;
     }
-
 
     public void setCuit(String cuit) {
         this.cuit = cuit;
     }
 
-
     public Rubro getRubro() {
         return rubro;
     }
-
 
     public void setRubro(Rubro rubro) {
         this.rubro = rubro;
     }
 
-
     public String getSitioWeb() {
         return sitioWeb;
     }
-
 
     public void setSitioWeb(String sitioWeb) {
         this.sitioWeb = sitioWeb;
     }
 
-
     public EstadoUsuario getEstado() {
         return estado;
     }
 
-
     public void setEstado(EstadoUsuario estado) {
         this.estado = estado;
     }
-
 
     public String getDocumento() {
         return documento;
@@ -105,38 +100,29 @@ public class Proveedor extends Usuario{
         this.documento = documento;
     }
 
-    
-
-
     public String getUbicacion() {
         return ubicacion;
     }
-
 
     public void setUbicacion(String ubicacion) {
         this.ubicacion = ubicacion;
     }
 
-
     public Double getLatitud() {
         return latitud;
     }
-
 
     public void setLatitud(Double latitud) {
         this.latitud = latitud;
     }
 
-
     public Double getLongitud() {
         return longitud;
     }
 
-
     public void setLongitud(Double longitud) {
         this.longitud = longitud;
     }
-
 
     @Override
     public int hashCode() {
@@ -145,7 +131,6 @@ public class Proveedor extends Usuario{
         result = prime * result + ((cuit == null) ? 0 : cuit.hashCode());
         return result;
     }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -164,16 +149,28 @@ public class Proveedor extends Usuario{
         return true;
     }
 
+    public String getLogoPath() {
+        return logoPath;
+    }
+
+    public void setLogoPath(String logoPath) {
+        this.logoPath = logoPath;
+    }
+
+    public List<Cotizacion> getCotizaciones() {
+        return cotizaciones;
+    }
+
+    public void setCotizaciones(List<Cotizacion> cotizaciones) {
+        this.cotizaciones = cotizaciones;
+    }
 
     // public List<Producto> getProductos() {
-    //     return productos;
+    // return productos;
     // }
-
 
     // public void setProductos(List<Producto> productos) {
-    //     this.productos = productos;
+    // this.productos = productos;
     // }
 
-    
 }
-

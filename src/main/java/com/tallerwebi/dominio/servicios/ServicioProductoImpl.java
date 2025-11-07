@@ -6,9 +6,13 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.tallerwebi.dominio.entidades.Producto;
+import com.tallerwebi.dominio.entidades.TipoProducto;
+import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
 import com.tallerwebi.infraestructura.RepositorioProductoImpl;
+import com.tallerwebi.presentacion.dto.ProductoDTO;
+import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
 
 @Service("servicioProducto")
 @Transactional
@@ -67,6 +71,60 @@ public class ServicioProductoImpl implements ServicioProducto {
     @Override
     public List<Producto> buscarPorProveedorId(Long proveedorId) {
         return productoRepository.buscarPorProveedorId(proveedorId);
+    }
+
+    @Override
+    public List<Producto> obtenerProductosFiltrados(Long idProveedor, String busqueda, Long tipoProductoId,
+            Long tipoVentanaId) {
+
+        return productoRepository.filtrarProductos(idProveedor, busqueda, tipoProductoId, tipoVentanaId);
+    }
+
+    @Override
+    public List<TipoProducto> obtenerTiposProductos(Long idProveedor) {
+        return productoRepository.obtenerTiposProductoPorProveedor(idProveedor);
+    }
+
+    @Override
+    public List<TipoVentana> obtenerTiposVentanas(Long idProveedor) {
+        return productoRepository.obtenerTiposVentanasPorProveedor(idProveedor);
+    }
+
+    @Override
+    public List<ProductoGenericoDTO> obtenerProductosGenericos() {
+        return productoRepository.obtenerProductosGenericos();
     }    
 
+    @Override
+   public List<Producto> buscarProductosParaCotizacion
+    (Long tipoProductoId, Long tipoVentanaId,
+     Long anchoId,
+     Long altoId,
+     Long materialId,
+     Long vidrioId,
+     Long colorId,
+     Boolean premarco,
+     Boolean barrotillos) {
+        return productoRepository.buscarProductosParaCotizacion( 
+            tipoProductoId,        
+         tipoVentanaId,
+         anchoId,
+         altoId,
+         materialId,
+         vidrioId,
+         colorId,
+         premarco,
+         barrotillos);
+    }
+
+    @Override
+    public List<Producto> obtenertodosPorListadoId(List<Long> productosIds) {
+       return productoRepository.obtenertodosPorListadoId(productosIds);
+    }
+
+    @Override
+    public List<Producto> filtrarProductos(Long tipoProductoId, Long tipoVentanaId, Long anchoId, Long altoId,
+            Long materialPerfilId, Long colorId) {
+        return productoRepository.filtrarProductos(tipoProductoId,tipoVentanaId,anchoId,altoId, materialPerfilId, colorId);
+    }
 }

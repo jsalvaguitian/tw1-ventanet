@@ -4,34 +4,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <title>Taller Web I</title>
 
     <!-- Boostrap core css -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
 
     <!-- custom style -->
-
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
     <style>
-        body {
-            background-color: #ffffff;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-        }
-
-        .site-header {
-            width: 100%;
-            border-bottom: 1px solid #f0edf8;
-            background: #fff;
-        }
-
-        .header-inner {
-            width: 90%;
-            margin: 0 auto;
-            padding: 16px 18px;
-            display: flex;
-            align-items: center;
-        }
-
+        /* Solo estilos propios del formulario */
         .container {
             max-width: 600px;
             margin-top: 3rem;
@@ -58,7 +39,6 @@
             border-radius: 6px;
             padding: 0.6rem;
         }
-
 
         .btn-primary {
             background-color: #392cdc;
@@ -89,13 +69,8 @@
 </head>
 
 <body>
-<header class="site-header">
-    <div class="header-inner">
-        <a th:href="@{/}" class="logo">
-            <span class="brand">VENTANET</span>
-        </a>
-    </div>
-</header>
+    <!-- HEADER -->
+    <div th:replace="fragments/header :: header"></div>
 
     <main>
         <div class="container">
@@ -120,7 +95,8 @@
 
                 <!-- Contraseña -->
                 <label for="password">Contraseña</label>
-                <input th:field="*{password}" type="password" id="password" class="form-control" placeholder="Contraseña" required />
+                <input th:field="*{password}" type="password" id="password" class="form-control" placeholder="Contraseña"
+                    required />
 
                 <!-- Repetir contraseña -->
                 <label for="confirmarPassword">Confirmar contraseña</label>
@@ -129,9 +105,9 @@
 
                 <!-- Botón -->
                 <button type="submit" class="btn btn-primary">Registrarme</button>
+
                 <!-- Enlace para login -->
                 <p class="register-text">¿Ya tenés cuenta? <a th:href="@{/login}">Ingresar &gt;</a></p>
-
 
                 <!-- Error -->
                 <p th:if="${error != null}" class="error" th:text="${error}"></p>
@@ -140,7 +116,6 @@
     </main>
 
     <!-- Boostrap core js -->
-    <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
-    
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

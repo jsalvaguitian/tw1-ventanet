@@ -45,7 +45,8 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
     }
 
     @Override
-    public Usuario iniciarSesion(String email, String password) throws UsuarioInexistenteException, CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException {
+    public Usuario iniciarSesion(String email, String password) throws UsuarioInexistenteException,
+            CuentaNoActivaException, CuentaPendienteException, CuentaRechazadaException {
         Usuario encontrado = repositorioUsuario.buscarPorMail(email);
 
         if (encontrado == null || !PasswordUtil.verificar(password, encontrado.getPassword())) {
@@ -54,7 +55,7 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
 
         switch (encontrado.getEstado()) {
             case NO_ACTIVO:
-            throw new CuentaNoActivaException();
+                throw new CuentaNoActivaException();
 
             case PENDIENTE:
                 throw new CuentaPendienteException();
@@ -207,12 +208,20 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
            */
 
         usuario.setTokenVerificacion(null);
-        
+
         usuario.setExpiracionToken(null);
 
         repositorioUsuario.actualizar(usuario);
         return true;
+    }
 
+    @Override
+    public Usuario buscarPorId(Long id) throws UsuarioInexistenteException {
+        Usuario usuarioEncontrado = repositorioUsuario.buscarPorId(id);
+        if (usuarioEncontrado == null) {
+            throw new UsuarioInexistenteException();
+        }
+        return usuarioEncontrado;
     }
 
     @Override
@@ -223,6 +232,11 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
     @Override
     public List<Usuario> obtenerTodosLosUsuarios() {
         return repositorioUsuario.obtenerTodosLosUsuarios();
+    }
+
+    @Override
+    public void eliminarUsuario(Usuario usuario) {
+        repositorioUsuario.eliminarUsuario(usuario);
     }
 
 }

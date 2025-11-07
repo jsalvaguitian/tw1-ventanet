@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.enums.EstadoUsuario;
+import com.tallerwebi.dominio.enums.Rubro;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioProveedor;
 
 
@@ -13,10 +14,12 @@ import com.tallerwebi.dominio.repositorios_interfaces.RepositorioProveedor;
 public class ServicioProveedorImpl implements ServicioProveedorI{
     @Autowired
     private RepositorioProveedor repositorioProveedor;
+    private ServicioEmail servicioEmail;
     
 
-    public ServicioProveedorImpl(RepositorioProveedor repositorioProveedor) {
+    public ServicioProveedorImpl(RepositorioProveedor repositorioProveedor,ServicioEmail servicioEmail) {
         this.repositorioProveedor = repositorioProveedor;
+        this.servicioEmail = servicioEmail;
     }
 
 
@@ -35,11 +38,6 @@ public class ServicioProveedorImpl implements ServicioProveedorI{
         return proveedor;
     }
 */
-
-
-    
-
-
 
     @Override
     public List<Proveedor> obtenerTodosLosProveedoresPendientes() {
@@ -80,6 +78,19 @@ public class ServicioProveedorImpl implements ServicioProveedorI{
         }else{
             return repositorioProveedor.contarProveedores(estado);
         }
+    }
+
+
+
+    @Override
+    public List<Rubro> obtenerRubrosActivos() {
+        return repositorioProveedor.obtenerRubrosActivos();
+    }
+
+
+    @Override
+    public List<Proveedor> obtenerProveedoresPorRubro(Rubro rubro) {
+        return repositorioProveedor.listarPorRubro(rubro);
     }
    
 

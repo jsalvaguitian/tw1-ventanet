@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Previsualización de Cotización</title>
+    <link rel="stylesheet" href="/spring/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet">    
+</head>
+
+<body class="container mt-4">
+    <nav class="navbar d-md-none px-3" style="box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <span class="navbar-title">Ventanet</span>
+        <button class="hamburger btn me-2" id="menuBtn">&#9776;</button>
+        <div class="dropdown" id="dropdownMenu"
+            style="display:none;position:absolute;top:56px;left:0;width:100%;z-index:1200;">
+            <div class="desplegable shadow p-2">
+                <a class="dropdown-item active" th:href="@{/}">Inicio</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <a th:href="@{/}"><h2>Ventanet</h2></a>
+        <ul>
+            <li class="active"><a href="presupuesto.html">Presupuesto</a></li>
+            <li><a th:href="@{/cliente/dashboard}">Dashboard</a></li>
+        </ul>
+    </div>
+
+    <div class="main" id="mainContent">
+        <div class="container my-5">           
+
+            <h2 class="text-center mb-4">Previsualización de Cotizaciones</h2>
+            <div class="info-box">
+                Por favor seleccione las cotizaciones que desea y los proveedores se pondrán en contacto a la brevedad.
+            </div>
+
+
+            <div th:if="${mensaje}" class="alert alert-warning" th:text="${mensaje}"></div>
+            <div th:if="${mensajeExito}" class="alert alert-success">
+                <p th:text="${mensajeExito}"></p>
+            </div>
+
+            <div th:if="${mensajeParcial}" class="alert alert-warning">
+                <p th:text="${mensajeParcial}"></p>
+            </div>
+
+            <div th:if="${mensajeError}" class="alert alert-danger">
+                <p th:text="${mensajeError}"></p>
+            </div>
+
+            <ul th:if="${errores}">
+                <li th:each="err : ${errores}" th:text="${err}"></li>
+            </ul>
+
+
+            <form action="/spring/cotizacion/confirmar" method="post" id="formCotizaciones">
+
+                <!-- Contenedor de todas las cotizaciones -->
+                <div id="cotizaciones-lista">
+                    <div th:each="cotizacion, cotizacionStat : ${cotizaciones}"
+                        class="mb-5 border rounded p-3 cotizacion-container" th:attr="data-id=${cotizacion.id}, 
+                    data-proveedor-id=${cotizacion.proveedor.id}, 
+                    data-proveedor-nombre=${cotizacion.proveedor.razonSocial},
+                data-cliente-id=${cotizacion.cliente.id}">
+
+                        <div class="d-flex align-items-center mb-2">
+                            <input type="checkbox" class="form-check-input me-2 seleccionar-cotizacion">
+                            <h4 th:text="'Proveedor: ' + ${cotizacion.proveedor.razonSocial}" class="m-0"></h4>
+                        </div>
+
+                        <table class="table table-bordered table-striped align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Descripción</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Cantidad</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item, itemStat : ${cotizacion.items}">
+                                    <td th:text="${item.producto.nombre}"></td>
+                                    <td th:text="${item.producto.descripcion}"></td>
+                                    <td>
+                                        <span th:text="${item.precioUnitario}" class="precio-unitario"></span>
+                                    </td>
+                                    <td>
+                                        <input type="number" min="1" class="form-control form-control-sm cantidad"
+                                            th:value="${item.cantidad}">
+                                    </td>
+                                    <td>
+                                        <span class="subtotal" th:text="${item.precioUnitario * item.cantidad}"></span>
+                                    </td>
+                                    <input type="hidden" class="producto-id" th:value="${item.producto.id}">
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="text-end fw-bold">Total</td>
+                                    <td><span class="total-cotizacion" th:text="${cotizacion.montoTotal}"></span></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <input type="hidden" name="cotizacionesJson" id="cotizacionesJson">
+
+                <div class="text-center mt-4" th:if="${esConfirmacion == null or esConfirmacion == false}">
+                    <button type="submit" class="btn btn-success px-4">Confirmar y Enviar Cotización</button>
+                </div>
+            </form>
+        </div>
+    </div>    
+
+    <script>
+        // Recalcular subtotal y total cuando cambia la cantidad
+        $(document).on('input', '.cantidad', function () {
+            const row = $(this).closest('tr');
+            const precio = parseFloat(row.find('.precio-unitario').text());
+            const cantidad = parseInt($(this).val()) || 0;
+            const subtotal = precio * cantidad;
+            row.find('.subtotal').text(subtotal.toFixed(2));
+
+            // Recalcular el total de la tabla
+            const tabla = row.closest('table');
+            let total = 0;
+            tabla.find('.subtotal').each(function () {
+                total += parseFloat($(this).text()) || 0;
+            });
+            tabla.find('.total-cotizacion').text(total.toFixed(2));
+        });
+
+        
+        $(document).on('change', '.seleccionar-cotizacion', function () {
+            const container = $(this).closest('.cotizacion-container');
+            container.toggleClass('selected', this.checked);
+        });
+
+        // Antes de enviar el formulario, generar un JSON con todas las cotizaciones
+        $('#formCotizaciones').on('submit', function (e) {
+            const cotizaciones = [];
+
+            $('#cotizaciones-lista .cotizacion-container').each(function () {
+                const cotizacionDiv = $(this);
+                const cotizacionId = cotizacionDiv.data('id');
+                const proveedorId = cotizacionDiv.data('proveedor-id');
+                const clienteId = cotizacionDiv.data('cliente-id');
+                const seleccionada = cotizacionDiv.find('.seleccionar-cotizacion').is(':checked');
+
+                const items = [];
+                cotizacionDiv.find('tbody tr').each(function () {
+                    const row = $(this);
+                    const idProducto = row.find('.producto-id').val();                     
+                    const cantidad = parseInt(row.find('.cantidad').val());                    
+
+                    items.push({
+                        idProducto,                        
+                        cantidad                        
+                    });
+                });
+
+                const montoTotal = parseFloat(cotizacionDiv.find('.total-cotizacion').text());
+
+                cotizaciones.push({
+                    id: cotizacionId,
+                    proveedorId,
+                    clienteId,
+                    seleccionada,
+                    montoTotal,
+                    items
+                });
+            });
+
+            // Asignar el JSON al campo oculto
+            $('#cotizacionesJson').val(JSON.stringify(cotizaciones));
+        });
+    </script>
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>

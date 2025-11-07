@@ -24,7 +24,7 @@ public class Producto {
     private int stock;
     
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tipo_producto_id", nullable = false)
     private TipoProducto tipoProducto;
 
@@ -78,7 +78,7 @@ public class Producto {
     private String modelo;
 
     @ManyToOne
-    private TipoMaterial TipoMaterial;
+    private TipoMaterial tipoMaterial;
 
     private Boolean aceptaEnvio;
     
@@ -100,11 +100,11 @@ public class Producto {
     }
 
     public TipoMaterial getTipoMaterial() {
-        return TipoMaterial;
+        return tipoMaterial;
     }
 
     public void setTipoMaterial(TipoMaterial tipoMaterial) {
-        TipoMaterial = tipoMaterial;
+        tipoMaterial = tipoMaterial;
     }
 
     public Boolean getAceptaEnvio() {

@@ -18,7 +18,8 @@ INSERT INTO Presentacion (id, descripcion, unidadMedida, cantidad) VALUES
 INSERT INTO TipoProducto (id, nombre) VALUES
     (1, 'Puerta'),
     (2, 'Ventana'),
-    (3, 'Techo');
+    (3, 'Techo'),
+    (4, 'Piso y Revestimiento');
 
 -- Tipo de ventana
 INSERT INTO TipoVentana (id, nombre, tipo_producto_id) VALUES
@@ -122,7 +123,7 @@ INSERT INTO Usuario (
 (2, 'Juan', 'Pérez', 'cliente1', 'juan.perez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '111222333', 'Calle Falsa 123', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
-
+----- PROVEEDORES
 (3, 'Pedro', 'Gómez', 'proveedor1', 'pedro.gomez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '444555666', 'Calle Empresa 45', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
@@ -138,14 +139,36 @@ INSERT INTO Usuario (
 (6, 'Juan', 'Fulano', 'proveedor4', 'juan.fulano@email.com',
  '$2a$10$9rO6fX2qRUYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '444555666', 'Calle Santa Fe 2245', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
-
+----- MÁS CLIENTES
  (7, 'María', 'Lopez', 'cliente2', 'maria.lopez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '111333555', 'Av. Belgrano 456', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
 
 (8, 'Carlos', 'Martinez', 'cliente3', 'carlos.martinez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
- '222444666', 'Calle San Martín 789', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO');
+ '222444666', 'Calle San Martín 789', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
+ 
+ --- MAS PROVEEDORES
+(9, 'Ana', 'García', 'proveedor5', 'ana.garcia@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '777888999', 'Calle Comercio 321', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(10, 'Luis', 'Fernández', 'proveedor6', 'luis@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '666555444', 'Av. Industria 654', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(11, 'Manuel', 'Ramírez', 'proveedor7', 'manuel@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '333222111', 'Calle Fabricación 987', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+ (12, 'Juana', 'Díaz', 'proveedor8', 'juana@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq','334323211', 'Calle Producción 159', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(13, 'Marcos', 'Vargas', 'proveedor9', 'marcos@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '112233445', 'Av. Comercial 753', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(14, 'Raimundo', 'Santos', 'proveedor10', 'raimundo@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '998877665', 'Calle Industrial 852', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+ (15, 'Juliana', 'Guitian', 'proveedor11', 'juliana@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '556677889', 'Av. Empresarial 951', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(16, 'Javier', 'Castro', 'proveedor12', 'javier@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '443322110', 'Calle de la Industria 357', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(17, 'Leandro', 'Rojas', 'proveedor13', 'leandro@email.com', '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '221100334', 'Av. Fabricación 258', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO');
 
 -- ===============================================
 -- SUBCLASES (JOINED)
@@ -156,71 +179,228 @@ INSERT INTO Cliente (id) VALUES (7);
 INSERT INTO Cliente (id) VALUES (8);
 
 INSERT INTO Proveedor (
-    id, razonSocial, cuit, rubro, sitioWeb, documento, ubicacion, latitud, longitud
+    id, razonSocial, cuit, rubro, sitioWeb, documento, ubicacion, latitud, longitud, logoPath
 ) VALUES
-(3, 'Gómez Servicios S.A.', '30123456789', NULL, 'https://www.gomezservicios.com', NULL, 'Buenos Aires', -34.60, -58.38),
-(4, 'Simpson Proveedores', '30222222222', NULL, 'https://www.simpsonpro.com', NULL, 'Springfield', -34.61, -58.40),
-(5, 'Pedro Construcciones', '30333333333', NULL, 'https://www.pedroconstruye.com', NULL, 'Córdoba', -31.42, -64.18),
-(6, 'Fulano Materiales', '30444444444', NULL, 'https://www.fulano.com', NULL, 'Rosario', -32.95, -60.66);
+(3, 'Interfloor S.A.', '30123456789','PISOS_REVESTIMIENTOS', 'https://interfloor.com.ar/', NULL, 'Buenos Aires', -34.60, -58.38, 'img/logo-interfloor-argentina.svg'),
+(4, 'Pewen Piso S.A', '30222222222','PISOS_REVESTIMIENTOS', 'https://www.simpsonpro.com', NULL, 'Springfield', -34.61, -58.40, 'img/logo-pewenpisos.png'),
+(5, 'Rolon Piso', '30333333333','PISOS_REVESTIMIENTOS', 'https://www.pedroconstruye.com', NULL, 'Córdoba', -31.42, -64.18, 'img/logo-rolon-pisos.png'),
+(6, 'Aluar', '30444444444','VIDRIOS_ABERTURAS', 'https://www.fulano.com', NULL, 'Rosario', -32.95, -60.66, 'img/logo1.png'),
+(9, 'Abercom', '30444444777', 'VIDRIOS_ABERTURAS', 'https://www.abercom.com', NULL, 'Salta', -22.22, -12.11, 'img/logo-abercom.png'),
+(10, 'Aluplast S.A.', '30555555555', 'VIDRIOS_ABERTURAS', 'https://www.aluplast.com.ar', NULL, 'Buenos Aires', -34.61, -58.39, 'img/logo2.png'),
+(11, 'Deceuninck Argentina', '30666666666', 'VIDRIOS_ABERTURAS', 'https://www.deceuninck.com.ar', NULL, 'Buenos Aires', -34.62, -58.37, 'img/logo-deceuninck.png'),
+(12, 'Pacheco Chapas S.R.L.', '30777777777', 'HIERROS_ESTRUCTURAS', 'https://www.pachecochapas.com.ar', NULL, 'Tigre', -34.47, -58.61, 'img/logo-pacheco-chapas.png'),
+(13, 'Todo Tejas', '30888888888', 'MATERIALES_OBRA', 'https://www.todotejas.com.ar', NULL, 'La Plata', -34.92, -57.95, 'img/logo-todotejas.png'),
+(14, 'Chapaferro S.A.', '30999999999', 'HIERROS_ESTRUCTURAS', 'https://www.chapaferro.com.ar', NULL, 'Rosario', -32.96, -60.65, '/img/logo-chapaferro.png'),
+(15, 'Tejas Fantini', '30101010101', 'MATERIALES_OBRA', 'https://www.tejasfantini.com.ar', NULL, 'Córdoba', -31.41, -64.19, 'img/logo-tejas-fantini.png'),
+(16, 'Adramet S.R.L.', '30202020202', 'HIERROS_ESTRUCTURAS', 'https://www.adramet.com.ar', NULL, 'Avellaneda', -34.67, -58.36, 'img/logo-adramet.jpg'),
+(17, 'El Italo Construcciones', '30303030303', 'MATERIALES_OBRA', 'https://www.elitalo.com.ar', NULL, 'San Miguel', -34.53, -58.70, 'img/logo-elitalo.png');
 
 -- ===============================================
 -- PRODUCTOS (las FK deben existir antes)
 -- ===============================================
 INSERT INTO Producto (
-    id, nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
+    nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
     tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
     tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
 ) VALUES
 -- Puerta de madera
-(1, 'Puerta de Madera', 15000.00, 'Puerta maciza de madera', '/uploads/imagenes/puerta-madera.jpg', 20, 3,
+('Puerta de Madera', 15000.00, 'Puerta maciza de madera', 'uploads/imagenes/puerta-madera.jpg', 20, 3,
  1, 1, 1, 'PMA-01', true,
  NULL, NULL, NULL, NULL, NULL, 3), -- color marrón
 
 -- Ventana de aluminio
-(2, 'Ventana de Aluminio', 10000.00, 'Ventana corrediza de aluminio', '/uploads/imagenes/ventana-aluminio.jpg', 30, 3,
+('Ventana de Aluminio', 10000.00, 'Ventana corrediza de aluminio', 'uploads/imagenes/ventana-aluminio.jpg', 30, 3,
  2, 2, 2, 'VAL-01', true,
  1, 10, 10, 1, 1, 1), -- corrediza, 1.5x1.5m, aluminio, vidrio simple, blanco
 
 -- Techo de chapa
-(3, 'Techo de chapa', 25000.00, 'Techo acanalado galvanizado', '/uploads/imagenes/techo-chapa.jpeg', 15, 3,
+('Techo de chapa', 25000.00, 'Techo acanalado galvanizado', 'uploads/imagenes/techo-chapa.jpeg', 15, 3,
  3, 3, 3, 'TCH-01', false,
  NULL, NULL, NULL, NULL, NULL, 2), -- gris
 
 -- Puerta económica
-(4, 'Puerta económica', 14500.00, 'Puerta igual pero de otro proveedor', '/uploads/imagenes/puerta-madera.jpg', 10, 4,
+('Puerta económica', 14500.00, 'Puerta igual pero de otro proveedor', 'uploads/imagenes/puerta-madera.jpg', 10, 4,
  1, 1, 1, 'PMA-02', true,
  NULL, NULL, NULL, NULL, NULL, 3), -- marrón
 
 -- Ventana de aluminio reforzada
-(5, 'Ventana de Aluminio reforzada', 12000.00, 'Ventana igual de otro proveedor', '/uploads/imagenes/ventana-aluminio-2.jpg', 25, 4,
+('Ventana de Aluminio reforzada', 12000.00, 'Ventana igual de otro proveedor', 'uploads/imagenes/ventana-aluminio-2.jpg', 25, 4,
  2, 2, 2, 'VAL-02', true,
  1, 12, 12, 1, 2, 1), -- corrediza, 1.7x1.7m, aluminio, doble vidrio, blanco
 
 -- Pintura blanca
-(6, 'Pintura blanca', 5000.00, 'Pintura para interiores', '/uploads/imagenes/pintura-blanca.jpg', 40, 5,
+('Pintura blanca', 5000.00, 'Pintura para interiores', 'uploads/imagenes/pintura-blanca.jpg', 40, 5,
  3, 2, 2, 'PIN-BL', true,
  NULL, NULL, NULL, NULL, NULL, 1), -- blanco
 
 -- Puerta de PVC
-(7, 'Puerta de PVC', 17000.00, 'Puerta plástica económica', '/uploads/imagenes/puerta-pvc.jpeg', 20, 5,
+('Puerta de PVC', 17000.00, 'Puerta plástica económica', 'uploads/imagenes/puerta-pvc.jpeg', 20, 5,
  1, 3, 1, 'PVP-02', true,
  NULL, NULL, NULL, 2, NULL, 1), -- material PVC, color blanco
 
 -- Techo aislante
-(8, 'Techo aislante', 30000.00, 'Techo con aislante térmico', '/uploads/imagenes/techo-aislante.jpg', 10, 6,
+('Techo aislante', 30000.00, 'Techo con aislante térmico', 'uploads/imagenes/techo-aislante.jpg', 10, 6,
  3, 2, 3, 'TCH-A2', false,
  NULL, NULL, NULL, NULL, NULL, 2), -- gris
 
 -- Ventana doble vidrio
-(9, 'Ventana doble vidrio', 20000.00, 'Ventana doble vidrio templado', '/uploads/imagenes/ventana-doble-vidrio.jpg', 5, 6,
+('Ventana doble vidrio', 20000.00, 'Ventana doble vidrio templado', 'uploads/imagenes/ventana-doble-vidrio.jpg', 5, 6,
  2, 1, 2, 'VDV-01', true,
  2, 15, 15, 1, 4, 1), -- oscilobatiente, 2.0x2.0m, aluminio, vidrio templado, blanco
 
 -- Puerta blindada
-(10, 'Puerta blindada', 45000.00, 'Puerta de seguridad', '/uploads/imagenes/puerta-blindada.jpg', 8, 6,
+('Puerta blindada', 45000.00, 'Puerta de seguridad', 'uploads/imagenes/puerta-blindada.jpg', 8, 6,
  1, 3, 1, 'PB-02', false,
  NULL, NULL, NULL, 1, NULL, 4); -- aluminio, color negro
 
+-- PRODUCTOS DEL PROVEEDOR ALUPLAST 
+INSERT INTO Producto (
+    nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
+    tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
+    tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
+) VALUES
+-- 1
+('Ventana PVC IDEAL 4000', 25000.00, 'Sistema de ventana PVC IDEAL 4000 con perfilería de 70 mm, aislamiento térmico Uf=1,3 W/m²K, vidrio hasta 41 mm, versión corrediza para máxima iluminación y ahorro energético.', 'img/ventana-corrediza.png', 15, 10,
+ 2, 1, 3, 'PVC-4000-COR', true,
+ 1, 6, 10, 2, 2, 1),
+
+-- 2
+('Ventana PVC IDEAL 5000', 32000.00, 'Ventana PVC IDEAL 5000 multicámara con triple junta de estanqueidad, refuerzo de seguridad RC2 y máxima eficiencia térmica para construcciones de alta exigencia.', 'img/ventana-corrediza-doblevidrio.jpg', 10, 10,
+ 2, 2, 3, 'PVC-5000-OSC', true,
+ 2, 7, 11, 2, 2, 1),
+
+-- 3
+('Puerta de entrada PVC/Aluminio', 45000.00, 'Puerta de entrada de PVC/aluminio con herrajes de seguridad, triple acristalamiento y acabado en lamas decorativas, ideal para aislamiento térmico y acústico.', 'img/puerta-aluminio.jpg', 5, 10,
+ 1, 3, 3, 'PE-ALU-01', true,
+ 6, 10, 20, 2, 2, 1),
+
+-- 4
+('Ventana oscilobatiente de aluminio', 28000.00, 'Ventana oscilobatiente de aluminio de alta calidad, con ventilación regulada, apertura abatible-oscilo y acabado en colores modernos.', 'img/venta-oscibilitante.png', 12, 10,
+ 2, 1, 3, 'ALU-OSC-01', true,
+ 2, 7, 12, 1, 1, 2),
+
+-- 5
+('Ventana corrediza de aluminio', 26000.00, 'Ventana corrediza de aluminio de diseño minimalista, ideal para balcones o terrazas, que maximiza la entrada de luz sin ocupar espacio de apertura.', 'img/ventana-corrediza-templado.jpg', 20, 10,
+ 2, 2, 3, 'ALU-COR-01', true,
+ 1, 8, 11, 1, 1, 1),
+
+-- 6
+('Puerta interior de madera lacada', 18000.00, 'Puerta de madera lacada con perfilería interior de PVC Aluplast, diseñada para ambientes interiores, con alta resistencia al desgaste y acabado elegante.', 'img/puerta-madera.jpg', 25, 10,
+ 1, 3, 3, 'PM-LAC-01', true,
+ 6, 6, 20, 3, 1, 3),
+
+-- 7
+('Ventana PVC Energeto', 35000.00, 'Ventana de PVC con el sistema energeto® sin refuerzo metálico, con valores Uw desde 0,60 W/m²K, pensada para proyectos de edificación pasiva y ultraeficiencia.', 'img/ventana-abatible.jpg', 8, 10,
+ 2, 1, 3, 'PVC-ENER-01', true,
+ 1, 7, 12, 2, 2, 1),
+
+-- 8
+('Ventana plegable de aluminio', 60000.00, 'Ventana plegable (tipo folding) de aluminio, para espacios amplios como terrazas o galerías, con múltiples hojas que se pliegan completamente y diseño de alta gama.', 'img/ventana-plegable.jpeg', 4, 10,
+ 2, 2, 3, 'ALU-FOLD-01', true,
+ 5, 10, 15, 1, 1, 1),
+
+-- 9
+('Paño fijo de PVC', 22000.00, 'Paño fijo de PVC con gran superficie de cristal, ideal para iluminación cenital o laterales amplios, con perfilería discreta y máxima estabilidad térmica.', 'img/ventana-paniofijo2.jpeg', 15, 10,
+ 2, 1, 3, 'PVC-FIX-01', true,
+ 3, 9, 18, 2, 2, 1),
+
+-- 10
+('Puerta abatible de PVC con vidrio templado', 38000.00, 'Puerta abatible de PVC con vidrio templado, herraje multipunto de seguridad y acabado en imitación madera para exteriores residenciales.', 'img/puerta-abatible2.jpeg', 6, 10,
+ 1, 3, 3, 'PA-PVC-01', true,
+ 4, 8, 20, 2, 4, 3),
+
+-- 11
+('Ventana doble de aluminio con vidrio acústico', 40000.00, 'Ventana doble de aluminio con vidrio acústico laminado 44/2, especial para zonas expuestas al ruido, con perfilería robusta y diseño elegante.', 'img/ventana-corrediza-doblevidrio.jpg', 7, 10,
+ 2, 2, 3, 'ALU-DBL-01', true,
+ 8, 8, 12, 1, 3, 2),
+
+-- 12
+('Puerta doble de madera UV-lacada', 50000.00, 'Puerta doble de madera con herraje oculto, UV-lacada, adecuada para entrada principal de vivienda, con diseño simétrico y acabado premium.', 'uploads/imagenes/puerta-blindada.jpg', 3, 10,
+ 1, 3, 3, 'PD-LAC-01', true,
+ 6, 12, 20, 3, 1, 3),
+
+-- 13
+('Ventana simple de PVC', 20000.00, 'Ventana simple de PVC para renovación, perfil estándar, apertura corredera-oscilobatiente, color blanco y vidrio sencillo, opción económica pero de calidad Aluplast.', 'img/venta-oscibilitante.png', 18, 10,
+ 2, 1, 3, 'PVC-SIM-01', true,
+ 1, 6, 10, 2, 1, 1),
+
+-- 14
+('Puerta plegable de PVC-Aluminio', 55000.00, 'Puerta plegable de PVC-aluminio para ambientes interiores/exteriores, hojas de gran tamaño, herrajes de alta resistencia, acabado color grafito.', 'img/puerta-abatible.jpeg', 4, 10,
+ 1, 2, 3, 'PP-FOLD-01', true,
+ 9, 10, 20, 2, 1, 4),
+
+-- 15
+('Ventana templada de aluminio y PVC', 36000.00, 'Ventana templada de aluminio y PVC, con hoja semiempotrada, diseño minimalista sin bisagras visibles, vidrio templado 6 mm + cámara y junta central triple.', 'img/ventana-corrediza-templada.jpg', 9, 10,
+ 2, 2, 3, 'ALU-PVC-TEMP-01', true,
+ 8, 7, 11, 1, 4, 2),
+
+-- 16
+('Puerta exterior reforzada de madera-aluminio', 65000.00, 'Puerta exterior reforzada de madera-aluminio, con perfilería Aluplast, aislamiento térmico, cámara de aire y herraje de seguridad, perfecta para viviendas de alto estándar.', 'img/puerta-madera.jpg', 3, 10,
+ 1, 3, 3, 'PE-REF-01', true,
+ 6, 12, 21, 3, 2, 3);
+
+-- PRODUCTOS DEL PROVEEDOR ABERCOM
+INSERT INTO Producto (
+    nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
+    tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
+    tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
+) VALUES
+-- 1: Coincide con ALUPLAST IDEAL 4000 (PVC corrediza)
+('Ventana corrediza de PVC Abercom Linea Europa', 24800.00, 'Ventana corrediza fabricada en PVC línea Europa de Abercom, con doble contacto de estanqueidad y perfilería multicámara. Ideal para ambientes residenciales.', 'img/abercom-ventana-europa.jpg', 10, 9,
+ 2, 1, 3, 'PVC-AB-4000', true,
+ 1, 6, 10, 2, 2, 1),
+
+-- 2: Coincide con ALUPLAST Ventana oscilobatiente aluminio
+('Ventana oscilobatiente de aluminio Abercom A45', 27500.00, 'Ventana oscilobatiente de aluminio línea A45, herraje europeo de apertura dual y alta durabilidad, disponible en terminación anodizada.', 'img/abercom-oscilobatiente.jpg', 12, 9,
+ 2, 2, 3, 'ALU-AB-OSC45', true,
+ 2, 7, 12, 1, 1, 2),
+
+-- 3: Coincide con ALUPLAST Paño fijo PVC
+('Paño fijo de PVC Abercom Vision', 21000.00, 'Paño fijo en PVC Abercom Vision, estructura estable, excelente luminosidad y bajo mantenimiento, ideal para fachadas o divisiones vidriadas.', 'img/abercom-paniofijo.jpg', 18, 9,
+ 2, 3, 3, 'PVC-AB-FIX', true,
+ 3, 9, 18, 2, 2, 1),
+
+-- 4: Coincide con ALUPLAST Ventana plegable aluminio
+('Ventana plegable de aluminio Abercom MaxFold', 58000.00, 'Sistema plegable Abercom MaxFold de aluminio, ideal para grandes aberturas, hojas móviles con rodamientos de alta resistencia.', 'img/abercom-plegable.jpg', 5, 9,
+ 2, 2, 3, 'ALU-AB-FLD', true,
+ 5, 10, 15, 1, 1, 1),
+
+-- 5: Coincide con ALUPLAST Puerta exterior madera-aluminio
+('Puerta exterior madera-aluminio Abercom Elite', 64000.00, 'Puerta exterior Abercom Elite con estructura mixta madera-aluminio, vidrio de seguridad y alto rendimiento térmico. Diseño contemporáneo.', 'img/abercom-puerta-elite.jpg', 4, 9,
+ 1, 3, 3, 'PE-AB-ELT', true,
+ 6, 12, 21, 3, 2, 3);
+
+
+-- PRODUCTOS DEL PROVEEDOR DECEUNINCK
+INSERT INTO Producto (
+    nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
+    tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
+    tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
+) VALUES
+-- 1: Coincide con ALUPLAST IDEAL 5000 (PVC oscilobatiente)
+('Ventana PVC Deceuninck Zendow Neo', 31500.00, 'Ventana PVC Deceuninck Zendow Neo con triple junta de estanqueidad, perfilería de 70 mm y excelente aislación térmica y acústica.', 'img/deceuninck-zendow-neo.jpg', 9, 11,
+ 2, 1, 3, 'PVC-DCK-ZEN', true,
+ 2, 7, 11, 2, 2, 1),
+
+-- 2: Coincide con ALUPLAST Ventana corrediza de aluminio
+('Ventana corrediza de aluminio Deceuninck Infinity', 25500.00, 'Ventana corrediza Infinity de aluminio Deceuninck, diseño minimalista y deslizamiento suave sobre guías reforzadas.', 'img/deceuninck-corrediza.jpg', 14, 11,
+ 2, 2, 3, 'ALU-DCK-INF', true,
+ 1, 8, 11, 1, 1, 1),
+
+-- 3: Coincide con ALUPLAST Puerta PVC/Aluminio
+('Puerta de entrada PVC-Aluminio Deceuninck Legend', 45500.00, 'Puerta de entrada híbrida Deceuninck Legend, con estructura PVC-aluminio, herraje multipunto y excelente sellado térmico.', 'img/deceuninck-puerta-legend.jpg', 6, 11,
+ 1, 3, 3, 'PE-DCK-LGD', true,
+ 6, 10, 20, 2, 2, 1),
+
+-- 4: Coincide con ALUPLAST Ventana plegable aluminio
+('Ventana plegable Deceuninck FoldAir', 59500.00, 'Sistema plegable Deceuninck FoldAir con hojas de apertura total, perfilería de aluminio reforzado y vidrio templado de 6 mm.', 'img/deceuninck-foldair.jpg', 5, 11,
+ 2, 2, 3, 'ALU-DCK-FLD', true,
+ 5, 10, 15, 1, 1, 1),
+
+-- 5: Coincide con ALUPLAST Paño fijo PVC
+('Paño fijo PVC Deceuninck Eforte', 22500.00, 'Paño fijo Eforte de PVC Deceuninck, pensado para máxima luminosidad y eficiencia energética, compatible con sistemas Zendow.', 'img/deceuninck-pano-eforte.jpg', 10, 11,
+ 2, 1, 3, 'PVC-DCK-FIX', true,
+ 3, 9, 18, 2, 2, 1);
 
 
 
@@ -301,7 +481,7 @@ VALUES
 (5,'CIUDAD DE BUENOS AIRES'),
 (6,'CÓRDOBA'),
 (7,'CORRIENTES'),
-(8,'ENTRE RÍOS'),
+(8,'ENTRE RIOS'),
 (9,'FORMOSA'),
 (10,'JUJUY'),
 (11,'LA PAMPA'),
@@ -309,15 +489,15 @@ VALUES
 (13,'MENDOZA'),
 (14,'MISIONES'),
 (15,'NEUQUÉN'),
-(16,'RÍO NEGRO'),
+(16,'RIO NEGRO'),
 (17,'SALTA'),
 (18,'SAN JUAN'),
 (19,'SAN LUIS'),
 (20,'SANTA CRUZ'),
 (21,'SANTA FE'),
 (22,'SANTIAGO DEL ESTERO'),
-(23,'TIERRA DEL FUEGO, ANTÁRTIDA E ISLAS DEL ATLÁNTICO SUR'),
-(24,'TUCUMÁN');
+(23,'TIERRA DEL FUEGO, ANTARTIDA E ISLAS DEL ATLANTICO SUR'),
+(24,'TUCUMAN');
 
 
 INSERT INTO Localidad (id_localidad, nombre, provincia_id)
@@ -426,7 +606,7 @@ VALUES
 (102,'ITUZAINGO',1),
 (103,'LOBOS',1),
 (104,'9 DE JULIO',1),
-(105,'BAHÍA BLANCA',1),
+(105,'BAHIA BLANCA',1),
 (106,'GENERAL LAVALLE',1),
 (107,'DAIREAUX',1),
 (108,'CARLOS TEJEDOR',1),
@@ -464,7 +644,7 @@ VALUES
 (140,'LA PAZ',2),
 (141,'POMAN',2),
 (142,'EL ALTO',2),
-(143,'ANDALGALÁ',2),
+(143,'ANDALGALA',2),
 (144,'CAPAYAN',2),
 (145,'VALLE VIEJO',2),
 (146,'ANCASTI',2),
@@ -481,7 +661,7 @@ VALUES
 (157,'SARGENTO CABRAL',3),
 (158,'25 DE MAYO',3),
 (159,'BERMEJO',3),
-(160,'LIBERTADOR GENERAL SAN MARTÍN',3),
+(160,'LIBERTADOR GENERAL SAN MARTIN',3),
 (161,'SAN FERNANDO',3),
 (162,'LIBERTAD',3),
 (163,'O HIGGINS',3),
@@ -496,7 +676,7 @@ VALUES
 (172,'COMANDANTE FERNANDEZ',3),
 (173,'CHACABUCO',3),
 (174,'9 DE JULIO',3),
-(175,'FRAY JUSTO SANTA MARÍA DE ORO',3),
+(175,'FRAY JUSTO SANTA MARIA DE ORO',3),
 (176,'QUITILIPI',3),
 (177,'LANGUIÑEO',4),
 (178,'RIO SENGUER',4),
@@ -537,7 +717,7 @@ VALUES
 (213,'GENERAL SAN MARTIN',6),
 (214,'MARCOS JUAREZ',6),
 (215,'COLON',6),
-(216,'SANTA MARÍA',6),
+(216,'SANTA MARIA',6),
 (217,'RIO PRIMERO',6),
 (218,'PUNILLA',6),
 (219,'RIO SEGUNDO',6),
@@ -657,10 +837,10 @@ VALUES
 (333,'GENERAL LAMADRID',12),
 (334,'CORONEL FELIPE VARELA',12),
 (335,'GENERAL JUAN F QUIROGA',12),
-(336,'GENERAL SAN MARTÍN',12),
+(336,'GENERAL SAN MARTIN',12),
 (337,'INDEPENDENCIA',12),
 (338,'CASTRO BARROS',12),
-(339,'GENERAL ÁNGEL VERA PEÑALOZA',12),
+(339,'GENERAL ANGEL VERA PEÑALOZA',12),
 (340,'MALARGUE',13),
 (341,'SAN CARLOS',13),
 (342,'SAN MARTIN',13),
@@ -679,7 +859,7 @@ VALUES
 (355,'RIVADAVIA',13),
 (356,'JUNIN',13),
 (357,'SAN RAFAEL',13),
-(358,'LIBERTADOR GENERAL SAN MARTÍN',14),
+(358,'LIBERTADOR GENERAL SAN MARTIN',14),
 (359,'SAN PEDRO',14),
 (360,'CAINGUAS',14),
 (361,'APOSTOLES',14),
@@ -732,7 +912,7 @@ VALUES
 (408,'CAFAYATE',17),
 (409,'ORAN',17),
 (410,'ANTA',17),
-(411,'GENERAL JOSE DE SAN MARTÍN',17),
+(411,'GENERAL JOSE DE SAN MARTIN',17),
 (412,'CHICOANA',17),
 (413,'RIVADAVIA',17),
 (414,'GENERAL GUEMES',17),
@@ -768,19 +948,19 @@ VALUES
 (444,'RAWSON',18),
 (445,'SAN MARTIN',18),
 (446,'GENERAL PEDERNERA',19),
-(447,'LIBERTADOR GENERAL SAN MARTÍN',19),
+(447,'LIBERTADOR GENERAL SAN MARTIN',19),
 (448,'CORONEL PRINGLES',19),
 (449,'JUNIN',19),
 (450,'AYACUCHO',19),
 (451,'CHACABUCO',19),
-(452,'JUAN MARTÍN DE PUEYRREDÓN',19),
+(452,'JUAN MARTIN DE PUEYRREDÓN',19),
 (453,'GOBERNADOR DUPUY',19),
 (454,'BELGRANO',19),
 (455,'LAGO ARGENTINO',20),
 (456,'DESEADO',20),
 (457,'MAGALLANES',20),
 (458,'GUER AIKE',20),
-(459,'RÍO CHICO',20),
+(459,'RIO CHICO',20),
 (460,'CORPEN AIKE',20),
 (461,'LAGO BUENOS AIRES',20),
 (462,'CONSTITUCION',21),
@@ -832,7 +1012,7 @@ VALUES
 (508,'USHUAIA',23),
 (509,'ISLAS DEL ATLANTICO SUR',23),
 (510,'RIO GRANDE',23),
-(511,'ANTÁRTIDA ARGENTINA',23),
+(511,'ANTARTIDA ARGENTINA',23),
 (512,'TOLHUIN',23),
 (513,'CRUZ ALTA',24),
 (514,'CHICLIGASTA',24),
