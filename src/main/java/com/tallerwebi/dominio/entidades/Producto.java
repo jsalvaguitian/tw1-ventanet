@@ -21,6 +21,7 @@ public class Producto {
     private double precio;
     private String descripcion;
     private String imagenUrl;
+    private String imgCloudinaryID;
     private int stock;
     
 
@@ -233,6 +234,14 @@ public class Producto {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public String getImgCloudinaryID() {
+        return imgCloudinaryID;
+    }
+
+    public void setImgCloudinaryID(String imgCloudinaryID) {
+        this.imgCloudinaryID = imgCloudinaryID;
     }
 
 }
