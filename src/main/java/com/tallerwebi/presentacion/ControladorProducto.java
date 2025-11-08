@@ -1,11 +1,13 @@
 package com.tallerwebi.presentacion;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +33,7 @@ import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
+import com.tallerwebi.dominio.servicios.ServicioCloudinary;
 import com.tallerwebi.dominio.servicios.ServicioMarca;
 import com.tallerwebi.dominio.servicios.ServicioPresentacion;
 import com.tallerwebi.dominio.servicios.ServicioProducto;
@@ -47,17 +50,19 @@ public class ControladorProducto implements ServletContextAware {
     private final ServicioMarca servicioMarca;
     private final ServicioPresentacion servicioPresentacion;
     private final ServicioProveedorI servicioProveedor;
+    private ServicioCloudinary servicioCloudinary;
 
     @Autowired
     public ControladorProducto(ServicioProducto servicioProducto, ServicioTipoProducto servicioTipoProducto,
             ServicioMarca servicioMarca, ServicioPresentacion servicioPresentacion,
-            ServicioProveedorI servicioProveedor) {
+            ServicioProveedorI servicioProveedor, ServicioCloudinary servicioCloudinary) {
         new ArrayList<>();
         this.servicioProducto = servicioProducto;
         this.servicioMarca = servicioMarca;
         this.servicioTipoProducto = servicioTipoProducto;
         this.servicioPresentacion = servicioPresentacion;
         this.servicioProveedor = servicioProveedor;
+        this.servicioCloudinary = servicioCloudinary;
     }
 
     public void setServletContext(ServletContext servletContext) {
@@ -138,24 +143,17 @@ public class ControladorProducto implements ServletContextAware {
             }
 
             if (imagenFile != null && !imagenFile.isEmpty()) {
-                String uploadDirectory = servletContext.getRealPath("/resources/core/uploads/");
-                Path uploadPath = Paths.get(uploadDirectory);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-                // Ejemplo: guardar en disco
-                Path filePath = Paths.get(uploadDirectory, imagenFile.getOriginalFilename());
-                // Copia el archivo
-                Files.copy(imagenFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                // Guardar la ruta en el producto
-                producto.setImagenUrl("/resources/core/uploads/" + imagenFile.getOriginalFilename());
+                Map<String, Object> resultado = servicioCloudinary.subirImagen(imagenFile);
+                producto.setImagenUrl((String) resultado.get("url"));
+                producto.setImgCloudinaryID((String) resultado.get("public_id"));
+                // antes imagen cargada en un directorio
             }
             servicioProducto.crearProducto(producto);
         } catch (ProductoExistente e) {
             model.put("error", "El producto ya existe");
             return new ModelAndView("nuevo-producto", model);
         } catch (Exception e) {
-            model.put("error", "Error al registrar el nuevo producto: "  + e.getMessage());
+            model.put("error", "Error al registrar el nuevo producto: " + e.getMessage());
             return new ModelAndView("nuevo-producto", model);
         }
         return new ModelAndView("redirect:listado", model);
@@ -191,18 +189,25 @@ public class ControladorProducto implements ServletContextAware {
             Proveedor proveedor = servicioProveedor.obtenerPorIdUsuario(usuarioSesion.getId());
             producto.setProveedor(proveedor);
 
+            // tener el producto actual para mantener los datos previos
+            Producto productoActual = servicioProducto.obtenerPorId(id);
+
             if (imagenFile != null && !imagenFile.isEmpty()) {
-                String uploadDirectory = servletContext.getRealPath("/resources/core/uploads/");
-                Path uploadPath = Paths.get(uploadDirectory);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-                // Ejemplo: guardar en disco
-                Path filePath = Paths.get(uploadDirectory, imagenFile.getOriginalFilename());
-                // Copia el archivo
-                Files.copy(imagenFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                // Guardar la ruta en el producto
-                producto.setImagenUrl("/resources/core/uploads/" + imagenFile.getOriginalFilename());
+                Map<String, Object> resultado = servicioCloudinary.subirImagen(imagenFile);
+                String nuevaUrl = (String) resultado.get("url");
+                String nuevoImgId = (String) resultado.get("public_id");
+
+                // borro la anterior imagen para no tener imgs huerfanas en el servidor
+                // cloudinary
+                if (productoActual.getImgCloudinaryID() != null)
+                    servicioCloudinary.eliminarImagen(productoActual.getImgCloudinaryID());
+
+                producto.setImagenUrl(nuevaUrl);
+                producto.setImgCloudinaryID(nuevoImgId);
+
+            } else {
+                producto.setImagenUrl(productoActual.getImagenUrl());
+                producto.setImgCloudinaryID(productoActual.getImgCloudinaryID());
             }
 
             servicioProducto.actualizar(producto);
@@ -212,6 +217,7 @@ public class ControladorProducto implements ServletContextAware {
             model.put("marcas", servicioMarca.obtener());
             model.put("presentaciones", servicioPresentacion.obtener());
             return new ModelAndView("editar-producto", model);
+
         } catch (Exception e) {
             model.put("error", "Error al actualizar producto: " + e.getMessage());
             return new ModelAndView("editar-producto", model);
@@ -219,20 +225,27 @@ public class ControladorProducto implements ServletContextAware {
     }
 
     @RequestMapping("/eliminar/{id}")
-    public String eliminarProducto(@PathVariable Long id, RedirectAttributes redirectAttrs) {
+    public String eliminarProducto(@PathVariable Long id, RedirectAttributes redirectAttrs){
         try {
+            Producto productoActual = servicioProducto.obtenerPorId(id);
+
+            if (productoActual!=null && productoActual.getImgCloudinaryID() != null)
+                servicioCloudinary.eliminarImagen(productoActual.getImgCloudinaryID());
+
             servicioProducto.eliminar(id);
             redirectAttrs.addFlashAttribute("exito", "Producto eliminado con éxito");
         } catch (NoHayProductoExistente e) {
             redirectAttrs.addFlashAttribute("error", "Producto no encontrado");
+        } catch (IOException e) {
+            redirectAttrs.addFlashAttribute("error", "No se pudo eliminar la imagen del producto del servidor de imagen");
         }
         return "redirect:/producto/listado";
     }
 
     @GetMapping("/buscar")
     @ResponseBody
-    public List<Producto> buscarProductos(      
-            @RequestParam(required = false) Long tipoProductoId,      
+    public List<Producto> buscarProductos(
+            @RequestParam(required = false) Long tipoProductoId,
             @RequestParam(required = false) Long tipoVentanaId,
             @RequestParam(required = false) Long anchoId,
             @RequestParam(required = false) Long altoId,
@@ -244,7 +257,7 @@ public class ControladorProducto implements ServletContextAware {
             Model model) {
 
         List<Producto> productos = servicioProducto.buscarProductosParaCotizacion(
-                tipoProductoId,                
+                tipoProductoId,
                 tipoVentanaId,
                 anchoId,
                 altoId,
@@ -256,7 +269,7 @@ public class ControladorProducto implements ServletContextAware {
 
         // model.addAttribute("productos", productos);
 
-        // // Si querés volver a mostrar el formulario con los valores seleccionados        
+        // // Si querés volver a mostrar el formulario con los valores seleccionados
         // model.addAttribute("tipoVentanaId", tipoVentanaId);
         // model.addAttribute("anchoId", anchoId);
         // model.addAttribute("altoId", altoId);
@@ -308,3 +321,19 @@ public class ControladorProducto implements ServletContextAware {
     }
 
 }
+/*
+ * String uploadDirectory =
+ * servletContext.getRealPath("/resources/core/uploads/");
+ * Path uploadPath = Paths.get(uploadDirectory);
+ * if (!Files.exists(uploadPath)) {
+ * Files.createDirectories(uploadPath);
+ * }
+ * // Ejemplo: guardar en disco
+ * Path filePath = Paths.get(uploadDirectory, imagenFile.getOriginalFilename());
+ * // Copia el archivo
+ * Files.copy(imagenFile.getInputStream(), filePath,
+ * StandardCopyOption.REPLACE_EXISTING);
+ * // Guardar la ruta en el producto
+ * producto.setImagenUrl("/resources/core/uploads/" +
+ * imagenFile.getOriginalFilename());
+ */

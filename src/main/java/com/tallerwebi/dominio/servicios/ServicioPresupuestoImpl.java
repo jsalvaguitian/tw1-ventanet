@@ -46,8 +46,9 @@ public class ServicioPresupuestoImpl implements ServicioPresupuesto {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Presupuesto obtenerPorId(Long id) {
-        throw new UnsupportedOperationException("No implementado aún");
+        return repositorioPresupuesto.obtenerPorId(id);
     }
 
     @Override
