@@ -85,6 +85,12 @@ body {
     color: #888;
 }
 
+.stat.active {
+    border: 2px solid #007bff;
+    background-color: #e9f2ff;
+    border-radius: 8px;
+}
+
 .events-table {
     background: #fff;
     border-radius: 8px;
