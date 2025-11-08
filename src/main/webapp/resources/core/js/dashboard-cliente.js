@@ -1,23 +1,86 @@
 document.addEventListener("DOMContentLoaded", function() {
-    //const stats = document.querySelectorAll(".stat");
+    const stats = document.querySelectorAll(".stat");
     const rows = document.querySelectorAll("#tablaCotizaciones tbody tr");
     const searchInput = document.querySelector(".form-control[placeholder^='Buscar']");
+    const dateFilter = document.getElementById("dateFilter");
+    const applyFilterBtn = document.getElementById("applyFilter");
     
     let currentFilter = "TODOS"; // Filtro de estado actual
     let searchText = "";
+    let dateRange = null;
+
+     function obtenerRangoFechas(valor) {
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        let inicio = null;
+        let fin = new Date(hoy);
+
+        switch (valor) {
+            case "today":
+                inicio = new Date(hoy);
+                break;
+            case "yesterday":
+                inicio = new Date(hoy);
+                inicio.setDate(inicio.getDate() - 1);
+                fin = new Date(inicio);
+                break;
+            case "last7":
+                inicio = new Date(hoy);
+                inicio.setDate(inicio.getDate() - 7);
+                break;
+            case "last30":
+                inicio = new Date(hoy);
+                inicio.setDate(inicio.getDate() - 30);
+                break;
+            case "month":
+                inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+                break;
+            default:
+                inicio = null; // Todos
+        }
+        return { inicio, fin };
+    }
+
 
     function aplicarFiltros() {
         rows.forEach(row => {
             const estado = row.children[3].textContent.trim().toUpperCase();
             const textoFila = row.textContent.toLowerCase();
+            const fechaStr = row.children[4].textContent.trim();
 
             const coincideEstado = currentFilter === "TODOS" || estado === currentFilter;
-            const coincideBusqueda = textoFila.includes(searchText);
+            const coincideBusqueda = textoFila.includes(searchText);let coincideFecha = true;
+            if (dateRange && dateRange.inicio) {
+                const fecha = new Date(fechaStr);
+                fecha.setHours(0, 0, 0, 0);
+                coincideFecha = (fecha >= dateRange.inicio && fecha <= dateRange.fin);
+            }
 
-            // Mostrar/ocultar fila según ambos criterios
-            row.style.display = (coincideEstado && coincideBusqueda) ? "" : "none";
+            // Mostrar/ocultar fila según todos los criterios
+            row.style.display = (coincideEstado && coincideBusqueda && coincideFecha) ? "" : "none";
         });
     }
+
+    applyFilterBtn.addEventListener("click", () => {
+        const valor = dateFilter.value;
+        dateRange = obtenerRangoFechas(valor);
+        aplicarFiltros();
+    });
+
+    // Filtro de estado
+    stats.forEach(stat => {
+        stat.addEventListener("click", () => {
+            stats.forEach(s => s.classList.remove("active"));
+            stat.classList.add("active");
+            currentFilter = stat.getAttribute("data-filter");
+            aplicarFiltros();
+        });
+    });
+
+    searchInput.addEventListener("input", (e) => {
+        searchText = e.target.value.toLowerCase();
+        aplicarFiltros();
+    });
 
     document.addEventListener('click', function(e) {
         // Verifica si el clic ocurrió en el botón o dentro de su icono

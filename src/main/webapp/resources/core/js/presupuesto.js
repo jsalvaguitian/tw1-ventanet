@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     listenerProvincia();
     listenerLocalidad();
+    listenerTipoProducto();
 
     // Llamar búsqueda inicial al cargar
     buscarProductos();
@@ -250,5 +251,37 @@ function listenerLocalidad() {
 
     });
 }
+
+function listenerTipoProducto() {
+    const tipoProductoEl = document.getElementById('tipoProducto');
+    const tipoVentanaEl = document.getElementById('tipoVentana');
+    tipoProductoEl.addEventListener('change', function () {
+        const prodId = this.value;
+
+        // limpiar opciones
+        tipoVentanaEl.innerHTML = '<option value="">Seleccione...</option>';
+        if (!prodId) return;
+        // Llamada al endpoint que retorna JSON
+        fetch('/spring/presupuesto/tipo-ventana?tipoProductoId=' + encodeURIComponent(prodId))
+            .then(resp => {
+                if (!resp.ok) throw new Error('Error en la respuesta');
+                return resp.json();
+            })
+            .then(list => {
+                list.forEach(it => {
+                    const opt = document.createElement('option');
+                    opt.value = it.id;
+                    opt.textContent = it.nombre;
+                    tipoVentanaEl.appendChild(opt);
+                });
+            })
+            .catch(err => {
+                console.error('No se pudieron cargar las categorias', err);
+                showToast('No se pudieron cargar las categorias para el producto seleccionado.');
+            });
+    });
+}
+
+
 
 
