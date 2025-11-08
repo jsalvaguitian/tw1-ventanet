@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: ["main", "Dev"]
   push:
-    branches: ["main", "jesica", "Dev"]
+    branches: ["main", "jesica", "Dev", "jesi-cloudinary"]
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
