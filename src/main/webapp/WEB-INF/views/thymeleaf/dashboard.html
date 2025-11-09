@@ -51,11 +51,27 @@
                 </div>
             </div>
 
-            <!-- Estadísticas -->
-            <div class="stats mt-3 mb-3 d-flex justify-content-around">
-                <div class="stat text-center">
-                    <span class="number" th:text="${cotizaciones.size()}"></span><br>
-                    <span class="label">Total de Presupuestos</span>
+            <!-- Estadísticas -->            
+            <div class="stats">
+                <div class="stat flex-fill text-center active" data-filter="TODOS">
+                    <span class="number" id="totalEvents" th:text="${totalCotizaciones}">0</span><br>
+                    <span class="label">Total de Cotizaciones</span>
+                </div>
+                <div class="stat flex-fill text-center" data-filter="PENDIENTE">
+                    <span class="number" id="pendingEvents" th:text="${cotizacionesPendientes}">0</span><br>
+                    <span class="label">Cotizaciones Pendientes</span>
+                </div>
+                <div class="stat flex-fill text-center" data-filter="APROBADA">
+                    <span class="number" id="approvedEvents" th:text="${cotizacionesAprobadas}">0</span><br>
+                    <span class="label">Cotizaciones Aprobadas</span>
+                </div>
+                <div class="stat flex-fill text-center" data-filter="RECHAZADO">
+                    <span class="number" id="rejectedEvents" th:text="${cotizacionesRechazadas}">0</span><br>
+                    <span class="label">Cotizaciones Rechazadas</span>
+                </div>
+                <div class="stat flex-fill text-center" data-filter="COMPLETADA">
+                    <span class="number" id="completedEvents" th:text="${cotizacionesCompletadas}">0</span><br>
+                    <span class="label">Cotizaciones Completadas</span>
                 </div>
             </div>
 
@@ -112,10 +128,7 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
-            <!-- <div id="eventsGrid" class="events-grid">
-
-            </div> -->
+            </div>            
         </div>
     </div>
 
@@ -137,145 +150,10 @@
         </div>
     </div>
 
-
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" th:src="@{/js/dashboard-cliente.js}"></script>
-    <!-- <script th:inline="javascript">
-        /*<![CDATA[*/
-        var events = [];
-        try {
-            var raw = /*[[${presupuestosJson}]]*/ '[]';
-            // base url (context path) injected by Thymeleaf so links work under any context
-            var baseUrl = /*[[@{/}]]*/ '/';
-            if (raw == null || raw === '') raw = '[]';
-            events = (typeof raw === 'string') ? JSON.parse(raw) : raw;
-            if (!Array.isArray(events)) events = [];
-        } catch (e) {
-            console.error('Error parsing presupuestosJson', e);
-            events = [];
-        }
-        function renderGrid(list) {
-            const grid = document.getElementById('eventsGrid');
-            if (!grid) return;
-
-            grid.innerHTML = '';
-
-            if (!list || list.length === 0) {
-                grid.innerHTML = '<div class="p-3">No hay presupuestos.</div>';
-                return;
-            }
-
-            // Crear tabla
-            const table = document.createElement('table');
-            table.className = 'table table-striped table-hover';
-
-            table.innerHTML = `
-        <thead>
-            <tr>
-                <th>Presupuesto</th>
-                <th>Fecha</th>
-                <th>Provincia</th>
-                <th>Localidad</th>
-                <th>Partido</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody></tbody>`;
-
-            const tbody = table.querySelector('tbody');
-
-            list.forEach((c, i) => {
-                const row = document.createElement('tr');
-                const detailHref = baseUrl + 'presupuesto/' + c.id + '/items';
-                row.innerHTML = `
-            <td>${i + 1}</td>
-            <td>${c.fecha}</td>
-            <td>${c.provincia}</td>
-            <td>${c.localidad}</td>
-            <td>${c.partido}</td>
-            <td class="text-center">
-                <a class='btn btn-primary btn-sm' href="${detailHref}">
-                    <i class="fa fa-eye"></i>
-                </a>
-            </td>`;
-                tbody.appendChild(row);
-            });
-
-            grid.appendChild(table);
-        }
-
-
-        // Inicializar grilla si existe
-        if (document.getElementById('eventsGrid')) renderGrid(events);
-
-        // Buscador
-        var searchEl = document.getElementById('searchInput');
-        if (searchEl) searchEl.addEventListener('input', function () {
-            const query = this.value.toLowerCase();
-            const filtered = events.filter(ev =>
-                (ev.proveedor && ev.proveedor.toLowerCase().includes(query)) ||
-                (ev.estado && ev.estado.toLowerCase().includes(query)) ||
-                (ev.fecha && ev.fecha.toLowerCase().includes(query))
-            );
-            renderGrid(filtered);
-        });
-        
-        var applyFilterBtn = document.getElementById('applyFilter');
-        if (applyFilterBtn) applyFilterBtn.onclick = function () {
-            const filter = document.getElementById('dateFilter').value;
-            const today = new Date();
-            function parseDate(str) {
-                if (!str) return new Date();
-                const parts = str.split('-');
-                return new Date(parts[0], parts[1] - 1, parts[2]);
-            }
-            let filtered = events;
-            if (filter === 'today') {
-                const s = today.toISOString().slice(0, 10);
-                filtered = events.filter(ev => ev.fecha === s);
-            } else if (filter === 'yesterday') {
-                const yesterday = new Date(today);
-                yesterday.setDate(today.getDate() - 1);
-                const s = yesterday.toISOString().slice(0, 10);
-                filtered = events.filter(ev => ev.fecha === s);
-            } else if (filter === 'last7') {
-                const weekAgo = new Date(today);
-                weekAgo.setDate(today.getDate() - 7);
-                filtered = events.filter(ev => parseDate(ev.fecha) >= weekAgo && parseDate(ev.fecha) <= today);
-            } else if (filter === 'last30') {
-                const monthAgo = new Date(today);
-                monthAgo.setDate(today.getDate() - 30);
-                filtered = events.filter(ev => parseDate(ev.fecha) >= monthAgo && parseDate(ev.fecha) <= today);
-            } else if (filter === 'month') {
-                filtered = events.filter(ev => {
-                    const d = parseDate(ev.fecha);
-                    return d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
-                });
-            }
-            renderGrid(filtered);
-        };
-        
-        document.addEventListener('click', function (e) {
-            if (e.target && e.target.classList.contains('action-btn')) {
-                const idx = e.target.getAttribute('data-index');
-                const c = events[idx];
-                const body = document.getElementById('eventModalBody');
-                body.innerHTML = `
-
-            <p><strong>Monto:</strong> $${c.monto}</p>
-            <p><strong>Fecha:</strong> ${c.fecha}</p>
-            <div><strong>Items:</strong><ul>${(c.items || []).map(it => `<li>${it.producto} - Cant: ${it.cantidad} - Precio: $${it.precio}</li>`).join('')}</ul></div>
-        `;
-            }
-        });
-        //            <p><strong>Proveedor:</strong> ${c.proveedor}</p>
-        /*]]>*/
-
-    </script> -->
-
-    <!-- Crear Cotización navega a /presupuesto (formulario completo) -->
+    <script type="module" th:src="@{/js/dashboard-cliente.js}"></script>    
 
     <!-- FOOTER -->
     <div th:replace="fragments/footer :: footer-dashboard"></div>

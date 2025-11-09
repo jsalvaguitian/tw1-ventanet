@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.entidades.Cotizacion;
 import com.tallerwebi.dominio.entidades.Presupuesto;
+import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.servicios.ServicioClienteI;
 import com.tallerwebi.dominio.servicios.ServicioCotizacion;
@@ -30,7 +31,7 @@ public class ControladorCliente {
 
     // Constructor que Spring usa para inyección
     public ControladorCliente(ServicioClienteI servicioClienteI, ServicioPresupuesto servicioPresupuesto,
-    ServicioCotizacion servicioCotizacion) {
+            ServicioCotizacion servicioCotizacion) {
         this.servicioClienteI = servicioClienteI;
         this.servicioPresupuesto = servicioPresupuesto;
         this.servicioCotizacion = servicioCotizacion;
@@ -54,48 +55,42 @@ public class ControladorCliente {
         datosModelado.put("apellidoCliente", usuarioSesion.getApellido());
         datosModelado.put("rolCliente", usuarioSesion.getRol());
 
-
         try {
-            List<Presupuesto> presupuestos = servicioPresupuesto.obtenerPresupuestosPorIdUsuario(usuarioSesion.getId());
-            List<Cotizacion> todasLasCotizaciones = servicioCotizacion.obtenerCotizacionPorIdCliente(usuarioSesion.getId());
+            List<Cotizacion> todasLasCotizaciones = servicioCotizacion
+                    .obtenerCotizacionPorIdCliente(usuarioSesion.getId());            
 
-            
-            if (presupuestos == null) {
-                presupuestos = new ArrayList<>();
-            }
-
-            if(todasLasCotizaciones == null) {
+            if (todasLasCotizaciones == null) {
                 todasLasCotizaciones = new ArrayList<>();
             }
 
+            long totalCotizaciones = todasLasCotizaciones.size();
+            long cotizacionesPendientes = todasLasCotizaciones.stream()
+                    .filter(c -> c.getEstado() == EstadoCotizacion.PENDIENTE)
+                    .count();
+            long cotizacionesAprobadas = todasLasCotizaciones.stream()
+                    .filter(c -> c.getEstado() == EstadoCotizacion.APROBADA)
+                    .count();
+            long cotizacionesRechazadas = todasLasCotizaciones.stream()
+                    .filter(c -> c.getEstado() == EstadoCotizacion.RECHAZADO)
+                    .count();
+            long cotizacionesCompletadas = todasLasCotizaciones.stream()
+                    .filter(c -> c.getEstado() == EstadoCotizacion.COMPLETADA)
+                    .count();
+
+            datosModelado.put("totalCotizaciones", totalCotizaciones);
+            datosModelado.put("cotizacionesPendientes", cotizacionesPendientes);
+            datosModelado.put("cotizacionesAprobadas", cotizacionesAprobadas);
+            datosModelado.put("cotizacionesRechazadas", cotizacionesRechazadas);
+            datosModelado.put("cotizacionesCompletadas", cotizacionesCompletadas);
             datosModelado.put("cotizaciones", todasLasCotizaciones);
-
-            datosModelado.put("presupuestos", presupuestos);
-            datosModelado.put("mensaje",
-                    presupuestos.isEmpty() ? "No hay presupuestos" : "Hay presupuestos disponibles");
-            // Serializar una versión simplificada a JSON para JS en la vista
-            try {
-                List<Map<String, Object>> simplified = new ArrayList<>();
-                for (Presupuesto p : presupuestos) {
-                    Map<String, Object> m = new HashMap<>();
-                    m.put("id", p.getId());
-                    m.put("fecha", p.getFechaCreacion() == null ? null : p.getFechaCreacion().toString());
-                    m.put("provincia", p.getProvincia() == null ? null : p.getProvincia().getNombre());
-                    m.put("localidad", p.getLocalidad() == null ? null : p.getLocalidad().getNombre());
-                    m.put("partido", p.getPartido() == null ? null : p.getPartido().getNombre());
-                    simplified.add(m);
-                }
-
-                ObjectMapper mapper = new ObjectMapper();
-                String json = mapper.writeValueAsString(simplified);
-                datosModelado.put("presupuestosJson", json);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                datosModelado.put("presupuestosJson", "[]");
-            }
+            
         } catch (NoHayProductoExistente e) {
             datosModelado.put("cotizaciones", new ArrayList<>());
-            datosModelado.put("presupuestos", new ArrayList<>());
+            datosModelado.put("totalCotizaciones", new ArrayList<>());
+            datosModelado.put("cotizacionesPendientes", new ArrayList<>());
+            datosModelado.put("cotizacionesAprobadas", new ArrayList<>());
+            datosModelado.put("cotizacionesRechazadas", new ArrayList<>());
+            datosModelado.put("cotizacionesCompletadas", new ArrayList<>());            
             datosModelado.put("error", "No hay presupuestos disponibles");
         }
 

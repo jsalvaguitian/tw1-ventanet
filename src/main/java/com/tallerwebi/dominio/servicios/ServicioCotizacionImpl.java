@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.excepcion.CotizacionesExistente;
+import com.tallerwebi.dominio.excepcion.NoHayCotizacionExistente;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.infraestructura.RepositorioCotizacionImpl;
 import com.tallerwebi.dominio.repositorios_interfaces.*;
@@ -32,10 +33,10 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
     }
 
     @Override
-    public Cotizacion obtenerPorId(Long id) {
+    public Cotizacion obtenerPorId(Long id) throws NoHayCotizacionExistente {
         Cotizacion cotizacion = cotizacionRepository.obtenerPorId(id);
         if (cotizacion == null) {
-            throw new NoHayProductoExistente();
+            throw new NoHayCotizacionExistente("No se encontró la cotización con ID: " + id);
         }
         return cotizacion;
     }
