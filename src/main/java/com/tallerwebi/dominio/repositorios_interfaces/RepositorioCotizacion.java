@@ -4,12 +4,29 @@ import java.util.List;
 
 import com.tallerwebi.dominio.entidades.Cotizacion;
 
-
 public interface RepositorioCotizacion {
     Cotizacion obtenerPorId(Long id);
+
     List<Cotizacion> obtenerPorIdProveedor(Long proveedorId);
-    List<Cotizacion> obtenerPorIdProveedorYEstado(Long proveedorId, String estado);    
+
+    List<Cotizacion> obtenerPorIdProveedorYEstado(Long proveedorId, String estado);
+
     boolean actualizarEstado(Cotizacion item);
+
     List<Cotizacion> obtenerPorIdCliente(Long id);
+
     Cotizacion guardar(Cotizacion cotizacion);
+
+    Long contarCotizacionesAprobadasPorProveedor(Long proveedorId);
+
+    Long contarCotizacionesRechazadasPorProveedor(Long proveedorId);
+
+    Long contarCotizacionesCompletadasPorProveedor(Long proveedorId);
+
+    Long contarCotizacionesPendientesPorProveedor(Long proveedorId);
+
+    Double obtenerPromedioGeneralCompletadas();
+
+    List<Object[]> obtenerProductosMasCotizados(Long proveedorId);
+
 }

@@ -42,9 +42,11 @@
 
         <button type="submit" class="btn btn-primary">Guardar cambios</button>
         <a th:href="@{/usuarios/perfil-usuario}" class="ml-3 cancelar btn-secondary">Cancerlar</a>
+        <p class="text-danger mt-3" th:if="${error}" th:text="${error}"></p>
     </form>
     </div>
     </main>
+    
 </body>
 </html>
 

@@ -12,7 +12,7 @@
     <title>Perfil de Usuario</title>
 </head>
 <div th:replace="fragments/header :: header"></div>
-<body class="bg-light">
+<body th:fragment="perfil-base(contenidoExtra)">
     <main class="container py-5 d-flex flex-column align-items-center">
         <div class="card2 shadow-lg p-4 text-center" style="max-width: 400px; width: 100%;">
             <div class="card-header bg-transparent border-0">
@@ -20,15 +20,18 @@
                 <form th:action="@{/usuarios/cambiar-foto}" method="post" enctype="multipart/form-data" class="cambiar-foto">
                 <input type="file" id="input-foto" name="foto" accept="image/*" class="form-control mb-2" hidden>
                   <label for="input-foto" class="cambiar-foto bg-primary text-white">
-            <i class="bi bi-camera"></i> <!-- icono del Bootstrap -->
-            </label>
-            </form>
+                    <i class="bi bi-camera"></i> <!-- icono del Bootstrap -->
+                </label>
+                </form>
             </div>
             <div class="card-body">
                 <h2 class="profile-username mb-3" th:text="${usuario.username}"></h2>
                 <div class="profile-info text-start">
-                    <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}" accept-charset="UTF-8"></span></p>
-                    <p><strong>Apellido:</strong> <span th:text="${usuario.apellido}" accept-charset="UTF-8"></span></p>
+                    <div th:replace="${contenidoExtra} ?: ~{}"></div>
+
+
+                    <p th:if="${usuario.rol != 'PROVEEDOR'}"><strong>Nombre:</strong> <span th:text="${usuario.nombre}" accept-charset="UTF-8"></span></p>
+                    <p th:if="${usuario.rol != 'PROVEEDOR'}"><strong>Apellido:</strong> <span th:text="${usuario.apellido}" accept-charset="UTF-8"></span></p>
                     <p><strong>Email:</strong> <span th:text="${usuario.email}" accept-charset="UTF-8"></span></p>
                     <p><strong>Dirección:</strong> <span th:text="${usuario.direccion}" accept-charset="UTF-8"></span></p>
                     <p><strong>Teléfono:</strong> <span th:text="${usuario.telefono}" accept-charset="UTF-8"></span></p>
@@ -42,7 +45,6 @@
             <!-- Modal Trigger -->
             <button id="modal-abrir" class="btn modal-trigger">Eliminar Cuenta</button>
 
-  <!-- Modal Structure -->
             <div class="modal-container" id="modal-container">
                 <div class="modal-content">
                     <h1>Eliminar Cuenta</h1>

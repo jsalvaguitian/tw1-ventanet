@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.tallerwebi.dominio.entidades.Cotizacion;
+import com.tallerwebi.dominio.entidades.CotizacionItem;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioCotizacion;
 
 @Repository("repositorioCotizacion")
@@ -83,17 +84,107 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
     public List<Cotizacion> obtenerPorIdCliente(Long clienteId) {
         var session = sessionFactory.getCurrentSession();
         var query = session.createQuery(
-            "SELECT DISTINCT c FROM Cotizacion c " +
-            "JOIN FETCH c.cliente " +
-            "JOIN FETCH c.proveedor " +
-            "LEFT JOIN FETCH c.items i " +
-            "LEFT JOIN FETCH i.producto " +
-            "WHERE c.cliente.id = :clienteId " +
-            "ORDER BY c.fechaCreacion DESC",
-            Cotizacion.class);
+                "SELECT DISTINCT c FROM Cotizacion c " +
+                        "JOIN FETCH c.cliente " +
+                        "JOIN FETCH c.proveedor " +
+                        "LEFT JOIN FETCH c.items i " +
+                        "LEFT JOIN FETCH i.producto " +
+                        "WHERE c.cliente.id = :clienteId " +
+                        "ORDER BY c.fechaCreacion DESC",
+                Cotizacion.class);
         query.setParameter("clienteId", clienteId);
         return query.getResultList();
     }
 
-}
+    @Override
+    public Long contarCotizacionesAprobadasPorProveedor(Long proveedorId) {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery(
+                "SELECT COUNT(c) FROM Cotizacion c WHERE c.proveedor.id = :proveedorId AND c.estado = 'APROBADA'",
+                Long.class);
+        query.setParameter("proveedorId", proveedorId);
+        return query.uniqueResult();
 
+    }
+
+    @Override
+    public Long contarCotizacionesRechazadasPorProveedor(Long proveedorId) {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery(
+                "SELECT COUNT(c) FROM Cotizacion c WHERE c.proveedor.id = :proveedorId AND c.estado = 'RECHAZADO'",
+                Long.class);
+        query.setParameter("proveedorId", proveedorId);
+        return query.uniqueResult();
+    }
+
+    @Override
+    public Long contarCotizacionesCompletadasPorProveedor(Long proveedorId) {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery(
+                "SELECT COUNT(c) FROM Cotizacion c WHERE c.proveedor.id = :proveedorId AND c.estado = 'COMPLETADA'",
+                Long.class);
+        query.setParameter("proveedorId", proveedorId);
+        return query.uniqueResult();
+    }
+
+    @Override
+    public Long contarCotizacionesPendientesPorProveedor(Long proveedorId) {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery(
+                "SELECT COUNT(c) FROM Cotizacion c WHERE c.proveedor.id = :proveedorId AND c.estado = 'PENDIENTE'",
+                Long.class);
+        query.setParameter("proveedorId", proveedorId);
+        return query.uniqueResult();
+    }
+    /*
+     * public Long promedioDeCotizacionesCompletadasPorProveedor(Long proveedorId) {
+     * var session = sessionFactory.getCurrentSession();
+     * var query = session.createQuery(
+     * "SELECT COUNT(c) FROM Cotizacion c " +
+     * "WHERE c.proveedor.id = :proveedorId AND c.estado = 'COMPLETADA'",
+     * Long.class);
+     * query.setParameter("proveedorId", proveedorId);
+     * return query.uniqueResult();
+     * }
+     */
+
+    @Override // Me tira error sql saco el promedio sin sql -->
+    public Double obtenerPromedioGeneralCompletadas() {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery(
+                "SELECT c.proveedor.id, COUNT(c) FROM Cotizacion c " +
+                        "WHERE c.estado = 'COMPLETADA' GROUP BY c.proveedor.id",
+                Object[].class); // Esto es porque el select de arriba devuelve una TUPLA que no es una entidad
+                                 // ni un numero
+
+        List<Object[]> resultados = query.getResultList();
+        if (resultados.isEmpty()) {
+            return 0.0;
+        }
+
+        double total = 0.0;
+        for (Object[] fila : resultados) {
+            Long count = (Long) fila[1];
+            total += count;
+        }
+
+        return total / resultados.size();
+    }
+
+    @Override
+    public List<Object[]> obtenerProductosMasCotizados(Long proveedorId) {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery(
+                "SELECT ci.producto.nombre, COUNT(DISTINCT ci.cotizacion.id) " +
+                        "FROM CotizacionItem ci " +
+                        "JOIN ci.cotizacion c " +
+                        "WHERE c.proveedor.id = :proveedorId " +
+                        "AND c.estado = 'APROBADA' " +
+                        "GROUP BY ci.producto.nombre " +
+                        "ORDER BY COUNT(DISTINCT ci.cotizacion.id) DESC",
+                Object[].class);
+        query.setParameter("proveedorId", proveedorId);
+        return query.getResultList();
+    }
+
+}
