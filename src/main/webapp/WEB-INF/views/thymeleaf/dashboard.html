@@ -46,12 +46,23 @@
                     id="searchInput">
             </div>
             <div class="col-12 col-md-4 d-flex align-items-center justify-content-md-end">
-                <div class="profile-section">
-                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop&crop=face"
-                        alt="Cliente" class="profile-img">
-                    <div class="profile-info">
-                        <h3><span th:text="${apellidoCliente}"></span>, <span th:text="${nombreCliente}"></span></h3>
-                        <p><span th:text="${rolCliente}"></span></p>
+                <div class="profile-section position-relative" id="profileMenuContainer">
+                    <button id="profileToggle" class="d-flex align-items-center bg-transparent border-0 p-0" aria-haspopup="true" aria-expanded="false" aria-controls="profileDropdown" title="Opciones de usuario">
+                        <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop&crop=face"
+                            alt="Cliente" class="profile-img me-2">
+                        <div class="profile-info text-start">
+                            <h3 class="mb-0 fs-6"><span th:text="${apellidoCliente}"></span>, <span th:text="${nombreCliente}"></span></h3>
+                            <p class="mb-0 text-muted small"><span th:text="${rolCliente}"></span></p>
+                        </div>
+                        <i class="ms-2 bi bi-caret-down-fill text-light small"></i>
+                    </button>
+                    <div id="profileDropdown" class="profile-dropdown shadow" role="menu" aria-hidden="true">
+                        <a class="profile-dropdown-item" th:href="@{/usuarios/perfil-usuario}" role="menuitem">
+                            <i class="bi bi-person-circle me-2"></i> Mi Perfil
+                        </a>
+                        <a class="profile-dropdown-item" th:href="@{/logout}" role="menuitem">
+                            <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                        </a>
                     </div>
                 </div>
             </div>
@@ -171,6 +182,38 @@
                     btn.addEventListener('click', function() {
                         const showing = sidebar.classList.toggle('show');
                         btn.setAttribute('aria-expanded', showing ? 'true' : 'false');
+                    });
+                }
+
+                // Dropdown perfil
+                const profileToggle = document.getElementById('profileToggle');
+                const profileDropdown = document.getElementById('profileDropdown');
+                function closeProfileDropdown() {
+                    profileDropdown.classList.remove('show');
+                    profileToggle.setAttribute('aria-expanded', 'false');
+                    profileDropdown.setAttribute('aria-hidden', 'true');
+                }
+                function openProfileDropdown() {
+                    profileDropdown.classList.add('show');
+                    profileToggle.setAttribute('aria-expanded', 'true');
+                    profileDropdown.setAttribute('aria-hidden', 'false');
+                }
+                if (profileToggle && profileDropdown) {
+                    profileToggle.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (profileDropdown.classList.contains('show')) {
+                            closeProfileDropdown();
+                        } else {
+                            openProfileDropdown();
+                        }
+                    });
+                    document.addEventListener('click', function(e) {
+                        if (!profileDropdown.contains(e.target) && !profileToggle.contains(e.target)) {
+                            closeProfileDropdown();
+                        }
+                    });
+                    document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape') closeProfileDropdown();
                     });
                 }
             })();
