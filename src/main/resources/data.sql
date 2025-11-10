@@ -471,6 +471,21 @@ VALUES
 (16, 6, 3, 1, 25000.00);  -- Techo de chapa x1
 
 
+-- ===============================================
+-- COMENTARIOS DE PRUEBA PARA COTIZACIONES
+-- Nota: asumiendo nombres de columnas segun entidad Comentario.
+-- Campos: id, mensaje, cotizacion_id, cliente_id, proveedor_id, fecha_creacion, leido_por_cliente, leido_por_proveedor
+-- ===============================================
+INSERT INTO Comentario (id, mensaje, cotizacion_id, cliente_id, proveedor_id, fecha_creacion, leido_por_cliente, leido_por_proveedor)
+VALUES
+ (1, 'Hola proveedor, ¿podés confirmar tiempos de entrega?', 1, 2, 3, CURRENT_TIMESTAMP, false, false),
+ (2, 'Hola cliente, la entrega estimada es en 7 días hábiles.', 1, NULL, 3, CURRENT_TIMESTAMP, false, false),
+ (3, 'Perfecto, ¿incluye instalación?', 1, 2, 3, CURRENT_TIMESTAMP, false, false),
+ (4, 'Sí, incluye instalación básica.', 1, NULL, 3, CURRENT_TIMESTAMP, false, false),
+ (5, '¿Podés detallar garantía?', 2, 2, 3, CURRENT_TIMESTAMP, false, false),
+ (6, 'Garantía escrita de 1 año por defectos del material.', 2, NULL, 3, CURRENT_TIMESTAMP, false, false);
+
+
 
 INSERT INTO Provincia (id_provincia, nombre)
 VALUES
