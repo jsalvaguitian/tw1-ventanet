@@ -52,7 +52,6 @@ public class ServicioRecuperarPasswordImpl implements ServicioRecuperarPassword 
         String cuerpo = "Hola " + usuario.getNombre() +
                 ". Para cambiar tu contrasenia, hace click en el siguiente enlace: \n " +
                 url + "\n\n" + "Este enlace expirara en 30 min.";
-        System.out.println("DEBUG >> Email del usuario en servicio: " + usuario.getEmail());
 
         servicioEmail.enviarEmail(usuario.getEmail(), asunto, cuerpo, false);
 

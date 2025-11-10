@@ -85,7 +85,7 @@ public class ServicioEmail {
      */
 
     public void enviarEmail(String destinatario, String asunto, String cuerpo, boolean esHtml) {
-        System.out.println("DEBUG >> clave: '" + clave + "'");
+
         Properties properties = new Properties();
         properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.auth", "true");
@@ -121,11 +121,10 @@ public class ServicioEmail {
             Transport.send(message);
 
         } catch (MessagingException exception) {
-            exception.printStackTrace(); // TEMPORAL: para ver pq carajo no funca
+            exception.printStackTrace();
             throw new RuntimeException("Error al enviar email: " + exception.getMessage(), exception);
         }
 
     }
-
 
 }
