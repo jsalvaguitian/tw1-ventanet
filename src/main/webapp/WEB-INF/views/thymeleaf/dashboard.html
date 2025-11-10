@@ -13,9 +13,13 @@
 </head>
 
 <body>
-    <nav class="navbar d-md-none px-3" style="box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+    <!-- Navbar móvil: visible debajo de 992px para alinear con la lógica de colapso -->
+    <nav class="navbar navbar-dark bg-dark d-lg-none px-3" style="box-shadow:0 2px 8px rgba(0,0,0,0.04);">
         <span class="navbar-title">Ventanet</span>
-        <button class="hamburger btn me-2" id="menuBtn">&#9776;</button>
+        <!-- Botón hamburger mejorado (estándar Bootstrap) -->
+        <button class="navbar-toggler me-2" type="button" id="menuBtn" aria-label="Menú" aria-expanded="false">
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <div class="dropdown" id="dropdownMenu"
             style="display:none;position:absolute;top:56px;left:0;width:100%;z-index:1200;">
             <div class="desplegable shadow p-2">
@@ -25,11 +29,12 @@
     </nav>
 
     <div class="sidebar" id="sidebar">
-        <a th:href="@{/}">
+        <a th:href="@{/}" style="text-decoration: none; color: white;">
             <h2>Ventanet</h2>
         </a>
         <ul>
-            <li class="active">Dashboard</li>
+            <li class="active"><i class="bi bi-house"></i>Dashboard</li>
+            
         </ul>
     </div>
 
@@ -104,7 +109,7 @@
                             <th>Estado</th>
                             <th>Fecha Creación</th>
                             <th>Fecha Expiración</th>
-                            <th></th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,15 +120,17 @@
                             <td th:text="${cotizacion.estado}"></td>
                             <td th:text="${cotizacion.fechaCreacion}"></td>
                             <td th:text="${cotizacion.fechaExpiracion}"></td>
-                            <td>
-                                <!-- <button type="button" class="btn btn-sm btn-info"
-                                        th:onclick="'javascript:mostrarDetalleCotizacion(\'' + ${cotizacion.id} + '\');'">
-                                    <i class="fas fa-eye"></i>
-                                </button> -->
+                            <td class="d-flex gap-1">
                                 <button type="button" class="btn btn-sm btn-info btn-detalle-cotizacion"
-                                    th:data-id="${cotizacion.id}">
+                                    th:data-id="${cotizacion.id}" title="Ver detalle">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                                <a class="btn btn-sm btn-secondary position-relative" title="Mensajes" th:href="@{'/cotizacion/' + ${cotizacion.id} + '/mensajes'}">
+                                    <i class="fas fa-comments"></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                          th:if="${unreadComentarioCounts != null and unreadComentarioCounts[cotizacion.id] > 0}"
+                                          th:text="${unreadComentarioCounts[cotizacion.id]}"></span>
+                                </a>
                             </td>
                         </tr>
                     </tbody>

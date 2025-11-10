@@ -79,7 +79,7 @@
                             <th>Estado</th>
                             <th>Fecha Creación</th>
                             <th>Fecha Expiración</th>
-                            <th></th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,11 +90,19 @@
                             <td th:text="${cotizacion.estado}"></td>
                             <td th:text="${cotizacion.fechaCreacion}"></td>
                             <td th:text="${cotizacion.fechaExpiracion}"></td>
-                            <td>
+                            <td class="d-flex gap-1">
                                 <button type="button" class="btn btn-sm btn-info"
-                                        th:onclick="'javascript:mostrarDetalleCotizacion(\'' + ${cotizacion.id} + '\');'">
+                                        th:onclick="'javascript:mostrarDetalleCotizacion(\'' + ${cotizacion.id} + '\');'"
+                                        title="Ver detalle">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                                <a class="btn btn-sm btn-secondary position-relative" title="Mensajes"
+                                   th:href="@{'/cotizacion/' + ${cotizacion.id} + '/mensajes'}">
+                                    <i class="fas fa-comments"></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                          th:if="${unreadComentarioCounts != null and unreadComentarioCounts[cotizacion.id] > 0}"
+                                          th:text="${unreadComentarioCounts[cotizacion.id]}"></span>
+                                </a>
                             </td>
                         </tr>
                     </tbody>

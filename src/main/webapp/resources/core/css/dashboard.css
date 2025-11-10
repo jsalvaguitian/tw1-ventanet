@@ -27,6 +27,19 @@ body {
     letter-spacing: 1px;
 }
 
+/* Breakpoint ampliado: mostramos hamburger y ocultamos sidebar desde 992px hacia abajo */
+@media (max-width: 992px) {
+    .sidebar {
+        left: -220px;
+    }
+    .main {
+        margin-left: 0;
+    }
+    .hamburger, .navbar-toggler {
+        display: inline-block !important;
+    }
+}
+
 .sidebar ul {
     list-style: none;
     padding: 0;
