@@ -1,6 +1,7 @@
 package com.tallerwebi.infraestructura;
 
 import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.tallerwebi.dominio.entidades.Alto;
-import com.tallerwebi.dominio.entidades.Color;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioGenerico;
 
 @Repository("repositorioAlto")

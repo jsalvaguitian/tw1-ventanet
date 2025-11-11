@@ -52,7 +52,8 @@
 
         .card img {
             width: 80px;
-            margin-bottom: 20px;
+            margin: 0 auto 20px auto;
+            display: block;
         }
 
         .card h3 {
@@ -94,12 +95,11 @@
         <div class="d-flex align-items-center">
             <span class="ms-3 fw-semibold">VENTANET</span>
         </div>
-
     </header>
 
     <main class="container-box">
         <div class="card">
-            <img th:src="@{/img/check-icon.jpg}" alt="Éxito">
+            <img th:src="@{/img/check-icon.png}" alt="Éxito">
             <h3>¡Registro exitoso!</h3>
             <p th:text="${mensaje}">Revisá tu mail para terminar el proceso de activación de cuenta.</p>
             <a th:href="@{/login}" class="btn btn-primary">

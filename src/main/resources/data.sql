@@ -168,7 +168,10 @@ INSERT INTO Usuario (
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '556677889', 'Av. Empresarial 951', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
 (16, 'Javier', 'Castro', 'proveedor12', 'javier@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '443322110', 'Calle de la Industria 357', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
-(17, 'Leandro', 'Rojas', 'proveedor13', 'leandro@email.com', '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '221100334', 'Av. Fabricación 258', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO');
+(17, 'Leandro', 'Rojas', 'proveedor13', 'leandro@email.com', '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '221100334', 'Av. Fabricación 258', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(18, 'Pobredor', 'Terrible', 'SinCotizaciones', 'pobreedor@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '444555666', 'Calle Empresa 45', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO');
 
 -- ===============================================
 -- SUBCLASES (JOINED)

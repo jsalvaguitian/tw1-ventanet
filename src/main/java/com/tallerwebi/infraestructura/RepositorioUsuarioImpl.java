@@ -1,9 +1,5 @@
 package com.tallerwebi.infraestructura;
 
-import com.tallerwebi.dominio.entidades.Cliente;
-import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.repositorios_interfaces.RepositorioUsuario;
-
 import java.util.List;
 
 import javax.persistence.Query;
@@ -13,6 +9,9 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.repositorios_interfaces.RepositorioUsuario;
 
 @Repository("repositorioUsuario")
 public class RepositorioUsuarioImpl implements RepositorioUsuario {

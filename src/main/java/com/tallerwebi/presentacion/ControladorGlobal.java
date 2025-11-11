@@ -27,7 +27,8 @@ public class ControladorGlobal {
     @ModelAttribute("dolarData")
     public Map<String, Object> agregarDolarALaVista() {
         Map<String, Object> data = new HashMap<>();
-        servicioDolar.getDatosOficial().ifPresent(d -> data.put("oficial", d));
+        // lanza excepcion si no hay datos
+        data.put("oficial", servicioDolar.getDatosOficialOrThrow());
         return data;
     }
 }

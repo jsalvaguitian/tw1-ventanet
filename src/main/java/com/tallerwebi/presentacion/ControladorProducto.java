@@ -225,11 +225,11 @@ public class ControladorProducto implements ServletContextAware {
     }
 
     @RequestMapping("/eliminar/{id}")
-    public String eliminarProducto(@PathVariable Long id, RedirectAttributes redirectAttrs){
+    public String eliminarProducto(@PathVariable Long id, RedirectAttributes redirectAttrs) {
         try {
             Producto productoActual = servicioProducto.obtenerPorId(id);
 
-            if (productoActual!=null && productoActual.getImgCloudinaryID() != null)
+            if (productoActual != null && productoActual.getImgCloudinaryID() != null)
                 servicioCloudinary.eliminarImagen(productoActual.getImgCloudinaryID());
 
             servicioProducto.eliminar(id);
@@ -237,7 +237,8 @@ public class ControladorProducto implements ServletContextAware {
         } catch (NoHayProductoExistente e) {
             redirectAttrs.addFlashAttribute("error", "Producto no encontrado");
         } catch (IOException e) {
-            redirectAttrs.addFlashAttribute("error", "No se pudo eliminar la imagen del producto del servidor de imagen");
+            redirectAttrs.addFlashAttribute("error",
+                    "No se pudo eliminar la imagen del producto del servidor de imagen");
         }
         return "redirect:/producto/listado";
     }

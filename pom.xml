@@ -169,8 +169,6 @@
             <version>5.2.2</version>
         </dependency>
 
-
-
         <!-- compile only, deployed container will provide this -->
         <!--
         <dependency>

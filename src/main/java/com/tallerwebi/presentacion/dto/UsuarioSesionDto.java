@@ -17,7 +17,6 @@ public class UsuarioSesionDto {
     }
 
     public UsuarioSesionDto() {
-        // TODO Auto-generated constructor stub
     }
 
     public Long getId() {

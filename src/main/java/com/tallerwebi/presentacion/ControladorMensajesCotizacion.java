@@ -31,21 +31,16 @@ public class ControladorMensajesCotizacion {
     }
 
     @GetMapping("/cotizacion/{id}/mensajes")
-    public ModelAndView verMensajes(@PathVariable("id") Long idCotizacion, HttpServletRequest request) {
+    public ModelAndView verMensajes(@PathVariable("id") Long idCotizacion, HttpServletRequest request) throws NoHayCotizacionExistente {
         ModelMap modelo = new ModelMap();
-        Cotizacion cotizacion = null;
-        try {
-            cotizacion = servicioCotizacion.obtenerPorId(idCotizacion);
-        } catch (NoHayCotizacionExistente e) {
-            modelo.put("error", "Cotización no encontrada");
-            return new ModelAndView("cotizacion-mensajes", modelo);
-        }
+
+        Cotizacion cotizacion = servicioCotizacion.obtenerPorId(idCotizacion);
         if (cotizacion == null) {
-            modelo.put("error", "Cotización no encontrada");
-            return new ModelAndView("cotizacion-mensajes", modelo);
+            throw new NoHayCotizacionExistente("No se encontró la cotización especificada.");
         }
 
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+        
         // Marcar mensajes como leídos según rol
         if (usuarioSesion != null) {
             if ("CLIENTE".equalsIgnoreCase(usuarioSesion.getRol())) {
