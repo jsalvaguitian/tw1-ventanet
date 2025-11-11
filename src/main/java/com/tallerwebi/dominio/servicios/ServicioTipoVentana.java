@@ -3,6 +3,7 @@ package com.tallerwebi.dominio.servicios;
 import java.util.List;
 
 import com.tallerwebi.dominio.entidades.TipoVentana;
+import com.tallerwebi.presentacion.dto.TipoVentanaDTO;
 
 public interface ServicioTipoVentana {
     List<TipoVentana> obtener();

@@ -1,13 +1,11 @@
 package com.tallerwebi.integracion;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.tallerwebi.config.RestTemplateConfig;
+import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.integracion.config.CloudinaryTestConfig;
+import com.tallerwebi.integracion.config.HibernateTestConfig;
+import com.tallerwebi.integracion.config.SpringWebTestConfig;
+import com.tallerwebi.infraestructura.config.RestTemplateTestConfig;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +27,7 @@ import com.tallerwebi.integracion.config.SpringWebTestConfig;
 
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {SpringWebTestConfig.class, HibernateTestConfig.class, RestTemplateTestConfig.class})
+@ContextConfiguration(classes = {SpringWebTestConfig.class, HibernateTestConfig.class, RestTemplateTestConfig.class, CloudinaryTestConfig.class})
 public class ControladorLoginTest {
 
 	private Usuario usuarioMock;

@@ -11,6 +11,7 @@ import javax.persistence.OneToMany;
 
 import javax.persistence.CascadeType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.enums.Rubro;
 
@@ -40,7 +41,13 @@ public class Proveedor extends Usuario {
     private String logoPath;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Cotizacion> cotizaciones = new ArrayList<>();
+    /*
+     * @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval =
+     * true)
+     * private List<Cotizacion> cotizaciones = new ArrayList<>();
+     */
 
     public Proveedor() {
         super();
@@ -152,13 +159,15 @@ public class Proveedor extends Usuario {
         this.logoPath = logoPath;
     }
 
-    public List<Cotizacion> getCotizaciones() {
-        return cotizaciones;
-    }
-
-    public void setCotizaciones(List<Cotizacion> cotizaciones) {
-        this.cotizaciones = cotizaciones;
-    }
+    /*
+     * public List<Cotizacion> getCotizaciones() {
+     * return cotizaciones;
+     * }
+     * 
+     * public void setCotizaciones(List<Cotizacion> cotizaciones) {
+     * this.cotizaciones = cotizaciones;
+     * }
+     */
 
     // public List<Producto> getProductos() {
     // return productos;

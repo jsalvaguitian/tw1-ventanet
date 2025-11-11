@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversación Cotización #[[${cotizacion != null}?${cotizacion.id}:'-']]</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
+    <style>
+        .chat-container {max-width: 960px; margin: 0 auto;}
+        .mensaje {padding: .6rem .9rem; border-radius: .75rem; margin-bottom:.5rem; position:relative;}
+        .mensaje.cliente {background:#e7f3ff; align-self:flex-start;}
+        .mensaje.proveedor {background:#f5e7ff; align-self:flex-end;}
+        .mensaje small {display:block; font-size:.65rem; margin-top:.35rem; opacity:.7;}
+        .chat-stream {display:flex; flex-direction:column;}
+        .form-chat textarea {resize:vertical;}
+        .badge-leido {position:absolute; top:4px; right:8px; font-size:.55rem;}
+    </style>
+</head>
+<body>
+    <div class="sidebar d-none d-md-block" id="sidebar">
+        <a th:href="@{/}"><h2>Ventanet</h2></a>
+        <ul>
+            <li><a th:href="@{/cliente/dashboard}">Dashboard</a></li>
+            <li class="active">Mensajes</li>
+        </ul>
+    </div>
+    <div class="main" id="mainContent">
+        <h3 class="mb-3">Conversación de Cotización <span th:text="${cotizacion.id}"></span></h3>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:unless="${error}" class="chat-container">
+            <div class="mb-3 p-2 bg-light rounded">
+                <strong>Cliente:</strong> <span th:text="${cotizacion.cliente.nombre}"></span>
+                &mdash; <strong>Proveedor:</strong> <span th:text="${cotizacion.proveedor.razonSocial}"></span>
+            </div>
+            <div class="chat-stream" id="chatStream">
+                <div th:each="c : ${comentarios}" th:class="${c.cliente != null} ? 'mensaje cliente' : 'mensaje proveedor'" th:id="${c.id}">
+                    <div th:text="${c.mensaje}"></div>
+                    <small>
+                        <span th:text="${c.fechaCreacionFormatted} + ' hs'"></span>
+                        &middot;
+                        <span th:text="${c.cliente != null ? cotizacion.cliente.nombre : cotizacion.proveedor.razonSocial}"></span>
+                    </small>
+                    <span class="badge bg-success badge-leido" th:if="${(usuarioSesion != null && usuarioSesion.rol == 'CLIENTE' && c.leidoPorCliente) || (usuarioSesion != null && usuarioSesion.rol == 'PROVEEDOR' && c.leidoPorProveedor)}">Leído</span>
+                </div>
+                <div id="ultimo"></div>
+            </div>
+            <form class="form-chat mt-3" th:action="@{'/cotizacion/' + ${cotizacion.id} + '/mensajes'}" method="post">
+                <div class="mb-2">
+                    <textarea name="mensaje" class="form-control" rows="3" placeholder="Escribí tu mensaje" required></textarea>
+                </div>
+                <button class="btn btn-primary">Enviar</button>
+                <!-- Botón Volver dinámico según rol -->
+                <a th:if="${usuarioSesion != null && usuarioSesion.rol == 'CLIENTE'}" th:href="@{/cliente/dashboard}" class="btn btn-secondary">Volver</a>
+                <a th:if="${usuarioSesion != null && usuarioSesion.rol == 'PROVEEDOR'}" th:href="@{/proveedor/dashboard-proveedor}" class="btn btn-secondary">Volver</a>
+                <div th:if="${param.error}" class="alert alert-warning mt-2" th:text="${param.error}"></div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Scroll al último mensaje
+        const ultimo = document.getElementById('ultimo');
+        if (ultimo) {
+            ultimo.scrollIntoView({behavior:'smooth'});
+        }
+    </script>
+</body>
+</html>

@@ -11,6 +11,8 @@ import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
 import com.tallerwebi.infraestructura.RepositorioProductoImpl;
+import com.tallerwebi.presentacion.dto.ProductoDTO;
+import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
 
 @Service("servicioProducto")
 @Transactional
@@ -86,11 +88,16 @@ public class ServicioProductoImpl implements ServicioProducto {
     @Override
     public List<TipoVentana> obtenerTiposVentanas(Long idProveedor) {
         return productoRepository.obtenerTiposVentanasPorProveedor(idProveedor);
+    }
+
+    @Override
+    public List<ProductoGenericoDTO> obtenerProductosGenericos() {
+        return productoRepository.obtenerProductosGenericos();
     }    
 
     @Override
    public List<Producto> buscarProductosParaCotizacion
-    (Long tipoVentanaId,
+    (Long tipoProductoId, Long tipoVentanaId,
      Long anchoId,
      Long altoId,
      Long materialId,
@@ -98,7 +105,8 @@ public class ServicioProductoImpl implements ServicioProducto {
      Long colorId,
      Boolean premarco,
      Boolean barrotillos) {
-        return productoRepository.buscarProductosParaCotizacion(         
+        return productoRepository.buscarProductosParaCotizacion( 
+            tipoProductoId,        
          tipoVentanaId,
          anchoId,
          altoId,
@@ -112,5 +120,11 @@ public class ServicioProductoImpl implements ServicioProducto {
     @Override
     public List<Producto> obtenertodosPorListadoId(List<Long> productosIds) {
        return productoRepository.obtenertodosPorListadoId(productosIds);
+    }
+
+    @Override
+    public List<Producto> filtrarProductos(Long tipoProductoId, Long tipoVentanaId, Long anchoId, Long altoId,
+            Long materialPerfilId, Long colorId) {
+        return productoRepository.filtrarProductos(tipoProductoId,tipoVentanaId,anchoId,altoId, materialPerfilId, colorId);
     }
 }

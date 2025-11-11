@@ -5,29 +5,49 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import com.tallerwebi.dominio.entidades.Presupuesto;
+
+import com.tallerwebi.dominio.entidades.Cotizacion;
+import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
-import com.tallerwebi.dominio.servicios.ServicioClienteI;
-import com.tallerwebi.dominio.servicios.ServicioPresupuesto;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tallerwebi.dominio.servicios.ServicioComentario;
+import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 @Controller
 @RequestMapping("/cliente")
 public class ControladorCliente {
 
-    private final ServicioClienteI servicioClienteI;
-    private final ServicioPresupuesto servicioPresupuesto; // inyección correcta
+    // Eliminado ServicioClienteI y ServicioPresupuesto por no uso en el dashboard actual
+    private final ServicioCotizacion servicioCotizacion;
+    private final ServicioComentario servicioComentario;
 
-    // Constructor que Spring usa para inyección
-    public ControladorCliente(ServicioClienteI servicioClienteI, ServicioPresupuesto servicioPresupuesto) {
-        this.servicioClienteI = servicioClienteI;
-        this.servicioPresupuesto = servicioPresupuesto;
+    // Constructor principal que Spring debe usar para la inyección
+    @Autowired
+    public ControladorCliente(ServicioCotizacion servicioCotizacion,
+                              ServicioComentario servicioComentario) {
+        this.servicioCotizacion = servicioCotizacion;
+        this.servicioComentario = servicioComentario;
+    }
+
+    // Constructor de compatibilidad con tests antiguos que esperaban ServicioClienteI y ServicioPresupuesto
+    public ControladorCliente(com.tallerwebi.dominio.servicios.ServicioClienteI servicioClienteI,
+                              com.tallerwebi.dominio.servicios.ServicioPresupuesto servicioPresupuesto,
+                              ServicioCotizacion servicioCotizacion,
+                              ServicioComentario servicioComentario) {
+        this(servicioCotizacion, servicioComentario); // reutiliza el constructor principal
+    }
+
+    // Constructor de compatibilidad adicional (tests que pasan sólo ServicioClienteI, ServicioPresupuesto y ServicioCotizacion)
+    public ControladorCliente(com.tallerwebi.dominio.servicios.ServicioClienteI servicioClienteI,
+                               com.tallerwebi.dominio.servicios.ServicioPresupuesto servicioPresupuesto,
+                               ServicioCotizacion servicioCotizacion) {
+        this(servicioCotizacion, null); // servicioComentario opcional
     }
 
     @GetMapping("/dashboard")
@@ -48,37 +68,61 @@ public class ControladorCliente {
         datosModelado.put("apellidoCliente", usuarioSesion.getApellido());
         datosModelado.put("rolCliente", usuarioSesion.getRol());
 
-
         try {
-            List<Presupuesto> presupuestos = servicioPresupuesto.obtenerPresupuestosPorIdUsuario(usuarioSesion.getId());
-            if (presupuestos == null) {
-                presupuestos = new ArrayList<>();
-            }
-            datosModelado.put("presupuestos", presupuestos);
-            datosModelado.put("mensaje",
-                    presupuestos.isEmpty() ? "No hay presupuestos" : "Hay presupuestos disponibles");
-            // Serializar una versión simplificada a JSON para JS en la vista
-            try {
-                List<Map<String, Object>> simplified = new ArrayList<>();
-                for (Presupuesto p : presupuestos) {
-                    Map<String, Object> m = new HashMap<>();
-                    m.put("id", p.getId());
-                    m.put("fecha", p.getFechaCreacion() == null ? null : p.getFechaCreacion().toString());
-                    m.put("provincia", p.getProvincia() == null ? null : p.getProvincia().getNombre());
-                    m.put("localidad", p.getLocalidad() == null ? null : p.getLocalidad().getNombre());
-                    m.put("partido", p.getPartido() == null ? null : p.getPartido().getNombre());
-                    simplified.add(m);
-                }
+            List<Cotizacion> todasLasCotizaciones = servicioCotizacion
+                    .obtenerCotizacionPorIdCliente(usuarioSesion.getId());            
 
-                ObjectMapper mapper = new ObjectMapper();
-                String json = mapper.writeValueAsString(simplified);
-                datosModelado.put("presupuestosJson", json);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                datosModelado.put("presupuestosJson", "[]");
+            if (todasLasCotizaciones == null) {
+                todasLasCotizaciones = new ArrayList<>();
             }
+
+            long totalCotizaciones = todasLasCotizaciones.size();
+            long cotizacionesPendientes = todasLasCotizaciones.stream()
+                    .filter(c -> c.getEstado() == EstadoCotizacion.PENDIENTE)
+                    .count();
+            long cotizacionesAprobadas = todasLasCotizaciones.stream()
+                    .filter(c -> c.getEstado() == EstadoCotizacion.APROBADA)
+                    .count();
+            long cotizacionesRechazadas = todasLasCotizaciones.stream()
+                    .filter(c -> c.getEstado() == EstadoCotizacion.RECHAZADO)
+                    .count();
+            long cotizacionesCompletadas = todasLasCotizaciones.stream()
+                    .filter(c -> c.getEstado() == EstadoCotizacion.COMPLETADA)
+                    .count();
+
+            datosModelado.put("totalCotizaciones", totalCotizaciones);
+            datosModelado.put("cotizacionesPendientes", cotizacionesPendientes);
+            datosModelado.put("cotizacionesAprobadas", cotizacionesAprobadas);
+            datosModelado.put("cotizacionesRechazadas", cotizacionesRechazadas);
+            datosModelado.put("cotizacionesCompletadas", cotizacionesCompletadas);
+            datosModelado.put("cotizaciones", todasLasCotizaciones);
+
+            // Map de contador de comentarios no leídos para cada cotización (cliente)
+            Map<Long, Long> unreadCounts = new HashMap<>();
+            for (Cotizacion c : todasLasCotizaciones) {
+                if (c.getId() != null) {
+                    long noLeidos = 0L;
+                    if (servicioComentario != null) {
+                        try {
+                            noLeidos = servicioComentario.contarNoLeidosParaCliente(c.getId());
+                        } catch (Exception ex) {
+                            noLeidos = 0L; // tolerante
+                        }
+                    } else {
+                        noLeidos = 0L;
+                    }
+                    unreadCounts.put(c.getId(), noLeidos);
+                }
+            }
+            datosModelado.put("unreadComentarioCounts", unreadCounts);
+            
         } catch (NoHayProductoExistente e) {
-            datosModelado.put("presupuestos", new ArrayList<>());
+            datosModelado.put("cotizaciones", new ArrayList<>());
+            datosModelado.put("totalCotizaciones", new ArrayList<>());
+            datosModelado.put("cotizacionesPendientes", new ArrayList<>());
+            datosModelado.put("cotizacionesAprobadas", new ArrayList<>());
+            datosModelado.put("cotizacionesRechazadas", new ArrayList<>());
+            datosModelado.put("cotizacionesCompletadas", new ArrayList<>());            
             datosModelado.put("error", "No hay presupuestos disponibles");
         }
 

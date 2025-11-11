@@ -6,4 +6,5 @@ import com.tallerwebi.dominio.entidades.Presupuesto;
 public interface RepositorioPresupuesto {
     Presupuesto guardar(Presupuesto presupuesto);
     List<Presupuesto> obtenerPorIdCliente(Long id);
+    Presupuesto obtenerPorId(Long id);
 }

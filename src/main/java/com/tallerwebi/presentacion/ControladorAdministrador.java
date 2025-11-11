@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.servicios.ServicioAdministrador;
@@ -42,19 +43,20 @@ public class ControladorAdministrador {
     private ServicioAdministrador servicioAdmin;
     private ServicioProveedorI servicioProveedor;
     private ServicioClienteI servicioCliente;
-    private ServicioUsuario servicioUsuario; 
+    private ServicioUsuario servicioUsuario;
     private ServicioEmail servicioEmail;
 
     private ServletContext servletContext; // rutas relativas
 
     @Autowired
     public ControladorAdministrador(ServicioAdministrador servicioAdmin, ServicioProveedorI servicioProveedor,
-            ServicioEmail servicioEmail, ServletContext servletContext, ServicioClienteI servicioCliente, ServicioUsuario servicioUsuario) {
-                
+            ServicioEmail servicioEmail, ServletContext servletContext, ServicioClienteI servicioCliente,
+            ServicioUsuario servicioUsuario) {
+
         this.servicioAdmin = servicioAdmin;
         this.servicioProveedor = servicioProveedor;
         this.servicioEmail = servicioEmail;
-        this.servletContext = servletContext;//para ver el pdf de afip
+        this.servletContext = servletContext;// para ver el pdf de afip
         this.servicioCliente = servicioCliente;
         this.servicioUsuario = servicioUsuario;
 
@@ -78,6 +80,16 @@ public class ControladorAdministrador {
         modelMap.put("proveedoresPendientes", servicioProveedor.contarProveedores(EstadoUsuario.PENDIENTE));
         modelMap.put("proveedoresRechazados", servicioProveedor.contarProveedores(EstadoUsuario.RECHAZADO));
         modelMap.put("totalClientes", servicioCliente.contarClientes());
+
+        // Convertir la lista de usuarios a JSON plano
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String usuariosJson = mapper.writeValueAsString(servicioUsuario.obtenerTodosLosUsuarios());
+            modelMap.put("usuariosJson", usuariosJson);
+        } catch (Exception e) {
+            e.printStackTrace();
+            modelMap.put("usuariosJson", "[]"); // lista vacía en caso de error
+        }
 
         // lista combinada de clientes y proveedores
         modelMap.put("usuarios", servicioUsuario.obtenerTodosLosUsuarios());
