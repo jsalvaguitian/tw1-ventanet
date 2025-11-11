@@ -12,6 +12,8 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.tallerwebi.dominio.excepcion.NoSePudoObtenerDolarException;
+
 @Service
 public class ServicioDolar {
 
@@ -49,5 +51,13 @@ public class ServicioDolar {
 
     public Optional<Map<String, BigDecimal>> getDatosOficial() {
         return cache.isEmpty() ? Optional.empty() : Optional.of(cache);
+    }
+
+    // lanza excepcion si no hay datos
+    public Map<String, BigDecimal> getDatosOficialOrThrow() {
+        if (cache.isEmpty()) {
+            throw new NoSePudoObtenerDolarException("No se pudo obtener el precio del dólar oficial");
+        }
+        return cache;
     }
 }

@@ -32,6 +32,7 @@ import com.tallerwebi.dominio.entidades.TipoProducto;
 import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.enums.Rubro;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
+import com.tallerwebi.dominio.excepcion.ProveedorNoExistente;
 import com.tallerwebi.dominio.servicios.ServicioMarca;
 import com.tallerwebi.dominio.servicios.ServicioProducto;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
@@ -107,8 +108,7 @@ public class ControladorCatalogo {
 
         Proveedor proveedor = servicioProveedor.buscarPorId(idProveedor);
         if (proveedor == null) {
-            modelMap.put("mensaje", "No se encontro el proveedor. Lo sentimos");
-            return new ModelAndView("catalogo-proveedor", modelMap);
+            throw new ProveedorNoExistente();
         }
 
         // creo mi dto Proveedor
@@ -259,8 +259,9 @@ public class ControladorCatalogo {
 
         Producto producto = servicioProducto.obtenerPorId(productoId);
         if (producto == null) {
-            modelMap.put("mensaje", "El producto no existe.");
-            return new ModelAndView("detalle-producto", modelMap);
+            throw new NoHayProductoExistente();
+            //modelMap.put("mensaje", "El producto no existe.");
+            //return new ModelAndView("detalle-producto", modelMap);
         }
 
         modelMap.put("producto", producto);
@@ -347,7 +348,6 @@ public class ControladorCatalogo {
             productoDTOs.add(productoDTO);
         }
         return productoDTOs;
-
     }
 
 }

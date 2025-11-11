@@ -37,9 +37,13 @@
     </div>
 
     <div class="text-center mt-3 text-muted small">
-      <span th:if="${dolarData.oficial != null}">
+      <span th:if="${dolarData != null and dolarData.oficial != null}">
         Dólar Oficial | Compra: $<span th:text="${dolarData.oficial.compra}"></span>
         | Venta: $<span th:text="${dolarData.oficial.venta}"></span>
+      </span>
+      <!-- Si no hay datos de dólar -->
+      <span th:if="${dolarData == null or dolarData.oficial == null}" class="text-danger">
+        No se pudo actualizar el precio del dólar
       </span>
     </div>
   </footer>
@@ -50,9 +54,13 @@
   <footer class="site-footer py-5">
     <div class="container">
       <div class="text-center mt-3 text-muted small">
-        <span th:if="${dolarData.oficial != null}">
+        <span th:if="${dolarData != null and dolarData.oficial != null}">
           Dólar Oficial | Compra: $<span th:text="${dolarData.oficial.compra}"></span>
           | Venta: $<span th:text="${dolarData.oficial.venta}"></span>
+        </span>
+        <!-- Si no hay datos de dólar -->
+        <span th:if="${dolarData == null or dolarData.oficial == null}" class="text-danger">
+          No se pudo actualizar el precio del dólar
         </span>
       </div>
     </div>

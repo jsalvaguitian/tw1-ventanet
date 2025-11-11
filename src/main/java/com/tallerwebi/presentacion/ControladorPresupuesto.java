@@ -73,16 +73,6 @@ public class ControladorPresupuesto {
         this.servicioUsuario = servicioUsuario;
         this.servicioPresupuesto = servicioPresupuesto;
     }
-<<<<<<< HEAD
-    
-    @GetMapping("/presupuesto")
-    public String mostrarFormulario(Model model, HttpServletRequest request) {
-        // Validar si el usuario está logueado
-        UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
-        if (usuarioSesion == null) {
-            return "redirect:/login";
-        }
-=======
 
     @GetMapping("/presupuestoBkp")
     public String mostrarFormulario(Model model) {
@@ -93,49 +83,11 @@ public class ControladorPresupuesto {
         model.addAttribute("altos", servicioTablas.obtenerAltos());
         model.addAttribute("anchos", servicioTablas.obtenerAnchos());
         model.addAttribute("provincias", servicioTablas.obtenerProvincias());
->>>>>>> Dev
 
-        try {
-            // Buscar usuario por email
-            var usuario = servicioUsuario.buscarPorMail(usuarioSesion.getUsername());
-
-            // Solo los clientes pueden acceder
-            if (usuario == null || !(usuario instanceof Cliente)) {
-                return "redirect:/home";
-            }
-
-            // Cargar datos del formulario
-            model.addAttribute("tiposProducto", servicioTipoProducto.obtener());
-            model.addAttribute("colores", servicioTablas.obtenerColores());
-            model.addAttribute("materiales", servicioTablas.obtenerMateriales());
-            model.addAttribute("altos", servicioTablas.obtenerAltos());
-            model.addAttribute("anchos", servicioTablas.obtenerAnchos());
-            model.addAttribute("provincias", servicioTablas.obtenerProvincias());
-
-            // Cargar presupuestos del cliente logueado
-            List<Presupuesto> presupuestos = servicioPresupuesto.obtenerPresupuestosPorIdUsuario(usuario.getId());
-            model.addAttribute("presupuestos", presupuestos);
-
-            return "presupuesto";
-
-        } catch (UsuarioInexistenteException e) {
-            // Usuario no encontrado → redirigir al login
-            return "redirect:/login";
-
-        } catch (NoHayProductoExistente e) {
-            // No hay productos o presupuestos → pasar listas vacías y mensaje
-            model.addAttribute("tiposProducto", new ArrayList<>());
-            model.addAttribute("colores", new ArrayList<>());
-            model.addAttribute("materiales", new ArrayList<>());
-            model.addAttribute("altos", new ArrayList<>());
-            model.addAttribute("anchos", new ArrayList<>());
-            model.addAttribute("provincias", new ArrayList<>());
-            model.addAttribute("presupuestos", new ArrayList<>());
-            model.addAttribute("errorProductos", "Todavía no hay productos o presupuestos disponibles.");
-
-            return "presupuesto";
+        // tipoVentana will be loaded dynamically based on the selected tipoProducto via
+        // AJAX
+        return "presupuesto";
         }
-    }
 
     /**
      * Endpoint utilizado por la vista para obtener las categorias (TipoVentana) de

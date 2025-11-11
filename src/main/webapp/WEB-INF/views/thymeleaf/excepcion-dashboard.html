@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error - Ventanet</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
+    <style>
+        .content-wrapper {max-width: 600px; margin: 5rem auto; text-align:center;}
+        .btn-volver {margin-top: 2rem;}
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-dark d-lg-none px-3" style="box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <span class="navbar-title">Ventanet</span>
+        <!-- Botón hamburger mejorado (estándar Bootstrap) -->
+        <button class="navbar-toggler me-2" type="button" id="menuBtn" aria-label="Menú" aria-expanded="false">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="dropdown" id="dropdownMenu"
+            style="display:none;position:absolute;top:56px;left:0;width:100%;z-index:1200;">
+            <div class="desplegable shadow p-2">
+                <a class="dropdown-item active" href="#">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar" id="sidebar">
+        <a th:href="@{/}" style="text-decoration: none; color: white;">
+            <h2>Ventanet</h2>
+        </a>
+        <ul>
+            <li class="active"><i class="bi bi-house"></i>Dashboard</li>         
+        </ul>
+    </div>
+
+    <div class="main" id="mainContent">
+        <div class="content-wrapper">
+            <h2 th:text="${mensaje != null} ? ${mensaje} : 'Ocurrió un error'"></h2>
+            <p>Algo salió mal. Por favor, volvé al dashboard.</p>
+
+            <a th:if="${usuarioSesion != null && usuarioSesion.rol == 'CLIENTE'}" 
+               th:href="@{/cliente/dashboard}" class="btn btn-secondary btn-volver">Volver al dashboard</a>
+            <a th:if="${usuarioSesion != null && usuarioSesion.rol == 'PROVEEDOR'}" 
+               th:href="@{/proveedor/dashboard-proveedor}" class="btn btn-secondary btn-volver">Volver al dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

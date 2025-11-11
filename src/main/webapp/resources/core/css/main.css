@@ -303,7 +303,6 @@ body {
   margin-bottom: 10px;
 }
 
-
 /* STRIP FABRICA */
 .fabricando {
     position: relative;
@@ -538,4 +537,38 @@ body {
 
 #faqCarousel .carousel-indicators .active {
   opacity: 1;
+}
+
+/* Error producto o presupuesto no encontrado */
+.noencontrado {
+    position: relative;
+    color: #fff;
+    text-align: center;
+    overflow: hidden;
+    min-height: 300px;   /* altura mínima, ajusta como quieras */
+    display: flex;
+    align-items: center;  /* centra verticalmente el contenido */
+    justify-content: center;
+    padding: 0 20px;     /* padding lateral */
+}
+
+.noencontrado::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5); /* overlay oscuro */
+    z-index: 1;
+}
+
+.noencontrado > * {
+    position: relative;
+    z-index: 2;  /* asegura que el texto quede sobre el overlay */
+}
+
+.noencontrado h3 {
+    position: relative;               /* para que quede por encima del overlay */
+    z-index: 2;
 }
