@@ -25,6 +25,18 @@
       <div class="hero-content">
         <p class="lead">Presupuestos optimizados para tus productos</p>
         <a th:href="@{/cotizacion/presupuesto}" class="btn btn-primary btn-lg">Cotizar Presupuesto</a>
+             
+        <!-- Botón visible sólo si existe usuarioLogueado (ControladorGlobal ya provee atributo) -->
+        <a th:if="${usuarioLogueado != null}"
+         th:href="@{/licitacion/presupuesto-custom}"
+         class="btn btn-primary btn-lg me-2">Solicitar Presupuesto Custom</a>
+
+        <!-- Alternativa: si NO está logueado, mostramos enlace al login (opcional) -->
+        <a th:if="${usuarioLogueado == null}"
+         th:href="@{/login}"
+         class="btn btn-outline-primary btn-lg me-2"
+         title="Debes iniciar sesión para solicitar un presupuesto">Revisar Licitaciones</a>
+
       </div>
     </div>
   </header>
