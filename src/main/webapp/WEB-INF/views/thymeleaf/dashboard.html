@@ -95,9 +95,9 @@
             </div>
 
             <!-- Filtros -->
-            <div class="filters mb-3 d-flex flex-wrap align-items-center justify-content-between flex-wrap">
-                <div class="d-flex align-items-center flex-wrap gap-2">
-                    <select id="dateFilter" class="form-select w-auto mb-2 mb-md-0">
+            <div class="filters mb-3 d-flex flex-wrap align-items-center">
+                <div class="d-flex align-items-center flex-wrap gap-3">
+                    <select id="dateFilter" class="form-select w-auto">
                         <option value="all">Todos</option>
                         <option value="today">Hoy</option>
                         <option value="yesterday">Ayer</option>
@@ -105,64 +105,146 @@
                         <option value="last30">Últimos 30 días</option>
                         <option value="month">Este Mes</option>
                     </select>
-                    <button id="applyFilter" class="btn btn-primary mb-2 mb-md-0">Aplicar</button>
+
+                    <button id="applyFilter" class="btn btn-primary">Aplicar</button>
+                    <a class="btn btn-success" th:href="@{/cotizacion/presupuesto}">Crear Cotización</a>
+                    <a class="btn btn-info" th:href="@{/licitacion/presupuesto-custom}">Crear Cotización Custom</a>
                 </div>
-                <a class="btn btn-success mb-2 mb-md-0" th:href="@{/cotizacion/presupuesto}">Crear Cotización</a>
-                <a class="btn btn-info mb-2 mb-md-0" th:href="@{/licitacion/presupuesto-custom}">Crear Cotizacion
-                    Custom</a>
-                <div class="form-check form-switch me-3">
+
+                <div class="form-check form-switch ms-auto">
                     <input class="form-check-input" type="checkbox" id="toggleDolar">
                     <label class="form-check-label" for="toggleDolar">Convertir a USD</label>
                 </div>
             </div>
+
         </div>
 
         <!-- Grilla de cotizaciones -->
-        <!-- Grilla de cotizaciones -->
         <div class="events-table">
-            <div class="events-table">
-                <table class="table table-striped mt-4" id="tablaCotizaciones"
-                    th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Proveedor</th>
-                            <th>Monto Total</th>
-                            <th>Estado</th>
-                            <th>Fecha Creación</th>
-                            <th>Fecha Expiración</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="cotizacion : ${cotizaciones}">
-                            <td th:text="${cotizacion.id}"></td>
-                            <td th:text="${cotizacion.proveedor.razonSocial}"></td>
-                            <td class="monto-cotizacion" th:data-precio-ars="${cotizacion.montoTotal}"
-                                th:text="'$' + ${#numbers.formatDecimal(cotizacion.montoTotal, 2, 2)} + ' ARS'">
-                            </td>
-                            <td th:text="${cotizacion.estado}"></td>
-                            <td th:text="${cotizacion.fechaCreacion}"></td>
-                            <td th:text="${cotizacion.fechaExpiracion}"></td>
-                            <td class="d-flex gap-1">
-                                <button type="button" class="btn btn-sm btn-info btn-detalle-cotizacion"
-                                    th:data-id="${cotizacion.id}" title="Ver detalle">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <a class="btn btn-sm btn-secondary position-relative" title="Mensajes"
-                                    th:href="@{'/cotizacion/' + ${cotizacion.id} + '/mensajes'}">
-                                    <i class="fas fa-comments"></i>
-                                    <span
-                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                        th:if="${unreadComentarioCounts != null and unreadComentarioCounts[cotizacion.id] > 0}"
-                                        th:text="${unreadComentarioCounts[cotizacion.id]}"></span>
-                                </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link"
+                        th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard')} ? 'active' : ''"
+                        th:href="@{/cliente/dashboard}" role="tab">
+                        Cotizaciones
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link"
+                        th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard-custom')} ? 'active' : ''"
+                        th:href="@{/cliente/dashboard-custom}" role="tab">
+                        Cotizaciones Custom
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-3">
+                <!-- TAB Cotizaciones normales -->
+                <div class="tab-pane fade"
+                    th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard')} ? 'show active' : ''"
+                    id="cotizaciones" role="tabpanel">
+
+                    <h3 class="mb-3 mt-4 text-primary">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> Cotizaciones
+                    </h3>
+
+                    <table class="table table-striped mt-4" id="tablaCotizaciones"
+                        th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Proveedor</th>
+                                <th>Monto Total</th>
+                                <th>Estado</th>
+                                <th>Fecha Creación</th>
+                                <th>Fecha Expiración</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="cotizacion : ${cotizaciones}">
+                                <td th:text="${cotizacion.id}"></td>
+                                <td th:text="${cotizacion.proveedor.razonSocial}"></td>
+                                <td class="monto-cotizacion" th:data-precio-ars="${cotizacion.montoTotal}"
+                                    th:text="'$' + ${#numbers.formatDecimal(cotizacion.montoTotal, 2, 2)} + ' ARS'">
+                                </td>
+                                <td th:text="${cotizacion.estado}"></td>
+                                <td th:text="${cotizacion.fechaCreacion}"></td>
+                                <td th:text="${cotizacion.fechaExpiracion}"></td>
+                                <td class="d-flex gap-1">
+                                    <button type="button" class="btn btn-sm btn-info btn-detalle-cotizacion"
+                                        th:data-id="${cotizacion.id}" title="Ver detalle">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <a class="btn btn-sm btn-secondary position-relative" title="Mensajes"
+                                        th:href="@{'/cotizacion/' + ${cotizacion.id} + '/mensajes'}">
+                                        <i class="fas fa-comments"></i>
+                                        <span
+                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                            th:if="${unreadComentarioCounts != null and unreadComentarioCounts[cotizacion.id] > 0}"
+                                            th:text="${unreadComentarioCounts[cotizacion.id]}"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div th:if="${cotizaciones == null or cotizaciones.isEmpty()}" class="text-center text-muted mt-4">
+                        No hay cotizaciones disponibles.
+                    </div>
+                </div>
+
+                <!-- TAB Cotizaciones Custom -->
+                <div class="tab-pane fade"
+                    th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard-custom')} ? 'show active' : ''"
+                    id="cotizacionesCustom" role="tabpanel"
+                    th:if="${#httpServletRequest.requestURI.endsWith('/dashboard-custom')}">
+
+                    <h3 class="mb-3 mt-4 text-primary">
+                        <i class="fas fa-cogs me-2"></i> Cotizaciones a Medida
+                    </h3>
+
+                    <table class="table table-striped mt-4" id="tablaLicitaciones"
+                        th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Descripción</th>
+                                <th>Proveedor</th>
+                                <th>Estado</th>
+                                <th>Fecha Creación</th>
+                                <th>Fecha Expiración</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="licitacion : ${cotizaciones}">
+                                <td th:text="${licitacion.id}"></td>
+                                <td
+                                    th:text="${licitacion.productoCustom != null ? licitacion.productoCustom.descripcion : '—'}">
+                                </td>
+                                <td th:text="${licitacion.proveedor.razonSocial}"></td>
+                                <td th:text="${licitacion.estado}"></td>
+                                <td th:text="${licitacion.fechaCreacion}"></td>
+                                <td th:text="${licitacion.fechaExpiracion}"></td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-info btn-detalle-licitacion" title="Ver detalle"
+                                        th:data-id="${licitacion.id}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div th:if="${cotizaciones == null or cotizaciones.isEmpty()}" class="text-center text-muted mt-4">
+                        No hay cotizaciones custom disponibles.
+                    </div>
+                </div>
+
             </div>
         </div>
+
     </div>
 
     <!-- Modal para detalles -->

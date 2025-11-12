@@ -6,10 +6,10 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import com.tallerwebi.dominio.entidades.Cotizacion;
 import com.tallerwebi.dominio.entidades.Licitacion;
+import com.tallerwebi.dominio.enums.EstadoLicitacion;
+import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.infraestructura.RepositorioLicitacionImpl;
-import com.tallerwebi.infraestructura.RepositorioLocalidadImpl;
 
 @Service("servicioLicitacion")
 @Transactional
@@ -30,8 +30,9 @@ public class ServicioLicitacionImpl implements ServicioLicitacion {
 
     @Override
     public Licitacion obtenerPorId(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'obtenerPorId'");
+        Licitacion licitacion = licitacionRepository.obtenerPorId(id);
+        
+        return licitacion;
     }
 
     @Override
@@ -44,6 +45,27 @@ public class ServicioLicitacionImpl implements ServicioLicitacion {
     public void eliminar(Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'eliminar'");
+    }
+
+     @Override
+    public void actualizarEstado(Long licitacionId, EstadoLicitacion estado){
+
+        Licitacion licitacion = licitacionRepository.obtenerPorId(licitacionId);        
+
+        licitacion.setEstado(estado);
+        licitacionRepository.actualizarEstado(licitacion);
+    }
+
+
+
+    @Override
+    public List<Licitacion> obtenerLicitacionesPorIdCliente(Long clienteId) {        
+        List<Licitacion> licitaciones = licitacionRepository.obtenerPorIdCliente(clienteId);
+        
+        if (licitaciones == null || licitaciones.isEmpty()) {
+            throw new NoHayProductoExistente();
+        }
+        return licitaciones;
     }
 
 }

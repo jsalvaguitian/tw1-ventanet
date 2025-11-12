@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.entidades.Cotizacion;
+import com.tallerwebi.dominio.entidades.Licitacion;
 import com.tallerwebi.dominio.enums.EstadoCotizacion;
+import com.tallerwebi.dominio.enums.EstadoLicitacion;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.servicios.ServicioComentario;
 import com.tallerwebi.dominio.servicios.ServicioCotizacion;
+import com.tallerwebi.dominio.servicios.ServicioLicitacion;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 @Controller
@@ -26,13 +29,16 @@ public class ControladorCliente {
     // Eliminado ServicioClienteI y ServicioPresupuesto por no uso en el dashboard actual
     private final ServicioCotizacion servicioCotizacion;
     private final ServicioComentario servicioComentario;
+    private final ServicioLicitacion servicioLicitacion;
 
     // Constructor principal que Spring debe usar para la inyección
     @Autowired
     public ControladorCliente(ServicioCotizacion servicioCotizacion,
-                              ServicioComentario servicioComentario) {
+                              ServicioComentario servicioComentario,
+                              ServicioLicitacion servicioLicitacion) {
         this.servicioCotizacion = servicioCotizacion;
         this.servicioComentario = servicioComentario;
+        this.servicioLicitacion = servicioLicitacion;
     }
 
     // Constructor de compatibilidad con tests antiguos que esperaban ServicioClienteI y ServicioPresupuesto
@@ -40,14 +46,14 @@ public class ControladorCliente {
                               com.tallerwebi.dominio.servicios.ServicioPresupuesto servicioPresupuesto,
                               ServicioCotizacion servicioCotizacion,
                               ServicioComentario servicioComentario) {
-        this(servicioCotizacion, servicioComentario); // reutiliza el constructor principal
+        this(servicioCotizacion, servicioComentario, null); // reutiliza el constructor principal, servicioLicitacion no disponible
     }
 
     // Constructor de compatibilidad adicional (tests que pasan sólo ServicioClienteI, ServicioPresupuesto y ServicioCotizacion)
     public ControladorCliente(com.tallerwebi.dominio.servicios.ServicioClienteI servicioClienteI,
                                com.tallerwebi.dominio.servicios.ServicioPresupuesto servicioPresupuesto,
                                ServicioCotizacion servicioCotizacion) {
-        this(servicioCotizacion, null); // servicioComentario opcional
+        this(servicioCotizacion, null, null); // servicioComentario y servicioLicitacion opcionales
     }
 
     @GetMapping("/dashboard")
@@ -114,6 +120,84 @@ public class ControladorCliente {
                     unreadCounts.put(c.getId(), noLeidos);
                 }
             }
+            datosModelado.put("unreadComentarioCounts", unreadCounts);
+            
+        } catch (NoHayProductoExistente e) {
+            datosModelado.put("cotizaciones", new ArrayList<>());
+            datosModelado.put("totalCotizaciones", new ArrayList<>());
+            datosModelado.put("cotizacionesPendientes", new ArrayList<>());
+            datosModelado.put("cotizacionesAprobadas", new ArrayList<>());
+            datosModelado.put("cotizacionesRechazadas", new ArrayList<>());
+            datosModelado.put("cotizacionesCompletadas", new ArrayList<>());            
+            datosModelado.put("error", "No hay presupuestos disponibles");
+        }
+
+        return new ModelAndView("dashboard", datosModelado);
+    }
+
+    @GetMapping("/dashboard-custom")
+    public ModelAndView irDashboardCustom(HttpServletRequest request) {
+        ModelMap datosModelado = new ModelMap();
+
+        UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+        String rol_cliente = "CLIENTE";
+
+        if (usuarioSesion == null || !rol_cliente.equalsIgnoreCase(usuarioSesion.getRol())
+                || usuarioSesion.getUsername() == null) {
+            return new ModelAndView("redirect:/login");
+        }
+
+        datosModelado.put("nombreCliente", usuarioSesion.getNombre());
+        datosModelado.put("apellidoCliente", usuarioSesion.getApellido());
+        datosModelado.put("rolCliente", usuarioSesion.getRol());
+
+        try {
+            List<Licitacion> todasLasLicitaciones = servicioLicitacion
+                    .obtenerLicitacionesPorIdCliente(usuarioSesion.getId());
+                                
+
+            if (todasLasLicitaciones == null) {
+                todasLasLicitaciones = new ArrayList<>();
+            }
+
+            long totalLicitaciones = todasLasLicitaciones.size();
+            long cotizacionesPendientes = todasLasLicitaciones.stream()
+                    .filter(c -> c.getEstado() == EstadoLicitacion.PENDIENTE)
+                    .count();
+            long cotizacionesAprobadas = todasLasLicitaciones.stream()
+                    .filter(c -> c.getEstado() == EstadoLicitacion.APROBADA)
+                    .count();
+            long cotizacionesRechazadas = todasLasLicitaciones.stream()
+                    .filter(c -> c.getEstado() == EstadoLicitacion.RECHAZADO)
+                    .count();
+            long cotizacionesCompletadas = todasLasLicitaciones.stream()
+                    .filter(c -> c.getEstado() == EstadoLicitacion.COMPLETADA)
+                    .count();
+
+            datosModelado.put("totalCotizaciones", totalLicitaciones);
+            datosModelado.put("cotizacionesPendientes", cotizacionesPendientes);
+            datosModelado.put("cotizacionesAprobadas", cotizacionesAprobadas);
+            datosModelado.put("cotizacionesRechazadas", cotizacionesRechazadas);
+            datosModelado.put("cotizacionesCompletadas", cotizacionesCompletadas);
+            datosModelado.put("cotizaciones", todasLasLicitaciones);
+
+            // Map de contador de comentarios no leídos para cada cotización (cliente)
+            Map<Long, Long> unreadCounts = new HashMap<>();
+            // for (Cotizacion c : todasLasCotizaciones) {
+            //     if (c.getId() != null) {
+            //         long noLeidos = 0L;
+            //         if (servicioComentario != null) {
+            //             try {
+            //                 noLeidos = servicioComentario.contarNoLeidosParaCliente(c.getId());
+            //             } catch (Exception ex) {
+            //                 noLeidos = 0L; // tolerante
+            //             }
+            //         } else {
+            //             noLeidos = 0L;
+            //         }
+            //         unreadCounts.put(c.getId(), noLeidos);
+            //     }
+            // }
             datosModelado.put("unreadComentarioCounts", unreadCounts);
             
         } catch (NoHayProductoExistente e) {
