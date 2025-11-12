@@ -168,7 +168,10 @@ INSERT INTO Usuario (
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '556677889', 'Av. Empresarial 951', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
 (16, 'Javier', 'Castro', 'proveedor12', 'javier@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '443322110', 'Calle de la Industria 357', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
-(17, 'Leandro', 'Rojas', 'proveedor13', 'leandro@email.com', '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '221100334', 'Av. Fabricación 258', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO');
+(17, 'Leandro', 'Rojas', 'proveedor13', 'leandro@email.com', '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq', '221100334', 'Av. Fabricación 258', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO'),
+(18, 'Pobredor', 'Terrible', 'SinCotizaciones', 'pobreedor@email.com',
+ '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
+ '444555666', 'Calle Empresa 45', CURRENT_DATE, 'PROVEEDOR', true, 'ACTIVO');
 
 -- ===============================================
 -- SUBCLASES (JOINED)
@@ -469,6 +472,21 @@ VALUES
 (14, 6, 1, 3, 15000.00),  -- Puerta de Madera x3
 (15, 6, 2, 4, 10000.00),  -- Ventana de Aluminio x4
 (16, 6, 3, 1, 25000.00);  -- Techo de chapa x1
+
+
+-- ===============================================
+-- COMENTARIOS DE PRUEBA PARA COTIZACIONES
+-- Nota: asumiendo nombres de columnas segun entidad Comentario.
+-- Campos: id, mensaje, cotizacion_id, cliente_id, proveedor_id, fecha_creacion, leido_por_cliente, leido_por_proveedor
+-- ===============================================
+INSERT INTO Comentario (id, mensaje, cotizacion_id, cliente_id, proveedor_id, fecha_creacion, leido_por_cliente, leido_por_proveedor)
+VALUES
+ (1, 'Hola proveedor, ¿podés confirmar tiempos de entrega?', 1, 2, 3, CURRENT_TIMESTAMP, false, false),
+ (2, 'Hola cliente, la entrega estimada es en 7 días hábiles.', 1, NULL, 3, CURRENT_TIMESTAMP, false, false),
+ (3, 'Perfecto, ¿incluye instalación?', 1, 2, 3, CURRENT_TIMESTAMP, false, false),
+ (4, 'Sí, incluye instalación básica.', 1, NULL, 3, CURRENT_TIMESTAMP, false, false),
+ (5, '¿Podés detallar garantía?', 2, 2, 3, CURRENT_TIMESTAMP, false, false),
+ (6, 'Garantía escrita de 1 año por defectos del material.', 2, NULL, 3, CURRENT_TIMESTAMP, false, false);
 
 
 

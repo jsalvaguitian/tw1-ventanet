@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Error - Ventanet</title>
+
+  <!-- Boostrap core css -->
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+
+  <!-- custom style -->
+  <link rel="stylesheet" th:href="@{/css/main.css}" />
+</head>
+
+<body>
+  <!-- HEADER -->
+  <div th:replace="fragments/header :: header"></div>
+
+    <main role="main">
+        <section class="noencontrado text-center py-5 bg-light">
+            <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <div class="alert alert-warning" role="alert">
+                <h3 th:text="${mensaje}">No encontramos el producto que buscabas.</h3>
+                </div>
+                <a class="btn btn-primary mt-3" th:href="@{/menu-catalogo}">Volver al catálogo</a>
+            </div>
+            </div>
+        </section>
+    </main>
+
+  <!-- FOOTER -->
+
+  <!-- Boostrap core js 
+  <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>-->
+  <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+
+</body>
+</html>
