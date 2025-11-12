@@ -3,14 +3,17 @@ package com.tallerwebi.presentacion;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tallerwebi.dominio.entidades.Cliente;
+import com.tallerwebi.dominio.entidades.Cotizacion;
 import com.tallerwebi.dominio.entidades.Licitacion;
 import com.tallerwebi.dominio.entidades.ProductoCustom;
 import com.tallerwebi.dominio.entidades.Proveedor;
@@ -18,6 +21,7 @@ import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.enums.EstadoLicitacion;
 import com.tallerwebi.dominio.enums.Rubro;
+import com.tallerwebi.dominio.excepcion.NoHayCotizacionExistente;
 import com.tallerwebi.dominio.servicios.ServicioCloudinary;
 import com.tallerwebi.dominio.servicios.ServicioLicitacion;
 import com.tallerwebi.dominio.servicios.ServicioProductoCustom;
@@ -37,6 +41,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @Controller
 @RequestMapping("/licitacion")
@@ -184,6 +190,22 @@ public class ControladorLicitacion {
         }
 
         return mav;
+    }
+
+      @GetMapping("/detalle/{id}")
+    @ResponseBody
+    public ResponseEntity<?> obtenerDetalleCotizacion(@PathVariable Long id) throws NoHayCotizacionExistente {
+
+        
+        if (id == null || id <= 0) {
+            return ResponseEntity.badRequest().body("El ID de licitacion no es válido");
+        }
+
+        Licitacion licitacion = servicioLicitacion.obtenerPorId(id);
+        if (licitacion == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Licitacion no encontrada");
+        }
+        return ResponseEntity.ok(licitacion);
     }
 
 }

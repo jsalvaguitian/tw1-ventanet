@@ -84,7 +84,7 @@ public class RepositorioLicitacionImpl implements RepositorioLicitacion{
             "SELECT DISTINCT c FROM Licitacion c " +
             "JOIN FETCH c.cliente " +
             "JOIN FETCH c.proveedor " +
-            "JOIN JOIN FETCH c.productoCustom i " +            
+            "JOIN FETCH c.productoCustom i " +            
             "WHERE c.cliente.id = :clienteId " +
             "ORDER BY c.fechaCreacion DESC",
             Licitacion.class);
