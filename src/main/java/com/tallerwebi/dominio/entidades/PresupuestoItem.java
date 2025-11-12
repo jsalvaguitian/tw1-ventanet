@@ -29,7 +29,7 @@ public class PresupuestoItem {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tipo_ventana_id", nullable = false)
-    private TipoVentana tipoVentana;
+    private SubTipoProducto tipoVentana;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ancho_id", nullable = false)
@@ -41,7 +41,7 @@ public class PresupuestoItem {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "material_id", nullable = false)
-    private MaterialDePerfil material;
+    private Material material;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "color_id", nullable = false)
@@ -59,8 +59,8 @@ public class PresupuestoItem {
     public TipoProducto getTipoProducto() { return tipoProducto; }
     public void setTipoProducto(TipoProducto tipoProducto) { this.tipoProducto = tipoProducto; }
 
-    public TipoVentana getTipoVentana() { return tipoVentana; }
-    public void setTipoVentana(TipoVentana tipoVentana) { this.tipoVentana = tipoVentana; }
+    public SubTipoProducto getTipoVentana() { return tipoVentana; }
+    public void setTipoVentana(SubTipoProducto tipoVentana) { this.tipoVentana = tipoVentana; }
 
     public Ancho getAncho() { return ancho; }
     public void setAncho(Ancho ancho) { this.ancho = ancho; }
@@ -68,8 +68,8 @@ public class PresupuestoItem {
     public Alto getAlto() { return alto; }
     public void setAlto(Alto alto) { this.alto = alto; }
 
-    public MaterialDePerfil getMaterial() { return material; }
-    public void setMaterial(MaterialDePerfil material) { this.material = material; }
+    public Material getMaterial() { return material; }
+    public void setMaterial(Material material) { this.material = material; }
 
     public Color getColor() { return color; }
     public void setColor(Color color) { this.color = color; }

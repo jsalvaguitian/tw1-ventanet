@@ -179,8 +179,8 @@
 
           <!-- Tipo de Ventana -->
           <div class="mb-3">
-            <label for="tipo_ventana_id" class="form-label">Tipo de Ventana</label>
-            <select th:field="*{tipoVentana.id}" id="tipo_ventana_id" class="form-select">
+            <label for="tipo_ventana_id" class="form-label">Subtipo de producto</label>
+            <select th:field="*{subTipoProducto.id}" id="subtipo_producto_id" class="form-select">
               <option value="">Seleccione...</option>
               <option value="1">Corrediza</option>
               <option value="2">Oscilobatiente</option>
@@ -255,7 +255,7 @@
           <!-- Material de perfil -->
           <div class="mb-3">
             <label for="material_perfil_id" class="form-label">Material de Perfil</label>
-            <select th:field="*{materialDePerfil.id}" id="material_perfil_id" class="form-select">
+            <select th:field="*{material.id}" id="material_id" class="form-select">
               <option value="">Seleccione...</option>
               <option value="1">Aluminio</option>
               <option value="2">PVC</option>
@@ -277,7 +277,7 @@
 
           <!-- Color -->
           <div class="mb-3">
-            <label for="color_id" class="form-label">Tipo de Vidrio</label>
+            <label for="color_id" class="form-label">Color</label>
             <select th:field="*{color.id}" id="color_id" class="form-select">
               <option value="">Seleccione...</option>
               <option value="1">Blanco</option>

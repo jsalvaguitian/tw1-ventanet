@@ -7,6 +7,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.tallerwebi.dominio.entidades.Ancho;
 import com.tallerwebi.dominio.entidades.Marca;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioGenerico;
 
@@ -57,5 +58,12 @@ public class RepositorioMarcaImpl implements RepositorioGenerico<Marca> {
         if (presentacion != null) {
             sessionFactory.getCurrentSession().remove(presentacion);
         }
+    }
+
+    public Marca buscarPorNombre(String marca) {
+        return (Marca) sessionFactory.getCurrentSession()
+                .createCriteria(Marca.class)
+                .add(Restrictions.eq("nombre", marca))
+                .uniqueResult();
     }
 }

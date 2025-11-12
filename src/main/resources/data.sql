@@ -6,23 +6,26 @@
 INSERT INTO Marca (id, nombre) VALUES
     (1, 'Marca A'),
     (2, 'Marca B'),
-    (3, 'Marca C');
+    (3, 'Marca C'),
+    (4, 'No aplica');
 
 -- Presentaciones
 INSERT INTO Presentacion (id, descripcion, unidadMedida, cantidad) VALUES
     (1, 'Kilogramo', 'kg', 1.0),
     (2, 'Litro', 'litros', 0.5),
-    (3, 'Unidad', 'unidades', 10.0);
+    (3, 'Unidad', 'unidades', 10.0),
+    (4, 'No aplica', 'No aplica', 0);
 
 -- Tipos de producto
 INSERT INTO TipoProducto (id, nombre) VALUES
     (1, 'Puerta'),
     (2, 'Ventana'),
     (3, 'Techo'),
-    (4, 'Piso y Revestimiento');
+    (4, 'Piso y Revestimiento'),
+    (5, 'No aplica');
 
 -- Tipo de ventana
-INSERT INTO TipoVentana (id, nombre, tipo_producto_id) VALUES
+INSERT INTO SubTipoProducto (id, nombre, tipo_producto_id) VALUES
     (1, 'Corrediza', 2),
     (2, 'Oscilobatiente', 2),
     (3, 'Paño fijo', 2),
@@ -33,7 +36,8 @@ INSERT INTO TipoVentana (id, nombre, tipo_producto_id) VALUES
     (8, 'Doble', 1),
     (9, 'Plegable', 1),
     (10, 'De Chapa', 3),
-    (11, 'Aislante', 3);
+    (11, 'Aislante', 3),
+    (12, 'No aplica',5);
     
 
 
@@ -90,7 +94,7 @@ INSERT INTO Alto (id, nombre) VALUES
     (23, '2.9 m');
 
 -- Material de perfil
-INSERT INTO MaterialDePerfil (id, nombre) VALUES
+INSERT INTO Material (id, nombre) VALUES
     (1, 'Aluminio'),
     (2, 'PVC'),
     (3, 'Madera');
@@ -100,7 +104,8 @@ INSERT INTO TipoDeVidrio (id, nombre) VALUES
     (1, 'Simple'),
     (2, 'Doble'),
     (3, 'Laminado'),
-    (4, 'Templado');
+    (4, 'Templado'),
+    (5, 'No aplica');
 
 -- Color
 INSERT INTO Color (id, nombre) VALUES
@@ -201,7 +206,7 @@ INSERT INTO Proveedor (
 INSERT INTO Producto (
     nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
     tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
-    tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
+    subtipo_producto_id, ancho_id, alto_id, material_id, tipo_vidrio_id, color_id
 ) VALUES
 -- Puerta de madera
 ('Puerta de Madera', 15000.00, 'Puerta maciza de madera', 'uploads/imagenes/puerta-madera.jpg', 20, 3,
@@ -257,7 +262,7 @@ INSERT INTO Producto (
 INSERT INTO Producto (
     nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
     tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
-    tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
+    subtipo_producto_id, ancho_id, alto_id, material_id, tipo_vidrio_id, color_id
 ) VALUES
 -- 1
 ('Ventana PVC IDEAL 4000', 25000.00, 'Sistema de ventana PVC IDEAL 4000 con perfilería de 70 mm, aislamiento térmico Uf=1,3 W/m²K, vidrio hasta 41 mm, versión corrediza para máxima iluminación y ahorro energético.', 'img/ventana-corrediza.png', 15, 10,
@@ -343,7 +348,7 @@ INSERT INTO Producto (
 INSERT INTO Producto (
     nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
     tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
-    tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
+    subtipo_producto_id, ancho_id, alto_id, material_id, tipo_vidrio_id, color_id
 ) VALUES
 -- 1: Coincide con ALUPLAST IDEAL 4000 (PVC corrediza)
 ('Ventana corrediza de PVC Abercom Linea Europa', 24800.00, 'Ventana corrediza fabricada en PVC línea Europa de Abercom, con doble contacto de estanqueidad y perfilería multicámara. Ideal para ambientes residenciales.', 'img/abercom-ventana-europa.jpg', 10, 9,
@@ -375,7 +380,7 @@ INSERT INTO Producto (
 INSERT INTO Producto (
     nombre, precio, descripcion, imagenUrl, stock, proveedor_id,
     tipo_producto_id, marca_id, presentacion_id, modelo, aceptaEnvio,
-    tipo_ventana_id, ancho_id, alto_id, material_perfil_id, tipo_vidrio_id, color_id
+    subtipo_producto_id, ancho_id, alto_id, material_id, tipo_vidrio_id, color_id
 ) VALUES
 -- 1: Coincide con ALUPLAST IDEAL 5000 (PVC oscilobatiente)
 ('Ventana PVC Deceuninck Zendow Neo', 31500.00, 'Ventana PVC Deceuninck Zendow Neo con triple junta de estanqueidad, perfilería de 70 mm y excelente aislación térmica y acústica.', 'img/deceuninck-zendow-neo.jpg', 9, 11,

@@ -37,8 +37,8 @@ public class Producto {
     private Proveedor proveedor;
 
     @ManyToOne
-    @JoinColumn(name = "tipo_ventana_id")
-    private TipoVentana tipoVentana;
+    @JoinColumn(name = "subtipo_producto_id")
+    private SubTipoProducto subTipoProducto;
 
     @ManyToOne
     @JoinColumn(name = "ancho_id")
@@ -49,8 +49,8 @@ public class Producto {
     private Alto alto;
 
     @ManyToOne
-    @JoinColumn(name = "material_perfil_id")
-    private MaterialDePerfil materialDePerfil;
+    @JoinColumn(name = "material_id")
+    private Material material;
 
     @ManyToOne
     @JoinColumn(name = "tipo_vidrio_id")
@@ -188,12 +188,12 @@ public class Producto {
         return presentacion;
     }
 
-    public TipoVentana getTipoVentana() {
-        return tipoVentana;
+    public SubTipoProducto getSubTipoProducto() {
+        return subTipoProducto;
     }
 
-    public void setTipoVentana(TipoVentana tipoVentana) {
-        this.tipoVentana = tipoVentana;
+    public void setSubTipoProducto(SubTipoProducto tipoVentana) {
+        this.subTipoProducto = tipoVentana;
     }
 
     public Ancho getAncho() {
@@ -212,12 +212,12 @@ public class Producto {
         this.alto = alto;
     }
 
-    public MaterialDePerfil getMaterialDePerfil() {
-        return materialDePerfil;
+    public Material getMaterial() {
+        return material;
     }
 
-    public void setMaterialDePerfil(MaterialDePerfil materialDePerfil) {
-        this.materialDePerfil = materialDePerfil;
+    public void setMaterial(Material materialDePerfil) {
+        this.material = materialDePerfil;
     }
 
     public TipoDeVidrio getTipoDeVidrio() {

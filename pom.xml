@@ -169,6 +169,19 @@
             <version>5.2.2</version>
         </dependency>
 
+        <!-- Agrego dependencia Apache POI para que crea y lea archivos excel.-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
+        </dependency>
+
+
 
 
         <!-- compile only, deployed container will provide this -->

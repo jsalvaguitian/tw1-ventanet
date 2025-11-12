@@ -2,7 +2,6 @@ package com.tallerwebi.dominio.entidades;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -10,7 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class TipoVentana extends BaseCatalogo {
+public class SubTipoProducto extends BaseCatalogo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,6 +23,14 @@ public class TipoVentana extends BaseCatalogo {
     private TipoProducto tipoProducto;
 
     
+    
+    public SubTipoProducto() {
+    }
+
+    public SubTipoProducto(String subtipoProducto) {
+        this.nombre = subtipoProducto;
+    }
+
     // Getters y setters
     public Long getId() {
         return id;

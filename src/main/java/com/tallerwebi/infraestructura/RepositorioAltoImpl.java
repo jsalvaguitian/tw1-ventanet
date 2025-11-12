@@ -60,4 +60,13 @@ public class RepositorioAltoImpl implements RepositorioGenerico<Alto> {
         }
     }
 
+    public Alto buscarPorNombre(String alto) {
+
+        return (Alto) sessionFactory.getCurrentSession()
+                .createCriteria(Alto.class)
+                .add(Restrictions.eq("nombre", alto))
+                .uniqueResult();
+
+    }
+
 }

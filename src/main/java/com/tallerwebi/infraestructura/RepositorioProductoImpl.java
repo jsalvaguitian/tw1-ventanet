@@ -14,7 +14,8 @@ import org.springframework.stereotype.Repository;
 
 import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.TipoProducto;
-import com.tallerwebi.dominio.entidades.TipoVentana;
+import com.tallerwebi.dominio.entidades.SubTipoProducto;
+import com.tallerwebi.dominio.entidades.TipoDeVidrio;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioGenerico;
 import com.tallerwebi.presentacion.dto.ProductoDTO;
 import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
@@ -136,7 +137,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
 
     }
 
-    public List<Producto> filtrarProductos(Long idProveedor, String busqueda, Long tipoProductoId, Long tipoVentanaId) {
+    public List<Producto> filtrarProductos(Long idProveedor, String busqueda, Long tipoProductoId, Long subTipoProductoId) {
         Session session = sessionFactory.getCurrentSession();
 
         String hql = "FROM Producto p WHERE p.proveedor.id = :idProveedor ";
@@ -146,8 +147,8 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         if (tipoProductoId != null)
             hql += "AND p.tipoProducto.id =:tipoProductoId ";
 
-        if (tipoVentanaId != null)
-            hql += "AND p.tipoVentana.id =: tipoVentanaId";
+        if (subTipoProductoId != null)
+            hql += "AND p.subTipoProducto.id =: subTipoProductoId";
 
         Query query = session.createQuery(hql, Producto.class);
         query.setParameter("idProveedor", idProveedor);
@@ -158,8 +159,8 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         if (tipoProductoId != null)
             query.setParameter("tipoProductoId", tipoProductoId);
 
-        if (tipoVentanaId != null)
-            query.setParameter("tipoVentanaId", tipoVentanaId);
+        if (subTipoProductoId != null)
+            query.setParameter("subTipoProductoId", subTipoProductoId);
 
         return query.getResultList();
     }
@@ -174,11 +175,11 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         return query.getResultList();
     }
 
-    public List<TipoVentana> obtenerTiposVentanasPorProveedor(Long idProveedor) {
+    public List<SubTipoProducto> obtenerTiposVentanasPorProveedor(Long idProveedor) {
         Session session = sessionFactory.getCurrentSession();
 
-        String hql = "SELECT DISTINCT p.tipoVentana FROM Producto p WHERE p.proveedor.id =: idProveedor AND p.tipoVentana IS NOT NULL";
-        org.hibernate.Query<TipoVentana> query = session.createQuery(hql, TipoVentana.class);
+        String hql = "SELECT DISTINCT p.subTipoProducto FROM Producto p WHERE p.proveedor.id =: idProveedor AND p.subTipoProducto IS NOT NULL";
+        org.hibernate.Query<SubTipoProducto> query = session.createQuery(hql, SubTipoProducto.class);
         query.setParameter("idProveedor", idProveedor);
 
         return query.getResultList();
@@ -186,10 +187,10 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
     
     public List<Producto> buscarProductosParaCotizacion(
             Long tipoProductoId,           
-            Long tipoVentanaId,
+            Long subTipoProductoId,
             Long anchoId,
             Long altoId,
-            Long materialDePerfilId,
+            Long materialId,
             Long tipoDeVidrioId,
             Long colorId,
             Boolean conPremarco,
@@ -205,9 +206,9 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
             params.put("tipoProductoId", tipoProductoId);
         }
 
-        if (tipoVentanaId != null) {
-            hql.append(" AND p.tipoVentana.id = :tipoVentanaId");
-            params.put("tipoVentanaId", tipoVentanaId);
+        if (subTipoProductoId != null) {
+            hql.append(" AND p.subTipoProducto.id = :subTipoProductoId");
+            params.put("subTipoProductoId", subTipoProductoId);
         }
 
         if (anchoId != null) {
@@ -220,9 +221,9 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
             params.put("altoId", altoId);
         }
 
-        if (materialDePerfilId != null) {
-            hql.append(" AND p.materialDePerfil.id = :materialDePerfilId");
-            params.put("materialDePerfilId", materialDePerfilId);
+        if (materialId != null) {
+            hql.append(" AND p.material.id = :materialId");
+            params.put("materialId", materialId);
         }
 
         if (tipoDeVidrioId != null) {
@@ -267,14 +268,14 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
 
         String hql = "SELECT new com.tallerwebi.presentacion.dto.ProductoGenericoDTO(" +
                 "p.tipoProducto.nombre, " +
-                "COALESCE(p.tipoVentana.nombre, 'N/A'), " +
-                "COALESCE(p.materialDePerfil.nombre, 'N/A'), " +
+                "COALESCE(p.subTipoProducto.nombre, 'N/A'), " +
+                "COALESCE(p.material.nombre, 'N/A'), " +
                 "COALESCE(p.tipoDeVidrio.nombre,'N/A'), " +
                 "COALESCE(CONCAT(p.ancho.nombre, 'x', p.alto.nombre), 'N/A'), " +
                 "COUNT(DISTINCT p.proveedor.id)) " +
                 "FROM Producto p " +
                 "GROUP BY " +
-                "p.tipoProducto.id, p.tipoVentana.id, p.materialDePerfil.id, p.tipoDeVidrio.id, p.ancho.id, p.alto.id";
+                "p.tipoProducto.id, p.subTipoProducto.id, p.material.id, p.tipoDeVidrio.id, p.ancho.id, p.alto.id";
 
         return session.createQuery(hql, ProductoGenericoDTO.class).list();
     }
@@ -282,7 +283,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
 
     public List<Producto> filtrarProductos(
             Long tipoProductoId,
-            Long tipoVentanaId,
+            Long subTipoProductoId,
             Long anchoId,
             Long altoId,
             Long materialPerfilId,
@@ -290,11 +291,11 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
 
         StringBuilder hql = new StringBuilder("select distinct p from Producto p ")
                 .append("left join fetch p.tipoProducto ")
-                .append("left join fetch p.tipoVentana ")
+                .append("left join fetch p.subTipoProducto ")
                 .append("left join fetch p.marca ")
                 .append("left join fetch p.ancho ")
                 .append("left join fetch p.alto ")
-                .append("left join fetch p.materialDePerfil ")
+                .append("left join fetch p.material ")
                 .append("left join fetch p.color ");
 
         // Mapa para los parámetros dinámicos
@@ -308,9 +309,9 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
             params.put("tipoProductoId", tipoProductoId);
             tieneFiltro = true;
         }
-        if (tipoVentanaId != null) {
-            hql.append(tieneFiltro ? " and" : " where").append(" p.tipoVentana.id = :tipoVentanaId");
-            params.put("tipoVentanaId", tipoVentanaId);
+        if (subTipoProductoId != null) {
+            hql.append(tieneFiltro ? " and" : " where").append(" p.subTipoProducto.id = :subTipoProductoId");
+            params.put("subTipoProductoId", subTipoProductoId);
             tieneFiltro = true;
         }
         if (anchoId != null) {
@@ -324,7 +325,7 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
             tieneFiltro = true;
         }
         if (materialPerfilId != null) {
-            hql.append(tieneFiltro ? " and" : " where").append(" p.materialDePerfil.id = :materialPerfilId");
+            hql.append(tieneFiltro ? " and" : " where").append(" p.material.id = :materialPerfilId");
             params.put("materialPerfilId", materialPerfilId);
             tieneFiltro = true;
         }
@@ -349,6 +350,13 @@ public class RepositorioProductoImpl implements RepositorioGenerico<Producto> {
         }
 
         return query.getResultList();
+    }
+
+    public Producto buscarPorNombre(String nombre) {
+        return (Producto) sessionFactory.getCurrentSession()
+                .createCriteria(Producto.class)
+                .add(Restrictions.eq("nombre", nombre))
+                .uniqueResult();
     }
 
 }

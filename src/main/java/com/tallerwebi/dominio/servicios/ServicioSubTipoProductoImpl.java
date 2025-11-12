@@ -7,33 +7,33 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
-import com.tallerwebi.dominio.entidades.TipoVentana;
+import com.tallerwebi.dominio.entidades.SubTipoProducto;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
-import com.tallerwebi.infraestructura.RepositorioTipoVentanaImpl;
+import com.tallerwebi.infraestructura.RepositorioSubTipoProductoImpl;
 import com.tallerwebi.presentacion.dto.TipoVentanaDTO;
 
 @Service("servicioTipoVentana")
 @Transactional
-public class ServicioTipoVentanaImpl implements ServicioTipoVentana {
-    private final RepositorioTipoVentanaImpl tipoVentanaRepository;
+public class ServicioSubTipoProductoImpl implements ServicioSubTipoProducto {
+    private final RepositorioSubTipoProductoImpl tipoVentanaRepository;
 
-    public ServicioTipoVentanaImpl(RepositorioTipoVentanaImpl tipoVentanaRepository) {
+    public ServicioSubTipoProductoImpl(RepositorioSubTipoProductoImpl tipoVentanaRepository) {
         this.tipoVentanaRepository = tipoVentanaRepository;
     }
 
     @Override
-    public List<TipoVentana> obtener() {
+    public List<SubTipoProducto> obtener() {
         return this.tipoVentanaRepository.obtener();
     }
 
     @Override
-    public void crearTipoVentana(TipoVentana ventana) {
+    public void crearTipoVentana(SubTipoProducto ventana) {
         tipoVentanaRepository.guardar(ventana);
     }
 
     @Override
-    public List<TipoVentana> obtenerPorIdTipoProducto(Long id_tipo_producto) {
-        List<TipoVentana> tipoVentanas = tipoVentanaRepository.obtenerPorIdTipoProducto(id_tipo_producto);
+    public List<SubTipoProducto> obtenerPorIdTipoProducto(Long id_tipo_producto) {
+        List<SubTipoProducto> tipoVentanas = tipoVentanaRepository.obtenerPorIdTipoProducto(id_tipo_producto);
         if (tipoVentanas == null || tipoVentanas.isEmpty()) {
             throw new NoHayProductoExistente();
         }

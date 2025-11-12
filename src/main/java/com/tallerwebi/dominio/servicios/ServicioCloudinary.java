@@ -1,5 +1,6 @@
 package com.tallerwebi.dominio.servicios;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -27,6 +28,14 @@ public class ServicioCloudinary {
 
     public void eliminarImagen(String publicId) throws IOException{
         cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+    }
+
+    public Map<String, Object> subirImagen(File imagen) throws IOException {
+        if (imagen == null || !imagen.exists()) {
+            throw new IOException("El archivo no existe o es nulo.");
+        }
+        return cloudinary.uploader().upload(imagen, ObjectUtils.emptyMap());
+
     }
 
 

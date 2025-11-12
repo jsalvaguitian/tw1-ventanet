@@ -15,6 +15,14 @@ public class Color extends BaseCatalogo {
     @Column(nullable = false, length = 100)
     private String nombre;
 
+    
+    public Color() {
+    }
+
+    public Color(String color) {
+        this.nombre = color;
+    }
+
     // Getters y setters
     public Long getId() {
         return id;

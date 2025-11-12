@@ -1,10 +1,14 @@
 package com.tallerwebi.presentacion.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.enums.Rubro;
+
 
 public class UsuarioProvDTO {
     private Long id;
@@ -19,16 +23,21 @@ public class UsuarioProvDTO {
 
     private String documentoPath;
     private String logoPath;
-    
+
+    private List<ProductoImportDTO> productos;
+
     public UsuarioProvDTO(Long id, String razonSocial, String logoPath, Rubro rubro) {
         this.id = id;
         this.razonSocial = razonSocial;
-        this.logoPath= logoPath;
+        this.logoPath = logoPath;
         this.rubro = rubro;
     }
 
     public UsuarioProvDTO() {
+        this.productos = new ArrayList<>();
     }
+
+    
 
     public String getEmail() {
         return email;
@@ -45,15 +54,19 @@ public class UsuarioProvDTO {
     public void setPassword(String password) {
         this.password = password;
     }
+
     public String getCuit() {
         return cuit;
     }
+
     public void setCuit(String cuit) {
         this.cuit = cuit;
     }
+
     public String getRazonSocial() {
         return razonSocial;
     }
+
     public void setRazonSocial(String razonSocial) {
         this.razonSocial = razonSocial;
     }
@@ -61,6 +74,7 @@ public class UsuarioProvDTO {
     public Rubro getRubro() {
         return rubro;
     }
+
     public void setRubro(Rubro rubro) {
         this.rubro = rubro;
     }
@@ -68,6 +82,7 @@ public class UsuarioProvDTO {
     public MultipartFile getDocumento() {
         return documento;
     }
+
     public void setDocumento(MultipartFile documento) {
         this.documento = documento;
     }
@@ -75,7 +90,8 @@ public class UsuarioProvDTO {
     public Proveedor obtenerEntidad() {
         Proveedor proveedor = new Proveedor();
         proveedor.setEmail(this.email);
-        proveedor.setPassword(this.password);;
+        proveedor.setPassword(this.password);
+        ;
         proveedor.setCuit(this.cuit);
         proveedor.setRazonSocial(this.razonSocial);
         proveedor.setRubro(this.rubro);
@@ -113,5 +129,13 @@ public class UsuarioProvDTO {
     public void setLogoPath(String logoPath) {
         this.logoPath = logoPath;
     }
-    
+
+    public List<ProductoImportDTO> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<ProductoImportDTO> productos) {
+        this.productos = productos;
+    }
+
 }

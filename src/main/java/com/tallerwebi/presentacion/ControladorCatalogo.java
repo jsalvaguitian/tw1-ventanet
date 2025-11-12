@@ -25,11 +25,11 @@ import com.tallerwebi.dominio.entidades.Alto;
 import com.tallerwebi.dominio.entidades.Ancho;
 import com.tallerwebi.dominio.entidades.Color;
 import com.tallerwebi.dominio.entidades.Marca;
-import com.tallerwebi.dominio.entidades.MaterialDePerfil;
+import com.tallerwebi.dominio.entidades.Material;
 import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.TipoProducto;
-import com.tallerwebi.dominio.entidades.TipoVentana;
+import com.tallerwebi.dominio.entidades.SubTipoProducto;
 import com.tallerwebi.dominio.enums.Rubro;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.servicios.ServicioMarca;
@@ -37,7 +37,7 @@ import com.tallerwebi.dominio.servicios.ServicioProducto;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.dominio.servicios.ServicioTablas;
 import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
-import com.tallerwebi.dominio.servicios.ServicioTipoVentana;
+import com.tallerwebi.dominio.servicios.ServicioSubTipoProducto;
 import com.tallerwebi.presentacion.dto.ProductoDTO;
 import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
@@ -53,14 +53,14 @@ public class ControladorCatalogo {
     private ServicioProveedorI servicioProveedor;
     private ServicioTipoProducto servicioTipoProducto;
     private ServicioMarca servicioMarca;
-    private ServicioTipoVentana servicioTipoVentana;
+    private ServicioSubTipoProducto servicioTipoVentana;
     private ServicioTablas servicioTablas;
     private ServicioCotizacion servicioCotizacion;
 
     @Autowired
     public ControladorCatalogo(ServicioProducto servicioProducto, ServicioProveedorI servicioProveedor,
             ServicioTipoProducto servicioTipoProducto, ServicioMarca servicioMarca,
-            ServicioTipoVentana servicioTipoVentana, ServicioTablas servicioTablas) {
+            ServicioSubTipoProducto servicioTipoVentana, ServicioTablas servicioTablas) {
         this.servicioProducto = servicioProducto;
         this.servicioProveedor = servicioProveedor;
         this.servicioTipoProducto = servicioTipoProducto;
@@ -121,7 +121,7 @@ public class ControladorCatalogo {
 
         // filtros
         List<TipoProducto> tiposProductos = servicioProducto.obtenerTiposProductos(idProveedor);
-        List<TipoVentana> tipoVentanas = servicioProducto.obtenerTiposVentanas(idProveedor);
+        List<SubTipoProducto> tipoVentanas = servicioProducto.obtenerTiposVentanas(idProveedor);
 
         if (productos == null || productos.isEmpty()) {
             modelMap.put("mensaje", "No hay productos cargados");
@@ -216,7 +216,7 @@ public class ControladorCatalogo {
         List<Ancho> anchos = servicioTablas.obtenerAnchos();
         modelMap.put("anchos", anchos);
 
-        List<MaterialDePerfil> materialesPerfil = servicioTablas.obtenerMateriales();
+        List<Material> materialesPerfil = servicioTablas.obtenerMateriales();
         modelMap.put("materialesPerfil", materialesPerfil);
 
         List<Color> colores = servicioTablas.obtenerColores();
@@ -243,7 +243,7 @@ public class ControladorCatalogo {
 
     @GetMapping("/tiposVentana/{tipoProductoId}")
     @ResponseBody
-    public List<TipoVentana> obtenerTiposDeVentana(@PathVariable Long tipoProductoId) {
+    public List<SubTipoProducto> obtenerTiposDeVentana(@PathVariable Long tipoProductoId) {
         try {
             return servicioTipoVentana.obtenerPorIdTipoProducto(tipoProductoId);
 

@@ -7,6 +7,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.tallerwebi.dominio.entidades.Alto;
 import com.tallerwebi.dominio.entidades.Presentacion;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioGenerico;
 
@@ -57,5 +58,12 @@ public class RepositorioPresentacionImpl implements RepositorioGenerico<Presenta
         if (presentacion != null) {
             sessionFactory.getCurrentSession().remove(presentacion);
         }
+    }
+
+    public Presentacion buscarPorNombre(String presentacion) {
+        return (Presentacion) sessionFactory.getCurrentSession()
+                .createCriteria(Presentacion.class)
+                .add(Restrictions.eq("descripcion", presentacion))
+                .uniqueResult();
     }
 }

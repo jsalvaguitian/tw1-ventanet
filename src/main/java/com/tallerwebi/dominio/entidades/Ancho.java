@@ -7,13 +7,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Ancho extends BaseCatalogo{
- @Id
+public class Ancho extends BaseCatalogo {
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 100)
     private String nombre;
+
+    public Ancho() {
+    }
+
+    public Ancho(String ancho) {
+        this.nombre = ancho;
+    }
 
     // Getters y setters
     public Long getId() {

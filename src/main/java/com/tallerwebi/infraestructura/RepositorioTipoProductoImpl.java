@@ -7,6 +7,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.tallerwebi.dominio.entidades.TipoDeVidrio;
 import com.tallerwebi.dominio.entidades.TipoProducto;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioGenerico;
 
@@ -57,5 +58,12 @@ public class RepositorioTipoProductoImpl implements RepositorioGenerico<TipoProd
         if (presentacion != null) {
             sessionFactory.getCurrentSession().remove(presentacion);
         }
+    }
+
+    public TipoProducto buscarPorNombre(String tipoProducto) {
+        return (TipoProducto) sessionFactory.getCurrentSession()
+                .createCriteria(TipoProducto.class)
+                .add(Restrictions.eq("nombre", tipoProducto))
+                .uniqueResult();       
     }
 }

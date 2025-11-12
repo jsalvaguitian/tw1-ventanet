@@ -1,5 +1,6 @@
 package com.tallerwebi.dominio.servicios;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,6 +11,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -72,7 +74,7 @@ public class ServicioFileStorage {
     public String guardarArchivoImgOPdf(MultipartFile archivo) throws IOException {
         return guardarArchivoGenerico(archivo,
                 List.of(".pdf", ".jpg", ".jpeg", ".png"),
-                List.of("application/pdf", "image/jpeg", "image/png"),
+                List.of("application/pdf", "image/jpeg", "image/png", "image/jpg"),
                 "afip");
     }
 
@@ -87,4 +89,24 @@ public class ServicioFileStorage {
                         "application/vnd.oasis.opendocument.spreadsheet"),
                 "varios");
     }
+
+    public String guardarArchivoTemporal(MultipartFile archivo, String sessionId) throws IOException {
+        return guardarArchivoGenerico(
+                archivo,
+                List.of(".jpg", ".jpeg", ".png"),
+                List.of("image/jpeg", "image/png", "image/jpg"),
+                "tmp/" + sessionId);
+    }
+
+    public void eliminarCarpetaTemporal(String subcarpeta) throws IOException {
+    Path carpeta = UPLOAD_DIR.resolve(subcarpeta);
+    if (Files.exists(carpeta)) {
+        Files.walk(carpeta)
+             .sorted(Comparator.reverseOrder())
+             .map(Path::toFile)
+             .forEach(File::delete);
+    }
+}
+
+
 }

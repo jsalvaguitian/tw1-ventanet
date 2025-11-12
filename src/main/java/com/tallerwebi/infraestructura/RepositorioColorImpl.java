@@ -7,6 +7,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.tallerwebi.dominio.entidades.Ancho;
 import com.tallerwebi.dominio.entidades.Color;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioGenerico;
 
@@ -57,6 +58,13 @@ public class RepositorioColorImpl implements RepositorioGenerico<Color> {
         if (presentacion != null) {
             sessionFactory.getCurrentSession().remove(presentacion);
         }
+    }
+
+    public Color buscarPorNombre(String color) {
+        return (Color) sessionFactory.getCurrentSession()
+                .createCriteria(Color.class)
+                .add(Restrictions.eq("nombre", color))
+                .uniqueResult();
     }
 
 }

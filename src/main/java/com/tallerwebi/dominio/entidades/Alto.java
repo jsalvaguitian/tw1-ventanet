@@ -15,6 +15,14 @@ public class Alto extends BaseCatalogo {
     @Column(nullable = false, length = 100)
     private String nombre;
 
+    
+    public Alto() {
+    }
+
+    public Alto(String alto) {
+        this.nombre =alto;
+    }
+
     // Getters y setters
     public Long getId() {
         return id;

@@ -7,6 +7,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.tallerwebi.dominio.entidades.Alto;
 import com.tallerwebi.dominio.entidades.Ancho;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioGenerico;
 
@@ -58,5 +59,15 @@ public class RepositorioAnchoImpl implements RepositorioGenerico<Ancho> {
             sessionFactory.getCurrentSession().remove(presentacion);
         }
     }
+
+    public Ancho buscarPorNombre(String ancho) {
+
+        return (Ancho) sessionFactory.getCurrentSession()
+                .createCriteria(Ancho.class)
+                .add(Restrictions.eq("nombre", ancho))
+                .uniqueResult();
+    }
+
+
 
 }

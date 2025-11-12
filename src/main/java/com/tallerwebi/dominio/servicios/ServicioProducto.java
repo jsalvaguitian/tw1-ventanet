@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.TipoProducto;
-import com.tallerwebi.dominio.entidades.TipoVentana;
+import com.tallerwebi.dominio.entidades.SubTipoProducto;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
 import com.tallerwebi.presentacion.dto.ProductoDTO;
 import com.tallerwebi.presentacion.dto.ProductoGenericoDTO;
@@ -26,7 +26,7 @@ public interface ServicioProducto {
     List<Producto> obtenerProductosFiltrados(Long idProveedor, String busqueda, Long tipoProductoId,
             Long tipoVentanaId);
     List<TipoProducto> obtenerTiposProductos(Long idProveedor);
-    List<TipoVentana> obtenerTiposVentanas(Long idProveedor);
+    List<SubTipoProducto> obtenerTiposVentanas(Long idProveedor);
     List<ProductoGenericoDTO> obtenerProductosGenericos();
 
     List<Producto> buscarProductosParaCotizacion(

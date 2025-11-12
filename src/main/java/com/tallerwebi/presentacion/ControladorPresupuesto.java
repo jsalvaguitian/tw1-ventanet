@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tallerwebi.dominio.entidades.Localidad;
 import com.tallerwebi.dominio.entidades.Partido;
-import com.tallerwebi.dominio.entidades.TipoVentana;
+import com.tallerwebi.dominio.entidades.SubTipoProducto;
 import com.tallerwebi.dominio.servicios.ServicioTablas;
 import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
-import com.tallerwebi.dominio.servicios.ServicioTipoVentana;
+import com.tallerwebi.dominio.servicios.ServicioSubTipoProducto;
 import com.tallerwebi.dominio.servicios.ServicioProducto;
 import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 import com.tallerwebi.dominio.servicios.ServicioUsuario;
@@ -45,7 +45,7 @@ import com.tallerwebi.dominio.entidades.PresupuestoItem;
 import com.tallerwebi.dominio.entidades.TipoProducto;
 import com.tallerwebi.dominio.entidades.Ancho;
 import com.tallerwebi.dominio.entidades.Alto;
-import com.tallerwebi.dominio.entidades.MaterialDePerfil;
+import com.tallerwebi.dominio.entidades.Material;
 import com.tallerwebi.dominio.entidades.Color;
 // TipoVentana import removed (duplicate)
 
@@ -53,14 +53,14 @@ import com.tallerwebi.dominio.entidades.Color;
 public class ControladorPresupuesto {
 
     private final ServicioTipoProducto servicioTipoProducto;
-    private final ServicioTipoVentana servicioTipoVentana;
+    private final ServicioSubTipoProducto servicioTipoVentana;
     private final ServicioTablas servicioTablas;
     private final ServicioProducto servicioProducto;
     private final ServicioCotizacion servicioCotizacion;
     private final ServicioUsuario servicioUsuario;
     private final com.tallerwebi.dominio.servicios.ServicioPresupuesto servicioPresupuesto;
 
-    public ControladorPresupuesto(ServicioTipoProducto servicioTipoProducto, ServicioTipoVentana servicioTipoVentana,
+    public ControladorPresupuesto(ServicioTipoProducto servicioTipoProducto, ServicioSubTipoProducto servicioTipoVentana,
             ServicioTablas servicioTablas, ServicioProducto servicioProducto, ServicioCotizacion servicioCotizacion,
             ServicioUsuario servicioUsuario, com.tallerwebi.dominio.servicios.ServicioPresupuesto servicioPresupuesto) {
         this.servicioTipoProducto = servicioTipoProducto;
@@ -97,7 +97,7 @@ public class ControladorPresupuesto {
     @ResponseBody
     public List<Map<String, Object>> obtenerTipoVentanaPorTipoDeProducto(
             @RequestParam("tipoProductoId") Long tipoProductoId) {
-        List<TipoVentana> lista = servicioTipoVentana.obtenerPorIdTipoProducto(tipoProductoId);
+        List<SubTipoProducto> lista = servicioTipoVentana.obtenerPorIdTipoProducto(tipoProductoId);
         return lista.stream().map(tv -> {
             Map<String, Object> m = new HashMap<>();
             m.put("id", tv.getId());
@@ -204,11 +204,11 @@ public class ControladorPresupuesto {
                 // intentar encontrar producto por combinacion de atributos
                 Producto encontrado = servicioProducto.buscarConFiltros(tipoProductoId).stream()
                         .filter(p -> (tipoVentanaId == null
-                                || (p.getTipoVentana() != null && p.getTipoVentana().getId().equals(tipoVentanaId)))
+                                || (p.getSubTipoProducto() != null && p.getSubTipoProducto().getId().equals(tipoVentanaId)))
                                 && (anchoId == null || (p.getAncho() != null && p.getAncho().getId().equals(anchoId)))
                                 && (altoId == null || (p.getAlto() != null && p.getAlto().getId().equals(altoId)))
-                                && (material == null || (p.getMaterialDePerfil() != null
-                                        && p.getMaterialDePerfil().getNombre().equalsIgnoreCase(material)))
+                                && (material == null || (p.getMaterial() != null
+                                        && p.getMaterial().getNombre().equalsIgnoreCase(material)))
                                 && (vidrio == null || (p.getTipoDeVidrio() != null
                                         && p.getTipoDeVidrio().getNombre().equalsIgnoreCase(vidrio)))
                                 && (color == null
@@ -320,13 +320,13 @@ public class ControladorPresupuesto {
             try {
                 PresupuestoItem it = new PresupuestoItem();
                 TipoProducto tp = servicioTipoProducto.obtenerPorId(ir.tipoProductoId);
-                TipoVentana tv = servicioTipoVentana.obtener().stream().filter(t -> t.getId().equals(ir.tipoVentanaId))
+                SubTipoProducto tv = servicioTipoVentana.obtener().stream().filter(t -> t.getId().equals(ir.tipoVentanaId))
                         .findFirst().orElse(null);
                 Ancho ancho = servicioTablas.obtenerAnchos().stream().filter(a -> a.getId().equals(ir.anchoId))
                         .findFirst().orElse(null);
                 Alto alto = servicioTablas.obtenerAltos().stream().filter(a -> a.getId().equals(ir.altoId)).findFirst()
                         .orElse(null);
-                MaterialDePerfil mat = servicioTablas.obtenerMateriales().stream()
+                Material mat = servicioTablas.obtenerMateriales().stream()
                         .filter(m -> m.getId().equals(ir.materialId)).findFirst().orElse(null);
                 Color color = servicioTablas.obtenerColores().stream().filter(c -> c.getId().equals(ir.colorId))
                         .findFirst().orElse(null);
@@ -533,7 +533,7 @@ public class ControladorPresupuesto {
 
                 PresupuestoItem it = new PresupuestoItem();
                 TipoProducto tp = tipoProductoId != null ? servicioTipoProducto.obtenerPorId(tipoProductoId) : null;
-                TipoVentana tv = tipoVentanaId != null
+                SubTipoProducto tv = tipoVentanaId != null
                         ? servicioTipoVentana.obtener().stream().filter(t -> t.getId().equals(tipoVentanaId))
                                 .findFirst().orElse(null)
                         : null;
@@ -545,7 +545,7 @@ public class ControladorPresupuesto {
                         ? servicioTablas.obtenerAltos().stream().filter(a -> a.getId().equals(altoId)).findFirst()
                                 .orElse(null)
                         : null;
-                MaterialDePerfil mat = materialId != null
+                Material mat = materialId != null
                         ? servicioTablas.obtenerMateriales().stream().filter(m -> m.getId().equals(materialId))
                                 .findFirst().orElse(null)
                         : null;
@@ -629,7 +629,7 @@ public class ControladorPresupuesto {
 
                              */
                             if (it.getTipoVentana() != null) {
-                                if (prod.getTipoVentana() == null || !prod.getTipoVentana().getId().equals(it.getTipoVentana().getId()))
+                                if (prod.getSubTipoProducto() == null || !prod.getSubTipoProducto().getId().equals(it.getTipoVentana().getId()))
                                     continue;
                             }
                            /* // ancho
@@ -643,7 +643,7 @@ public class ControladorPresupuesto {
                                 */
                             // material
                             if (it.getMaterial() != null) {
-                                if (prod.getMaterialDePerfil() == null || !prod.getMaterialDePerfil().getId().equals(it.getMaterial().getId())) continue;
+                                if (prod.getMaterial() == null || !prod.getMaterial().getId().equals(it.getMaterial().getId())) continue;
                             }
                             /*
                             // color

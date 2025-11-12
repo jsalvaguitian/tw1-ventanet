@@ -45,7 +45,7 @@ import com.tallerwebi.dominio.servicios.ServicioProducto;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.dominio.servicios.ServicioTablas;
 import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
-import com.tallerwebi.dominio.servicios.ServicioTipoVentana;
+import com.tallerwebi.dominio.servicios.ServicioSubTipoProducto;
 import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.CotizacionDTO;
 import com.tallerwebi.presentacion.dto.CotizacionItemDTO;
@@ -59,11 +59,11 @@ public class ControladorCotizacion {
     private ServicioUsuario servicioUsuario;
     private ServicioProveedorI servicioProveedor;
     private final ServicioTipoProducto servicioTipoProducto;
-    private final ServicioTipoVentana servicioTipoVentana;
+    private final ServicioSubTipoProducto servicioTipoVentana;
     private final ServicioTablas servicioTablas;
 
     @Autowired
-    public ControladorCotizacion(ServicioTipoProducto servicioTipoProducto, ServicioTipoVentana servicioTipoVentana,
+    public ControladorCotizacion(ServicioTipoProducto servicioTipoProducto, ServicioSubTipoProducto servicioTipoVentana,
             ServicioTablas servicioTablas, ServicioCotizacion servicioCotizacion, ServicioProducto servicioProducto,
             ServicioUsuario servicioUsuario, ServicioProveedorI servicioProveedor) {
         this.servicioCotizacion = servicioCotizacion;
