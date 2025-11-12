@@ -17,7 +17,6 @@ public class ManejadorExcepciones {
 
     @ExceptionHandler(NoHayProductoExistente.class)
     public String manejarNoHayProductoExistente(NoHayProductoExistente ex, Model model) {
-        // Le pasamos un mensaje a la vista
         model.addAttribute("mensaje", "No encontramos el producto que buscabas. Volver al catálogo.");
         return "excepcion";
     }

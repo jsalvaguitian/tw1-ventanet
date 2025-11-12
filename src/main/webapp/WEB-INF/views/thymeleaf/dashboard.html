@@ -92,17 +92,24 @@
             </div>
 
             <!-- Filtros -->
-            <div class="filters mb-3 d-flex flex-wrap align-items-center">
-                <select id="dateFilter" class="form-select w-auto me-2 mb-2 mb-md-0">
-                    <option value="all">Todos</option>
-                    <option value="today">Hoy</option>
-                    <option value="yesterday">Ayer</option>
-                    <option value="last7">Últimos 7 días</option>
-                    <option value="last30">Últimos 30 días</option>
-                    <option value="month">Este Mes</option>
-                </select>
-                <button id="applyFilter" class="btn btn-primary me-2 mb-2 mb-md-0">Aplicar</button>
+            <div class="filters mb-3 d-flex flex-wrap align-items-center justify-content-between flex-wrap">
+                <div class="d-flex align-items-center flex-wrap gap-2">
+  <select id="dateFilter" class="form-select w-auto mb-2 mb-md-0">
+    <option value="all">Todos</option>
+    <option value="today">Hoy</option>
+    <option value="yesterday">Ayer</option>
+    <option value="last7">Últimos 7 días</option>
+    <option value="last30">Últimos 30 días</option>
+    <option value="month">Este Mes</option>
+  </select>
+  <button id="applyFilter" class="btn btn-primary mb-2 mb-md-0">Aplicar</button>
+</div>
                 <a class="btn btn-success mb-2 mb-md-0" th:href="@{/cotizacion/presupuesto}">Crear Cotización</a>
+
+                <div class="form-check form-switch me-3">
+                    <input class="form-check-input" type="checkbox" id="toggleDolar">
+                    <label class="form-check-label" for="toggleDolar">Convertir a USD</label>
+                </div>
             </div>
         </div>
 
@@ -127,7 +134,10 @@
                         <tr th:each="cotizacion : ${cotizaciones}">
                             <td th:text="${cotizacion.id}"></td>
                             <td th:text="${cotizacion.proveedor.razonSocial}"></td>
-                            <td th:text="${cotizacion.montoTotal}"></td>
+                            <td class="monto-cotizacion"
+                            th:data-precio-ars="${cotizacion.montoTotal}"
+                            th:text="'$' + ${#numbers.formatDecimal(cotizacion.montoTotal, 2, 2)} + ' ARS'">
+                            </td>
                             <td th:text="${cotizacion.estado}"></td>
                             <td th:text="${cotizacion.fechaCreacion}"></td>
                             <td th:text="${cotizacion.fechaExpiracion}"></td>

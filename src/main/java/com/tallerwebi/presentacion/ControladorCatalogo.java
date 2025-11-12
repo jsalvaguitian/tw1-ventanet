@@ -149,24 +149,20 @@ public class ControladorCatalogo {
     @GetMapping("/catalogo/{idProveedor}/detalle/{idProducto}")
     public ModelAndView verDetalleProducto(@PathVariable("idProveedor") Long idProveedor,
             @PathVariable("idProducto") Long idProducto) {
-        ModelMap modelMap = new ModelMap();
-
+        // manejamos excepciones primero
         Proveedor proveedor = servicioProveedor.buscarPorId(idProveedor);
-
         if (proveedor == null) {
-            modelMap.put("mensaje", "El proveedor no existe.");
-            return new ModelAndView("detalle-producto", modelMap);
+            throw new ProveedorNoExistente("El proveedor con ID " + idProveedor + " no existe.");
         }
-
-        UsuarioProvDTO provDTO = new UsuarioProvDTO(idProveedor, proveedor.getRazonSocial(), proveedor.getLogoPath(),
-                proveedor.getRubro());
 
         Producto producto = servicioProducto.obtenerPorId(idProducto);
         if (producto == null) {
-            modelMap.put("mensaje", "El producto no existe.");
-            return new ModelAndView("detalle-producto", modelMap);
+            throw new NoHayProductoExistente("El producto con ID " + idProducto + " no existe.");
         }
 
+        UsuarioProvDTO provDTO = new UsuarioProvDTO(idProveedor, proveedor.getRazonSocial(), proveedor.getLogoPath(), proveedor.getRubro());
+
+        ModelMap modelMap = new ModelMap();
         modelMap.put("proveedor", provDTO);
         modelMap.put("producto", producto);
 
