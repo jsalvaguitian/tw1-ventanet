@@ -92,6 +92,11 @@ public class ServicioProveedorImpl implements ServicioProveedorI{
     public List<Proveedor> obtenerProveedoresPorRubro(Rubro rubro) {
         return repositorioProveedor.listarPorRubro(rubro);
     }
+
+    @Override
+    public List<Proveedor> obtenerProveedoresPorEstadoActivoInactivo(Boolean estado) {
+        return repositorioProveedor.listarTodosPorEstado(estado);
+    }
    
 
 

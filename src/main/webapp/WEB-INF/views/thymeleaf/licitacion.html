@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitar Presupuesto - Ventanet</title>
+  <link th:href="@{/css/licitacion.css}" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/ver-proveedores.css}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link th:href="@{/css/main.css}" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <nav class="navbar d-md-none px-3" style="box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+    <span class="navbar-title">Ventanet</span>
+    <button class="hamburger btn me-2" id="menuBtn">&#9776;</button>
+    <div class="dropdown" id="dropdownMenu"
+      style="display:none;position:absolute;top:56px;left:0;width:100%;z-index:1200;">
+      <div class="desplegable shadow p-2">
+        <a class="dropdown-item active" th:href="@{/}">Inicio</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="sidebar" id="sidebar">
+    <a th:href="@{/}">
+      <h2>Ventanet</h2>
+    </a>
+    <ul>
+      <li class="active">Presupuesto</li>
+      <li><a th:href="@{/cliente/dashboard}">Dashboard</a></li>
+    </ul>
+  </div>
+
+  <!-- SELECCION DE ATRIBUTOS -->
+  <div class="main" id="mainContent">
+    <div class="container my-5">
+      <h2 class="text-center mb-4">Solicitud de Presupuesto a medida</h2>
+      <div class="info-box">
+        Por favor, seleccione el/los proveedores al que quiere enviarle la consulta, la cantidad que desea cotizar y
+        brindenos el mayor nivel de
+        detalle posible del producto a medida que quiere
+        cotizar. El pedido será enviado a el/los proveedores y luego se pondrán en contacto a la brevedad.
+      </div>
+
+      <form id="formPresupuesto" th:object="${productoCustom}" action="/spring/licitacion/confirmar" method="post"
+        class="row g-4">
+
+        <div class="d-flex justify-content-center flex-wrap gap-2 mb-4">
+          <button type="button" id="btnTodos" class="btn btn-primary filtro-btn me-2">
+            <i class="bi bi-grid"></i> Todos
+          </button>
+
+          <button type="button" th:each="rubro : ${rubros}" class="btn btn-outline-primary filtro-btn"
+            th:data-rubro="${rubro}">
+            <i th:classappend="${rubro.icono}"></i>
+            <span th:text="${rubro.descripcion}"></span>
+          </button>
+        </div>
+        <!-- Loader animado -->
+        <div id="loader" class="text-center my-4" style="display:none;">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+        </div>
+
+        <div id="carouselProveedores" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner" id="proveedoresCarousel">
+            <div class="carousel-item active">
+              <div class="d-flex justify-content-center flex-wrap gap-4">
+                <div th:each="proveedor : ${proveedores}" th:data-id="${proveedor.id}"
+                  class="proveedor-item text-center" style="width:120px;">
+                  <img th:src="@{${'/'+ proveedor.logoPath}}" class="proveedor-logo" alt="Logo del proveedor">
+                  <p class="mt-2 mb-0" th:text="${proveedor.razonSocial}"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controles del carrusel -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselProveedores"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselProveedores"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+          </button>
+        </div>
+
+
+        <!-- 4. Descripción -->
+        <div class="col-md-12">
+          <label for="descripcion" class="form-label">Descripción del producto a cotizar</label>
+          <textarea th:field="*{descripcion}" id="descripcion" class="form-control" rows="4"></textarea>
+        </div>
+
+        <div class="col-md-6">
+          <label for="ancho" class="form-label">Ancho (m)</label>
+          <input th:field="*{ancho}" id="ancho" type="number" step="0.01" min="0" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label for="alto" class="form-label">Alto (m)</label>
+          <input th:field="*{alto}" id="alto" type="number" step="0.01" min="0" class="form-control" />
+        </div>
+        <!--Largo y Espesor-->
+        <div class="col-md-6">
+          <label for="largo" class="form-label">Largo</label>
+          <input th:field="*{largo}" id="largo" type="number" step="0.01" min="0" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label for="espesor" class="form-label">Espesor</label>
+          <input th:field="*{espesor}" id="espesor" type="number" step="0.01" min="0" class="form-control" />
+        </div>
+
+        <!-- 3. Material -->
+        <div class="col-md-6">
+          <label for="tipoMaterial" class="form-label">Material de construcción</label>
+          <input th:field="*{tipoMaterial}" id="tipoMaterial" class="form-control" />
+        </div>
+        <!-- 5. Color -->
+        <div class="col-md-6">
+          <label for="color" class="form-label">Color</label>
+          <input th:field="*{color}" id="color" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label for="cantidad" class="form-label">Cantidad</label>
+          <input th:field="*{cantidad}" id="cantidad" type="number" step="1" min="1" class="form-control" />
+        </div>
+        <div class="col-md-6">
+          <label for="imagenFile" class="form-label">Imagen de Referencia</label>
+          <input id="imagenFile" name="imagenFile" type="file" class="form-control" accept="image/*" />
+        </div>
+        <div class="col-12 text-center mt-4">
+          <button id="btnEnviar" type="submit" class="btn btn-primary px-5 py-2" disabled>Solicitar presupuesto</button>
+        </div>
+        <input type="hidden" id="successMessage" th:value="${successMessage}">
+        <input type="hidden" id="errorMessage" th:value="${errorMessage}">
+        <input type="hidden" id="licitacionJson" name="licitacionJson">
+      </form>
+    </div>
+  </div>
+
+
+  <!-- FOOTER -->
+  <footer class="site-footer py-5">
+    <div class="container">
+      <div class="row text-center text-md-start">
+
+        <!-- Columna Izquierda: Redes sociales -->
+        <div class="col-md-4">
+          <p class="mb-1">2025 © Ventanet</p>
+          <p class="mb-1">
+            <a href="mailto:info@ventanet.com.ar" class="footer-link">info@ventanet.com.ar</a><br>
+            <a href="tel:+5491112345678" class="footer-link">+54 9 11 1234-5678</a>
+          </p>
+        </div>
+
+        <!-- Columna Medio: Navegación -->
+        <div class="col-md-4 mb-4 mb-md-0">
+          <ul class="list-unstyled">
+            <li><a href="#productos" class="footer-link">Productos</a></li>
+            <li><a href="login.html" class="footer-link">Ingreso</a></li>
+            <li><a href="nuevo-usuario.html" class="footer-link">Registro</a></li>
+          </ul>
+        </div>
+
+        <!-- Columna Derecha: Datos Empresa -->
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5 class="mb-3">Seguinos en:</h5>
+          <div class="d-flex justify-content-center justify-content-md-start gap-3">
+            <a href="https://facebook.com"><img th:src="@{/img/rrss1.png}" alt="Facebook" width="30"></a>
+            <a href="https://instagram.com"><img th:src="@{/img/rrss2.png}" alt="Instagram" width="30"></a>
+            <a href="https://linkedin.com"><img th:src="@{/img/rrss3.png}" alt="Linkedin" width="30"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script th:src="@{/js/licitacion.js}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+</body>
+
+</html>
