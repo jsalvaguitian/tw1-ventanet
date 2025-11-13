@@ -29,6 +29,7 @@ import com.tallerwebi.dominio.entidades.Alto;
 import com.tallerwebi.dominio.entidades.Ancho;
 import com.tallerwebi.dominio.entidades.CarritoCotizacion;
 import com.tallerwebi.dominio.entidades.Color;
+import com.tallerwebi.dominio.entidades.Cotizacion;
 import com.tallerwebi.dominio.entidades.Marca;
 import com.tallerwebi.dominio.entidades.MaterialDePerfil;
 import com.tallerwebi.dominio.entidades.Producto;
@@ -417,6 +418,15 @@ public class ControladorCatalogo {
                 "mensaje", "Cantidad actualizada correctamente.",
                 "items", items));
     }
+
+    @PostMapping("/enviar-cottizacion")
+    @ResponseBody
+    public  ResponseEntity<List<Cotizacion>> crearCotizacionesParaPrevisualizar(HttpServletRequest request) {
+    
+        
+        return null;
+    }
+    
 
     // -------------------------------------------------------------------------------------------------
     private List<UsuarioProvDTO> convertirProveedoresADtosFiltro(List<Proveedor> proveedores) {
