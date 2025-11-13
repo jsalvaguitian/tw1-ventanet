@@ -7,19 +7,23 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import com.tallerwebi.dominio.entidades.Licitacion;
+import com.tallerwebi.dominio.entidades.Producto;
+import com.tallerwebi.dominio.entidades.ProductoCustom;
 import com.tallerwebi.dominio.enums.EstadoLicitacion;
 import com.tallerwebi.dominio.excepcion.NoHayLicitacionesExistentes;
-import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.infraestructura.RepositorioLicitacionImpl;
+import com.tallerwebi.infraestructura.RepositorioProductoCustomImpl;
 
 @Service("servicioLicitacion")
 @Transactional
 public class ServicioLicitacionImpl implements ServicioLicitacion {
 
     private final RepositorioLicitacionImpl licitacionRepository;
+    private final RepositorioProductoCustomImpl productoCustomRepository;
 
-    public ServicioLicitacionImpl(RepositorioLicitacionImpl licitacionRepository) {
+    public ServicioLicitacionImpl(RepositorioLicitacionImpl licitacionRepository,RepositorioProductoCustomImpl productoCustomRepository) {
         this.licitacionRepository = licitacionRepository;
+        this.productoCustomRepository = productoCustomRepository;
     }
 
     
@@ -57,11 +61,35 @@ public class ServicioLicitacionImpl implements ServicioLicitacion {
         licitacionRepository.actualizarEstado(licitacion);
     }
 
+     @Override
+    public void actualizarEstadoYPrecioUnitario(Long licitacionId, EstadoLicitacion estado, Double precioUnitario){
+
+        Licitacion licitacion = licitacionRepository.obtenerPorId(licitacionId);
+        licitacion.setEstado(estado);
+        ProductoCustom productoCustom = licitacion.getProductoCustom();
+        productoCustom.setPrecio(precioUnitario);
+        productoCustomRepository.actualizar(productoCustom);
+        licitacion.setProductoCustom(productoCustom);
+        licitacionRepository.actualizarEstado(licitacion);
+    }
+
 
 
     @Override
     public List<Licitacion> obtenerLicitacionesPorIdCliente(Long clienteId) throws NoHayLicitacionesExistentes {        
         List<Licitacion> licitaciones = licitacionRepository.obtenerPorIdCliente(clienteId);
+        
+        if (licitaciones == null || licitaciones.isEmpty()) {
+            throw new NoHayLicitacionesExistentes();
+        }
+        return licitaciones;
+    }
+
+
+
+    @Override
+    public List<Licitacion> obtenerLicitacionesPorIdProveedor(Long proveedorId) throws NoHayLicitacionesExistentes {
+        List<Licitacion> licitaciones = licitacionRepository.obtenerPorIdProveedor(proveedorId);
         
         if (licitaciones == null || licitaciones.isEmpty()) {
             throw new NoHayLicitacionesExistentes();
