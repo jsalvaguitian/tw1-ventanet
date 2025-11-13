@@ -42,4 +42,10 @@ public class ManejadorExcepciones {
         model.addAttribute("mensaje", ex.getMessage());
         return null;
     }
+
+    @ExceptionHandler(NoHayLicitacionesExistentes.class)
+    public String manejarNoHayLicitacionExistente(NoHayLicitacionesExistentes ex, Model model) {
+        model.addAttribute("mensaje", "No encontramos licitaciones. Volver al catálogo.");
+        return "excepcion";
+    }
 }

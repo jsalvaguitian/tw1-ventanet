@@ -16,7 +16,7 @@ public interface ServicioCotizacion {
 
     void actualizarEstado(Long cotizacionId, EstadoCotizacion estado) throws CotizacionesExistente;
 
-    List<Cotizacion> obtenerCotizacionPorIdCliente(Long id);
+    List<Cotizacion> obtenerCotizacionPorIdCliente(Long id) throws NoHayCotizacionExistente;
 
     Cotizacion guardar(Cotizacion cotizacion);
 
