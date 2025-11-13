@@ -170,4 +170,15 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         return productos;
     }
 
+    @Override
+    public Map<String, Long> obtenerProductosMasCotizadosDeTodosLosProveedores() {
+        List<Object[]> resultados = cotizacionRepository.obtenerProductosMasCotizadosDeTodosLosProveedores();
+        Map<String, Long> productos = new LinkedHashMap<>();
+        for (Object[] fila : resultados) {
+            String nombre = (String) fila[0];
+            Long cantidad = ((Number) fila[1]).longValue();
+            productos.put(nombre, cantidad);
+        }
+        return productos;
+    }
 }
