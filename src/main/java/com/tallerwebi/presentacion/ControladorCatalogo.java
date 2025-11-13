@@ -1,5 +1,6 @@
 package com.tallerwebi.presentacion;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,14 +29,17 @@ import org.springframework.web.servlet.ModelAndView;
 import com.tallerwebi.dominio.entidades.Alto;
 import com.tallerwebi.dominio.entidades.Ancho;
 import com.tallerwebi.dominio.entidades.CarritoCotizacion;
+import com.tallerwebi.dominio.entidades.CarritoItem;
 import com.tallerwebi.dominio.entidades.Color;
 import com.tallerwebi.dominio.entidades.Cotizacion;
+import com.tallerwebi.dominio.entidades.CotizacionItem;
 import com.tallerwebi.dominio.entidades.Marca;
 import com.tallerwebi.dominio.entidades.MaterialDePerfil;
 import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.TipoProducto;
 import com.tallerwebi.dominio.entidades.TipoVentana;
+import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.enums.Rubro;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProveedorNoExistente;
@@ -287,14 +291,21 @@ public class ControladorCatalogo {
 
         if (sesionDto == null || sesionDto.getRol().equalsIgnoreCase("PROVEEDOR")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("mensaje", "Debe iniciar sesión como cliente para cotizar un producto."));
+                    .body(Map.of("mensaje", "Debe iniciar sesión como cliente para cotizar un producto.", "tipo",
+                            "NO_LOGUEADO"));
+        }
+
+        if (sesionDto.getRol().equalsIgnoreCase("PROVEEDOR")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("mensaje", "Solo clientes pueden cotizar. Cierre sesión.", "tipo", "PROVEEDOR"));
         }
 
         Cliente cliente = clienteService.buscarPorId(sesionDto.getId());
 
         if (cliente == null)
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("mensaje", "Hubo un error de sesion. No se lo encontro registrado"));
+                    .body(Map.of("mensaje", "Hubo un error de sesión. No se encontró registrado", "tipo",
+                            "ERROR_SESION"));
 
         Producto producto = servicioProducto.obtenerPorId(idProducto);
         if (producto == null) {
@@ -419,14 +430,77 @@ public class ControladorCatalogo {
                 "items", items));
     }
 
-    @PostMapping("/enviar-cottizacion")
+    @PostMapping("/cotizar/enviar")
     @ResponseBody
-    public  ResponseEntity<List<Cotizacion>> crearCotizacionesParaPrevisualizar(HttpServletRequest request) {
-    
-        
-        return null;
+    public ResponseEntity<?> enviarCotizacion(HttpServletRequest request) {
+        UsuarioSesionDto sesionDto = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+
+        if (sesionDto == null || sesionDto.getRol().equalsIgnoreCase("PROVEEDOR")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("mensaje", "Debe iniciar sesión como cliente para enviar cotización."));
+        }
+
+        Cliente cliente = clienteService.buscarPorId(sesionDto.getId());
+        if (cliente == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("mensaje", "Hubo un error de sesión."));
+        }
+
+        // Obtener carrito del cliente
+        CarritoCotizacion carrito = carritoService.obtenerOCrearCarrito(cliente);
+
+        if (carrito.getItems().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("mensaje", "El carrito está vacío."));
+        }
+
+        // Agrupar productos por proveedor
+        Map<Proveedor, List<CarritoItem>> itemsPorProveedor = carrito.getItems().stream()
+                .collect(Collectors.groupingBy(item -> item.getProducto().getProveedor()));
+
+        List<Cotizacion> cotizaciones = new ArrayList<>();
+
+        for (Map.Entry<Proveedor, List<CarritoItem>> entry : itemsPorProveedor.entrySet()) {
+            Proveedor proveedor = entry.getKey();
+            List<CarritoItem> itemsDelProveedor = entry.getValue();
+
+            Cotizacion cotizacion = new Cotizacion();
+            cotizacion.setProveedor(proveedor);
+            cotizacion.setCliente(cliente);
+            cotizacion.setFechaCreacion(LocalDate.now());
+            cotizacion.setEstado(EstadoCotizacion.PENDIENTE);
+
+            List<CotizacionItem> cotizacionItems = new ArrayList<>();
+            double total = 0;
+
+            for (CarritoItem carritoItem : itemsDelProveedor) {
+                CotizacionItem item = new CotizacionItem();
+                item.setProducto(carritoItem.getProducto());
+                item.setCantidad(carritoItem.getCantidad());
+                item.setPrecioUnitario(carritoItem.getProducto().getPrecio());
+                item.setCotizacion(cotizacion);
+
+                total += carritoItem.getCantidad() * carritoItem.getProducto().getPrecio();
+                cotizacionItems.add(item);
+            }
+
+            cotizacion.setItems(cotizacionItems);
+            cotizacion.setMontoTotal(total);
+            cotizaciones.add(cotizacion);
+        }
+
+        // Guardar cotizaciones en sesión para previsualizar en el presupuesto
+        request.getSession().setAttribute("cotizaciones", cotizaciones);
+
+        // vacio carrito
+        carrito.vaciar();
+        carritoService.guardar(carrito);
+
+        return ResponseEntity
+                .ok(Map.of("mensaje", "Cotizaciones generadas", "cantidadCotizaciones", cotizaciones.size()));
     }
-    
+
+    /* */
 
     // -------------------------------------------------------------------------------------------------
     private List<UsuarioProvDTO> convertirProveedoresADtosFiltro(List<Proveedor> proveedores) {
