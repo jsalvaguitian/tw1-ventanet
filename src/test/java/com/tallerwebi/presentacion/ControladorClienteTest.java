@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.tallerwebi.dominio.excepcion.NoHayCotizacionExistente;
 import com.tallerwebi.dominio.servicios.ServicioClienteI;
 import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
@@ -50,7 +51,7 @@ public class ControladorClienteTest {
     // }
 
     @Test
-    public void queRedirijaAlLoginSiNoEstaLogueado() {
+    public void queRedirijaAlLoginSiNoEstaLogueado() throws NoHayCotizacionExistente {
         when(requestMock.getSession()).thenReturn(sessionMock);
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(null);
         ModelAndView modelAndView = controladorCliente.irDashboard(requestMock);
@@ -58,7 +59,7 @@ public class ControladorClienteTest {
     }
 
     @Test
-    public void queRedirijaAlLoginSiElRolNoEsCliente() {
+    public void queRedirijaAlLoginSiElRolNoEsCliente() throws NoHayCotizacionExistente {
         when(requestMock.getSession()).thenReturn(sessionMock);
         UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
         uSesionDto.setRol("PROVEEDOR");

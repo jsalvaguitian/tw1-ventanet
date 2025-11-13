@@ -121,6 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 window.mostrarDetalleCotizacion = mostrarDetalleCotizacion;
 window.manejarAccionCotizacion = manejarAccionCotizacion;
+window.manejarAccionLicitacion = manejarAccionLicitacion;
 window.getEstadoHTML = getEstadoHTML;
 
 
@@ -297,7 +298,7 @@ function mostrarDetalleLicitacion(id) {
                         </thead>
                         <tbody>
                             <tr>
-                                <td style="border: 1px solid #ccc; padding: 8px;">${licitacion.productoCustom.detalle}</td>
+                                <td style="border: 1px solid #ccc; padding: 8px;">${licitacion.productoCustom.descripcion}</td>
                                 <td style="border: 1px solid #ccc; padding: 8px;">${licitacion.productoCustom.cantidad}</td>
                                 <td style="border: 1px solid #ccc; padding: 8px;">$${licitacion.productoCustom.precio.toFixed(2)}</td>
                                 <td style="border: 1px solid #ccc; padding: 8px;">${licitacion.productoCustom.color || '-'}</td>
@@ -418,17 +419,15 @@ function manejarAccionLicitacion(id, accion) {
     // 2. Muestra una confirmación (opcional)
     Swal.fire({
         title: `¿Confirmar ${accion}?`,
-        text: `¿Estás seguro de que deseas ${accion} la Cotización a medida #${id}?`,
+        text: `¿Estás seguro de que deseas pasar a estado ${accion} la Cotización a medida #${id}?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: `Sí, ${accion}`,
         cancelButtonText: 'Cancelar'
     }).then((result) => {
-        if (result.isConfirmed) {
-            // 3. Llama al endpoint de tu servidor (ej. PUT/POST)
+        if (result.isConfirmed) {            
             fetch(`/spring/licitacion/${id}/cambiar-estado/${accion}`, {
-                method: 'POST' // o 'PUT'
-                // Puedes agregar headers si es necesario
+                method: 'POST'
             })
                 .then(response => {
                     console.log('respuesta cambio estado', response);
@@ -437,12 +436,10 @@ function manejarAccionLicitacion(id, accion) {
                         throw new Error(`Error al cambiar estado: ${response.status}`);
                     }
                     Swal.fire('¡Éxito!', `Cotización a medida #${id} se cambió a ${accion} correctamente.`, 'success');
-                    location.reload();
-                    // return response.json(); // O simplemente response.text()
+                    location.reload();                    
                 })
                 .then(data => {
                     Swal.fire('¡Éxito!', `Cotización a medida #${id} ${accion} correctamente.`, 'success');
-                    // 4. Recargar la tabla o el dashboard para reflejar el cambio
                     location.reload();
                 })
                 .catch(error => {

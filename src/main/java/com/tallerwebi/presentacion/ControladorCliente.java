@@ -20,6 +20,7 @@ import com.tallerwebi.dominio.entidades.Licitacion;
 import com.tallerwebi.dominio.entidades.ProductoCustom;
 import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.enums.EstadoLicitacion;
+import com.tallerwebi.dominio.excepcion.NoHayCotizacionExistente;
 import com.tallerwebi.dominio.excepcion.NoHayLicitacionesExistentes;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.servicios.ServicioComentario;
@@ -69,7 +70,7 @@ public class ControladorCliente {
     }
 
     @GetMapping("/dashboard")
-    public ModelAndView irDashboard(HttpServletRequest request) {
+    public ModelAndView irDashboard(HttpServletRequest request) throws NoHayCotizacionExistente {
         ModelMap datosModelado = new ModelMap();
 
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");

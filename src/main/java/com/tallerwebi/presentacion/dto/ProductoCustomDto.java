@@ -1,7 +1,6 @@
 package com.tallerwebi.presentacion.dto;
 
 import javax.persistence.ManyToOne;
-import com.tallerwebi.dominio.entidades.Proveedor;
 
 public class ProductoCustomDto {
     private long id;    
