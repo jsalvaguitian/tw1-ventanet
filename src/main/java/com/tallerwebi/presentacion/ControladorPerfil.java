@@ -74,6 +74,9 @@ public class ControladorPerfil {
 
             Map<String, Long> productosMasCotizados = servicioCotizacion.obtenerProductosMasCotizados(proveedorId);
 
+            Map<String, Long> productosMasCotizadosDeTodosLosProveedores = servicioCotizacion
+                    .obtenerProductosMasCotizadosDeTodosLosProveedores();
+
             boolean sinCotizaciones = true;
             if (estadisticas != null) { // Para mostrar mensaje si no tiene cotizaciones en lugar del grafico
                 for (Long v : estadisticas.values()) { // El nesteo es terrible pero no encontre otra forma
@@ -86,8 +89,12 @@ public class ControladorPerfil {
 
             if (sinCotizaciones) {
                 modelMap.addAttribute("promedioGeneralComparacion", promedioGeneralComparacion);
+                modelMap.addAttribute("productosMasCotizadosDeTodosLosProveedores",
+                        productosMasCotizadosDeTodosLosProveedores);
                 modelMap.addAttribute("graficoVacio", "No tienes cotizaciones para mostrar estadísticas aún.");
             } else {
+                modelMap.addAttribute("productosMasCotizadosDeTodosLosProveedores",
+                        productosMasCotizadosDeTodosLosProveedores);
                 modelMap.addAttribute("promedioGeneralComparacion", promedioGeneralComparacion);
                 modelMap.addAttribute("productosMasCotizados", productosMasCotizados);
                 modelMap.addAttribute("estadisticas", estadisticas);

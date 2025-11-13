@@ -6,6 +6,11 @@ body {
   padding: 0;
 }
 
+.noStyleLinks {
+    text-decoration: none;
+    color: white;
+}
+
 .hero-btn {
     border-radius: 50px;
     padding: 12px 30px;
