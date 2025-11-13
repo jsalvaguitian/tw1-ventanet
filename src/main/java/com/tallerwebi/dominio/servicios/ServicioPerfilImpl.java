@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.ValorInvalido;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioUsuario;
@@ -58,6 +59,36 @@ public class ServicioPerfilImpl implements ServicioPerfil {
         usuarioActual.setTelefono(telefono);
         repositorioUsuario.actualizar(usuarioActual);
 
+    }
+
+    @Override
+    @Transactional
+    public void actualizarPerfilProveedor(String nombre, String apellido, String username, String direccion,
+            String telefono, String razonSocial, String ubicacion, String sitioWeb, Proveedor proveedorActual)
+            throws ValorInvalido {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new ValorInvalido("El nombre no puede quedar vacio");
+        }
+
+        if (apellido == null || apellido.trim().isEmpty()) {
+            throw new ValorInvalido("El apellido no puede quedar vacio");
+        }
+
+        if (telefono != null && !telefono.matches("\\d+")) {
+            throw new ValorInvalido("El telfono solo debe contener numeros");
+        }
+
+        proveedorActual.setNombre(nombre);
+        proveedorActual.setApellido(apellido);
+        proveedorActual.setUsername(username);
+        proveedorActual.setDireccion(direccion);
+        proveedorActual.setTelefono(telefono);
+
+        proveedorActual.setRazonSocial(razonSocial);
+        proveedorActual.setUbicacion(ubicacion);
+        proveedorActual.setSitioWeb(sitioWeb);
+
+        repositorioUsuario.actualizar(proveedorActual);
     }
 
 }
