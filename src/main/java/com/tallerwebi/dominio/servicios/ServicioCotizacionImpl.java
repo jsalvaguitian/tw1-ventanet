@@ -68,7 +68,7 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         List<Cotizacion> cotizaciones = cotizacionRepository.obtenerPorIdCliente(id);
         System.out.println(
                 "[ServicioCotizacion] cantidad encontrada=" + (cotizaciones == null ? 0 : cotizaciones.size()));
-        if (cotizaciones == null || cotizaciones.isEmpty()) {
+        if (cotizaciones == null) {
             throw new NoHayCotizacionExistente();
         }
         return cotizaciones;
