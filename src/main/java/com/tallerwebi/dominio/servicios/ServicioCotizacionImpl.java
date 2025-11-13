@@ -139,7 +139,7 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         cotizacionRepository.guardar(cotizacion);
     }
 
-    @Override
+    
     public Map<String, Long> obtenerEstadisticasCotizacionesDelProveedor(Long proveedorId) {
         Map<String, Long> estadisticas = new HashMap<>();
         estadisticas.put("APROBADA", cotizacionRepository.contarCotizacionesAprobadasPorProveedor(proveedorId));
@@ -149,7 +149,6 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         return estadisticas;
     }
 
-    @Override
     public Map<String, Object> obtenerEstadisticaComparacionEntreProveedores(Long proveedorId) {
         Double promedioGeneral = cotizacionRepository.obtenerPromedioGeneralCompletadas();
         Long cantidadAprobadasProveedor = cotizacionRepository.contarCotizacionesAprobadasPorProveedor(proveedorId);
@@ -161,7 +160,6 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         return comparacion;
     }
 
-    @Override
     @Transactional
     public Map<String, Long> obtenerProductosMasCotizados(Long proveedorId) {
         List<Object[]> resultados = cotizacionRepository.obtenerProductosMasCotizados(proveedorId);
