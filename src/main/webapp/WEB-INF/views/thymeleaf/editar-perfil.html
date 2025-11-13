@@ -40,6 +40,21 @@
             <input type="text" id="direccion" name="direccion" th:value="${usuario.direccion}" class="form-control">
         </div>
 
+        <div  th:if="${usuario.rol == 'PROVEEDOR'}" class="mb-3">
+            <label for="razonSocial" class="form-label">Razon Social</label>
+            <input type="text" id="razonSocial" name="razonSocial" th:value="${usuario.razonSocial}" class="form-control">
+        </div>
+
+        <div  th:if="${usuario.rol == 'PROVEEDOR'}" class="mb-3">
+            <label for="ubicacion" class="form-label">Ubicacion</label>
+            <input type="text" id="ubicacion" name="ubicacion" th:value="${usuario.ubicacion}" class="form-control">
+        </div>
+
+        <div  th:if="${usuario.rol == 'PROVEEDOR'}" class="mb-3">
+            <label for="sitioWeb" class="form-label">Sitio Web</label>
+            <input type="text" id="sitioWeb" name="sitioWeb" th:value="${usuario.sitioWeb}" class="form-control">
+        </div>
+
         <button type="submit" class="btn btn-primary">Guardar cambios</button>
         <a th:href="@{/usuarios/perfil-usuario}" class="ml-3 cancelar btn-secondary">Cancerlar</a>
         <p class="text-danger mt-3" th:if="${error}" th:text="${error}"></p>

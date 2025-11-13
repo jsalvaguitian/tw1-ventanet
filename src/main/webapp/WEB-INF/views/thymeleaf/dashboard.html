@@ -34,7 +34,7 @@
         </a>
         <ul>
             <li class="active"><i class="bi bi-house"></i>Dashboard</li>
-            
+
         </ul>
     </div>
 
@@ -47,11 +47,14 @@
             </div>
             <div class="col-12 col-md-4 d-flex align-items-center justify-content-md-end">
                 <div class="profile-section position-relative" id="profileMenuContainer">
-                    <button id="profileToggle" class="d-flex align-items-center bg-transparent border-0 p-0" aria-haspopup="true" aria-expanded="false" aria-controls="profileDropdown" title="Opciones de usuario">
+                    <button id="profileToggle" class="d-flex align-items-center bg-transparent border-0 p-0"
+                        aria-haspopup="true" aria-expanded="false" aria-controls="profileDropdown"
+                        title="Opciones de usuario">
                         <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop&crop=face"
                             alt="Cliente" class="profile-img me-2">
                         <div class="profile-info text-start">
-                            <h3 class="mb-0 fs-6"><span th:text="${apellidoCliente}"></span>, <span th:text="${nombreCliente}"></span></h3>
+                            <h3 class="mb-0 fs-6"><span th:text="${apellidoCliente}"></span>, <span
+                                    th:text="${nombreCliente}"></span></h3>
                             <p class="mb-0 text-muted small"><span th:text="${rolCliente}"></span></p>
                         </div>
                         <i class="ms-2 bi bi-caret-down-fill text-light small"></i>
@@ -67,7 +70,7 @@
                 </div>
             </div>
 
-            <!-- Estadísticas -->            
+            <!-- Estadísticas -->
             <div class="stats">
                 <div class="stat flex-fill text-center active" data-filter="TODOS">
                     <span class="number" id="totalEvents" th:text="${totalCotizaciones}">0</span><br>
@@ -92,72 +95,156 @@
             </div>
 
             <!-- Filtros -->
-            <div class="filters mb-3 d-flex flex-wrap align-items-center justify-content-between flex-wrap">
-                <div class="d-flex align-items-center flex-wrap gap-2">
-  <select id="dateFilter" class="form-select w-auto mb-2 mb-md-0">
-    <option value="all">Todos</option>
-    <option value="today">Hoy</option>
-    <option value="yesterday">Ayer</option>
-    <option value="last7">Últimos 7 días</option>
-    <option value="last30">Últimos 30 días</option>
-    <option value="month">Este Mes</option>
-  </select>
-  <button id="applyFilter" class="btn btn-primary mb-2 mb-md-0">Aplicar</button>
-</div>
-                <a class="btn btn-success mb-2 mb-md-0" th:href="@{/cotizacion/presupuesto}">Crear Cotización</a>
+            <div class="filters mb-3 d-flex flex-wrap align-items-center">
+                <div class="d-flex align-items-center flex-wrap gap-3">
+                    <select id="dateFilter" class="form-select w-auto">
+                        <option value="all">Todos</option>
+                        <option value="today">Hoy</option>
+                        <option value="yesterday">Ayer</option>
+                        <option value="last7">Últimos 7 días</option>
+                        <option value="last30">Últimos 30 días</option>
+                        <option value="month">Este Mes</option>
+                    </select>
 
-                <div class="form-check form-switch me-3">
+                    <button id="applyFilter" class="btn btn-primary">Aplicar</button>
+                    <a class="btn btn-success" th:href="@{/cotizacion/presupuesto}">Crear Cotización</a>
+                    <a class="btn btn-info" th:href="@{/licitacion/presupuesto-custom}">Crear Cotización Custom</a>
+                </div>
+
+                <div class="form-check form-switch ms-auto">
                     <input class="form-check-input" type="checkbox" id="toggleDolar">
                     <label class="form-check-label" for="toggleDolar">Convertir a USD</label>
                 </div>
             </div>
+
         </div>
 
         <!-- Grilla de cotizaciones -->
-        <!-- Grilla de cotizaciones -->
         <div class="events-table">
-            <div class="events-table">
-                <table class="table table-striped mt-4" id="tablaCotizaciones"
-                    th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Proveedor</th>
-                            <th>Monto Total</th>
-                            <th>Estado</th>
-                            <th>Fecha Creación</th>
-                            <th>Fecha Expiración</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="cotizacion : ${cotizaciones}">
-                            <td th:text="${cotizacion.id}"></td>
-                            <td th:text="${cotizacion.proveedor.razonSocial}"></td>
-                            <td class="monto-cotizacion"
-                            th:data-precio-ars="${cotizacion.montoTotal}"
-                            th:text="'$' + ${#numbers.formatDecimal(cotizacion.montoTotal, 2, 2)} + ' ARS'">
-                            </td>
-                            <td th:text="${cotizacion.estado}"></td>
-                            <td th:text="${cotizacion.fechaCreacion}"></td>
-                            <td th:text="${cotizacion.fechaExpiracion}"></td>
-                            <td class="d-flex gap-1">
-                                <button type="button" class="btn btn-sm btn-info btn-detalle-cotizacion"
-                                    th:data-id="${cotizacion.id}" title="Ver detalle">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <a class="btn btn-sm btn-secondary position-relative" title="Mensajes" th:href="@{'/cotizacion/' + ${cotizacion.id} + '/mensajes'}">
-                                    <i class="fas fa-comments"></i>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                          th:if="${unreadComentarioCounts != null and unreadComentarioCounts[cotizacion.id] > 0}"
-                                          th:text="${unreadComentarioCounts[cotizacion.id]}"></span>
-                                </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>            
+            <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link"
+                        th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard')} ? 'active' : ''"
+                        th:href="@{/cliente/dashboard}" role="tab">
+                        Cotizaciones
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link"
+                        th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard-custom')} ? 'active' : ''"
+                        th:href="@{/cliente/dashboard-custom}" role="tab">
+                        Cotizaciones Custom
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-3">
+                <!-- TAB Cotizaciones normales -->
+                <div class="tab-pane fade"
+                    th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard')} ? 'show active' : ''"
+                    id="cotizaciones" role="tabpanel">
+
+                    <h3 class="mb-3 mt-4 text-primary">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> Cotizaciones
+                    </h3>
+
+                    <table class="table table-striped mt-4" id="tablaCotizaciones"
+                        th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Proveedor</th>
+                                <th>Monto Total</th>
+                                <th>Estado</th>
+                                <th>Fecha Creación</th>
+                                <th>Fecha Expiración</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="cotizacion : ${cotizaciones}">
+                                <td th:text="${cotizacion.id}"></td>
+                                <td th:text="${cotizacion.proveedor.razonSocial}"></td>
+                                <td class="monto-cotizacion" th:data-precio-ars="${cotizacion.montoTotal}"
+                                    th:text="'$' + ${#numbers.formatDecimal(cotizacion.montoTotal, 2, 2)} + ' ARS'">
+                                </td>
+                                <td th:text="${cotizacion.estado}"></td>
+                                <td th:text="${cotizacion.fechaCreacion}"></td>
+                                <td th:text="${cotizacion.fechaExpiracion}"></td>
+                                <td class="d-flex gap-1">
+                                    <button type="button" class="btn btn-sm btn-info btn-detalle-cotizacion"
+                                        th:data-id="${cotizacion.id}" title="Ver detalle">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <a class="btn btn-sm btn-secondary position-relative" title="Mensajes"
+                                        th:href="@{'/cotizacion/' + ${cotizacion.id} + '/mensajes'}">
+                                        <i class="fas fa-comments"></i>
+                                        <span
+                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                            th:if="${unreadComentarioCounts != null and unreadComentarioCounts[cotizacion.id] > 0}"
+                                            th:text="${unreadComentarioCounts[cotizacion.id]}"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div th:if="${cotizaciones == null or cotizaciones.isEmpty()}" class="text-center text-muted mt-4">
+                        No hay cotizaciones disponibles.
+                    </div>
+                </div>
+
+                <!-- TAB Cotizaciones Custom -->
+                <div class="tab-pane fade"
+                    th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard-custom')} ? 'show active' : ''"
+                    id="cotizacionesCustom" role="tabpanel"
+                    th:if="${#httpServletRequest.requestURI.endsWith('/dashboard-custom')}">
+
+                    <h3 class="mb-3 mt-4 text-primary">
+                        <i class="fas fa-cogs me-2"></i> Cotizaciones a Medida
+                    </h3>
+
+                    <table class="table table-striped mt-4" id="tablaLicitaciones"
+                        th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Descripción</th>
+                                <th>Proveedor</th>
+                                <th>Estado</th>
+                                <th>Fecha Creación</th>
+                                <th>Fecha Expiración</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="licitacion : ${cotizaciones}">
+                                <td th:text="${licitacion.id}"></td>
+                                <td
+                                    th:text="${licitacion.productoCustom != null ? licitacion.productoCustom.descripcion : '—'}">
+                                </td>
+                                <td th:text="${licitacion.proveedor.razonSocial}"></td>
+                                <td th:text="${licitacion.estado}"></td>
+                                <td th:text="${licitacion.fechaCreacion}"></td>
+                                <td th:text="${licitacion.fechaExpiracion}"></td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-info btn-detalle-licitacion" title="Ver detalle"
+                                        th:data-id="${licitacion.id}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div th:if="${cotizaciones == null or cotizaciones.isEmpty()}" class="text-center text-muted mt-4">
+                        No hay cotizaciones custom disponibles.
+                    </div>
+                </div>
+
+            </div>
         </div>
+
     </div>
 
     <!-- Modal para detalles -->
@@ -181,53 +268,53 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" th:src="@{/js/dashboard-cliente.js}"></script>    
+    <script type="module" th:src="@{/js/dashboard-cliente.js}"></script>
 
-        <!-- Script toggle sidebar -->
-        <script>
-            (function() {
-                const btn = document.getElementById('menuBtn');
-                const sidebar = document.getElementById('sidebar');
-                if (btn && sidebar) {
-                    btn.addEventListener('click', function() {
-                        const showing = sidebar.classList.toggle('show');
-                        btn.setAttribute('aria-expanded', showing ? 'true' : 'false');
-                    });
-                }
+    <!-- Script toggle sidebar -->
+    <script>
+        (function () {
+            const btn = document.getElementById('menuBtn');
+            const sidebar = document.getElementById('sidebar');
+            if (btn && sidebar) {
+                btn.addEventListener('click', function () {
+                    const showing = sidebar.classList.toggle('show');
+                    btn.setAttribute('aria-expanded', showing ? 'true' : 'false');
+                });
+            }
 
-                // Dropdown perfil
-                const profileToggle = document.getElementById('profileToggle');
-                const profileDropdown = document.getElementById('profileDropdown');
-                function closeProfileDropdown() {
-                    profileDropdown.classList.remove('show');
-                    profileToggle.setAttribute('aria-expanded', 'false');
-                    profileDropdown.setAttribute('aria-hidden', 'true');
-                }
-                function openProfileDropdown() {
-                    profileDropdown.classList.add('show');
-                    profileToggle.setAttribute('aria-expanded', 'true');
-                    profileDropdown.setAttribute('aria-hidden', 'false');
-                }
-                if (profileToggle && profileDropdown) {
-                    profileToggle.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        if (profileDropdown.classList.contains('show')) {
-                            closeProfileDropdown();
-                        } else {
-                            openProfileDropdown();
-                        }
-                    });
-                    document.addEventListener('click', function(e) {
-                        if (!profileDropdown.contains(e.target) && !profileToggle.contains(e.target)) {
-                            closeProfileDropdown();
-                        }
-                    });
-                    document.addEventListener('keydown', function(e) {
-                        if (e.key === 'Escape') closeProfileDropdown();
-                    });
-                }
-            })();
-        </script>
+            // Dropdown perfil
+            const profileToggle = document.getElementById('profileToggle');
+            const profileDropdown = document.getElementById('profileDropdown');
+            function closeProfileDropdown() {
+                profileDropdown.classList.remove('show');
+                profileToggle.setAttribute('aria-expanded', 'false');
+                profileDropdown.setAttribute('aria-hidden', 'true');
+            }
+            function openProfileDropdown() {
+                profileDropdown.classList.add('show');
+                profileToggle.setAttribute('aria-expanded', 'true');
+                profileDropdown.setAttribute('aria-hidden', 'false');
+            }
+            if (profileToggle && profileDropdown) {
+                profileToggle.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (profileDropdown.classList.contains('show')) {
+                        closeProfileDropdown();
+                    } else {
+                        openProfileDropdown();
+                    }
+                });
+                document.addEventListener('click', function (e) {
+                    if (!profileDropdown.contains(e.target) && !profileToggle.contains(e.target)) {
+                        closeProfileDropdown();
+                    }
+                });
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') closeProfileDropdown();
+                });
+            }
+        })();
+    </script>
 
     <!-- FOOTER -->
     <div th:replace="fragments/footer :: footer-dashboard"></div>

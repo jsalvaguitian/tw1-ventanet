@@ -360,3 +360,35 @@ header .badge {
 .dropdown-menu li:hover {
     background-color: #f8f9fa;
 }
+
+/* ==== DROPDOWN DE PERFIL ==== */
+.profile-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    display: none; /* oculto por defecto */
+    flex-direction: column;
+    min-width: 180px;
+    z-index: 2000;
+}
+
+.profile-dropdown.show {
+    display: flex; /* visible cuando se hace toggle */
+}
+
+.profile-dropdown-item {
+    padding: 10px 15px;
+    color: #0b335b;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.profile-dropdown-item:hover {
+    background: #f2f6ff;
+    color: #2336e7;
+}
