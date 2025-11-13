@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.persistence.ManyToOne;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,19 +17,25 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.entidades.Cotizacion;
 import com.tallerwebi.dominio.entidades.Licitacion;
+import com.tallerwebi.dominio.entidades.ProductoCustom;
 import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.enums.EstadoLicitacion;
+import com.tallerwebi.dominio.excepcion.NoHayLicitacionesExistentes;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.servicios.ServicioComentario;
 import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 import com.tallerwebi.dominio.servicios.ServicioLicitacion;
+import com.tallerwebi.presentacion.dto.LicitacionDto;
+import com.tallerwebi.presentacion.dto.ProductoCustomDto;
+import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 @Controller
 @RequestMapping("/cliente")
 public class ControladorCliente {
 
-    // Eliminado ServicioClienteI y ServicioPresupuesto por no uso en el dashboard actual
+    // Eliminado ServicioClienteI y ServicioPresupuesto por no uso en el dashboard
+    // actual
     private final ServicioCotizacion servicioCotizacion;
     private final ServicioComentario servicioComentario;
     private final ServicioLicitacion servicioLicitacion;
@@ -34,25 +43,28 @@ public class ControladorCliente {
     // Constructor principal que Spring debe usar para la inyección
     @Autowired
     public ControladorCliente(ServicioCotizacion servicioCotizacion,
-                              ServicioComentario servicioComentario,
-                              ServicioLicitacion servicioLicitacion) {
+            ServicioComentario servicioComentario,
+            ServicioLicitacion servicioLicitacion) {
         this.servicioCotizacion = servicioCotizacion;
         this.servicioComentario = servicioComentario;
         this.servicioLicitacion = servicioLicitacion;
     }
 
-    // Constructor de compatibilidad con tests antiguos que esperaban ServicioClienteI y ServicioPresupuesto
+    // Constructor de compatibilidad con tests antiguos que esperaban
+    // ServicioClienteI y ServicioPresupuesto
     public ControladorCliente(com.tallerwebi.dominio.servicios.ServicioClienteI servicioClienteI,
-                              com.tallerwebi.dominio.servicios.ServicioPresupuesto servicioPresupuesto,
-                              ServicioCotizacion servicioCotizacion,
-                              ServicioComentario servicioComentario) {
-        this(servicioCotizacion, servicioComentario, null); // reutiliza el constructor principal, servicioLicitacion no disponible
+            com.tallerwebi.dominio.servicios.ServicioPresupuesto servicioPresupuesto,
+            ServicioCotizacion servicioCotizacion,
+            ServicioComentario servicioComentario) {
+        this(servicioCotizacion, servicioComentario, null); // reutiliza el constructor principal, servicioLicitacion no
+                                                            // disponible
     }
 
-    // Constructor de compatibilidad adicional (tests que pasan sólo ServicioClienteI, ServicioPresupuesto y ServicioCotizacion)
+    // Constructor de compatibilidad adicional (tests que pasan sólo
+    // ServicioClienteI, ServicioPresupuesto y ServicioCotizacion)
     public ControladorCliente(com.tallerwebi.dominio.servicios.ServicioClienteI servicioClienteI,
-                               com.tallerwebi.dominio.servicios.ServicioPresupuesto servicioPresupuesto,
-                               ServicioCotizacion servicioCotizacion) {
+            com.tallerwebi.dominio.servicios.ServicioPresupuesto servicioPresupuesto,
+            ServicioCotizacion servicioCotizacion) {
         this(servicioCotizacion, null, null); // servicioComentario y servicioLicitacion opcionales
     }
 
@@ -76,7 +88,7 @@ public class ControladorCliente {
 
         try {
             List<Cotizacion> todasLasCotizaciones = servicioCotizacion
-                    .obtenerCotizacionPorIdCliente(usuarioSesion.getId());            
+                    .obtenerCotizacionPorIdCliente(usuarioSesion.getId());
 
             if (todasLasCotizaciones == null) {
                 todasLasCotizaciones = new ArrayList<>();
@@ -121,14 +133,14 @@ public class ControladorCliente {
                 }
             }
             datosModelado.put("unreadComentarioCounts", unreadCounts);
-            
+
         } catch (NoHayProductoExistente e) {
             datosModelado.put("cotizaciones", new ArrayList<>());
             datosModelado.put("totalCotizaciones", new ArrayList<>());
             datosModelado.put("cotizacionesPendientes", new ArrayList<>());
             datosModelado.put("cotizacionesAprobadas", new ArrayList<>());
             datosModelado.put("cotizacionesRechazadas", new ArrayList<>());
-            datosModelado.put("cotizacionesCompletadas", new ArrayList<>());            
+            datosModelado.put("cotizacionesCompletadas", new ArrayList<>());
             datosModelado.put("error", "No hay presupuestos disponibles");
         }
 
@@ -152,9 +164,12 @@ public class ControladorCliente {
         datosModelado.put("rolCliente", usuarioSesion.getRol());
 
         try {
-            List<Licitacion> todasLasLicitaciones = servicioLicitacion
+            List<Licitacion> todasLasLicitacionesEntities = servicioLicitacion
                     .obtenerLicitacionesPorIdCliente(usuarioSesion.getId());
-                                
+
+            List<LicitacionDto> todasLasLicitaciones = todasLasLicitacionesEntities.stream()
+                    .map(this::MapearLicitacionALicitacionDto) 
+                    .collect(Collectors.toList());
 
             if (todasLasLicitaciones == null) {
                 todasLasLicitaciones = new ArrayList<>();
@@ -184,32 +199,76 @@ public class ControladorCliente {
             // Map de contador de comentarios no leídos para cada cotización (cliente)
             Map<Long, Long> unreadCounts = new HashMap<>();
             // for (Cotizacion c : todasLasCotizaciones) {
-            //     if (c.getId() != null) {
-            //         long noLeidos = 0L;
-            //         if (servicioComentario != null) {
-            //             try {
-            //                 noLeidos = servicioComentario.contarNoLeidosParaCliente(c.getId());
-            //             } catch (Exception ex) {
-            //                 noLeidos = 0L; // tolerante
-            //             }
-            //         } else {
-            //             noLeidos = 0L;
-            //         }
-            //         unreadCounts.put(c.getId(), noLeidos);
-            //     }
+            // if (c.getId() != null) {
+            // long noLeidos = 0L;
+            // if (servicioComentario != null) {
+            // try {
+            // noLeidos = servicioComentario.contarNoLeidosParaCliente(c.getId());
+            // } catch (Exception ex) {
+            // noLeidos = 0L; // tolerante
+            // }
+            // } else {
+            // noLeidos = 0L;
+            // }
+            // unreadCounts.put(c.getId(), noLeidos);
+            // }
             // }
             datosModelado.put("unreadComentarioCounts", unreadCounts);
-            
-        } catch (NoHayProductoExistente e) {
+
+        } catch (NoHayLicitacionesExistentes e) {
             datosModelado.put("cotizaciones", new ArrayList<>());
-            datosModelado.put("totalCotizaciones", new ArrayList<>());
-            datosModelado.put("cotizacionesPendientes", new ArrayList<>());
-            datosModelado.put("cotizacionesAprobadas", new ArrayList<>());
-            datosModelado.put("cotizacionesRechazadas", new ArrayList<>());
-            datosModelado.put("cotizacionesCompletadas", new ArrayList<>());            
+            datosModelado.put("totalCotizaciones", 0);
+            datosModelado.put("cotizacionesPendientes", 0);
+            datosModelado.put("cotizacionesAprobadas", 0);
+            datosModelado.put("cotizacionesRechazadas", 0);
+            datosModelado.put("cotizacionesCompletadas", 0);
             datosModelado.put("error", "No hay presupuestos disponibles");
         }
 
         return new ModelAndView("dashboard", datosModelado);
+    }
+
+    private ProductoCustomDto MapearProductoCustomAProductoCustomDto(ProductoCustom productoCustom) {
+        ProductoCustomDto dto = new ProductoCustomDto();
+        dto.setId(productoCustom.getId());
+        dto.setPrecio(productoCustom.getPrecio());
+        dto.setDescripcion(productoCustom.getDescripcion());
+        dto.setImgCloudinaryID(productoCustom.getImgCloudinaryID());
+        dto.setAncho(productoCustom.getAncho());
+        dto.setAlto(productoCustom.getAlto());
+        dto.setLargo(productoCustom.getLargo());
+        dto.setEspesor(productoCustom.getEspesor());
+        dto.setColor(productoCustom.getColor());
+        dto.setModelo(productoCustom.getModelo());
+        dto.setTipoMaterial(productoCustom.getTipoMaterial());
+        dto.setAceptaEnvio(productoCustom.getAceptaEnvio());
+        dto.setCantidad(productoCustom.getCantidad());
+
+        if (productoCustom.getProveedor() != null) {
+            UsuarioProvDTO dtoProv = new UsuarioProvDTO(productoCustom.getProveedor().getId(),
+                    productoCustom.getProveedor().getRazonSocial(), productoCustom.getProveedor().getLogoPath(),
+                    productoCustom.getProveedor().getRubro());
+            dto.setProveedor(dtoProv);
+        }
+
+        return dto;
+    }
+
+    private LicitacionDto MapearLicitacionALicitacionDto(Licitacion licitacion) {
+        LicitacionDto dto = new LicitacionDto();
+        dto.setId(licitacion.getId());
+        dto.setEstado(licitacion.getEstado());
+        dto.setClienteId(licitacion.getCliente().getId());
+        if (licitacion.getProveedor() != null) {
+            UsuarioProvDTO dtoProv = new UsuarioProvDTO(licitacion.getProveedor().getId(),
+                    licitacion.getProveedor().getRazonSocial(), licitacion.getProveedor().getLogoPath(),
+                    licitacion.getProveedor().getRubro());
+            dto.setProveedor(dtoProv);
+        }
+        dto.setProductoCustom(
+                MapearProductoCustomAProductoCustomDto(licitacion.getProductoCustom()));
+        dto.setFechaCreacion(licitacion.getFechaCreacion());
+        dto.setFechaExpiracion(licitacion.getFechaExpiracion());
+        return dto;
     }
 }

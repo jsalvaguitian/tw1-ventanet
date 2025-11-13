@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.tallerwebi.dominio.entidades.Licitacion;
 import com.tallerwebi.dominio.enums.EstadoLicitacion;
+import com.tallerwebi.dominio.excepcion.NoHayLicitacionesExistentes;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.infraestructura.RepositorioLicitacionImpl;
 
@@ -59,11 +60,11 @@ public class ServicioLicitacionImpl implements ServicioLicitacion {
 
 
     @Override
-    public List<Licitacion> obtenerLicitacionesPorIdCliente(Long clienteId) {        
+    public List<Licitacion> obtenerLicitacionesPorIdCliente(Long clienteId) throws NoHayLicitacionesExistentes {        
         List<Licitacion> licitaciones = licitacionRepository.obtenerPorIdCliente(clienteId);
         
         if (licitaciones == null || licitaciones.isEmpty()) {
-            throw new NoHayProductoExistente();
+            throw new NoHayLicitacionesExistentes();
         }
         return licitaciones;
     }
