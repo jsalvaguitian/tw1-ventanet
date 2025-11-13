@@ -38,26 +38,68 @@ public class ServicioComentarioImpl implements ServicioComentario {
         comentario.setFechaCreacion(LocalDateTime.now());
         Comentario guardado = repositorioComentario.guardar(comentario);
 
-        // Enviar email a la contraparte
+        // Enviar email a quien se le envia el comentario con cuerpo HTML
         Cotizacion cotizacion = comentario.getCotizacion();
         if (cotizacion != null) {
             Cliente cliente = cotizacion.getCliente();
             Proveedor proveedor = cotizacion.getProveedor();
             String asunto = "Nuevo mensaje en la cotización #" + cotizacion.getId();
-            String cuerpoBase = "Se agregó un nuevo comentario: \n\n" + comentario.getMensaje();
+
+            String remitenteNombre;
+            if (comentario.getCliente() != null && cliente != null) {
+                remitenteNombre = (cliente.getNombre() != null ? cliente.getNombre() : "Cliente") +
+                        (cliente.getApellido() != null ? " " + cliente.getApellido() : "");
+            } else if (comentario.getProveedor() != null && proveedor != null) {
+                remitenteNombre = (proveedor.getRazonSocial() != null ? proveedor.getRazonSocial() : "Proveedor");
+            } else {
+                remitenteNombre = "Usuario";
+            }
+
+            String estado = cotizacion.getEstado() != null ? cotizacion.getEstado().toString() : "";
+            String monto = cotizacion.getMontoTotal() != null ? cotizacion.getMontoTotal().toString() : "";
+            String fecha = comentario.getFechaCreacion() != null ? comentario.getFechaCreacion().toString() : LocalDateTime.now().toString();
+            String enlace = "/cotizacion/" + cotizacion.getId() + "/mensajes"; // relativo
+
+            StringBuilder cuerpo = new StringBuilder();
+            cuerpo.append("<div style='font-family:Segoe UI,Arial,sans-serif;font-size:14px;color:#222'>")
+                  .append("<h2 style='color:#0b335b;margin-top:0'>Nuevo mensaje en tu cotización</h2>")
+                  .append("<p><strong>Remitente:</strong> ").append(remitenteNombre).append("</p>")
+                  .append("<p><strong>Cotización:</strong> #").append(cotizacion.getId()).append("</p>")
+                  .append("<p><strong>Estado actual:</strong> ").append(estado).append("</p>")
+                  .append("<p><strong>Monto total:</strong> ").append(monto).append("</p>")
+                  .append("<p><strong>Fecha del mensaje:</strong> ").append(fecha).append("</p>")
+                  .append("<hr style='border:none;border-top:1px solid #ddd;margin:16px 0'>")
+                  .append("<p style='white-space:pre-line'><strong>Mensaje:</strong><br>")
+                  .append(escapeHtml(comentario.getMensaje())).append("</p>")
+                  .append("<p style='margin-top:24px'>Puedes responder ingresando al siguiente enlace (inicia sesión si es necesario):<br>")
+                  .append("<a style='color:#1a73e8' href='http://localhost:8080/spring").append(enlace).append("'>Abrir conversación</a></p>")
+                  .append("<p style='font-size:12px;color:#555'>Este es un correo automático de Ventanet. Por favor no respondas a este email.</p>")
+                  .append("</div>");
+
+            String cuerpoHtml = cuerpo.toString();
             if (comentario.getCliente() != null) {
                 // Lo escribió cliente, avisar a proveedor
                 if (proveedor != null && proveedor.getEmail() != null) {
-                    servicioEmail.enviarEmail(proveedor.getEmail(), asunto, cuerpoBase, false);
+                    servicioEmail.enviarEmail(proveedor.getEmail(), asunto, cuerpoHtml, true);
                 }
             } else if (comentario.getProveedor() != null) {
                 // Lo escribió proveedor, avisar a cliente
                 if (cliente != null && cliente.getEmail() != null) {
-                    servicioEmail.enviarEmail(cliente.getEmail(), asunto, cuerpoBase, false);
+                    servicioEmail.enviarEmail(cliente.getEmail(), asunto, cuerpoHtml, true);
                 }
             }
         }
         return guardado;
+    }
+
+    // Escapar HTML básico para evitar inyección si se envía contenido de usuario
+    private String escapeHtml(String input) {
+        if (input == null) return "";
+        return input.replace("&", "&amp;")
+                    .replace("<", "&lt;")
+                    .replace(">", "&gt;")
+                    .replace("\"", "&quot;")
+                    .replace("'", "&#39;");
     }
 
     @Override
