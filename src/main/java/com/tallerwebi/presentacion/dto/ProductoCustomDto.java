@@ -9,7 +9,7 @@ public class ProductoCustomDto {
     private String descripcion;    
     private String imgCloudinaryID;    
     @ManyToOne(optional = false)    
-    private Proveedor proveedor;      
+    private UsuarioProvDTO proveedor;      
     private Double ancho;
     private Double alto;
     private Double largo;
@@ -52,10 +52,10 @@ public class ProductoCustomDto {
         this.imgCloudinaryID = imgCloudinaryID;
     }
     
-    public Proveedor getProveedor() {
+    public UsuarioProvDTO getProveedor() {
         return proveedor;
     }
-    public void setProveedor(Proveedor proveedor) {
+    public void setProveedor(UsuarioProvDTO proveedor) {
         this.proveedor = proveedor;
     }
     public Double getAncho() {
