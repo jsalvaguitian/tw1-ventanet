@@ -82,13 +82,14 @@
             </div>
 
             <div class="col-md-9">
-            <!-- RESULTADOS 
+                <!-- RESULTADOS 
 
                 <div class="input-group mb-3">
                     <input type="text" name="nombre" class="form-control" placeholder="Buscar producto..."
                         th:value="${param.nombre}">
                     <button class="btn btn-outline-secondary" type="submit"> <i class="bi bi-search"></i></button>
                 </div>-->
+
 
                 <div class="row">
                     <p class="mensaje" th:if="${mensaje !=null}" th:text="${mensaje}"></p>
@@ -116,9 +117,9 @@
                                     <a th:href="@{'/detalle-producto/' + ${p.id}}" class="btn btn-outline-primary mb-2">
                                         Ver más
                                     </a>
-                                    <a class="solicitar-cotizacion btn btn-dark"
+                                    <a th:href="@{'/cotizar/'+ ${p.id}}" class="solicitar-cotizacion btn btn-dark"
                                         th:attr="data-producto-id=${p.id}, data-producto-nombre=${p.nombre}, data-proveedor = ${p.nombreProveedor}">
-                                        Solicitar cotización
+                                        Cotizar
                                     </a>
 
                                 </div>
@@ -153,245 +154,197 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <div class="modal fade" id="modalCotizacion" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Solicitar cotización</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const botones = document.querySelectorAll(".solicitar-cotizacion");
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+
+            botones.forEach(boton => {
+                boton.addEventListener("click", async (e) => {
+                    e.preventDefault();
+                    const url = boton.getAttribute("href");
+                    const respuesta = await fetch(url);
+
+                    if (respuesta.status === 401) {
+                        mostrarModalLogin(); // tu función actual para mostrar login
+                        return;
+                    }
+
+                    if (respuesta.ok) {
+                        // Mostrar alerta elegante
+                        Toast.fire({
+                            icon: "success",
+                            title: "Producto agregado al carrito"
+                        });
+
+                        // Obtener y actualizar el carrito lateral
+                        const data = await respuesta.json();
+                        actualizarCarritoLateral(data.items);
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Hubo un problema al agregar el producto."
+                        });
+                    }
+                })
+            });
+
+
+
+        });
+
+        function actualizarCarritoLateral(items) {
+            const contenedor = document.getElementById("carritoContenido");
+            contenedor.innerHTML = "";
+
+            if (items.length === 0) {
+                contenedor.innerHTML = `<p class="text-muted">Aún no agregaste productos.</p>`;
+                document.getElementById("btnEnviarCotizacion").disabled = true;
+                return;
+            }
+
+            items.forEach(item => {
+                contenedor.innerHTML += `
+            <div class="d-flex align-items-center justify-content-between mb-2 border-bottom pb-2">
+                <img src="${item.imagenUrl}" width="50" height="50" class="me-2 rounded">
+                <div class="flex-grow-1">
+                    <strong>${item.nombre}</strong><br>
+                    <input type="number" min="1" value="${item.cantidad}" 
+                        class="form-control form-control-sm w-50 mt-1" 
+                        onchange="cambiarCantidad(${item.id}, this.value)">
                 </div>
-                <div class="modal-body">
-                    <p id="productoNombre"></p>
-                    <input type="hidden" id="productoId">
-                    <div class="mb-3">
-                        <label for="cantidad" class="form-label">Cantidad:</label>
-                        <input type="number" id="cantidad" class="form-control" min="1" value="1">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Seguir buscando</button>
-                    <button type="button" class="btn btn-primary" id="btnCotizar">Cotizar</button>
+                <button class="btn btn-sm btn-danger" onclick="eliminarItem(${item.id})">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        `;
+            });
+
+            document.getElementById("btnEnviarCotizacion").disabled = false;
+        }
+
+        function mostrarModalLogin() {
+            const modalHtml = `
+        <div class="modal fade" id="loginModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-center p-3">
+                    <h5>Debe iniciar sesión para cotizar productos</h5>
+                    <a href="/spring/login" class="btn btn-primary mt-3">Ir a iniciar sesión</a>
                 </div>
             </div>
         </div>
-    </div>
+    `;
+            document.body.insertAdjacentHTML("beforeend", modalHtml);
+            const modal = new bootstrap.Modal(document.getElementById("loginModal"));
+            modal.show();
+        }
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        async function eliminarItem(idItem) {
+            const respuesta = await fetch(`/spring/cotizar/eliminar/${idItem}`, { method: "DELETE" });
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const botones = document.querySelectorAll(".solicitar-cotizacion");
-            const carritoContenido = document.getElementById("carritoContenido");
-            const btnEnviarCotizacion = document.getElementById("btnEnviarCotizacion");
-            const offcanvas = new bootstrap.Offcanvas(document.getElementById("offcanvasCarrito"));
-
-            // Guardamos productos en memoria (se sincronizan con sesión por fetch)
-            let carrito = {}; // { proveedorId: { proveedorNombre, productos: [ {id, nombre, cantidad} ] } }
-
-            // Función para renderizar el carrito lateral
-            function renderizarCarrito() {
-                if (Object.keys(carrito).length === 0) {
-                    carritoContenido.innerHTML = "<p class='text-muted'>Aún no agregaste productos.</p>";
-                    btnEnviarCotizacion.disabled = true;
-                    return;
-                }
-
-                let html = "";
-                for (const proveedorId in carrito) {
-                    const grupo = carrito[proveedorId];
-                    html += `<h6 class="fw-bold mt-2">${grupo.proveedorNombre}</h6><ul class="list-group mb-3">`;
-
-                    grupo.productos.forEach(p => {
-                        html += `
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            ${p.nombre}
-            <input type="number" min="1" value="${p.cantidad}" data-producto-id="${p.id}"
-              class="form-control form-control-sm w-25 cantidad-input">
-          </li>
-        `;
-                    });
-                    html += `</ul>`;
-                }
-
-                carritoContenido.innerHTML = html;
-                btnEnviarCotizacion.disabled = false;
+            if (respuesta.status === 401) {
+                mostrarModalLogin();
+                return;
             }
 
-            // Agregar producto al carrito
-            botones.forEach(btn => {
-                btn.addEventListener("click", (e) => {
-                    e.preventDefault();
+            const data = await respuesta.json();
 
-                    if (!estaLogueado) {
-                        alert("Se requiere estar logueado para solicitar una cotización.");
-                        return;
-                    }
-
-                    const card = btn.closest(".card");
-                    const productoId = card.dataset.productoId;
-                    const productoNombre = card.querySelector(".card-title").textContent;
-                    const proveedorId = card.dataset.proveedorId;
-                    const proveedorNombre = card.dataset.proveedorNombre;
-
-                    // Estructura de agrupación
-                    if (!carrito[proveedorId]) {
-                        carrito[proveedorId] = { proveedorNombre, productos: [] };
-                    }
-
-                    const grupo = carrito[proveedorId];
-                    const existente = grupo.productos.find(p => p.id == productoId);
-                    if (existente) {
-                        existente.cantidad++;
-                    } else {
-                        grupo.productos.push({ id: productoId, nombre: productoNombre, cantidad: 1 });
-                    }
-
-                    // Actualizar vista
-                    renderizarCarrito();
-
-                    // Mostrar carrito
-                    offcanvas.show();
-
-                    // Guardar en sesión
-                    fetch("/spring/agregar-item", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                        body: `productoId=${productoId}&cantidad=1`
-                    });
+            if (respuesta.ok) {
+                /*Swal.fire({
+                    icon: "success",
+                    title: "Eliminado",
+                    text: data.mensaje,
+                    timer: 2000,
+                    showConfirmButton: false
+                });*/
+                actualizarCarritoLateral(data.items);
+            } /*else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: data.mensaje || "No se pudo eliminar el producto."
                 });
-            });
+            }*/
+        }
 
-            // Enviar cotización al backend
-            btnEnviarCotizacion.addEventListener("click", () => {
-                if (confirm("¿Deseas confirmar esta cotización?")) {
-                    fetch("/spring/confirmar", { method: "POST" })
-                        .then(r => {
-                            if (r.ok) {
-                                alert("Cotización registrada con estado PENDIENTE");
-                                carrito = {};
-                                renderizarCarrito();
-                                offcanvas.hide();
-                            } else {
-                                alert("Error al registrar cotización");
-                            }
-                        });
-                }
-            });
-        });
+        async function cambiarCantidad(idItem, nuevaCantidad) {
+            // Convertir a número entero
+            nuevaCantidad = parseInt(nuevaCantidad);
 
-    </script>
-    <!-- Script con Thymeleaf para pasar el valor desde el backend -->
-    <script th:inline="javascript">
-        const estaLogueado = /*[[${estaLogueado}]]*/ false;
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const botones = document.querySelectorAll(".solicitar-cotizacion");
-            const modal = new bootstrap.Modal(document.getElementById("modalCotizacion"));
-            const productoIdInput = document.getElementById("productoId");
-            const productoNombre = document.getElementById("productoNombre");
-
-            botones.forEach(btn => {
-                btn.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    if (!estaLogueado) {
-                        alert("Se requiere estar logueado para solicitar una cotización.");
-                        return;
-                    }
-
-                    const id = btn.dataset.productoId;
-                    const nombre = btn.dataset.productoNombre;
-                    const proveedorNombre = btn.dataset.proveedor;
-
-                    productoIdInput.value = id;
-                    productoNombre.textContent = "Producto: " + nombre;
-                    modal.show();
+            if (isNaN(nuevaCantidad) || nuevaCantidad < 1) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Cantidad inválida",
+                    text: "Debe ingresar una cantidad mayor o igual a 1."
                 });
+                return;
+            }
+
+            const respuesta = await fetch(`/spring/cotizar/cambiar-cantidad/${idItem}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cantidad: nuevaCantidad })
             });
 
-            document.getElementById("btnCotizar").addEventListener("click", () => {
-                const productoId = productoIdInput.value;
-                const cantidad = document.getElementById("cantidad").value;
+            if (respuesta.status === 401) {
+                mostrarModalLogin();
+                return;
+            }
 
-                fetch("/spring/agregar-item", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: `productoId=${productoId}&cantidad=${cantidad}`
-                })
-                    .then(r => {
-                        if (!r.ok) throw new Error("Error al registrar cotización");
-                        return r.text();
-                    })
-                    .then(msg => {
-                        alert(msg);
-                        modal.hide();
-                    })
-                    .catch(err => alert(err.message));
-            });
-        });
+            const data = await respuesta.json();
+
+            if (respuesta.ok) {
+                actualizarCarritoLateral(data.items);
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: data.mensaje || "No se pudo actualizar la cantidad."
+                });
+            }
+        }
+
+
+
+
+        /*botones.forEach(boton => {
+             boton.addEventListener("click", async (e) => {
+                 e.preventDefault();
+                 const url = boton.getAttribute("href");
+ 
+ 
+                 const respuesta = await fetch(url);
+                 if (respuesta.status === 401) {
+                     mostrarModalLogin();
+                     return;
+                 }
+                 const alerta = document.getElementById("alertaExito");
+                 alerta.style.display = "block";
+                 alerta.textContent = "✅ Producto agregado al carrito.";
+                 setTimeout(() => alerta.style.display = "none", 3000);
+ 
+                 const data = await respuesta.json();
+                 actualizarCarritoLateral(data.items);
+             });
+         });*/
     </script>
 
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const tipoProductoSelect = document.getElementById("tipoProducto");
-            const tipoVentanaSelect = document.getElementById("tipoVentana");
-
-            tipoProductoSelect.addEventListener("change", () => {
-                const tipoProductoId = tipoProductoSelect.value;
-
-                // Limpiar el segundo select
-                tipoVentanaSelect.innerHTML = '<option value="">Seleccione un tipo de ventana</option>';
-
-                if (tipoProductoId) {
-                    // Hace la llamada al endpoint que devuelve JSON
-                    fetch(`/spring/tiposVentana/${tipoProductoId}`)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Error al obtener tipos de ventana");
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            // Cargar opciones en el select
-                            data.forEach(tv => {
-                                const option = document.createElement("option");
-                                option.value = tv.id;
-                                option.textContent = tv.nombre;
-                                tipoVentanaSelect.appendChild(option);
-                            });
-                        })
-                        .catch(error => {
-                            console.error(error);
-                        });
-                }
-            });
-        });
-
-
-    </script>
-    <!--
-                    <div class="mb-2">
-                        <select name="proveedorId" class="form-select">
-                            <option value="">Todos los proveedores</option>
-                            <th:block th:each="prov : ${proveedores}">
-                                <option th:value="${prov.id}" th:text="${prov.razonSocial}"></option>
-                            </th:block>
-                        </select>
-                    </div>
-
-                    <div class="mb-2">
-                        <label>Rubro</label>
-                        <select name="rubro" class="form-select">
-                            <option value="">Todos</option>
-                            <option th:each="r : ${T(com.tallerwebi.dominio.enums.Rubro).values()}" th:value="${r}"
-                                th:text="${r.descripcion}"></option>
-                        </select>
-                    </div>
-                -->
 </body>
 
 </html>
