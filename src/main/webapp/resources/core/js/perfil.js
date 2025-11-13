@@ -49,6 +49,7 @@ google.charts.setOnLoadCallback(() => {
   drawCotizacionesChart();
   drawPromedioGeneralChart();
   drawProductosMasCotizadosChart();
+  drawProductosMasCotizadosDeTodosLosProveedoresChart();
 });
 
 function drawCotizacionesChart() {
@@ -117,5 +118,29 @@ function drawProductosMasCotizadosChart() {
   chart.draw(data, options);
 }
 
+function drawProductosMasCotizadosDeTodosLosProveedoresChart() {
+    const dataFromServer = window.productosMasCotizadosDeTodosLosProveedoresData;
+    if (!dataFromServer) return;
+
+    const dataArray = [['Producto', 'Cantidad']];
+    for (const [nombre, cantidad] of Object.entries(dataFromServer)) {
+      dataArray.push([nombre, cantidad]);
+    }
+
+    const data = google.visualization.arrayToDataTable(dataArray);
+    const options = {
+      title: 'Productos más cotizados (proveedores)',
+      legend: { position: 'none' },
+      colors: ['#3498db'],
+      bar: { groupWidth: '60%' },
+      chartArea: { width: '75%', height: '70%' },
+      hAxis: { title: 'Producto' },
+      vAxis: { title: 'Cantidad de cotizaciones' }
+    }
+     const chart = new google.visualization.ColumnChart(
+      document.getElementById('grafico_todos_productos_mas_cotizados')
+    );
+    chart.draw(data, options);
+}
    
 
