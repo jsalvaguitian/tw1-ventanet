@@ -27,6 +27,19 @@ body {
     letter-spacing: 1px;
 }
 
+/* Breakpoint ampliado: mostramos hamburger y ocultamos sidebar desde 992px hacia abajo */
+@media (max-width: 992px) {
+    .sidebar {
+        left: -220px;
+    }
+    .main {
+        margin-left: 0;
+    }
+    .hamburger, .navbar-toggler {
+        display: inline-block !important;
+    }
+}
+
 .sidebar ul {
     list-style: none;
     padding: 0;
@@ -83,6 +96,12 @@ body {
 .stat .label {
     font-size: 14px;
     color: #888;
+}
+
+.stat.active {
+    border: 2px solid #007bff;
+    background-color: #e9f2ff;
+    border-radius: 8px;
 }
 
 .events-table {
@@ -143,6 +162,21 @@ body {
     cursor: pointer;
     font-size: 14px;
 }
+
+.filters .btn {
+    min-width: 160px;
+    font-weight: 500;
+    border-radius: 6px;
+}
+
+.filters select {
+    min-width: 140px;
+}
+
+.filters {
+    gap: 1rem; /* separación general */
+}
+
 
 @media (max-width: 900px) {
     .main {
@@ -217,6 +251,52 @@ body {
     backdrop-filter: blur(10px);
 }
 
+/* Dropdown perfil */
+.profile-section button#profileToggle:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 110%;
+    right: 0;
+    min-width: 190px;
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 6px 0;
+    display: none;
+    animation: fadeIn 120ms ease-in;
+    z-index: 1500;
+    box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    border: 1px solid #e2e8f0;
+    flex-direction: column;
+}
+
+.profile-dropdown.show { display: flex; }
+
+.profile-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 14px;
+    text-decoration: none;
+    color: #0b335b;
+    transition: background .15s, color .15s;
+}
+
+.profile-dropdown-item:hover,
+.profile-dropdown-item:focus {
+    background: #e9f2ff;
+    color: #072039;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 .profile-img {
     width: 40px;
     height: 40px;
@@ -287,4 +367,21 @@ body {
     border: 2px solid #198754 !important;
     background-color: #e6f9ed !important;
     box-shadow: 0 0 8px rgba(25, 135, 84, 0.4);
+}
+
+.nav-tabs .nav-link {
+  color: #495057;
+  border: none;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #0d6efd;
+}
+
+.nav-tabs .nav-link.active {
+  color: #0d6efd;
+  font-weight: 600;
+  border-bottom: 3px solid #0d6efd;
 }

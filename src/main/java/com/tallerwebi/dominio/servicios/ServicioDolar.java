@@ -1,17 +1,18 @@
 package com.tallerwebi.dominio.servicios;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.Map;
-import java.util.HashMap;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.tallerwebi.dominio.excepcion.NoSePudoObtenerDolarException;
 
 @Service
 public class ServicioDolar {
@@ -50,5 +51,13 @@ public class ServicioDolar {
 
     public Optional<Map<String, BigDecimal>> getDatosOficial() {
         return cache.isEmpty() ? Optional.empty() : Optional.of(cache);
+    }
+
+    // lanza excepcion si no hay datos
+    public Map<String, BigDecimal> getDatosOficialOrThrow() {
+        if (cache.isEmpty()) {
+            throw new NoSePudoObtenerDolarException("No se pudo obtener el precio del dólar oficial");
+        }
+        return cache;
     }
 }

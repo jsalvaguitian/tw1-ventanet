@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +37,7 @@ import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.excepcion.CotizacionesExistente;
+import com.tallerwebi.dominio.excepcion.NoHayCotizacionExistente;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.servicios.ServicioClienteI;
 import com.tallerwebi.dominio.servicios.ServicioCotizacion;
@@ -96,8 +98,17 @@ public class ControladorCotizacion {
 
     @GetMapping("/detalle/{id}")
     @ResponseBody
-    public Cotizacion obtenerDetalleCotizacion(@PathVariable Long id) {
-        return servicioCotizacion.obtenerPorId(id);
+    public ResponseEntity<?> obtenerDetalleCotizacion(@PathVariable Long id) throws NoHayCotizacionExistente {
+
+        if (id == null || id <= 0) {
+            return ResponseEntity.badRequest().body("El ID de cotización no es válido");
+        }
+
+        Cotizacion cotizacion = servicioCotizacion.obtenerPorId(id);
+        if (cotizacion == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cotización no encontrada");
+        }
+        return ResponseEntity.ok(cotizacion);
     }
 
     @PostMapping("/{id}/cambiar-estado/{nuevoEstado}")

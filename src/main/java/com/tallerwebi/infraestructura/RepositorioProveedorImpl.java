@@ -116,7 +116,17 @@ public class RepositorioProveedorImpl implements RepositorioProveedor {
         query.setParameter("rubro", rubro);
 
         return query.getResultList();
+    }
 
+    @Override
+    public List<Proveedor> listarTodosPorEstado(Boolean activo) {
+
+        String hql = "FROM Proveedor p where p.activo =: activo";
+        org.hibernate.query.Query<Proveedor> query = this.sessionFactory.getCurrentSession().createQuery(hql,
+                Proveedor.class);
+        query.setParameter("activo", activo);
+
+        return query.getResultList();
     }
 
 }

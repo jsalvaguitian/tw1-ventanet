@@ -1,15 +1,12 @@
 package com.tallerwebi.dominio.entidades;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 
 import javax.persistence.CascadeType;
@@ -46,6 +43,11 @@ public class Proveedor extends Usuario {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Cotizacion> cotizaciones = new ArrayList<>();
+    /*
+     * @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval =
+     * true)
+     * private List<Cotizacion> cotizaciones = new ArrayList<>();
+     */
 
     public Proveedor() {
         super();
@@ -157,13 +159,15 @@ public class Proveedor extends Usuario {
         this.logoPath = logoPath;
     }
 
-    public List<Cotizacion> getCotizaciones() {
-        return cotizaciones;
-    }
-
-    public void setCotizaciones(List<Cotizacion> cotizaciones) {
-        this.cotizaciones = cotizaciones;
-    }
+    /*
+     * public List<Cotizacion> getCotizaciones() {
+     * return cotizaciones;
+     * }
+     * 
+     * public void setCotizaciones(List<Cotizacion> cotizaciones) {
+     * this.cotizaciones = cotizaciones;
+     * }
+     */
 
     // public List<Producto> getProductos() {
     // return productos;

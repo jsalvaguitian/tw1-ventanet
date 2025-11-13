@@ -41,4 +41,29 @@ public class RepositorioPresupuestoImpl implements RepositorioPresupuesto {
             query.setParameter("clienteId", clienteId);
             return query.getResultList();
         }
+    
+        @Override
+        public Presupuesto obtenerPorId(Long id) {
+        Session session = sessionFactory.getCurrentSession();
+        // Eagerly fetch related entities used by the view (items and location
+        // references) to avoid LazyInitializationException when rendering outside
+        // the transactional session
+        var q = session.createQuery(
+            "SELECT DISTINCT p FROM Presupuesto p "
+                + "LEFT JOIN FETCH p.items it "
+                + "LEFT JOIN FETCH it.tipoProducto tp "
+                + "LEFT JOIN FETCH it.tipoVentana tv "
+                + "LEFT JOIN FETCH it.ancho a "
+                + "LEFT JOIN FETCH it.alto al "
+                + "LEFT JOIN FETCH it.material m "
+                + "LEFT JOIN FETCH it.color c "
+                + "LEFT JOIN FETCH it.usuario u "
+                + "LEFT JOIN FETCH p.provincia pr "
+                + "LEFT JOIN FETCH p.localidad lo "
+                + "LEFT JOIN FETCH p.partido pa "
+                + "WHERE p.id = :id",
+            Presupuesto.class);
+        q.setParameter("id", id);
+        return (Presupuesto) q.uniqueResult();
+        }
 }

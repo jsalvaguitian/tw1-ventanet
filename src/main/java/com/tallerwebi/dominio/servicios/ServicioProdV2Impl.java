@@ -15,13 +15,11 @@ public class ServicioProdV2Impl implements ServicioProdV2{
 
     @Override
     public Set<Producto> obtenerTodosLosProductos() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'obtenerTodosLosProductos'");
     }
 
     @Override
     public List<String> obtenerTodosLosTiposProductos() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'obtenerTodosLosTiposProductos'");
     }
 

@@ -236,7 +236,7 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
 
     @Override
     public void eliminarUsuario(Usuario usuario) {
-        repositorioUsuario.eliminarUsuario(usuario);
+        usuario.setActivo(false);
     }
 
 }

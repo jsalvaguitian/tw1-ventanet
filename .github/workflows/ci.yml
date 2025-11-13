@@ -4,10 +4,14 @@ on:
   pull_request:
     branches: ["main", "Dev"]
   push:
-    branches: ["main", "jesica", "Dev"]
+    branches: ["main", "jesica", "Dev", "jesi-cloudinary"]
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
+    env:
+      CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+      CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+      CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
     steps:
       - run: echo "🎉 Esta tarea (job) fue lanzado automaticamente por el evento ${{ github.event_name }}"
       - run: echo "🐧 Esta tarea esta corriendo en un servidor ${{ runner.os }} por GitHub!"

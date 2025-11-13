@@ -1,8 +1,10 @@
 package com.tallerwebi.infraestructura;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.isNotNull;
-import jakarta.mail.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+
 //import javax.mail.Session;
 import javax.transaction.Transactional;
 
@@ -15,19 +17,17 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioUsuario;
+import com.tallerwebi.infraestructura.config.CloudinaryTestConfig;
 import com.tallerwebi.infraestructura.config.HibernateTestConfig;
 import com.tallerwebi.infraestructura.config.SpringWebTestConfig;
 
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {SpringWebTestConfig.class , HibernateTestConfig.class })
+@ContextConfiguration(classes = {SpringWebTestConfig.class , HibernateTestConfig.class, CloudinaryTestConfig.class})
 public class RepositorioUsuarioTest {
 
     @Autowired

@@ -3,24 +3,25 @@ package com.tallerwebi.dominio.entidades;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.FetchType;
 
 @Entity
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, length = 155)
     private String nombre;
     private double precio;
     private String descripcion;
     private String imagenUrl;
+    private String imgCloudinaryID;
     private int stock;
     
 
@@ -151,7 +152,7 @@ public class Producto {
         this.presentacion = presentacion;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -233,6 +234,14 @@ public class Producto {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public String getImgCloudinaryID() {
+        return imgCloudinaryID;
+    }
+
+    public void setImgCloudinaryID(String imgCloudinaryID) {
+        this.imgCloudinaryID = imgCloudinaryID;
     }
 
 }

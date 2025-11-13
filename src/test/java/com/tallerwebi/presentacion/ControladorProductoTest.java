@@ -11,6 +11,7 @@ import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.TipoProducto;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
+import com.tallerwebi.dominio.servicios.ServicioCloudinary;
 import com.tallerwebi.dominio.servicios.ServicioMarca;
 import com.tallerwebi.dominio.servicios.ServicioPresentacion;
 import com.tallerwebi.dominio.servicios.ServicioProducto;
@@ -41,6 +42,7 @@ public class ControladorProductoTest {
     private ServicioProveedorI servicioProveedor;
     private HttpServletRequest requestMock;
     private HttpSession sessionMock;
+    private ServicioCloudinary servicioCloudinary;
 
     @BeforeEach
     public void init() {
@@ -49,10 +51,11 @@ public class ControladorProductoTest {
         this.servicioMarca = mock(ServicioMarca.class);
         this.servicioPresentacion = mock(ServicioPresentacion.class);
         this.servicioProveedor = mock(ServicioProveedorI.class);
+        this.servicioCloudinary = mock(ServicioCloudinary.class);
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);
         this.controladorProductos = new ControladorProducto(this.servicioProducto, this.servicioTipoProducto,
-                this.servicioMarca, this.servicioPresentacion, servicioProveedor);
+                this.servicioMarca, this.servicioPresentacion, servicioProveedor, this.servicioCloudinary);
     }
 
     @Test

@@ -35,7 +35,9 @@
 <div class="container detalle-container">
     <div class="row">
         <div class="col-md-6">
-            <img th:src="@{${'/'+producto.imagenUrl}}" alt="Imagen del producto" class="producto-img img-fluid">
+            <img th:src="${#strings.startsWith(producto.imagenUrl, 'http') 
+                        ? producto.imagenUrl : '/spring/' + producto.imagenUrl}"
+                        alt="Producto" class="producto-img img-fluid">
         </div>
 
         <div class="col-md-6">
