@@ -91,8 +91,9 @@
                 </div>-->
 
 
-                <div class="row">
-                    <p class="mensaje" th:if="${mensaje !=null}" th:text="${mensaje}"></p>
+                <div class="row d-flex align-items-center"  th:if="${mensaje !=null}">
+                    <p class="mensaje" th:text="${mensaje}"></p>
+                    <a class="btn btn-info w-50" th:href="@{/licitacion/presupuesto-custom}">Crear Cotización Custom</a>
 
                 </div>
                 <div class="row" th:each="p : ${productos}">
