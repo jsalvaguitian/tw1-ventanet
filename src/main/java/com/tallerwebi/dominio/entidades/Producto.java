@@ -14,7 +14,7 @@ import javax.persistence.FetchType;
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, length = 155)
     private String nombre;
@@ -152,7 +152,7 @@ public class Producto {
         this.presentacion = presentacion;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
