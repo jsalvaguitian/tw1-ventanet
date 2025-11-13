@@ -5,6 +5,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tallerwebi.dominio.entidades.Cliente;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioCliente;
 
 @Service
@@ -20,6 +21,10 @@ public class ServicioClienteImpl implements ServicioClienteI {
     @Override
     public Integer contarClientes() {
         return repositorioCliente.contarClientes();
+    }
+    @Override
+    public Cliente buscarPorId(Long id) {
+        return repositorioCliente.buscarPorId(id);
     }
 
 }

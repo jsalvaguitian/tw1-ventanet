@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -166,6 +167,9 @@ public class ControladorPerfil {
             @RequestParam String nombreUsuario,
             @RequestParam(required = false) String telefono,
             @RequestParam(required = false) String direccion,
+            @RequestParam(required = false) String razonSocial,
+            @RequestParam(required = false) String ubicacion,
+            @RequestParam(required = false) String sitioWeb,
             HttpServletRequest httpServletRequest) throws UsuarioInexistenteException, ValorInvalido {
 
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) httpServletRequest.getSession()
@@ -176,20 +180,53 @@ public class ControladorPerfil {
         }
 
         Usuario usuarioActual = servicioUsuario.buscarPorId(usuarioSesion.getId());
-        try {
-            servicioPerfil.actualizarPerfil(nombre, apellido,
-                    nombreUsuario, direccion, telefono,
-                    usuarioActual);
-        } catch (ValorInvalido e) {
-            ModelMap model = new ModelMap();
-            model.put("error", e.getMessage());
-            model.put("usuario", usuarioActual);
-            return new ModelAndView("editar-perfil", model);
+        if (usuarioActual instanceof Proveedor) {
+            try {
+                Proveedor proveedor = (Proveedor) usuarioActual;
+                servicioPerfil.actualizarPerfilProveedor(nombre, apellido,
+                        nombreUsuario, direccion, telefono, razonSocial, ubicacion, sitioWeb,
+                        proveedor);
+            } catch (ValorInvalido e) {
+                ModelMap model = new ModelMap();
+                model.put("error", e.getMessage());
+                model.put("usuario", usuarioActual);
+                return new ModelAndView("editar-perfil", model);
+            }
+        } else {
+            try {
+                servicioPerfil.actualizarPerfil(nombre, apellido,
+                        nombreUsuario, direccion, telefono,
+                        usuarioActual);
+            } catch (ValorInvalido e) {
+                ModelMap model = new ModelMap();
+                model.put("error", e.getMessage());
+                model.put("usuario", usuarioActual);
+                return new ModelAndView("editar-perfil", model);
+            }
         }
 
-        httpServletRequest.getSession().setAttribute("usuarioLogueado", usuarioActual);
+        UsuarioSesionDto dtoActualizado = new UsuarioSesionDto(
+                usuarioActual.getId(),
+                usuarioActual.getUsername(),
+                usuarioActual.getRol().toString(),
+                usuarioActual.getNombre(),
+                usuarioActual.getApellido());
+
+        httpServletRequest.getSession().setAttribute("usuarioLogueado", dtoActualizado);
 
         return new ModelAndView("redirect:/usuarios/perfil-usuario");
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ModelAndView manejarErroresGenerales(Exception e, HttpServletRequest request) {
+        ModelMap model = new ModelMap();
+
+        UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+        if (usuarioSesion != null) {
+            model.put("usuario", usuarioSesion);
+        }
+
+        return new ModelAndView("redirect:/home", model);
     }
 
 }

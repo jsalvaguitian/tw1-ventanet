@@ -1,4 +1,11 @@
-
+body{
+  background: #d5e3f1; 
+}
+.card-perfil{
+max-width: 400px; 
+width: 100%;
+background-color: #f0f0f0;  
+}
 .foto-perfil {
   width: 150px;
   height: 150px;
@@ -54,7 +61,7 @@
   font-size: 1.2rem;
   border-radius: 50%;
 }
-
+/* Modal HTML */
 .modal-container {
   background-color: rgba(0, 0, 0, 0.3);
   display: flex;
@@ -112,7 +119,7 @@
   min-height: 80vh;
 }
 .form-editar-perfil{
-  width: 30rem;
+  width: 31.25rem;
   max-width: 500px;
   background-color: #fff;
   padding: 2rem;
@@ -130,4 +137,25 @@
   max-width: 100%;
   min-width: 180px;
   text-align: center;
+}
+
+/* Perfil Proveedor HTML */
+.grafico {
+  height: 25rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-grafico{
+  padding: 2rem;
+  max-width: 100%;
+}
+
+@media (max-width: 550px) {
+  .btn{
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
 }

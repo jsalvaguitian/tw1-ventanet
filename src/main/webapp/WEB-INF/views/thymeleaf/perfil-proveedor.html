@@ -12,7 +12,7 @@
 </head>
 <div th:replace="fragments/header :: header"></div>
 <body>
-<main>
+
 <div th:replace="perfil-usuario :: perfil-base(~{::contenido-extra})">
     <div th:fragment="contenido-extra">
         <hr>
@@ -22,30 +22,30 @@
         <p><strong>Rubro: </strong><span th:text="${usuario.rubro}"></span></p>
         <p><strong>Sitio Web: </strong><a th:href="${usuario.sitioWeb}" th:text="${usuario.sitioWeb}"></a></p>
         <p><strong>Ubicación: </strong><span th:text="${usuario.ubicacion}"></span></p>
-        <!-- <p>Documento: <a th:href="@{${usuario.documento}}" target="_blank">Ver documento</a></p> -->
     </div>
 </div>
-</main>
+
 
 <article>
-    <div class="graficos">
-        <h2>Estadisticas</h2>
+    <div class="container-graficos">
+        <h2 class="text-center font-weight-bold mb-2">Estadisticas</h2>
+        <hr>
         <div class="dashboard-container">
-            <div class="card">
-                <h4 class="text-center">Estado de cotizaciones</h4>
-                <div th:if="${estadisticas != null}" id="grafico_cotizaciones" style="height: 400px;"></div>
+            <div class="card-grafico">
+                <h4 class="text-center mb-2">Estado de cotizaciones</h4>
+                <div class="grafico" th:if="${estadisticas != null}" id="grafico_cotizaciones"></div>
                 <p class="text-info mt-3" th:if="${graficoVacio}" th:text="${graficoVacio}"></p>
             </div>
             <div class="dashboard-container">
-                <div class="card">
+                <div class="card-grafico mb-2">
                     <h4 class="text-center">Comparacion general</h4>
-                    <div th:if="${promedioGeneralComparacion != null}" id="grafico_comparacion" style="height: 400px;"></div>
+                    <div class="grafico" th:if="${promedioGeneralComparacion != null}" id="grafico_comparacion"></div>
                 </div>
             </div>
             <div class="dashboard-container">
-                <div class="card">
-                    <h4 class="text-center">Productos más cotizados</h4>
-                    <div  id="grafico_productos" style="height: 400px;"></div>
+                <div class="card-grafico">
+                    <h4 class="text-center mb-2">Productos más cotizados</h4>
+                    <div class="grafico" th:if="${estadisticas != null}" id="grafico_productos"></div>
                     <p class="text-info mt-3" th:if="${graficoVacio}" th:text="${graficoVacio}"></p>
                 </div>
             </div>

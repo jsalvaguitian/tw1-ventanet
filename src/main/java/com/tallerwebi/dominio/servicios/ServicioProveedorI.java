@@ -17,4 +17,5 @@ public interface ServicioProveedorI {
     Integer contarProveedores(EstadoUsuario estado);
     List<Rubro> obtenerRubrosActivos();
     List<Proveedor> obtenerProveedoresPorRubro(Rubro rubro);
+    List<Proveedor>obtenerProveedoresPorEstadoActivoInactivo(Boolean estado);
 }

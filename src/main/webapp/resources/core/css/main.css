@@ -545,11 +545,12 @@ body {
     color: #fff;
     text-align: center;
     overflow: hidden;
-    min-height: 300px;   /* altura mínima, ajusta como quieras */
+    min-height: 767px;
     display: flex;
-    align-items: center;  /* centra verticalmente el contenido */
+    align-items: center;
     justify-content: center;
-    padding: 0 20px;     /* padding lateral */
+    padding: 0 20px;
+    background: url("/spring/img/hero.jpg") center center/cover no-repeat;
 }
 
 .noencontrado::before {
