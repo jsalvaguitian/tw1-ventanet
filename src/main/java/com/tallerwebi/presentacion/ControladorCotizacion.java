@@ -100,7 +100,6 @@ public class ControladorCotizacion {
     @ResponseBody
     public ResponseEntity<?> obtenerDetalleCotizacion(@PathVariable Long id) throws NoHayCotizacionExistente {
 
-        
         if (id == null || id <= 0) {
             return ResponseEntity.badRequest().body("El ID de cotización no es válido");
         }
