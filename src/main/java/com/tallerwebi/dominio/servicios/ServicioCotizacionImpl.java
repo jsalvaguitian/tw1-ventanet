@@ -63,13 +63,13 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
 
     @Override
     @Transactional
-    public List<Cotizacion> obtenerCotizacionPorIdCliente(Long id) {
+    public List<Cotizacion> obtenerCotizacionPorIdCliente(Long id) throws NoHayCotizacionExistente {
         System.out.println("[ServicioCotizacion] buscar cotizaciones para clienteId=" + id);
         List<Cotizacion> cotizaciones = cotizacionRepository.obtenerPorIdCliente(id);
         System.out.println(
                 "[ServicioCotizacion] cantidad encontrada=" + (cotizaciones == null ? 0 : cotizaciones.size()));
         if (cotizaciones == null || cotizaciones.isEmpty()) {
-            throw new NoHayProductoExistente();
+            throw new NoHayCotizacionExistente();
         }
         return cotizaciones;
     }
