@@ -79,7 +79,7 @@ public class ServicioLicitacionImpl implements ServicioLicitacion {
     public List<Licitacion> obtenerLicitacionesPorIdCliente(Long clienteId) throws NoHayLicitacionesExistentes {        
         List<Licitacion> licitaciones = licitacionRepository.obtenerPorIdCliente(clienteId);
         
-        if (licitaciones == null || licitaciones.isEmpty()) {
+        if (licitaciones == null) {
             throw new NoHayLicitacionesExistentes();
         }
         return licitaciones;
@@ -91,7 +91,7 @@ public class ServicioLicitacionImpl implements ServicioLicitacion {
     public List<Licitacion> obtenerLicitacionesPorIdProveedor(Long proveedorId) throws NoHayLicitacionesExistentes {
         List<Licitacion> licitaciones = licitacionRepository.obtenerPorIdProveedor(proveedorId);
         
-        if (licitaciones == null || licitaciones.isEmpty()) {
+        if (licitaciones == null) {
             throw new NoHayLicitacionesExistentes();
         }
         return licitaciones;

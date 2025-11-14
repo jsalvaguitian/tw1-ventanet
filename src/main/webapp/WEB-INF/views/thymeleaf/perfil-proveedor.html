@@ -38,15 +38,21 @@
             </div>
             <div class="dashboard-container">
                 <div class="card-grafico mb-2">
-                    <h4 class="text-center">Comparacion general</h4>
+                    <h4 class="text-center mb-2">Comparacion general</h4>
                     <div class="grafico" th:if="${promedioGeneralComparacion != null}" id="grafico_comparacion"></div>
                 </div>
             </div>
             <div class="dashboard-container">
                 <div class="card-grafico">
-                    <h4 class="text-center mb-2">Productos más cotizados</h4>
+                    <h4 class="text-center mb-2">Tus productos más cotizados</h4>
                     <div class="grafico" th:if="${estadisticas != null}" id="grafico_productos"></div>
                     <p class="text-info mt-3" th:if="${graficoVacio}" th:text="${graficoVacio}"></p>
+                </div>
+            </div>
+            <div class="dashboard-container">
+                <div class="card-grafico">
+                    <h4 class="text-center mb-2">Productos más cotizados de Ventanet</h4>
+                    <div class="grafico" id="grafico_todos_productos_mas_cotizados"></div>
                 </div>
             </div>
         </div>
@@ -61,6 +67,7 @@
 </script>
 <script th:inline="javascript">
     window.productosMasCotizadosData = /*[[${productosMasCotizados}]]*/ {};
+    window.productosMasCotizadosDeTodosLosProveedoresData = /*[[${productosMasCotizadosDeTodosLosProveedores}]]*/ {};
 </script>
 <script src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="module" th:src="@{/js/perfil.js}"></script>

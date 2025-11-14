@@ -252,11 +252,13 @@ public class ControladorProveedor {
         dto.setEstado(licitacion.getEstado());
         dto.setClienteId(licitacion.getCliente().getId());
 
-        if(licitacion.getCliente() != null) {
+        if (licitacion.getCliente() != null) {
             UsuarioSesionDto dtoCli = new UsuarioSesionDto(licitacion.getCliente().getId(),
-                    licitacion.getCliente().getUsername(), licitacion.getCliente().getRol(), licitacion.getCliente().getNombre(),
+                    licitacion.getCliente().getUsername(), licitacion.getCliente().getRol(),
+                    licitacion.getCliente().getNombre(),
                     licitacion.getCliente().getApellido());
-            dto.setCliente(dtoCli);        }
+            dto.setCliente(dtoCli);
+        }
 
         if (licitacion.getProveedor() != null) {
             UsuarioProvDTO dtoProv = new UsuarioProvDTO(licitacion.getProveedor().getId(),
