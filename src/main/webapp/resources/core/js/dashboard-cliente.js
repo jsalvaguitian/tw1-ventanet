@@ -3,40 +3,52 @@ document.addEventListener("DOMContentLoaded", function () {
     const rows = document.querySelectorAll("#tablaCotizaciones tbody tr");
     const searchInput = document.querySelector(".form-control[placeholder^='Buscar']");
     const dateFilter = document.getElementById("dateFilter");
+    // Botón opcional (puede no existir). El filtrado se aplica automáticamente al cambiar el select.
     const applyFilterBtn = document.getElementById("applyFilter");
 
     let currentFilter = "TODOS"; // Filtro de estado actual
     let searchText = "";
     let dateRange = null;
 
+    function endOfDay(d) {
+        const dt = new Date(d);
+        dt.setHours(23,59,59,999);
+        return dt;
+    }
+
     function obtenerRangoFechas(valor) {
         const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0);
+        hoy.setHours(0, 0, 0, 0); // normalizar inicio de hoy
         let inicio = null;
-        let fin = new Date(hoy);
+        let fin = endOfDay(hoy); // por defecto fin es hoy completo
 
         switch (valor) {
             case "today":
-                inicio = new Date(hoy);
+                inicio = new Date(hoy); // hoy 00:00
+                fin = endOfDay(hoy);     // hoy 23:59:59
                 break;
             case "yesterday":
                 inicio = new Date(hoy);
-                inicio.setDate(inicio.getDate() - 1);
-                fin = new Date(inicio);
+                inicio.setDate(inicio.getDate() - 1); // ayer 00:00
+                fin = endOfDay(inicio);               // ayer 23:59:59
                 break;
             case "last7":
                 inicio = new Date(hoy);
-                inicio.setDate(inicio.getDate() - 7);
+                inicio.setDate(inicio.getDate() - 7); // hace 7 días
+                fin = endOfDay(hoy);                  // hasta hoy completo
                 break;
             case "last30":
                 inicio = new Date(hoy);
                 inicio.setDate(inicio.getDate() - 30);
+                fin = endOfDay(hoy);
                 break;
             case "month":
-                inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+                inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1); // primer día del mes
+                fin = endOfDay(hoy);
                 break;
             default:
-                inicio = null; // Todos
+                inicio = null; // sin filtro de fechas
+                fin = null;
         }
         return { inicio, fin };
     }
@@ -53,20 +65,25 @@ document.addEventListener("DOMContentLoaded", function () {
             // Buscar índice de columna de estado y fecha (depende de la tabla)
             const esCustom = tablaActiva === "#tablaLicitaciones";
             const idxEstado = esCustom ? 3 : 3;
-            const idxFecha = esCustom ? 4 : 4;
+            // Fecha de CREACIÓN fija en índice 4 para ambas tablas
+            const idxFechaCreacion = esCustom ? 4 : 4;
 
             const estado = row.children[idxEstado].textContent.trim().toUpperCase();
             const textoFila = row.textContent.toLowerCase();
-            const fechaStr = row.children[idxFecha].textContent.trim();
+            const fechaStr = row.children[idxFechaCreacion]?.textContent.trim();
 
             const coincideEstado = currentFilter === "TODOS" || estado === currentFilter;
             const coincideBusqueda = textoFila.includes(searchText);
             let coincideFecha = true;
 
             if (dateRange && dateRange.inicio) {
-                const fecha = new Date(fechaStr);
-                fecha.setHours(0, 0, 0, 0);
-                coincideFecha = fecha >= dateRange.inicio && fecha <= dateRange.fin;
+                const fecha = parseFecha(fechaStr);
+                if (fecha) {
+                    coincideFecha = fecha >= dateRange.inicio && (!dateRange.fin || fecha <= dateRange.fin);
+                } else {
+                    // Si hay filtro activo y no se puede parsear, excluye la fila
+                    coincideFecha = false;
+                }
             }
 
             // Mostrar/ocultar fila según todos los criterios
@@ -74,11 +91,16 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    applyFilterBtn.addEventListener("click", () => {
-        const valor = dateFilter.value;
-        dateRange = obtenerRangoFechas(valor);
+    // Aplicar automáticamente al cambiar el select
+    if (dateFilter) {
+        dateFilter.addEventListener("change", () => {
+            dateRange = obtenerRangoFechas(dateFilter.value);
+            aplicarFiltros();
+        });
+        // Filtro inicial al cargar (si no es "all")
+        dateRange = obtenerRangoFechas(dateFilter.value);
         aplicarFiltros();
-    });
+    }
 
     // Filtro de estado
     stats.forEach(stat => {
@@ -492,3 +514,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+// --- Parsing robusto de fecha (solo día) ---
+// Acepta formatos: AAAA-MM-DD (local), AAAA-MM-DDTHH:mm[:ss], AAAA-MM-DD HH:mm[:ss], dd/MM/yyyy
+// IMPORTANTE: No usar new Date("YYYY-MM-DD") porque interpreta UTC y resta horas cambiando el día en zonas GMT-3.
+function parseFecha(txt) {
+    if (!txt) return null;
+    let base = txt.trim();
+
+    // Formato latino dd/MM/yyyy
+    let mLat = base.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (mLat) return new Date(+mLat[3], +mLat[2]-1, +mLat[1]);
+
+    // ISO sólo fecha AAAA-MM-DD (crear fecha local sin desfase)
+    let mIsoOnly = base.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (mIsoOnly) return new Date(+mIsoOnly[1], +mIsoOnly[2]-1, +mIsoOnly[3]);
+
+    // ISO con hora -> normalizar quitando tiempo (se interpreta en local)
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(base) || /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(base)) {
+        if (base.includes(' ') && !base.includes('T')) base = base.replace(' ', 'T');
+        const d = new Date(base);
+        if (!isNaN(d)) return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+    return null;
+}
