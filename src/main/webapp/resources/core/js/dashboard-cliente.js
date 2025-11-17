@@ -5,10 +5,56 @@ document.addEventListener("DOMContentLoaded", function () {
     const dateFilter = document.getElementById("dateFilter");
     // Botón opcional (puede no existir). El filtrado se aplica automáticamente al cambiar el select.
     const applyFilterBtn = document.getElementById("applyFilter");
+    // Select proveedor (nuevo id unificado filterProveedor o id antiguo filtroProveedor)
+    const proveedorSelect = document.getElementById('filterProveedor') || document.getElementById('filtroProveedor');
 
     let currentFilter = "TODOS"; // Filtro de estado actual
     let searchText = "";
     let dateRange = null;
+    let proveedorFilterValue = ""; // Valor seleccionado de proveedor (normalizado)
+    const montoMinInput = document.getElementById('filtroMonto');
+    const montoMaxInput = document.getElementById('filtroMontoMax');
+    let montoMinVal = null; // number | null
+    let montoMaxVal = null; // number | null
+    // Inputs fechas manuales
+    const fechaCreacionDesdeInput = document.getElementById('filtroFechaCreacionDesde');
+    const fechaCreacionHastaInput = document.getElementById('filtroFechaCreacionHasta');
+    const fechaExpDesdeInput = document.getElementById('filtroFechaExpiracionDesde');
+    const fechaExpHastaInput = document.getElementById('filtroFechaExpiracionHasta');
+    let fechaCreacionDesde = null;
+    let fechaCreacionHasta = null;
+    let fechaExpDesde = null;
+    let fechaExpHasta = null;
+
+    // Normaliza nombre para comparación (trim + lower + colapsar espacios)
+    function normalizarProveedor(nombre) {
+        return (nombre || "").trim().replace(/\s+/g,' ').toLowerCase();
+    }
+
+    function populateProveedorSelect() {
+        if (!proveedorSelect) return;
+        // Recolectar valores únicos de ambas tablas
+        const mapaDisplay = new Map(); // clave normalizada -> display original (primera aparición)
+        const recolectar = (selectorTabla, idxCol) => {
+            document.querySelectorAll(`${selectorTabla} tbody tr`).forEach(r => {
+                const vRaw = r.children[idxCol]?.textContent; if (!vRaw) return;
+                const key = normalizarProveedor(vRaw);
+                if (key && !mapaDisplay.has(key)) mapaDisplay.set(key, vRaw.trim());
+            });
+        };
+        recolectar('#tablaCotizaciones', 1); // Proveedor columna 1
+        recolectar('#tablaLicitaciones', 2); // Proveedor columna 2 en licitaciones
+
+        // Limpiar opciones existentes salvo placeholder
+        while (proveedorSelect.options.length > 1) proveedorSelect.remove(1);
+        // Ordenar por display usando locale es
+        [...mapaDisplay.entries()].sort((a,b)=>a[1].localeCompare(b[1],'es')).forEach(([key, display]) => {
+            const opt = document.createElement('option');
+            opt.value = key; // guardamos normalizado
+            opt.textContent = display; // mostramos formato original
+            proveedorSelect.appendChild(opt);
+        });
+    }
 
     function endOfDay(d) {
         const dt = new Date(d);
@@ -61,34 +107,101 @@ document.addEventListener("DOMContentLoaded", function () {
                 : "#tablaLicitaciones";
 
         const filas = document.querySelectorAll(`${tablaActiva} tbody tr`);
+        // Contadores dinámicos (sin aplicar filtro de estado para distribución)
+        let countTotal = 0;
+        let countPendiente = 0;
+        let countAprobada = 0;
+        let countRechazado = 0;
+        let countCompletada = 0;
+
         filas.forEach(row => {
             // Buscar índice de columna de estado y fecha (depende de la tabla)
             const esCustom = tablaActiva === "#tablaLicitaciones";
             const idxEstado = esCustom ? 3 : 3;
             // Fecha de CREACIÓN fija en índice 4 para ambas tablas
             const idxFechaCreacion = esCustom ? 4 : 4;
+            // Índice proveedor (difiere entre tablas)
+            const idxProveedor = esCustom ? 2 : 1;
 
             const estado = row.children[idxEstado].textContent.trim().toUpperCase();
             const textoFila = row.textContent.toLowerCase();
-            const fechaStr = row.children[idxFechaCreacion]?.textContent.trim();
+            const fechaStrCreacion = row.children[idxFechaCreacion]?.textContent.trim();
+            // Índice expiración: misma posición (5) en ambas tablas
+            const idxFechaExpiracion = esCustom ? 5 : 5;
+            const fechaStrExp = row.children[idxFechaExpiracion]?.textContent.trim();
+            const proveedorStr = normalizarProveedor(row.children[idxProveedor]?.textContent);
 
-            const coincideEstado = currentFilter === "TODOS" || estado === currentFilter;
+            // Primero evaluamos los filtros que NO son de estado para poder calcular distribución por estado.
             const coincideBusqueda = textoFila.includes(searchText);
             let coincideFecha = true;
-
-            if (dateRange && dateRange.inicio) {
-                const fecha = parseFecha(fechaStr);
-                if (fecha) {
-                    coincideFecha = fecha >= dateRange.inicio && (!dateRange.fin || fecha <= dateRange.fin);
-                } else {
-                    // Si hay filtro activo y no se puede parsear, excluye la fila
-                    coincideFecha = false;
+            // Proveedor solo se filtra en tabla de cotizaciones
+            let coincideProveedor = tablaActiva === '#tablaCotizaciones' ? (!proveedorFilterValue || proveedorStr === proveedorFilterValue) : true;
+            // Filtro de monto solo aplica a tabla cotizaciones. Columna monto total index 2
+            let coincideMonto = true;
+            if (tablaActiva === '#tablaCotizaciones' && (montoMinVal !== null || montoMaxVal !== null)) {
+                // Tomamos siempre el valor ARS original para comparar (independiente de si se muestra USD)
+                const montoCell = row.children[2];
+                const arsRaw = montoCell?.getAttribute('data-precio-ars');
+                const numeroArs = arsRaw ? parseFloat(arsRaw) : NaN;
+                if (!isNaN(numeroArs)) {
+                    if (montoMinVal !== null && numeroArs < montoMinVal) coincideMonto = false;
+                    if (montoMaxVal !== null && numeroArs > montoMaxVal) coincideMonto = false;
                 }
             }
 
-            // Mostrar/ocultar fila según todos los criterios
-            row.style.display = coincideEstado && coincideBusqueda && coincideFecha ? "" : "none";
+            // Lógica de fechas de creación manual: si existen sobreescriben preset
+            if (fechaCreacionDesde || fechaCreacionHasta) {
+                const fecha = parseFecha(fechaStrCreacion);
+                if (fecha) {
+                    if (fechaCreacionDesde && fecha < fechaCreacionDesde) coincideFecha = false;
+                    if (fechaCreacionHasta && fecha > fechaCreacionHasta) coincideFecha = false;
+                } else { coincideFecha = false; }
+            } else if (dateRange && dateRange.inicio) {
+                const fecha = parseFecha(fechaStrCreacion);
+                if (fecha) {
+                    coincideFecha = fecha >= dateRange.inicio && (!dateRange.fin || fecha <= dateRange.fin);
+                } else { coincideFecha = false; }
+            }
+
+            // Filtro de expiración independiente
+            let coincideFechaExp = true;
+            if (fechaExpDesde || fechaExpHasta) {
+                const fExp = parseFecha(fechaStrExp);
+                if (fExp) {
+                    if (fechaExpDesde && fExp < fechaExpDesde) coincideFechaExp = false;
+                    if (fechaExpHasta && fExp > fechaExpHasta) coincideFechaExp = false;
+                } else { coincideFechaExp = false; }
+            }
+
+            const pasaNoEstado = (coincideBusqueda && coincideFecha && coincideFechaExp && coincideProveedor && coincideMonto);
+
+            // Actualizar distribución si pasa filtros NO estado
+            if (pasaNoEstado) {
+                countTotal++;
+                switch (estado) {
+                    case 'PENDIENTE': countPendiente++; break;
+                    case 'APROBADA': countAprobada++; break;
+                    case 'RECHAZADO': countRechazado++; break;
+                    case 'COMPLETADA': countCompletada++; break;
+                }
+            }
+
+            // Estado se aplica solo para visibilidad final
+            const coincideEstado = currentFilter === "TODOS" || estado === currentFilter;
+            row.style.display = (pasaNoEstado && coincideEstado) ? "" : "none";
         });
+
+        // Actualizar indicadores (si existen)
+        const elTotal = document.getElementById('totalEvents');
+        const elPend = document.getElementById('pendingEvents');
+        const elAprob = document.getElementById('approvedEvents');
+        const elRech = document.getElementById('rejectedEvents');
+        const elComp = document.getElementById('completedEvents');
+        if (elTotal) elTotal.textContent = countTotal;
+        if (elPend) elPend.textContent = countPendiente;
+        if (elAprob) elAprob.textContent = countAprobada;
+        if (elRech) elRech.textContent = countRechazado;
+        if (elComp) elComp.textContent = countCompletada;
     }
 
     // Aplicar automáticamente al cambiar el select
@@ -116,6 +229,148 @@ document.addEventListener("DOMContentLoaded", function () {
         searchText = e.target.value.toLowerCase();
         aplicarFiltros();
     });
+
+    if (proveedorSelect) {
+        populateProveedorSelect();
+        proveedorSelect.addEventListener('change', () => {
+            proveedorFilterValue = normalizarProveedor(proveedorSelect.value);
+            aplicarFiltros();
+        });
+    }
+
+    // --- Populate datalist for montos únicos y placeholders rango ---
+    function populateMontosDatalist() {
+        const datalist = document.getElementById('listaMontos');
+        if (!datalist) return;
+        const montos = [];
+        document.querySelectorAll('#tablaCotizaciones .monto-cotizacion').forEach(c => {
+            const raw = c.getAttribute('data-precio-ars');
+            if (raw) {
+                const num = parseFloat(raw);
+                if (!isNaN(num)) montos.push(num);
+            }
+        });
+        const unicos = [...new Set(montos)].sort((a,b)=>a-b);
+        // Limpiar
+        datalist.innerHTML = '';
+        unicos.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m; // valor numérico directo
+            datalist.appendChild(opt);
+        });
+        // Placeholders auto rango
+        if (unicos.length) {
+            if (montoMinInput && !montoMinInput.value) montoMinInput.placeholder = '≥ ' + unicos[0];
+            if (montoMaxInput && !montoMaxInput.value) montoMaxInput.placeholder = '≤ ' + unicos[unicos.length-1];
+        }
+    }
+    populateMontosDatalist();
+
+    // Listeners monto min/max
+    if (montoMinInput) {
+        montoMinInput.addEventListener('input', () => {
+            const v = montoMinInput.value.trim();
+            montoMinVal = v === '' ? null : parseFloat(v);
+            aplicarFiltros();
+        });
+    }
+    if (montoMaxInput) {
+        montoMaxInput.addEventListener('input', () => {
+            const v = montoMaxInput.value.trim();
+            montoMaxVal = v === '' ? null : parseFloat(v);
+            aplicarFiltros();
+        });
+    }
+
+    // Listeners fechas manuales creación
+    const parseInputDate = (val) => {
+        if (!val) return null;
+        // val formato yyyy-MM-dd -> crear fecha local sin desfase
+        const m = val.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        return m ? new Date(+m[1], +m[2]-1, +m[3]) : null;
+    };
+
+    function actualizarFechasYFiltrar() {
+        fechaCreacionDesde = parseInputDate(fechaCreacionDesdeInput?.value);
+        fechaCreacionHasta = parseInputDate(fechaCreacionHastaInput?.value);
+        fechaExpDesde = parseInputDate(fechaExpDesdeInput?.value);
+        fechaExpHasta = parseInputDate(fechaExpHastaInput?.value);
+        aplicarFiltros();
+    }
+
+    [fechaCreacionDesdeInput, fechaCreacionHastaInput, fechaExpDesdeInput, fechaExpHastaInput].forEach(inp => {
+        if (inp) inp.addEventListener('change', actualizarFechasYFiltrar);
+    });
+
+    // Botón limpiar filtros
+    const btnLimpiar = document.getElementById('btnLimpiarFiltros');
+    if (btnLimpiar) {
+        btnLimpiar.addEventListener('click', () => {
+            // Reset valores
+            proveedorSelect && (proveedorSelect.value = '');
+            proveedorFilterValue = '';
+            montoMinInput && (montoMinInput.value = ''); montoMinVal = null;
+            montoMaxInput && (montoMaxInput.value = ''); montoMaxVal = null;
+            fechaCreacionDesdeInput && (fechaCreacionDesdeInput.value = ''); fechaCreacionDesde = null;
+            fechaCreacionHastaInput && (fechaCreacionHastaInput.value = ''); fechaCreacionHasta = null;
+            fechaExpDesdeInput && (fechaExpDesdeInput.value = ''); fechaExpDesde = null;
+            fechaExpHastaInput && (fechaExpHastaInput.value = ''); fechaExpHasta = null;
+            // Si hay preset, reseteamos a 'all'
+            if (dateFilter) { dateFilter.value = 'all'; dateRange = obtenerRangoFechas('all'); }
+            aplicarFiltros();
+        });
+    }
+
+    // Exportar a CSV (compatible Excel)
+    const btnExport = document.getElementById('btnExportExcel');
+    if (btnExport) {
+        btnExport.addEventListener('click', () => {
+            // Detectar tabla activa igual que en aplicarFiltros
+            const tablaActiva =
+                document.querySelector('#tablaCotizaciones')?.offsetParent !== null
+                    ? '#tablaCotizaciones'
+                    : '#tablaLicitaciones';
+            const tabla = document.querySelector(tablaActiva);
+            if (!tabla) return;
+
+            const filasVisibles = Array.from(tabla.querySelectorAll('tbody tr'))
+                .filter(tr => tr.style.display !== 'none');
+            if (!filasVisibles.length) {
+                Swal.fire('Sin datos', 'No hay filas visibles para exportar.', 'info');
+                return;
+            }
+            // Headers (excluir última columna Acciones)
+            const headers = Array.from(tabla.querySelectorAll('thead th'))
+                .map(th => th.textContent.trim())
+                .filter(h => h.toLowerCase() !== 'acciones');
+
+            const rowsCsv = [headers];
+            filasVisibles.forEach(tr => {
+                const celdas = Array.from(tr.children).slice(0, headers.length); // excluir acciones
+                const vals = celdas.map(td => {
+                    let txt = td.textContent.trim();
+                    // Escapar comillas
+                    if (txt.includes('"')) txt = txt.replace(/"/g,'""');
+                    // Envolver si contiene separadores
+                    if (/[;,\n]/.test(txt)) txt = '"' + txt + '"';
+                    return txt;
+                });
+                rowsCsv.push(vals);
+            });
+            const sep = ';'; // Excel latino suele abrir bien con ;
+            const csvContent = '\uFEFF' + rowsCsv.map(r => r.join(sep)).join('\n');
+            const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const fechaStamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+            a.download = (tablaActiva === '#tablaCotizaciones' ? 'cotizaciones' : 'cotizaciones_custom') + '_' + fechaStamp + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    }
 
     document.addEventListener('click', function (e) {
         // Verifica si el clic ocurrió en el botón o dentro de su icono
@@ -499,10 +754,9 @@ document.addEventListener("DOMContentLoaded", () => {
             // Convertir a USD
             montos.forEach((celda) => {
                 const ars = parseFloat(celda.dataset.precioArs);
+                if (isNaN(ars) || !dolarVenta) return;
                 const usd = ars / dolarVenta;
-                const valorFormateado =
-                    Number.isInteger(usd) ? usd.toString() : usd.toFixed(2);
-
+                const valorFormateado = Number.isInteger(usd) ? usd.toString() : usd.toFixed(2);
                 celda.textContent = `$${valorFormateado} USD`;
             });
         } else {
@@ -512,6 +766,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 celda.textContent = `$${ars.toLocaleString("es-AR")} ARS`;
             });
         }
+        // Reaplicar filtros sin cambiar semántica: los thresholds siguen siendo ARS.
+        aplicarFiltros();
     });
 });
 
