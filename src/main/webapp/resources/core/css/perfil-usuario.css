@@ -112,7 +112,7 @@ background-color: #f0f0f0;
 
  /* Editar perfil HTML */
 .fondo{
-  background-color: #f8f9fa;
+  background-color: #d5e3f1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -120,6 +120,7 @@ background-color: #f0f0f0;
 }
 .form-editar-perfil{
   width: 31.25rem;
+  margin-top: 2rem;
   max-width: 500px;
   background-color: #fff;
   padding: 2rem;

@@ -63,13 +63,13 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
 
     @Override
     @Transactional
-    public List<Cotizacion> obtenerCotizacionPorIdCliente(Long id) {
+    public List<Cotizacion> obtenerCotizacionPorIdCliente(Long id) throws NoHayCotizacionExistente {
         System.out.println("[ServicioCotizacion] buscar cotizaciones para clienteId=" + id);
         List<Cotizacion> cotizaciones = cotizacionRepository.obtenerPorIdCliente(id);
         System.out.println(
                 "[ServicioCotizacion] cantidad encontrada=" + (cotizaciones == null ? 0 : cotizaciones.size()));
-        if (cotizaciones == null || cotizaciones.isEmpty()) {
-            throw new NoHayProductoExistente();
+        if (cotizaciones == null) {
+            throw new NoHayCotizacionExistente();
         }
         return cotizaciones;
     }
@@ -139,7 +139,7 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         cotizacionRepository.guardar(cotizacion);
     }
 
-    @Override
+    
     public Map<String, Long> obtenerEstadisticasCotizacionesDelProveedor(Long proveedorId) {
         Map<String, Long> estadisticas = new HashMap<>();
         estadisticas.put("APROBADA", cotizacionRepository.contarCotizacionesAprobadasPorProveedor(proveedorId));
@@ -149,7 +149,6 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         return estadisticas;
     }
 
-    @Override
     public Map<String, Object> obtenerEstadisticaComparacionEntreProveedores(Long proveedorId) {
         Double promedioGeneral = cotizacionRepository.obtenerPromedioGeneralCompletadas();
         Long cantidadAprobadasProveedor = cotizacionRepository.contarCotizacionesAprobadasPorProveedor(proveedorId);
@@ -161,7 +160,6 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         return comparacion;
     }
 
-    @Override
     @Transactional
     public Map<String, Long> obtenerProductosMasCotizados(Long proveedorId) {
         List<Object[]> resultados = cotizacionRepository.obtenerProductosMasCotizados(proveedorId);
@@ -172,4 +170,15 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         return productos;
     }
 
+    @Override
+    public Map<String, Long> obtenerProductosMasCotizadosDeTodosLosProveedores() {
+        List<Object[]> resultados = cotizacionRepository.obtenerProductosMasCotizadosDeTodosLosProveedores();
+        Map<String, Long> productos = new LinkedHashMap<>();
+        for (Object[] fila : resultados) {
+            String nombre = (String) fila[0];
+            Long cantidad = ((Number) fila[1]).longValue();
+            productos.put(nombre, cantidad);
+        }
+        return productos;
+    }
 }

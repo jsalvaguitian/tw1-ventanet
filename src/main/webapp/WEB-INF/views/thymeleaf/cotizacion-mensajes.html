@@ -5,6 +5,7 @@
     <title>Conversación Cotización #[[${cotizacion != null}?${cotizacion.id}:'-']]</title>
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
     <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
         .chat-container {max-width: 960px; margin: 0 auto;}
         .mensaje {padding: .6rem .9rem; border-radius: .75rem; margin-bottom:.5rem; position:relative;}
@@ -14,14 +15,20 @@
         .chat-stream {display:flex; flex-direction:column;}
         .form-chat textarea {resize:vertical;}
         .badge-leido {position:absolute; top:4px; right:8px; font-size:.55rem;}
+        /* Overlay envío */
+        #sendingOverlay {position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:3000;}
+        #sendingOverlay .box {background:#ffffff; padding:1.25rem 1.75rem; border-radius:.75rem; box-shadow:0 8px 28px rgba(0,0,0,.25); display:flex; align-items:center; gap:.75rem;}
+        #sendingOverlay .spinner-border {width:1.75rem; height:1.75rem;}
+        #sendingOverlay.show {display:flex;}
     </style>
 </head>
 <body>
     <div class="sidebar d-none d-md-block" id="sidebar">
-        <a th:href="@{/}"><h2>Ventanet</h2></a>
+        <a th:href="@{/}" class="noStyleLinks"><h2>Ventanet</h2></a>
         <ul>
-            <li><a th:href="@{/cliente/dashboard}">Dashboard</a></li>
-            <li class="active">Mensajes</li>
+            <li class="active"><i class="bi bi-chat-dots"></i>Mensajes</li>
+            <li><a th:href="@{/cliente/dashboard}" class="noStyleLinks"><i class="bi bi-house"></i>Dashboard</a></li>
+            
         </ul>
     </div>
     <div class="main" id="mainContent">
@@ -44,11 +51,11 @@
                 </div>
                 <div id="ultimo"></div>
             </div>
-            <form class="form-chat mt-3" th:action="@{'/cotizacion/' + ${cotizacion.id} + '/mensajes'}" method="post">
+            <form class="form-chat mt-3" th:action="@{'/cotizacion/' + ${cotizacion.id} + '/mensajes'}" method="post" id="formEnviarComentario">
                 <div class="mb-2">
                     <textarea name="mensaje" class="form-control" rows="3" placeholder="Escribí tu mensaje" required></textarea>
                 </div>
-                <button class="btn btn-primary">Enviar</button>
+                <button class="btn btn-primary" id="btnEnviar">Enviar</button>
                 <!-- Botón Volver dinámico según rol -->
                 <a th:if="${usuarioSesion != null && usuarioSesion.rol == 'CLIENTE'}" th:href="@{/cliente/dashboard}" class="btn btn-secondary">Volver</a>
                 <a th:if="${usuarioSesion != null && usuarioSesion.rol == 'PROVEEDOR'}" th:href="@{/proveedor/dashboard-proveedor}" class="btn btn-secondary">Volver</a>
@@ -56,11 +63,31 @@
             </form>
         </div>
     </div>
+    <div id="sendingOverlay" aria-hidden="true" aria-live="assertive" aria-label="Enviando mensaje">
+        <div class="box">
+            <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
+            <div>
+                <strong>Enviando mensaje</strong><br>
+                <small>No cierres la página</small>
+            </div>
+        </div>
+    </div>
     <script>
-        // Scroll al último mensaje
         const ultimo = document.getElementById('ultimo');
         if (ultimo) {
             ultimo.scrollIntoView({behavior:'smooth'});
+        }
+
+        const form = document.getElementById('formEnviarComentario');
+        const overlay = document.getElementById('sendingOverlay');
+        const btnEnviar = document.getElementById('btnEnviar');
+        if(form && overlay && btnEnviar){
+            form.addEventListener('submit', function(){
+                overlay.classList.add('show');
+                overlay.setAttribute('aria-hidden','false');
+                btnEnviar.disabled = true;
+                btnEnviar.innerText = 'Enviando…';
+            });
         }
     </script>
 </body>

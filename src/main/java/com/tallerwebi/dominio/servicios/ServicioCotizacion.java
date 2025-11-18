@@ -16,7 +16,7 @@ public interface ServicioCotizacion {
 
     void actualizarEstado(Long cotizacionId, EstadoCotizacion estado) throws CotizacionesExistente;
 
-    List<Cotizacion> obtenerCotizacionPorIdCliente(Long id);
+    List<Cotizacion> obtenerCotizacionPorIdCliente(Long id) throws NoHayCotizacionExistente;
 
     Cotizacion guardar(Cotizacion cotizacion);
 
@@ -27,4 +27,6 @@ public interface ServicioCotizacion {
     Map<String, Object> obtenerEstadisticaComparacionEntreProveedores(Long proveedorId);
 
     Map<String, Long> obtenerProductosMasCotizados(Long proveedorId);
+
+    Map<String, Long> obtenerProductosMasCotizadosDeTodosLosProveedores();
 }
