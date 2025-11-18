@@ -20,12 +20,14 @@ import com.tallerwebi.dominio.repositorios_interfaces.RepositorioComentario;
 public class ServicioComentarioImpl implements ServicioComentario {
     private final RepositorioComentario repositorioComentario;
     private final ServicioEmail servicioEmail;
+    private ServicioNotificacion servicioNotificacion;
 
     @Autowired
     public ServicioComentarioImpl(RepositorioComentario repositorioComentario,
-            ServicioEmail servicioEmail) {
+            ServicioEmail servicioEmail, ServicioNotificacion servicioNotificacion) {
         this.repositorioComentario = repositorioComentario;
         this.servicioEmail = servicioEmail;
+        this.servicioNotificacion = servicioNotificacion;
     }
 
     @Override
@@ -57,24 +59,26 @@ public class ServicioComentarioImpl implements ServicioComentario {
 
             String estado = cotizacion.getEstado() != null ? cotizacion.getEstado().toString() : "";
             String monto = cotizacion.getMontoTotal() != null ? cotizacion.getMontoTotal().toString() : "";
-            String fecha = comentario.getFechaCreacion() != null ? comentario.getFechaCreacion().toString() : LocalDateTime.now().toString();
+            String fecha = comentario.getFechaCreacion() != null ? comentario.getFechaCreacion().toString()
+                    : LocalDateTime.now().toString();
             String enlace = "/cotizacion/" + cotizacion.getId() + "/mensajes"; // relativo
 
             StringBuilder cuerpo = new StringBuilder();
             cuerpo.append("<div style='font-family:Segoe UI,Arial,sans-serif;font-size:14px;color:#222'>")
-                  .append("<h2 style='color:#0b335b;margin-top:0'>Nuevo mensaje en tu cotización</h2>")
-                  .append("<p><strong>Remitente:</strong> ").append(remitenteNombre).append("</p>")
-                  .append("<p><strong>Cotización:</strong> #").append(cotizacion.getId()).append("</p>")
-                  .append("<p><strong>Estado actual:</strong> ").append(estado).append("</p>")
-                  .append("<p><strong>Monto total:</strong> ").append(monto).append("</p>")
-                  .append("<p><strong>Fecha del mensaje:</strong> ").append(fecha).append("</p>")
-                  .append("<hr style='border:none;border-top:1px solid #ddd;margin:16px 0'>")
-                  .append("<p style='white-space:pre-line'><strong>Mensaje:</strong><br>")
-                  .append(escapeHtml(comentario.getMensaje())).append("</p>")
-                  .append("<p style='margin-top:24px'>Puedes responder ingresando al siguiente enlace (inicia sesión si es necesario):<br>")
-                  .append("<a style='color:#1a73e8' href='http://localhost:8080/spring").append(enlace).append("'>Abrir conversación</a></p>")
-                  .append("<p style='font-size:12px;color:#555'>Este es un correo automático de Ventanet. Por favor no respondas a este email.</p>")
-                  .append("</div>");
+                    .append("<h2 style='color:#0b335b;margin-top:0'>Nuevo mensaje en tu cotización</h2>")
+                    .append("<p><strong>Remitente:</strong> ").append(remitenteNombre).append("</p>")
+                    .append("<p><strong>Cotización:</strong> #").append(cotizacion.getId()).append("</p>")
+                    .append("<p><strong>Estado actual:</strong> ").append(estado).append("</p>")
+                    .append("<p><strong>Monto total:</strong> ").append(monto).append("</p>")
+                    .append("<p><strong>Fecha del mensaje:</strong> ").append(fecha).append("</p>")
+                    .append("<hr style='border:none;border-top:1px solid #ddd;margin:16px 0'>")
+                    .append("<p style='white-space:pre-line'><strong>Mensaje:</strong><br>")
+                    .append(escapeHtml(comentario.getMensaje())).append("</p>")
+                    .append("<p style='margin-top:24px'>Puedes responder ingresando al siguiente enlace (inicia sesión si es necesario):<br>")
+                    .append("<a style='color:#1a73e8' href='http://localhost:8080/spring").append(enlace)
+                    .append("'>Abrir conversación</a></p>")
+                    .append("<p style='font-size:12px;color:#555'>Este es un correo automático de Ventanet. Por favor no respondas a este email.</p>")
+                    .append("</div>");
 
             String cuerpoHtml = cuerpo.toString();
             if (comentario.getCliente() != null) {
@@ -88,18 +92,38 @@ public class ServicioComentarioImpl implements ServicioComentario {
                     servicioEmail.enviarEmail(cliente.getEmail(), asunto, cuerpoHtml, true);
                 }
             }
+            if (comentario.getCliente() != null) {
+                // lo escribió el cliente -> avisar al proveedor
+                if (proveedor != null) {
+                    String txt = "Nuevo mensaje de " + cliente.getNombre() + " en la cotización #" + cotizacion.getId();
+                    servicioNotificacion.notificar(proveedor, txt,
+                            "/spring/cotizacion/" + cotizacion.getId() + "/mensajes",
+                            "MENSAJE_NUEVO", cotizacion.getId());
+                }
+            } else if (comentario.getProveedor() != null) {
+                // lo escribio proveedor -> avisar al cliente
+                if (cliente != null) {
+                    String txt = "Nuevo mensaje del proveedor " + proveedor.getRazonSocial() + " en la cotización #"
+                            + cotizacion.getId();
+                    servicioNotificacion.notificar(cliente, txt,
+                            "/spring/cotizacion/" + cotizacion.getId() + "/mensajes",
+                            "MENSAJE_NUEVO", cotizacion.getId());
+                }
+            }
+
         }
         return guardado;
     }
 
     // Escapar HTML básico para evitar inyección si se envía contenido de usuario
     private String escapeHtml(String input) {
-        if (input == null) return "";
+        if (input == null)
+            return "";
         return input.replace("&", "&amp;")
-                    .replace("<", "&lt;")
-                    .replace(">", "&gt;")
-                    .replace("\"", "&quot;")
-                    .replace("'", "&#39;");
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
     }
 
     @Override

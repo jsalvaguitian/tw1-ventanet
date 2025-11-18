@@ -122,7 +122,7 @@ public class ControladorLicitacion {
         Cliente cliente = new Cliente();
         cliente.setId(usuarioSesion.getId());
 
-        ModelAndView mav = new ModelAndView("licitacion"); // 👈 vuelve a la misma vista
+        ModelAndView mav = new ModelAndView("licitacion"); // vuelve a la misma vista
 
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -183,7 +183,7 @@ public class ControladorLicitacion {
                 servicioLicitacion.crear(lic);
             }
 
-            // ✅ mensaje de éxito
+            // mensaje de éxito
             mav.addObject("productoCustom", dto.getProductoCustom());
             mav.addObject("successMessage", "¡Licitación creada con éxito!");
 
@@ -235,7 +235,7 @@ public class ControladorLicitacion {
                 }
             }
         }
-        
+
         EstadoLicitacion estado = EstadoLicitacion.valueOf(nuevoEstado);
 
         servicioLicitacion.actualizarEstado(id, estado);
@@ -251,7 +251,8 @@ public class ControladorLicitacion {
 
     @PostMapping("/{id}/cambiar-estado")
     @ResponseBody
-    public ModelAndView cambiarEstadoCotizacionYValor(@PathVariable Long id, @RequestBody ActualizacionLicitacionDto dto,
+    public ModelAndView cambiarEstadoCotizacionYValor(@PathVariable Long id,
+            @RequestBody ActualizacionLicitacionDto dto,
             HttpServletRequest request)
             throws LicitacionesExistente {
 
@@ -273,7 +274,7 @@ public class ControladorLicitacion {
                 }
             }
         }
-        
+
         EstadoLicitacion estado = EstadoLicitacion.valueOf(dto.getNuevoEstado());
 
         servicioLicitacion.actualizarEstadoYPrecioUnitario(id, estado, dto.getPrecioUnitario());
