@@ -27,4 +27,6 @@ public interface ServicioCotizacion {
     Map<String, Object> obtenerEstadisticaComparacionEntreProveedores(Long proveedorId);
 
     Map<String, Long> obtenerProductosMasCotizados(Long proveedorId);
+
+    Map<String, Long> obtenerProductosMasCotizadosDeTodosLosProveedores();
 }

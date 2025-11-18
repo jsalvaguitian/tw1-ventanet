@@ -29,4 +29,6 @@ public interface RepositorioCotizacion {
 
     List<Object[]> obtenerProductosMasCotizados(Long proveedorId);
 
+    List<Object[]> obtenerProductosMasCotizadosDeTodosLosProveedores();
+
 }

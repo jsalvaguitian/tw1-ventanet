@@ -184,4 +184,20 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
         return query.getResultList();
     }
 
+    @Override
+    public List<Object[]> obtenerProductosMasCotizadosDeTodosLosProveedores() {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery(
+                "SELECT p.nombre, SUM(i.cantidad) " +
+                        "FROM Cotizacion c " +
+                        "JOIN c.items i " +
+                        "JOIN i.producto p " +
+                        "WHERE c.estado = com.tallerwebi.dominio.enums.EstadoCotizacion.APROBADA " +
+                        "GROUP BY p.nombre " +
+                        "ORDER BY SUM(i.cantidad) DESC",
+                Object[].class);
+        return query.getResultList();
+
+    }
+
 }
