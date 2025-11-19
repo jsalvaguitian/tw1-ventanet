@@ -328,6 +328,13 @@
                                             title="Ver detalle" th:data-id="${licitacion.id}">
                                             <i class="fas fa-eye"></i>
                                         </button>
+                                        <a class="btn btn-sm btn-secondary position-relative" title="Mensajes"
+                                            th:href="@{'/licitacion/' + ${licitacion.id} + '/mensajes'}">
+                                            <i class="fas fa-comments"></i>
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                                th:if="${unreadComentarioCounts != null and unreadComentarioCounts[licitacion.id] > 0}"
+                                                th:text="${unreadComentarioCounts[licitacion.id]}"></span>
+                                        </a>
                                     </td>
                                 </tr>
                             </tbody>
