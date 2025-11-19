@@ -13,33 +13,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-
     <script th:inline="javascript">
         /*<![CDATA[*/
         window.dashboardData = {
-            usuarios: [[${ usuariosJson }]],
-            totalClientes: [[${ totalClientes }]],
-            totalProveedores: [[${ totalProveedores }]],
-            totalUsuarios: [[${ totalUsuarios }]]
+            usuarios: /*[[${usuariosJson}]]*/,
+            totalClientes: /*[[${totalClientes}]]*/,
+            totalProveedores: /*[[${totalProveedores}]]*/,
+            totalUsuarios: /*[[${totalUsuarios}]]*/
         };
         /*]]>*/
     </script>
 
     <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script th:src="@{/js/dashboard-admin.js}" defer></script>
-
 </head>
 
 <body>
-    <div th:replace="navbar-admin :: navbar"></div>
-    <main>
-
-
+    <div class="d-flex vh-100">
+        <div th:replace="sidebar-admin :: sidebar"></div>
+        <main class="flex-grow-1 p-4 overflow-auto">
 
         <div class="d-flex">
-            <div class="content p-4 w-100">
+            <div class="content">
 
-                <div class="stats d-flex gap-4 mb-4">
+                <div class="stats d-flex gap-4 mb-4 flex-wrap">
                     <div class="alert alert-dismissible alert-info stat flex-fill text-center">
                         <span class="number" id="totalProviders" th:text="${totalUsuarios}">0</span><br>
                         <span class="label">Total de Usuarios</span>
@@ -69,33 +66,43 @@
                 <div id="grafico_usuarios" class="card"></div>
                 <!-- <div id="tabla_usuarios" class="card"></div>-->
             </section>
+        
+            <div class="mb-3">
+                 <input type="text" id="buscarUsuario" class="form-control" placeholder="Escribe aqui para buscar por usuario, email, razon social...">
+            </div>
+        
             <div class="events-table">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
+                <table class="table table-striped" id="tablaUsuarios">
+                    <thead><tr>
                             <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>CUIT</th>
+                            <th>Rubro</th>
                             <th>Rol</th>
-                            <th>Nombre o Razón Social</th>
                             <th>Estado</th>
-                        </tr>
+                            <th>Fecha Registro</th>
+                            </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="usuario : ${usuarios}">
-                            <td th:text="${usuario.id}"></td>
-                            <td th:text="${usuario.rol}"></td>
-                            <td th:text="${usuario.nombreMostrable}"></td>
-                            <td th:text="${usuario.estado}"></td>
-                        </tr>
+                            <tr th:each="u : ${usuarios}">
+                                <td th:text="${u.id}"></td>
+                                <td th:text="${u.nombreMostrable}"></td>
+                                <td th:text="${u.email}"></td>
+                                <td th:text="${u.cuit}"></td>
+                                <td th:text="${u.rubro}"></td>
+                                <td th:text="${u.rol}"></td>
+                                <td th:text="${u.estado}"></td>
+                                <td th:text="${u.fechaCreacion}"></td>
+                            </tr>
                     </tbody>
                 </table>
 
             </div>
         </section>
         <button id="btnExportarPDF" class="btn btn-dark">Exportar PDF</button>
-
-
-
-    </main>
+        </main>
+    </div>
 </body>
 
 </html>
@@ -104,5 +111,31 @@
 
 </body>
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("buscarUsuario");
+    const table = document.getElementById("tablaUsuarios");
+    const rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+    input.addEventListener("keyup", () => {
+        const filter = input.value.toLowerCase();
+
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName("td");
+            let found = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j].textContent.toLowerCase().includes(filter)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            rows[i].style.display = found ? "" : "none";
+        }
+    });
+});
+</script>
 
 </html>

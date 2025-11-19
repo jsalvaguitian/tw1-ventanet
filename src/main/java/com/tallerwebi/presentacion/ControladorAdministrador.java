@@ -35,6 +35,7 @@ import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
+import com.tallerwebi.presentacion.dto.UsuarioAdminDTO;;
 
 @Controller
 @RequestMapping("/admin")
@@ -81,19 +82,16 @@ public class ControladorAdministrador {
         modelMap.put("proveedoresRechazados", servicioProveedor.contarProveedores(EstadoUsuario.RECHAZADO));
         modelMap.put("totalClientes", servicioCliente.contarClientes());
 
-        // Convertir la lista de usuarios a JSON plano
-        ObjectMapper mapper = new ObjectMapper();
+        List<UsuarioAdminDTO> usuariosDTO = servicioUsuario.obtenerUsuariosParaAdmin();
+        modelMap.put("usuarios", usuariosDTO);
+
         try {
-            String usuariosJson = mapper.writeValueAsString(servicioUsuario.obtenerTodosLosUsuarios());
+            ObjectMapper mapper = new ObjectMapper();
+            String usuariosJson = mapper.writeValueAsString(usuariosDTO);
             modelMap.put("usuariosJson", usuariosJson);
         } catch (Exception e) {
-            e.printStackTrace();
-            modelMap.put("usuariosJson", "[]"); // lista vacía en caso de error
+            modelMap.put("usuariosJson", "[]");
         }
-
-        // lista combinada de clientes y proveedores
-        modelMap.put("usuarios", servicioUsuario.obtenerTodosLosUsuarios());
-
         return new ModelAndView("dashboard-admin", modelMap);
     }
 

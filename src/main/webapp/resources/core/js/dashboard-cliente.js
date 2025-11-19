@@ -99,6 +99,24 @@ document.addEventListener("DOMContentLoaded", function () {
         return { inicio, fin };
     }
 
+// funcion para cargar img en el pdf
+    function loadImageAsBase64(url) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = "Anonymous"; // por si acaso
+            img.onload = function () {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL("image/png"));
+            };
+            img.onerror = reject;
+            img.src = url;
+        });
+    }
+
     function aplicarFiltros() {
         // Detectar tabla activa
         const tablaActiva =
@@ -449,24 +467,24 @@ async function mostrarDetalleCotizacion(id) {
 
     try {
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const cotizacion = await response.json();
         const estadoHTML = getEstadoHTML(cotizacion.estado);
-
         let botonesAccion = '';
+
         if (cotizacion.estado === 'PENDIENTE') {
             botonesAccion = `
-                <div style="margin-top: 25px; text-align: center;">
-                    <button class="btn btn-danger" 
-                            onclick="manejarAccionCotizacion(${cotizacion.id}, 'RECHAZADO')">
-                        ❌ Rechazar
-                    </button>
+                <div style="margin-top: 20px; text-align: center;">                
+                    <button class="btn btn-danger" onclick="manejarAccionCotizacion(${cotizacion.id}, 'RECHAZADO')">Rechazar</button>
                 </div>
             `;
         }
 
         if (cotizacion.estado === 'APROBADA' || cotizacion.estado === 'COMPLETADA') {
-            botonesAccion += `
+            botonesAccion = `
                 <div style="margin-top: 20px; text-align: center;">
                     <button id="btnDescargarPDF" class="btn btn-success">
                         <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
@@ -475,127 +493,164 @@ async function mostrarDetalleCotizacion(id) {
             `;
         }
 
-        // --- Cálculo de totales con IVA ---
-        const subtotal = cotizacion.montoTotal / 1.21;
-        const iva = cotizacion.montoTotal - subtotal;
-
-        // --- Encabezado y tabla de productos ---
+        // Generar contenido HTML del detalle
         let htmlContent = `
-            <div style="font-family: Arial, sans-serif; color:#333; text-align:left;">
-                <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #ccc; padding-bottom: 10px; margin-bottom: 10px;">
-                    <div style="width: 48%;">
-                        <h4 style="margin: 0; color: #003366;">${cotizacion.proveedor?.razonSocial || 'Proveedor desconocido'}</h4>
-                        <p style="margin: 2px 0;">${cotizacion.proveedor?.direccion || ''}</p>
-                        <p style="margin: 2px 0;">Tel: ${cotizacion.proveedor?.telefono || '-'}</p>
-                        <p style="margin: 2px 0;">Email: ${cotizacion.proveedor?.email || '-'}</p>
-                        <p style="margin: 2px 0;">CUIT: ${cotizacion.proveedor?.cuit || '-'}</p>
-                    </div>
-                    <div style="width: 48%; text-align: right;">
-                        <h5 style="margin: 0 0 5px;">Cliente</h5>
-                        <p style="margin: 2px 0;"><strong>${cotizacion.cliente?.nombre || 'Cliente desconocido'}</strong></p>
-                        <p style="margin: 2px 0;">${cotizacion.cliente?.telefono || '-'}</p>
-                        <p style="margin: 2px 0;">Fecha: ${new Date(cotizacion.fechaCreacion).toLocaleDateString()}</p>
-                    </div>
-                </div>
-
-                <p><strong>Estado:</strong> ${estadoHTML}</p>
-
-                <h5 style="margin-top: 20px; color:#003366;">Detalle de la Cotización</h5>
-                <table style="width:100%; border-collapse: collapse; font-size: 14px; margin-top:5px;">
-                    <thead>
-                        <tr style="background-color: #f2f2f2;">
-                            <th style="border: 1px solid #ccc; padding: 8px;">Producto</th>
-                            <th style="border: 1px solid #ccc; padding: 8px;">Cantidad</th>
-                            <th style="border: 1px solid #ccc; padding: 8px;">Precio Unitario</th>
-                            <th style="border: 1px solid #ccc; padding: 8px;">% Descuento</th>
-                            <th style="border: 1px solid #ccc; padding: 8px;">IVA</th>
-                            <th style="border: 1px solid #ccc; padding: 8px;">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+            <p><strong>Proveedor:</strong> ${cotizacion.proveedor.razonSocial}</p>
+            <p><strong>Estado:</strong> ${estadoHTML}</p> 
+            <p><strong>Monto Total:</strong> $${cotizacion.montoTotal.toFixed(2)}</p>
+            
+            <h5 style="margin-top: 20px;">Items de la Cotización</h5>
+            <table class="table table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>P. Unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
         `;
 
-        cotizacion.items?.forEach(item => {
-            const totalItem = item.cantidad * item.precioUnitario;
+        cotizacion.items.forEach(item => {
+            const subtotal = item.cantidad * item.precioUnitario;
             htmlContent += `
                 <tr>
-                    <td style="border: 1px solid #ccc; padding: 8px;">${item.producto?.nombre || '-'}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">${item.cantidad}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">$${item.precioUnitario.toFixed(2)}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">${item.descuento ? item.descuento + '%' : '0%'}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">21%</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">$${totalItem.toFixed(2)}</td>
+                    <td>${item.producto.nombre}</td>
+                    <td>${item.cantidad}</td>
+                    <td>$${item.precioUnitario.toFixed(2)}</td>
+                    <td>$${subtotal.toFixed(2)}</td>
                 </tr>
             `;
         });
 
-        htmlContent += `
-                    </tbody>
-                </table>
-                <div style="margin-top: 20px; text-align: right;">
-                    <p><strong>Base imponible:</strong> $${subtotal.toFixed(2)}</p>
-                    <p><strong>IVA (21%):</strong> $${iva.toFixed(2)}</p>
-                    <p style="font-size:16px;"><strong>Total:</strong> $${cotizacion.montoTotal.toFixed(2)}</p>
-                </div>
+        htmlContent += `</tbody></table>`;
+        htmlContent += botonesAccion;
 
-                ${botonesAccion}
-
-                <p style="margin-top:20px; font-style:italic;">
-                    Para los detalles del envío, por favor comunicarse con el proveedor mediante mensajería correspondiente.
-                </p>
-            </div>
-        `;
-
-        // --- Mostrar SweetAlert ---
+        // Mostrar SweetAlert con el detalle
         Swal.fire({
-            title: `Cotización #${id}`,
+            title: `Detalle de Cotización #${id}`,
             html: htmlContent,
             icon: 'info',
-            width: '75%',
+            width: '80%',
             showConfirmButton: true,
             confirmButtonText: 'Cerrar',
             didOpen: (popup) => {
                 setTimeout(() => {
+                    console.log("Buscando botón PDF...");
                     const btnPDF = popup.querySelector("#btnDescargarPDF");
+                    console.log("Encontrado:", btnPDF);
                     if (btnPDF) {
                         btnPDF.addEventListener("click", async () => {
+                            console.log("Click detectado en botón PDF");
+
                             const { jsPDF } = window.jspdf;
                             const doc = new jsPDF();
+                            const pageWidth = doc.internal.pageSize.getWidth();
+                            
+                            // CABECERA                       
+                            // ---- Cargar logo del proveedor ----
+                            let logoUrl = null;
+                            let logoBase64 = null;
 
-                            // --- Cabecera ---
-                            doc.setFontSize(10);
-                            doc.text(`Proveedor: ${cotizacion.proveedor.razonSocial}`, 10, 10);
-                            doc.text(`CUIT: ${cotizacion.proveedor.cuit || 'N/A'}`, 10, 15);
-                            doc.text(`Dirección: ${cotizacion.proveedor.direccion || '-'}`, 10, 20);
-                            doc.text(`Teléfono: ${cotizacion.proveedor.telefono || '-'}`, 10, 25);
-
-                            // --- Cliente ---
-                            if (cotizacion.cliente) {
-                                doc.text(`Cliente: ${cotizacion.cliente.nombre}`, 10, 35);
-                                doc.text(`Teléfono: ${cotizacion.cliente.telefono || '-'}`, 10, 40);
-                                doc.text(`Fecha: ${new Date(cotizacion.fechaCreacion).toLocaleDateString()}`, 10, 45);
+                            if (cotizacion.proveedor.origenLogo === "img") {
+                                logoUrl = `/spring/img/${cotizacion.proveedor.logoPath}`;
+                            } 
+                            else if (cotizacion.proveedor.origenLogo === "uploads") {
+                                logoUrl = `/spring/uploads/${cotizacion.proveedor.logoPath}`;
                             }
 
-                            // --- Línea separatoria ---
-                            doc.line(10, 50, 200, 50);
+                            if (logoUrl) {
+                                console.log("➡️ URL del logo que estoy intentando cargar:", logoUrl);
+                                console.log("Proveedor:", cotizacion.proveedor);
+                                console.log("Origen del logo:", cotizacion.proveedor.origenLogo);
+                                console.log("LogoPath:", cotizacion.proveedor.logoPath);
+                                
+                                try {
+                                    logoBase64 = await loadImageAsBase64(logoUrl);
+                                } catch (err) {
+                                    console.error("Error cargando logo:", err);
+                                }
+                            }
 
-                            // --- Productos ---
-                            let y = 55;
-                            cotizacion.items?.forEach(item => {
-                                const totalItem = item.cantidad * item.precioUnitario;
-                                doc.text(`${item.producto?.nombre} - Cant: ${item.cantidad} x $${item.precioUnitario.toFixed(2)}`, 10, y);
+                            // Insertar logo (columna izquierda)
+                            if (logoBase64) {
+                                doc.addImage(logoBase64, "PNG", 10, 10, 40, 20);
+                            }
+
+                            doc.setFontSize(12);
+                            doc.setFont("helvetica", "bold");
+                            const columnaDerechaX = pageWidth - 80;
+                            
+                            // Proveedor (ESQUINA SUPERIOR DERECHA)
+                            const proveedorText = `Proveedor: ${cotizacion.proveedor.razonSocial}\nCUIT: ${cotizacion.proveedor.cuit || 'N/A'}\n${cotizacion.proveedor.sitioWeb || 'N/A'}`;
+
+                            const proveedorX = pageWidth - doc.getTextWidth("Proveedor: " + cotizacion.proveedor.razonSocial) - 10;
+                            doc.text(proveedorText, columnaDerechaX, 15);
+
+                            // Cliente y Cotización en 2 columnas
+                            doc.setFontSize(11);
+                            doc.setFont("helvetica", "normal");
+
+                            // Columna izquierda CLIENTE
+                            let y = 35;
+                            doc.text(`Cliente: ${cotizacion.cliente?.nombre || "N/A"}`, 10, y);
+                            doc.text(`Teléfono: ${cotizacion.cliente?.telefono || "N/A"}`, 10, y + 7);
+
+                            // Columna derecha COTIZACION + FECHA
+                            const fechaActual = new Date().toLocaleString();
+                            const datosDerecha =
+                                `Cotización #${cotizacion.id}\nFecha: ${fechaActual}`;
+
+                            const derechaX = pageWidth - doc.getTextWidth("Cotización #" + cotizacion.id) - 20;
+                            doc.text(datosDerecha, columnaDerechaX, y);
+
+                            // Línea separadora CABECERA-CUERPO
+                            doc.line(10, y + 15, pageWidth - 10, y + 15);
+
+                            // CUERPO
+                            y += 30;
+                            doc.setFont("helvetica", "bold");
+                            doc.setFontSize(13);
+                            doc.text("Detalles de la cotización", 10, y);
+                            y += 6;
+
+                            doc.setFont("helvetica", "normal");
+                            doc.setFontSize(11);
+
+                            // Encabezado de tabla
+                            doc.text("Producto", 10, y);
+                            doc.text("Cant.", pageWidth / 2 - 10, y);
+                            doc.text("Monto", pageWidth - 40, y);
+
+                            y += 5;
+                            doc.line(10, y, pageWidth - 10, y);
+                            y += 7;
+
+                            // Items
+                            cotizacion.items.forEach(item => {
+                                const subtotal = item.cantidad * item.precioUnitario;
+
+                                doc.text(item.producto.nombre, 10, y);
+                                doc.text(String(item.cantidad), pageWidth / 2 - 10, y);
+                                doc.text(`$${subtotal.toFixed(2)}`, pageWidth - 40, y);
                                 y += 8;
                             });
 
-                            // --- Mensaje de envío ---
-                            y += 10;
-                            doc.text("Para los detalles del envío, por favor comunicarse con el proveedor mediante mensajería correspondiente.", 10, y);
-
-                            // --- Total ---
+                            // Línea separadora CUERPO-PIE
+                            doc.line(10, y, pageWidth - 10, y);
                             y += 15;
-                            doc.setFontSize(12);
-                            doc.text(`TOTAL: $${cotizacion.montoTotal.toFixed(2)}`, 150, y);
 
+                            // PIE
+                            doc.setFont("helvetica", "bold");
+                            doc.setFontSize(16);
+
+                            const totalText = `TOTAL: $${cotizacion.montoTotal.toFixed(2)}`;
+                            const totalX = pageWidth - doc.getTextWidth(totalText) - 10;
+
+                            doc.text(totalText, totalX, y);
+
+                            // Guardar PDF
                             doc.save(`cotizacion_${cotizacion.id}.pdf`);
                         });
                     }
@@ -605,7 +660,7 @@ async function mostrarDetalleCotizacion(id) {
 
     } catch (error) {
         console.error("Error al cargar el detalle:", error);
-        Swal.fire('Error', 'No se pudo cargar el detalle de la cotización: ' + error.message, 'error');
+        Swal.fire('Error', 'No se pudo cargar el detalle de la cotización. Detalle: ' + error.message, 'error');
     }
 }
 
