@@ -310,10 +310,10 @@ async function mostrarDetalleCotizacion(id) {
             }
         });
 
-    } catch (error) {
+    }).catch (error => {
         console.error("Error al cargar el detalle:", error);
         Swal.fire('Error', 'No se pudo cargar el detalle de la cotización: ' + error.message, 'error');
-    }
+    });
 }
 
 function mostrarDetalleLicitacion(id) {
