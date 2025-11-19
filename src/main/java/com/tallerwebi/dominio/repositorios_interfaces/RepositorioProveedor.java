@@ -27,4 +27,5 @@ public interface RepositorioProveedor {
 
     List<Proveedor> listarPorRubro(Rubro rubro);
     List<Proveedor> listarTodosPorEstado(Boolean activo);
+    Proveedor obtenerProveedorConMedios(Long id);
 }

@@ -219,16 +219,17 @@ public class ControladorCotizacion {
     public ModelAndView previsualizar(
             HttpServletRequest request) {
         try {
+            ModelMap datosModelado = new ModelMap();
             List<Cotizacion> cotizaciones = (List<Cotizacion>) request.getSession()
                     .getAttribute("cotizaciones");
             if (cotizaciones == null || cotizaciones.isEmpty()) {
                 // Redirigir si la sesión está vacía (ej. acceso directo o sesión expirada)
-                return new ModelAndView("redirect:/catalogo");
+                return new ModelAndView("previsualizar-cotizacion", datosModelado);
             }
 
             request.getSession().removeAttribute("cotizaciones");
 
-            ModelMap datosModelado = new ModelMap();
+            
             datosModelado.put("cotizaciones", cotizaciones);
             datosModelado.put("esConfirmacion", false);
 
@@ -236,8 +237,7 @@ public class ControladorCotizacion {
 
         } catch (Exception e) {
             e.printStackTrace();
-            ModelMap datosModelado = new ModelMap();
-            // return "redirect:/catalogo";
+            ModelMap datosModelado = new ModelMap();            
             return new ModelAndView("previsualizar-cotizacion", datosModelado);
         }
     }

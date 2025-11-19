@@ -9,27 +9,33 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.entidades.Cotizacion;
 import com.tallerwebi.dominio.entidades.Licitacion;
+import com.tallerwebi.dominio.entidades.MedioDePago;
 import com.tallerwebi.dominio.entidades.ProductoCustom;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.enums.EstadoLicitacion;
-import com.tallerwebi.dominio.enums.Rubro;
 import com.tallerwebi.dominio.excepcion.NoHayLicitacionesExistentes;
 import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 import com.tallerwebi.dominio.servicios.ServicioLicitacion;
+import com.tallerwebi.dominio.servicios.ServicioMedioDePago;
 import com.tallerwebi.dominio.servicios.ServicioComentario;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.presentacion.dto.LicitacionDto;
+import com.tallerwebi.presentacion.dto.MedioDePagoDto;
 import com.tallerwebi.presentacion.dto.ProductoCustomDto;
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
@@ -48,11 +54,14 @@ public class ControladorProveedor {
     private ServicioComentario servicioComentario;
     @Autowired(required = false)
     private final ServicioLicitacion servicioLicitacion;
+    @Autowired
+    private ServicioMedioDePago medioDePagoService;
 
     // Constructor por defecto requerido por algunos mecanismos de instanciación
     // (Jetty/Spring con múltiples constructores previos)
     public ControladorProveedor() {
         this.servicioLicitacion = null;
+        this.medioDePagoService = null;
     }
 
     // Constructor de compatibilidad para tests antiguos que crean manualmente el
@@ -61,6 +70,7 @@ public class ControladorProveedor {
         this.servicioLicitacion = null;
         this.servicioProveedorI = servicioProveedorI;
         this.servicioCotizacion = servicioCotizacion;
+        this.medioDePagoService = null;
     }
 
     // Constructor de compatibilidad extendido para tests que incluyen comentario
@@ -70,13 +80,15 @@ public class ControladorProveedor {
         this.servicioProveedorI = servicioProveedorI;
         this.servicioCotizacion = servicioCotizacion;
         this.servicioComentario = servicioComentario;
+        this.medioDePagoService = null;
     }
 
     public ControladorProveedor(ServicioProveedorI servicioProveedorI, ServicioCotizacion servicioCotizacion,
-            ServicioLicitacion servicioLicitacion) {
+            ServicioLicitacion servicioLicitacion, ServicioMedioDePago medioDePagoService) {
         this.servicioLicitacion = servicioLicitacion;
         this.servicioProveedorI = servicioProveedorI;
         this.servicioCotizacion = servicioCotizacion;
+        this.medioDePagoService = medioDePagoService;
     }
 
     @GetMapping("/dashboard-proveedor")
@@ -271,5 +283,78 @@ public class ControladorProveedor {
         dto.setFechaCreacion(licitacion.getFechaCreacion());
         dto.setFechaExpiracion(licitacion.getFechaExpiracion());
         return dto;
+    }
+
+    @GetMapping("/medios-pago")
+    public ModelAndView mostrarProveedorMedioPago(HttpServletRequest request) {
+        ModelMap datosModelado = new ModelMap();
+
+        UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+        String rol_proveedor = "PROVEEDOR";
+
+        if (usuarioSesion == null || !rol_proveedor.equalsIgnoreCase(usuarioSesion.getRol())) {
+            return new ModelAndView("redirect:/login");
+        }
+
+        List<MedioDePago> mediosProveedorAux = servicioProveedorI.obtenerMediosDePagoDeProveedor(usuarioSesion.getId());
+
+        List<MedioDePagoDto> mediosProveedor = mediosProveedorAux.stream()
+                .map(m -> new MedioDePagoDto() {
+                    {
+                        setId(m.getId());
+                        setNombre(m.getNombre());
+                        setImagen(m.getImagen());
+                        setTipo(m.getTipo());
+                    }
+                })
+                .collect(Collectors.toList());
+
+        List<MedioDePago> mediosDisponibles = medioDePagoService.obtenerTodosLosMedios();
+        List<Long> idsMediosProveedor = mediosProveedorAux
+                .stream()
+                .map(MedioDePago::getId)
+                .collect(Collectors.toList());
+
+        datosModelado.addAttribute("idsMediosProveedor", idsMediosProveedor);
+        datosModelado.put("mailProveedor", usuarioSesion.getUsername());
+        datosModelado.addAttribute("mediosProveedor", mediosProveedor);
+        datosModelado.addAttribute("mediosDisponibles", mediosDisponibles);
+
+        return new ModelAndView("proveedor-medio-pago", datosModelado);
+    }
+
+    @PostMapping("/guardar-medios-pago")
+    public ModelAndView guardarMediosPagoProveedor(
+            @RequestParam("mediosPagoIds") List<Long> mediosPagoIds,
+            HttpServletRequest request) {
+
+        UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+        String rol_proveedor = "PROVEEDOR";
+
+        if (usuarioSesion == null || !rol_proveedor.equalsIgnoreCase(usuarioSesion.getRol())) {
+            return new ModelAndView("redirect:/login");
+        }
+
+        try {
+            servicioProveedorI.actualizarMediosPago(usuarioSesion.getId(), mediosPagoIds);
+            return new ModelAndView("redirect:/proveedor/medios-pago?exito=true");
+
+        } catch (Exception e) {
+            return new ModelAndView("redirect:/proveedor/medios-pago?error=true");
+        }
+    }
+
+    @GetMapping("/medios-pago/{proveedorId}")
+    @ResponseBody // Indica a Spring que la respuesta debe ser escrita directamente en el cuerpo (como JSON)
+    public ResponseEntity<List<MedioDePago>> obtenerMediosPagoPorProveedor(@PathVariable Long proveedorId) {
+        
+        // 1. Obtener el proveedor.
+        List<MedioDePago> mediosPago = servicioProveedorI.obtenerMediosDePagoDeProveedor(proveedorId);
+        
+        if (mediosPago == null) {            
+            return ResponseEntity.notFound().build();
+        }
+        
+        return ResponseEntity.ok(mediosPago);
     }
 }

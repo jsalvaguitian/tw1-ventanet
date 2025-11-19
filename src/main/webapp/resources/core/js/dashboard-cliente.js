@@ -127,23 +127,46 @@ window.getEstadoHTML = getEstadoHTML;
 async function mostrarDetalleCotizacion(id) {
     const url = '/spring/cotizacion/detalle/' + id;
 
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const cotizacion = await response.json();
-        const estadoHTML = getEstadoHTML(cotizacion.estado);
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(cotizacion => {
+            const estadoHTML = getEstadoHTML(cotizacion.estado);
+            let botonesAccion = '';
 
-        let botonesAccion = '';
-        if (cotizacion.estado === 'PENDIENTE') {
-            botonesAccion = `
-                <div style="margin-top: 25px; text-align: center;">
-                    <button class="btn btn-danger" 
-                            onclick="manejarAccionCotizacion(${cotizacion.id}, 'RECHAZADO')">
-                        ❌ Rechazar
-                    </button>
-                </div>
-            `;
-        }
+            if (cotizacion.estado === 'PENDIENTE') {
+                botonesAccion = `
+                    <div style="margin-top: 25px; text-align: center;">
+                        <button class="btn btn-danger" 
+                                onclick="manejarAccionCotizacion(${cotizacion.id}, 'RECHAZADO')">
+                            ❌ Rechazar
+                        </button>
+                    </div>
+                `;
+            }
+
+            
+            let medioDePagoHTML = '';
+            if (cotizacion.medioDePago) {
+                const mp = cotizacion.medioDePago;
+                let cuotas = '';
+                if(mp.tipo === 'CREDITO') {
+                    cuotas = mp.cantidad_cuotas ? `(${mp.cantidad_cuotas} cuotas)` : '';
+                }
+                
+                const detalleMP = `${mp.nombre} ${cuotas}`;
+                
+                medioDePagoHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <p style="margin: 0; font-size: 14px; text-align: right;">
+                            <strong>Medio de Pago:</strong> ${detalleMP}
+                        </p>
+                        ${mp.imagen ? `<img src="/spring/img/${mp.imagen}" alt="${mp.nombre}" style="width: 30px; height: auto; border-radius: 5px;">` : ''}
+                    </div>
+                `;
+            }
 
         if (cotizacion.estado === 'APROBADA' || cotizacion.estado === 'COMPLETADA') {
             botonesAccion += `
@@ -178,7 +201,11 @@ async function mostrarDetalleCotizacion(id) {
                     </div>
                 </div>
 
-                <p><strong>Estado:</strong> ${estadoHTML}</p>
+                    <!-- Estado -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">
+                        <p style="margin: 0;"><strong>Estado:</strong> ${estadoHTML}</p>
+                        ${medioDePagoHTML}
+                    </div>
 
                 <h5 style="margin-top: 20px; color:#003366;">Detalle de la Cotización</h5>
                 <table style="width:100%; border-collapse: collapse; font-size: 14px; margin-top:5px;">

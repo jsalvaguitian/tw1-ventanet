@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,6 +128,19 @@ public class RepositorioProveedorImpl implements RepositorioProveedor {
         query.setParameter("activo", activo);
 
         return query.getResultList();
+    }
+
+    @Override
+    public Proveedor obtenerProveedorConMedios(Long id) {
+
+        String hql = "SELECT p FROM Proveedor p JOIN FETCH p.mediosDePago WHERE p.id = :id";
+        sessionFactory.getCurrentSession()
+                .createQuery(hql, Proveedor.class);
+        org.hibernate.query.Query<Proveedor> query = this.sessionFactory.getCurrentSession().createQuery(hql,
+                Proveedor.class);
+        query.setParameter("id", id);
+        return query.uniqueResult();
+
     }
 
 }
