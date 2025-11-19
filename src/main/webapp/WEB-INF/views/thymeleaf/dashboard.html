@@ -94,27 +94,77 @@
                 </div>
             </div>
 
-            <!-- Filtros -->
-            <div class="filters mb-3 d-flex flex-wrap align-items-center">
+            <!-- Filtros globales (aplican a ambas tablas) -->
+            <div class="filters mb-3 d-flex flex-column gap-3">
                 <div class="d-flex align-items-center flex-wrap gap-3">
-                    <select id="dateFilter" class="form-select w-auto">
-                        <option value="all">Todos</option>
-                        <option value="today">Hoy</option>
-                        <option value="yesterday">Ayer</option>
-                        <option value="last7">Últimos 7 días</option>
-                        <option value="last30">Últimos 30 días</option>
-                        <option value="month">Este Mes</option>
-                    </select>
-
-                    <button id="applyFilter" class="btn btn-primary">Aplicar</button>
                     <a class="btn btn-success" th:href="@{/cotizacion/presupuesto}">Crear Cotización</a>
                     <a class="btn btn-info" th:href="@{/licitacion/presupuesto-custom}">Crear Cotización Custom</a>
+                    <div class="form-check form-switch ms-auto">
+                        <input class="form-check-input" type="checkbox" id="toggleDolar">
+                        <label class="form-check-label" for="toggleDolar">Convertir a USD</label>
+                    </div>
                 </div>
 
-                <div class="form-check form-switch ms-auto">
-                    <input class="form-check-input" type="checkbox" id="toggleDolar">
-                    <label class="form-check-label" for="toggleDolar">Convertir a USD</label>
+                <!-- Línea de filtros detallados -->
+                <div class="container-fluid p-0" id="filtrosDetalladosContainer">
+                    <div class="row g-3 align-items-end">
+                        <!-- Proveedor -->
+                        <div class="col-12 col-sm-6 col-md-3 col-lg-3">
+                            <label class="form-label small mb-1" for="filterProveedor">Proveedor</label>
+                            <select class="form-select" id="filterProveedor">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+                        <!-- Monto mínimo -->
+                        <div class="col-6 col-sm-3 col-md-2 col-lg-3">
+                            <label class="form-label small mb-1" for="filtroMonto">Monto Min</label>
+                            <input type="number" class="form-control" id="filtroMonto" placeholder="≥">
+                        </div>
+                        <!-- Monto máximo -->
+                        <div class="col-6 col-sm-3 col-md-2 col-lg-3">
+                            <label class="form-label small mb-1" for="filtroMontoMax">Monto Max</label>
+                            <input type="number" class="form-control" id="filtroMontoMax" placeholder="≤">
+                        </div>
+
+                        <div class="col-6 col-sm-3 col-md-2 col-lg-3 d-flex gap-2">
+                            <button type="button" id="btnLimpiarFiltros" class="btn btn-outline-secondary flex-fill"
+                                aria-label="Limpiar filtros" title="Limpiar filtros">
+                                <i class="bi bi-funnel-fill"></i>
+                            </button>
+                            <button type="button" id="btnExportExcel" class="btn btn-outline-success flex-fill"
+                                title="Exportar filas visibles a Excel">
+                                <i class="bi bi-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-end">
+                        <!-- Fecha Creación Desde -->
+                        <div class="col-6 col-sm-3 col-md-2 col-lg-3">
+                            <label class="form-label small mb-1" for="filtroFechaCreacionDesde">Creación Desde</label>
+                            <input type="date" class="form-control" id="filtroFechaCreacionDesde">
+                        </div>
+                        <!-- Fecha Creación Hasta -->
+                        <div class="col-6 col-sm-3 col-md-2 col-lg-3">
+                            <label class="form-label small mb-1" for="filtroFechaCreacionHasta">Creación Hasta</label>
+                            <input type="date" class="form-control" id="filtroFechaCreacionHasta">
+                        </div>
+                        <!-- Fecha Expiración Desde -->
+                        <div class="col-6 col-sm-3 col-md-2 col-lg-3">
+                            <label class="form-label small mb-1" for="filtroFechaExpiracionDesde">Expiración
+                                Desde</label>
+                            <input type="date" class="form-control" id="filtroFechaExpiracionDesde">
+                        </div>
+                        <!-- Fecha Expiración Hasta -->
+                        <div class="col-6 col-sm-3 col-md-2 col-lg-3">
+                            <label class="form-label small mb-1" for="filtroFechaExpiracionHasta">Expiración
+                                Hasta</label>
+                            <input type="date" class="form-control" id="filtroFechaExpiracionHasta">
+                        </div>
+                        <!-- Botones -->
+
+                    </div>
                 </div>
+                <datalist id="listaMontos"></datalist>
             </div>
 
         </div>
@@ -144,10 +194,11 @@
                     th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard')} ? 'show active' : ''"
                     id="cotizaciones" role="tabpanel">
 
-                    <h3 class="mb-3 mt-4 text-primary">
+                    <h3 class="mb-4 mt-4 text-primary d-flex align-items-center">
                         <i class="fas fa-file-invoice-dollar me-2"></i> Cotizaciones
                     </h3>
 
+                    <!-- Filtros específicos removidos; ahora se usan filtros globales arriba -->
                     <table class="table table-striped mt-4" id="tablaCotizaciones"
                         th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
                         <thead>
@@ -193,57 +244,68 @@
                         No hay cotizaciones disponibles.
                     </div>
                 </div>
-
-                <!-- TAB Cotizaciones Custom -->
-                <div class="tab-pane fade"
-                    th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard-custom')} ? 'show active' : ''"
-                    id="cotizacionesCustom" role="tabpanel"
-                    th:if="${#httpServletRequest.requestURI.endsWith('/dashboard-custom')}">
-
-                    <h3 class="mb-3 mt-4 text-primary">
-                        <i class="fas fa-cogs me-2"></i> Cotizaciones a Medida
-                    </h3>
-
-                    <table class="table table-striped mt-4" id="tablaLicitaciones"
-                        th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Descripción</th>
-                                <th>Proveedor</th>
-                                <th>Estado</th>
-                                <th>Fecha Creación</th>
-                                <th>Fecha Expiración</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr th:each="licitacion : ${cotizaciones}">
-                                <td th:text="${licitacion.id}"></td>
-                                <td
-                                    th:text="${licitacion.productoCustom != null ? licitacion.productoCustom.descripcion : '—'}">
-                                </td>
-                                <td th:text="${licitacion.proveedor.razonSocial}"></td>
-                                <td th:text="${licitacion.estado}"></td>
-                                <td th:text="${licitacion.fechaCreacion}"></td>
-                                <td th:text="${licitacion.fechaExpiracion}"></td>
-                                <td>
-                                    <button type="button" class="btn btn-sm btn-info btn-detalle-licitacion" title="Ver detalle"
-                                        th:data-id="${licitacion.id}">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div th:if="${cotizaciones == null or cotizaciones.isEmpty()}" class="text-center text-muted mt-4">
-                        No hay cotizaciones custom disponibles.
-                    </div>
-                </div>
-
             </div>
+
+            <!-- TAB Cotizaciones Custom -->
+            <div class="tab-pane fade"
+                th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard-custom')} ? 'show active' : ''"
+                id="cotizacionesCustom" role="tabpanel"
+                th:if="${#httpServletRequest.requestURI.endsWith('/dashboard-custom')}">
+
+                <h3 class="mb-3 mt-4 text-primary">
+                    <i class="fas fa-cogs me-2"></i> Cotizaciones a Medida
+                </h3>
+
+                <table class="table table-striped mt-4" id="tablaLicitaciones"
+                    th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Descripción</th>
+                            <th>Proveedor</th>
+                            <th>Monto Total</th>
+                            <th>Estado</th>
+                            <th>Fecha Creación</th>
+                            <th>Fecha Expiración</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="licitacion : ${cotizaciones}">
+                            <td th:text="${licitacion.id}"></td>
+                            <td
+                                th:text="${licitacion.productoCustom != null ? licitacion.productoCustom.descripcion : '—'}">
+                            </td>
+                            <td th:text="${licitacion.proveedor.razonSocial}"></td>
+                            <td class="monto-cotizacion" th:data-precio-ars="${licitacion.montoTotal}"
+                                th:text="'$' + ${#numbers.formatDecimal(licitacion.montoTotal, 2, 2)} + ' ARS'"></td>
+                            <td th:text="${licitacion.estado}"></td>
+                            <td th:text="${licitacion.fechaCreacion}"></td>
+                            <td th:text="${licitacion.fechaExpiracion}"></td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-info btn-detalle-licitacion"
+                                    title="Ver detalle" th:data-id="${licitacion.id}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <a class="btn btn-sm btn-secondary position-relative" title="Mensajes"
+                                    th:href="@{'/licitacion/' + ${licitacion.id} + '/mensajes'}">
+                                    <i class="fas fa-comments"></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                        th:if="${unreadLicitacionCounts != null and unreadLicitacionCounts[licitacion.id] > 0}"
+                                        th:text="${unreadLicitacionCounts[licitacion.id]}"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div th:if="${cotizaciones == null or cotizaciones.isEmpty()}" class="text-center text-muted mt-4">
+                    No hay cotizaciones custom disponibles.
+                </div>
+            </div>
+
         </div>
+    </div>
 
     </div>
 
@@ -260,7 +322,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="btnDescargarPDF" class="btn btn-success">
-                    <i class="bi bi-file-earmark-pdf"></i>Descargar PDF</button>
+                        <i class="bi bi-file-earmark-pdf"></i>Descargar PDF</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
@@ -270,12 +332,10 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
     <!-- Librerias PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script type="module" th:src="@{/js/dashboard-cliente.js}"></script>
-
     <!-- Script toggle sidebar -->
     <script>
         (function () {

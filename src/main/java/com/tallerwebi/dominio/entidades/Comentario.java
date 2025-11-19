@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
 
 @Entity
 public class Comentario {
@@ -21,9 +22,13 @@ public class Comentario {
     @Column(name = "mensaje", nullable = false, length = 2000)
     private String mensaje;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "cotizacion_id", nullable = false)
-    private Cotizacion cotizacion;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cotizacion_id")
+    private Cotizacion cotizacion; // nullable si pertenece a una licitacion
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "licitacion_id")
+    private Licitacion licitacion; // nullable si pertence a una cotizacion
 
     // Autor del mensaje será o el cliente o el proveedor de la cotización.
     @ManyToOne(fetch = FetchType.LAZY)
@@ -67,6 +72,19 @@ public class Comentario {
     public void setCotizacion(Cotizacion cotizacion) {
         this.cotizacion = cotizacion;
     }
+
+    public Licitacion getLicitacion() {
+        return licitacion;
+    }
+
+    public void setLicitacion(Licitacion licitacion) {
+        this.licitacion = licitacion;
+    }
+
+    @javax.persistence.Transient
+    public boolean esDeCotizacion() { return cotizacion != null; }
+    @javax.persistence.Transient
+    public boolean esDeLicitacion() { return licitacion != null; }
 
     public Cliente getCliente() {
         return cliente;

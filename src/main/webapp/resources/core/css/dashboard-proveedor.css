@@ -8,6 +8,11 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
 }
+.noStyleLinks {
+    text-decoration: none;
+    color: white;
+}
+
 
 /* ==== SIDEBAR ==== */
 .sidebar {
@@ -56,7 +61,7 @@ body {
 
 /* ==== MAIN CONTENT ==== */
 .main {
-    margin-left: 20px;
+    margin-left: 220px;
     padding: 30px 60px 30px 60px;
     min-width: 0;
     transition: margin-left 0.3s;

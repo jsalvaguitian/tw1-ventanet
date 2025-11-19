@@ -15,6 +15,7 @@ import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioProveedor;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioUsuario;
 import com.tallerwebi.dominio.utils.PasswordUtil;
+import com.tallerwebi.presentacion.dto.UsuarioAdminDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -237,6 +239,42 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
     @Override
     public void eliminarUsuario(Usuario usuario) {
         usuario.setActivo(false);
+    }
+
+    @Override
+    public List<UsuarioAdminDTO> obtenerUsuariosParaAdmin() {
+
+        List<Usuario> usuarios = this.obtenerTodosLosUsuarios();
+
+        return usuarios.stream().map(usuario -> {
+            UsuarioAdminDTO dto = new UsuarioAdminDTO();
+            dto.setId(usuario.getId());
+            dto.setNombre(usuario.getNombre());
+            dto.setApellido(usuario.getApellido());
+            dto.setEmail(usuario.getEmail());
+            dto.setUsername(usuario.getUsername());
+            dto.setTelefono(usuario.getTelefono());
+            dto.setDireccion(usuario.getDireccion());
+            dto.setFechaCreacion(usuario.getFechaCreacion());
+            dto.setRol(usuario.getRol());
+            dto.setActivo(usuario.getActivo());
+            dto.setEstado(usuario.getEstado());
+            dto.setFotoPerfil(usuario.getFotoPerfil());
+            dto.setNombreMostrable(usuario.getNombreMostrable());
+
+            // para proveedores
+            if (usuario instanceof Proveedor) {
+                Proveedor p = (Proveedor) usuario;
+
+                dto.setCuit(p.getCuit());
+                dto.setRubro(p.getRubro());
+                dto.setDocumento(p.getDocumento());
+                dto.setRazonSocial(p.getRazonSocial());
+                dto.setUbicacion(p.getUbicacion());
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
     }
 
 }

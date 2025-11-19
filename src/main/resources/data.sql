@@ -135,7 +135,7 @@ INSERT INTO Usuario (
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '1234567890', 'Av. Principal 1', CURRENT_DATE, 'ADMIN', true, 'ACTIVO'),
 
-(2, 'Juan', 'Pérez', 'cliente1', 'juan.perez@email.com',
+(2, 'Juan', 'Pérez', 'cliente1', 'gaston.ezequiel.bisogno@gmail.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '111222333', 'Calle Falsa 123', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
 ----- PROVEEDORES
@@ -14601,42 +14601,31 @@ VALUES
 (2,	16,	11,	1,	3,	1,	2,	1,	2),
 (3,	7,	10,	3,	3,	1,	1,	6,	2);
 
+-- ===============================================
+-- PRODUCTO CUSTOM (semilla para licitaciones a medida)
+-- ===============================================
+-- Nota: Se especifican IDs manuales para poder referenciarlos desde Licitacion.
+INSERT INTO ProductoCustom (id, precio, descripcion, imgCloudinaryID, proveedor_id, ancho, alto, largo, espesor, color, modelo, tipoMaterial, aceptaEnvio, cantidad)
+VALUES
+ (1, 14000.00, 'Ventana PVC personalizada triple hoja', 'uploads/imagenes/custom1.jpg', 10, 1.20, 1.50, NULL, 4.0, 'Blanco', 'CUST-PVC-3H', 'PVC', true, 3),
+ (2, 52000.00, 'Puerta exterior reforzada a medida', 'uploads/imagenes/custom2.jpg', 6, 1.00, 2.10, NULL, 5.0, 'Negro', 'CUST-PUERTA-REF', 'Aluminio-Madera', false, 1),
+ (3, 18500.00, 'Paño fijo ampliado con perfilería extra', 'uploads/imagenes/custom3.jpg', 9, 2.00, 1.80, NULL, 4.0, 'Blanco', 'CUST-PANIO-XL', 'PVC', true, 2),
+ (4, 30000.00, 'Ventana plegable modular personalizada', 'uploads/imagenes/custom4.jpg', 10, 2.50, 2.00, NULL, 6.0, 'Gris', 'CUST-FOLD-MOD', 'Aluminio', true, 4),
+ (5, 9500.00, 'Ventana económica simple a medida', 'uploads/imagenes/custom5.jpg', 3, 1.00, 1.00, NULL, 3.0, 'Blanco', 'CUST-SIMPLE', 'PVC', true, 1),
+ (6, 41000.00, 'Puerta doble con acabado premium especial', 'uploads/imagenes/custom6.jpg', 10, 1.60, 2.10, NULL, 5.0, 'Marrón', 'CUST-PUERTA-DOB', 'Madera', false, 2);
 
+-- ===============================================
+-- LICITACIONES (cotizaciones a medida)
+-- ===============================================
+-- Se usan montos calculados (precio * cantidad) para coherencia básica.
+-- Estados disponibles: APROBADA, PENDIENTE, RECHAZADO, COMPLETADA
+INSERT INTO Licitacion (montoTotal, cliente_id, proveedor_id, fechaCreacion, fechaExpiracion, adjuntoUrl, estado, productoCustom_id)
+VALUES
+ (42000.00, 2, 10, CURRENT_DATE, CURRENT_DATE, 'uploads/adjuntos/licitacion1.pdf', 'PENDIENTE', 1), -- 14000 * 3
+ (52000.00, 7, 6, CURRENT_DATE, CURRENT_DATE, 'uploads/adjuntos/licitacion2.pdf', 'APROBADA', 2),   -- 52000 * 1
+ (37000.00, 2, 9, CURRENT_DATE, CURRENT_DATE, 'uploads/adjuntos/licitacion3.pdf', 'RECHAZADO', 3), -- 18500 * 2
+ (120000.00, 8, 10, CURRENT_DATE, CURRENT_DATE, 'uploads/adjuntos/licitacion4.pdf', 'COMPLETADA', 4), -- 30000 * 4
+ (9500.00, 7, 3, CURRENT_DATE, CURRENT_DATE, 'uploads/adjuntos/licitacion5.pdf', 'PENDIENTE', 5),  -- 9500 * 1
+ (82000.00, 8, 10, CURRENT_DATE, CURRENT_DATE, 'uploads/adjuntos/licitacion6.pdf', 'APROBADA', 6); -- 41000 * 2
 
-
--- proveedor_medio_de_pago (proveedor_id, medio_id)
-
-INSERT INTO proveedor_medio_pago (proveedor_id, medio_pago_id) VALUES
-    -- Proveedor 3 (Pedro Gómez)
-    (3, 1),  -- Efectivo
-    (3, 2),  -- Transferencia bancaria
-    (3, 3),  -- Visa crédito 1 cuota
-
-    -- Proveedor 4 (Homero Simpson)
-    (4, 4),  -- Visa crédito 3 cuotas
-    (4, 5),  -- Visa crédito 6 cuotas
-    (4, 6),  -- Visa crédito 12 cuotas
-    (4, 7),  -- Amex crédito 1 cuota
-    (4, 8),  -- Amex crédito 3 cuotas
-
-    -- Proveedor 5 (Pedro Simpson)
-    (5, 11), -- Débito Visa
-    (5, 13), -- MercadoPago
-    (5, 14), -- Pago Fácil
-
-    -- Proveedor 6 (Juan Fulano) → TODOS los medios
-    (6, 1),
-    (6, 2),
-    (6, 3),
-    (6, 4),
-    (6, 5),
-    (6, 6),
-    (6, 7),
-    (6, 8),
-    (6, 9),
-    (6, 10),
-    (6, 11),
-    (6, 12),
-    (6, 13),
-    (6, 14),
-    (6, 15);
+-- Fin de semillas de licitaciones

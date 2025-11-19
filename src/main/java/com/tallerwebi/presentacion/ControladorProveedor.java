@@ -193,9 +193,21 @@ public class ControladorProveedor {
             datosModelado.put("cotizacionesCompletadas", cotizacionesCompletadas);
             datosModelado.put("cotizaciones", todasLasLicitaciones);
 
-            // Map de contador de comentarios no leídos para cada cotización (cliente)
+            // Map de contador de comentarios no leídos para cada licitación (proveedor)
             Map<Long, Long> unreadCounts = new HashMap<>();
-
+            if (servicioComentario != null) {
+                for (LicitacionDto l : todasLasLicitaciones) {
+                    if (l.getId() != null) {
+                        long noLeidos = 0L;
+                        try {
+                            noLeidos = servicioComentario.contarNoLeidosParaProveedorLicitacion(l.getId());
+                        } catch (Exception ex) {
+                            noLeidos = 0L;
+                        }
+                        unreadCounts.put(l.getId(), noLeidos);
+                    }
+                }
+            }
             datosModelado.put("unreadComentarioCounts", unreadCounts);
 
         } catch (NoHayLicitacionesExistentes e) {

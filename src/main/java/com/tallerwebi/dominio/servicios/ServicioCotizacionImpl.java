@@ -24,13 +24,16 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
     private final RepositorioCotizacion cotizacionRepository;
     private final RepositorioProductoImpl productoRepository;
     private ServicioEmail servicioEmail;
+    private ServicioNotificacion servicioNotificacion;
 
     @Autowired
     public ServicioCotizacionImpl(RepositorioCotizacion cotizacionRepository,
-            RepositorioProductoImpl repositorioProducto, ServicioEmail servicioEmail) {
+            RepositorioProductoImpl repositorioProducto, ServicioEmail servicioEmail,
+            ServicioNotificacion servicioNotificacion) {
         this.cotizacionRepository = cotizacionRepository;
         this.productoRepository = repositorioProducto;
         this.servicioEmail = servicioEmail;
+        this.servicioNotificacion = servicioNotificacion;
     }
 
     @Override
@@ -57,6 +60,21 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
 
         cotizacion.setEstado(estado);
         cotizacionRepository.actualizarEstado(cotizacion);
+
+        String texto = "";
+        if (estado == EstadoCotizacion.APROBADA) {
+            texto = "El proveedor " + cotizacion.getProveedor().getRazonSocial() + " aceptó tu cotización #"
+                    + cotizacion.getId();
+        } else if (estado == EstadoCotizacion.RECHAZADO) {
+            texto = "Tu cotización #" + cotizacion.getId() + " de " + cotizacion.getProveedor().getRazonSocial()
+                    + " fue rechazada";
+        } else if (estado == EstadoCotizacion.COMPLETADA) {
+            texto = "Tu cotización #" + cotizacion.getId() + " fue completada.";
+        }
+        servicioNotificacion.notificar(cotizacion.getCliente(), texto,
+                "/spring/cliente/dashboard",
+                "COTIZACION_ESTADO", cotizacion.getId());
+
     }
 
     @Override
@@ -85,6 +103,19 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
 
         // servicioEmail.enviarEmail(newCotizacion.getProveedor().getEmail(), asunto,
         // cuerpoProveedor, false);
+
+        // inyectar ServicioNotificacion en el constructor y usar:
+        String msg = "Se creó la cotización #" + newCotizacion.getId() + " para el proveedor "
+                + newCotizacion.getProveedor().getRazonSocial();
+        servicioNotificacion.notificar(newCotizacion.getCliente(), msg,
+                "/spring/cliente/dashboard",
+                "COTIZACION_CREATED", newCotizacion.getId());
+
+        String msgProveedor = "El cliente " + newCotizacion.getCliente().getNombre() + " inicio la cotización #"
+                + cotizacion.getId();
+        servicioNotificacion.notificar(newCotizacion.getProveedor(), msgProveedor,
+                "/spring/proveedor/dashboard-proveedor",
+                "COTIZACION_CREATED", newCotizacion.getId());
 
         String cuerpoCliente = "Se ha creado una nueva cotización con ID: " + newCotizacion.getId() +
                 "\nMonto Total: " + newCotizacion.getMontoTotal() +
@@ -137,7 +168,6 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         cotizacionRepository.guardar(cotizacion);
     }
 
-    
     public Map<String, Long> obtenerEstadisticasCotizacionesDelProveedor(Long proveedorId) {
         Map<String, Long> estadisticas = new HashMap<>();
         estadisticas.put("APROBADA", cotizacionRepository.contarCotizacionesAprobadasPorProveedor(proveedorId));

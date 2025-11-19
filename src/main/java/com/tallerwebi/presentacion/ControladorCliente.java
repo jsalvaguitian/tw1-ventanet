@@ -70,7 +70,7 @@ public class ControladorCliente {
     }
 
     @GetMapping("/dashboard")
-    public ModelAndView irDashboard(HttpServletRequest request) throws NoHayCotizacionExistente {
+    public ModelAndView irDashboard(HttpServletRequest request) {
         ModelMap datosModelado = new ModelMap();
 
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
@@ -87,9 +87,9 @@ public class ControladorCliente {
         datosModelado.put("apellidoCliente", usuarioSesion.getApellido());
         datosModelado.put("rolCliente", usuarioSesion.getRol());
 
-        try {
-            List<Cotizacion> todasLasCotizaciones = servicioCotizacion
-                    .obtenerCotizacionPorIdCliente(usuarioSesion.getId());
+    try {
+        List<Cotizacion> todasLasCotizaciones = servicioCotizacion
+            .obtenerCotizacionPorIdCliente(usuarioSesion.getId());
 
             if (todasLasCotizaciones == null) {
                 todasLasCotizaciones = new ArrayList<>();
@@ -135,14 +135,38 @@ public class ControladorCliente {
             }
             datosModelado.put("unreadComentarioCounts", unreadCounts);
 
-        } catch (NoHayProductoExistente e) {
+            // Licitaciones y comentarios no leídos (solo si servicioLicitacion disponible)
+            if (servicioLicitacion != null) {
+                try {
+                    List<Licitacion> licitacionesCliente = servicioLicitacion.obtenerLicitacionesPorIdCliente(usuarioSesion.getId());
+                    Map<Long, Long> unreadLicitacionCounts = new HashMap<>();
+                    for (Licitacion l : licitacionesCliente) {
+                        if (l.getId() != null && servicioComentario != null) {
+                            long noLeidosLic = 0L;
+                            try {
+                                noLeidosLic = servicioComentario.contarNoLeidosParaClienteLicitacion(l.getId());
+                            } catch (Exception ex) {
+                                noLeidosLic = 0L;
+                            }
+                            unreadLicitacionCounts.put(l.getId(), noLeidosLic);
+                        }
+                    }
+                    datosModelado.put("licitacionesCliente", licitacionesCliente); // lista completa para posible uso
+                    datosModelado.put("unreadLicitacionCounts", unreadLicitacionCounts);
+                } catch (Exception ex) {
+                    datosModelado.put("unreadLicitacionCounts", new HashMap<Long, Long>());
+                }
+            }
+
+        } catch (NoHayCotizacionExistente e) {
+            // Caso sin cotizaciones: devolvemos contadores en cero y lista vacía, evitando tipos incorrectos
             datosModelado.put("cotizaciones", new ArrayList<>());
-            datosModelado.put("totalCotizaciones", new ArrayList<>());
-            datosModelado.put("cotizacionesPendientes", new ArrayList<>());
-            datosModelado.put("cotizacionesAprobadas", new ArrayList<>());
-            datosModelado.put("cotizacionesRechazadas", new ArrayList<>());
-            datosModelado.put("cotizacionesCompletadas", new ArrayList<>());
-            datosModelado.put("error", "No hay presupuestos disponibles");
+            datosModelado.put("totalCotizaciones", 0L);
+            datosModelado.put("cotizacionesPendientes", 0L);
+            datosModelado.put("cotizacionesAprobadas", 0L);
+            datosModelado.put("cotizacionesRechazadas", 0L);
+            datosModelado.put("cotizacionesCompletadas", 0L);
+            datosModelado.put("error", "No hay cotizaciones disponibles");
         }
 
         return new ModelAndView("dashboard", datosModelado);
@@ -215,6 +239,23 @@ public class ControladorCliente {
             // }
             // }
             datosModelado.put("unreadComentarioCounts", unreadCounts);
+
+            // Cargar contadores de comentarios no leídos para licitaciones (vista custom)
+            Map<Long, Long> unreadLicitacionCounts = new HashMap<>();
+            if (servicioComentario != null) {
+                for (LicitacionDto l : todasLasLicitaciones) {
+                    if (l.getId() != null) {
+                        long noLeidosLic = 0L;
+                        try {
+                            noLeidosLic = servicioComentario.contarNoLeidosParaClienteLicitacion(l.getId());
+                        } catch (Exception ex) {
+                            noLeidosLic = 0L;
+                        }
+                        unreadLicitacionCounts.put(l.getId(), noLeidosLic);
+                    }
+                }
+            }
+            datosModelado.put("unreadLicitacionCounts", unreadLicitacionCounts);
 
         } catch (NoHayLicitacionesExistentes e) {
             datosModelado.put("cotizaciones", new ArrayList<>());

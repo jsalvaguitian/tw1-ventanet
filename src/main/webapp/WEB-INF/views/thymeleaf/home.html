@@ -80,6 +80,54 @@
     </section>
   </main>
 
+<!-- SECCION DESTACADOS -->
+  <h2 class="text-center mt-4 mb-3">Productos Destacados</h2>
+  <div th:if="${productosMasCotizados.size() > 0}">
+      <div id="carouselProductos" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4500">
+          <div class="carousel-inner">
+
+              <th:block th:with="slides=${(productosMasCotizados.size() + 2) / 3}">
+
+                  <div class="carousel-item"
+                      th:each="i : ${#numbers.sequence(0, slides-1)}"
+                      th:classappend="${i == 0} ? 'active'">
+
+                      <div class="row justify-content-center">
+
+                          <div class="col-md-4"
+                              th:each="p, stat : ${productosMasCotizados}"
+                              th:if="${stat.index >= i*3 and stat.index < (i+1)*3}">
+
+                              <a th:href="@{'/detalle-producto/' + ${p.productoId}}" class="text-decoration-none">
+                              <div class="card mb-3">
+                                  <img th:if="${p.imagenUrl != null}" th:src="@{${p.imagenUrl}}" class="card-img-top">
+                                  <div class="card-body text-center">
+                                      <h5 th:text="${p.nombre}" class="text-dark"></h5>
+                                      <p>Cotizado <span th:text="${p.cantidadTotal}"></span> veces</p>
+                                  </div>
+                              </div>
+                            </a>
+
+                          </div>
+                      </div>
+                  </div>
+              </th:block>
+
+          </div>
+
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselProductos" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon"></span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselProductos" data-bs-slide="next">
+              <span class="carousel-control-next-icon"></span>
+          </button>
+      </div>
+  </div>
+
+  <p th:if="${productosMasCotizados.size() == 0}" class="text-muted">
+      Aún no hay productos cotizados.
+  </p>
+
   <!-- NOSOTROS / FABRICANDO -->
   <section class="fabricando text-center py-5 bg-light">
     <div class="container">

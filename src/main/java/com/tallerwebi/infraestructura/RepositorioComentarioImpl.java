@@ -48,6 +48,20 @@ public class RepositorioComentarioImpl implements RepositorioComentario {
         return query.getResultList();
     }
 
+        @Override
+        public List<Comentario> obtenerPorIdLicitacion(Long licitacionId) {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery(
+            "SELECT c FROM Comentario c " +
+                "LEFT JOIN FETCH c.cliente " +
+                "LEFT JOIN FETCH c.proveedor " +
+                "WHERE c.licitacion.id = :licitacionId " +
+                "ORDER BY c.fechaCreacion ASC",
+            Comentario.class);
+        query.setParameter("licitacionId", licitacionId);
+        return query.getResultList();
+        }
+
     @Override
     public Comentario guardar(Comentario comentario) {
         sessionFactory.getCurrentSession().save(comentario);
@@ -92,6 +106,28 @@ public class RepositorioComentarioImpl implements RepositorioComentario {
     query.setParameter("cid", cotizacionId);
     Long result = query.uniqueResult();
     return result == null ? 0L : result;
+    }
+
+    @Override
+    public long contarNoLeidosParaLicitacionCliente(Long licitacionId) {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery(
+            "SELECT COUNT(c) FROM Comentario c WHERE c.licitacion.id = :lid AND c.leidoPorCliente = false",
+            Long.class);
+        query.setParameter("lid", licitacionId);
+        Long result = query.uniqueResult();
+        return result == null ? 0L : result;
+    }
+
+    @Override
+    public long contarNoLeidosParaLicitacionProveedor(Long licitacionId) {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery(
+            "SELECT COUNT(c) FROM Comentario c WHERE c.licitacion.id = :lid AND c.leidoPorProveedor = false",
+            Long.class);
+        query.setParameter("lid", licitacionId);
+        Long result = query.uniqueResult();
+        return result == null ? 0L : result;
     }
 
 }
