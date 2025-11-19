@@ -35,7 +35,7 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
 
     private RepositorioUsuario repositorioUsuario;
     private RepositorioProveedor repositorioProveedor;
-    //private ServicioFileStorage fileStorageService = new ServicioFileStorage();
+    private ServicioFileStorage fileStorageService = new ServicioFileStorage();
     private ServicioEmail servicioEmail;
 
     @Autowired
@@ -132,8 +132,8 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
 
         // Guardar documento del proveedor en el servidor
         if (!documento.isEmpty() || documento != null) {
-            //String path = fileStorageService.guardarArchivoImgOPdf(documento);
-            //proveedor.setDocumento(path);
+            String path = fileStorageService.guardarArchivoImgOPdf(documento);
+            proveedor.setDocumento(path);
         }
 
         String contraseniaHasheada = PasswordUtil.hashear(proveedor.getPassword());
