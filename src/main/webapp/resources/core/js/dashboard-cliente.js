@@ -465,23 +465,46 @@ window.getEstadoHTML = getEstadoHTML;
 async function mostrarDetalleCotizacion(id) {
     const url = '/spring/cotizacion/detalle/' + id;
 
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(cotizacion => {
+            const estadoHTML = getEstadoHTML(cotizacion.estado);
+            let botonesAccion = '';
 
-        const cotizacion = await response.json();
-        const estadoHTML = getEstadoHTML(cotizacion.estado);
-        let botonesAccion = '';
+            if (cotizacion.estado === 'PENDIENTE') {
+                botonesAccion = `
+                    <div style="margin-top: 25px; text-align: center;">
+                        <button class="btn btn-danger" 
+                                onclick="manejarAccionCotizacion(${cotizacion.id}, 'RECHAZADO')">
+                            ❌ Rechazar
+                        </button>
+                    </div>
+                `;
+            }
 
-        if (cotizacion.estado === 'PENDIENTE') {
-            botonesAccion = `
-                <div style="margin-top: 20px; text-align: center;">                
-                    <button class="btn btn-danger" onclick="manejarAccionCotizacion(${cotizacion.id}, 'RECHAZADO')">Rechazar</button>
-                </div>
-            `;
-        }
+            
+            let medioDePagoHTML = '';
+            if (cotizacion.medioDePago) {
+                const mp = cotizacion.medioDePago;
+                let cuotas = '';
+                if(mp.tipo === 'CREDITO') {
+                    cuotas = mp.cantidad_cuotas ? `(${mp.cantidad_cuotas} cuotas)` : '';
+                }
+                
+                const detalleMP = `${mp.nombre} ${cuotas}`;
+                
+                medioDePagoHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <p style="margin: 0; font-size: 14px; text-align: right;">
+                            <strong>Medio de Pago:</strong> ${detalleMP}
+                        </p>
+                        ${mp.imagen ? `<img src="/spring/img/${mp.imagen}" alt="${mp.nombre}" style="width: 30px; height: auto; border-radius: 5px;">` : ''}
+                    </div>
+                `;
+            }
 
         if (cotizacion.estado === 'APROBADA' || cotizacion.estado === 'COMPLETADA') {
             botonesAccion = `
@@ -495,21 +518,42 @@ async function mostrarDetalleCotizacion(id) {
 
         // Generar contenido HTML del detalle
         let htmlContent = `
-            <p><strong>Proveedor:</strong> ${cotizacion.proveedor.razonSocial}</p>
-            <p><strong>Estado:</strong> ${estadoHTML}</p> 
-            <p><strong>Monto Total:</strong> $${cotizacion.montoTotal.toFixed(2)}</p>
-            
-            <h5 style="margin-top: 20px;">Items de la Cotización</h5>
-            <table class="table table-bordered table-sm">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>P. Unitario</th>
-                        <th>Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div style="font-family: Arial, sans-serif; color:#333; text-align:left;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #ccc; padding-bottom: 10px; margin-bottom: 10px;">
+                    <div style="width: 48%;">
+                        <h4 style="margin: 0; color: #003366;">${cotizacion.proveedor?.razonSocial || 'Proveedor desconocido'}</h4>
+                        <p style="margin: 2px 0;">${cotizacion.proveedor?.direccion || ''}</p>
+                        <p style="margin: 2px 0;">Tel: ${cotizacion.proveedor?.telefono || '-'}</p>
+                        <p style="margin: 2px 0;">Email: ${cotizacion.proveedor?.email || '-'}</p>
+                        <p style="margin: 2px 0;">CUIT: ${cotizacion.proveedor?.cuit || '-'}</p>
+                    </div>
+                    <div style="width: 48%; text-align: right;">
+                        <h5 style="margin: 0 0 5px;">Cliente</h5>
+                        <p style="margin: 2px 0;"><strong>${cotizacion.cliente?.nombre || 'Cliente desconocido'}</strong></p>
+                        <p style="margin: 2px 0;">${cotizacion.cliente?.telefono || '-'}</p>
+                        <p style="margin: 2px 0;">Fecha: ${new Date(cotizacion.fechaCreacion).toLocaleDateString()}</p>
+                    </div>
+                </div>
+
+                    <!-- Estado -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">
+                        <p style="margin: 0;"><strong>Estado:</strong> ${estadoHTML}</p>
+                        ${medioDePagoHTML}
+                    </div>
+
+                <h5 style="margin-top: 20px; color:#003366;">Detalle de la Cotización</h5>
+                <table style="width:100%; border-collapse: collapse; font-size: 14px; margin-top:5px;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="border: 1px solid #ccc; padding: 8px;">Producto</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Cantidad</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Precio Unitario</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">% Descuento</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">IVA</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
         `;
 
         cotizacion.items.forEach(item => {
@@ -658,10 +702,10 @@ async function mostrarDetalleCotizacion(id) {
             }
         });
 
-    } catch (error) {
+    }).catch (error => {
         console.error("Error al cargar el detalle:", error);
-        Swal.fire('Error', 'No se pudo cargar el detalle de la cotización. Detalle: ' + error.message, 'error');
-    }
+        Swal.fire('Error', 'No se pudo cargar el detalle de la cotización: ' + error.message, 'error');
+    });
 }
 
 function mostrarDetalleLicitacion(id) {

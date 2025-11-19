@@ -10,6 +10,7 @@ public class CotizacionDTO {
     private Double montoTotal;
     private List<CotizacionItemDTO> items;
     private boolean seleccionada;
+    private Long medioPagoId;
 
     public CotizacionDTO() {}
 
@@ -18,6 +19,10 @@ public class CotizacionDTO {
     }
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getMedioPagoId() {
+        return medioPagoId;
     }
 
 
@@ -57,4 +62,6 @@ public class CotizacionDTO {
     public void setSeleccionada(boolean seleccionada) {
         this.seleccionada = seleccionada;
     }
+
+    
 }

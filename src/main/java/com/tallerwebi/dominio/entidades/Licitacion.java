@@ -35,6 +35,10 @@ public class Licitacion {
     @JoinColumn(name = "productoCustom_id", nullable = false)
     private ProductoCustom productoCustom;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "medio_pago_id", nullable = true)
+    private MedioDePago medioDePago;
+
     public Long getId() {
         return id;
     }

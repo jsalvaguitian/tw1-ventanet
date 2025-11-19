@@ -35,6 +35,7 @@ import com.tallerwebi.dominio.entidades.CotizacionItem;
 import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.entidades.MedioDePago;
 import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.excepcion.CotizacionesExistente;
 import com.tallerwebi.dominio.excepcion.NoHayCotizacionExistente;
@@ -47,6 +48,7 @@ import com.tallerwebi.dominio.servicios.ServicioTablas;
 import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
 import com.tallerwebi.dominio.servicios.ServicioTipoVentana;
 import com.tallerwebi.dominio.servicios.ServicioUsuario;
+import com.tallerwebi.dominio.servicios.ServicioMedioDePago;
 import com.tallerwebi.presentacion.dto.CotizacionDTO;
 import com.tallerwebi.presentacion.dto.CotizacionItemDTO;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
@@ -61,11 +63,12 @@ public class ControladorCotizacion {
     private final ServicioTipoProducto servicioTipoProducto;
     private final ServicioTipoVentana servicioTipoVentana;
     private final ServicioTablas servicioTablas;
+    private final ServicioMedioDePago servicioMedioDePago;
 
     @Autowired
     public ControladorCotizacion(ServicioTipoProducto servicioTipoProducto, ServicioTipoVentana servicioTipoVentana,
             ServicioTablas servicioTablas, ServicioCotizacion servicioCotizacion, ServicioProducto servicioProducto,
-            ServicioUsuario servicioUsuario, ServicioProveedorI servicioProveedor) {
+            ServicioUsuario servicioUsuario, ServicioProveedorI servicioProveedor, ServicioMedioDePago servicioMedioDePago) {
         this.servicioCotizacion = servicioCotizacion;
         this.servicioProducto = servicioProducto;
         this.servicioUsuario = servicioUsuario;
@@ -73,6 +76,7 @@ public class ControladorCotizacion {
         this.servicioTipoProducto = servicioTipoProducto;
         this.servicioTipoVentana = servicioTipoVentana;
         this.servicioTablas = servicioTablas;
+        this.servicioMedioDePago = servicioMedioDePago;
     }
 
     @GetMapping("/presupuesto")
@@ -219,16 +223,17 @@ public class ControladorCotizacion {
     public ModelAndView previsualizar(
             HttpServletRequest request) {
         try {
+            ModelMap datosModelado = new ModelMap();
             List<Cotizacion> cotizaciones = (List<Cotizacion>) request.getSession()
                     .getAttribute("cotizaciones");
             if (cotizaciones == null || cotizaciones.isEmpty()) {
                 // Redirigir si la sesión está vacía (ej. acceso directo o sesión expirada)
-                return new ModelAndView("redirect:/catalogo");
+                return new ModelAndView("previsualizar-cotizacion", datosModelado);
             }
 
             request.getSession().removeAttribute("cotizaciones");
 
-            ModelMap datosModelado = new ModelMap();
+            
             datosModelado.put("cotizaciones", cotizaciones);
             datosModelado.put("esConfirmacion", false);
 
@@ -236,8 +241,7 @@ public class ControladorCotizacion {
 
         } catch (Exception e) {
             e.printStackTrace();
-            ModelMap datosModelado = new ModelMap();
-            // return "redirect:/catalogo";
+            ModelMap datosModelado = new ModelMap();            
             return new ModelAndView("previsualizar-cotizacion", datosModelado);
         }
     }
@@ -275,6 +279,8 @@ public class ControladorCotizacion {
                     continue;
                 }
 
+               
+
                 // 🔹 Crear entidad Cotización
                 Cotizacion cot = new Cotizacion();
                 cot.setCliente((Cliente) cliente);
@@ -283,6 +289,12 @@ public class ControladorCotizacion {
                 cot.setEstado(EstadoCotizacion.PENDIENTE);
                 cot.setFechaCreacion(LocalDate.now());
                 cot.setFechaExpiracion(LocalDate.now().plusDays(7));
+
+                 MedioDePago medioDePago = servicioMedioDePago.obtenerPorId(dto.getMedioPagoId());
+                if (medioDePago != null) {
+                    cot.setMedioDePago(medioDePago);
+                }
+                
 
                 List<CotizacionItem> items = new ArrayList<>();
 
