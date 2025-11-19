@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,6 +28,7 @@ import com.tallerwebi.dominio.excepcion.CuitInvalido;
 import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
+import com.tallerwebi.dominio.servicios.ServicioEstadisticas;
 import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.DatosLogin;
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
@@ -162,8 +164,20 @@ public class ControladorAutenticacion {
 
     @RequestMapping(path = "/home", method = RequestMethod.GET)
     public ModelAndView irAHome() {
-        return new ModelAndView("home");
+        ModelAndView mav = new ModelAndView("home");
+        mav.addObject("productosMasCotizados", servicioEstadisticas.obtenerTopProductos(7)); // cantidad que quieras
+        return mav;
     }
+
+    @Autowired
+    private ServicioEstadisticas servicioEstadisticas;
+
+    @GetMapping("/estadisticas")
+    public String mostrarEstadisticas(Model model) {
+        model.addAttribute("productosMasCotizados", servicioEstadisticas.obtenerTopProductos(7));
+        return "estadisticas";
+    }
+    
 
     @RequestMapping(path = "/dashboard/detalle-cotizacion", method = RequestMethod.GET)
     public ModelAndView irADetalleCotizacion() {

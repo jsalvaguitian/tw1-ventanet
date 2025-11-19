@@ -41,6 +41,24 @@ document.addEventListener("DOMContentLoaded", function () {
         return { inicio, fin };
     }
 
+// funcion para cargar img en el pdf
+    function loadImageAsBase64(url) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = "Anonymous"; // por si acaso
+            img.onload = function () {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL("image/png"));
+            };
+            img.onerror = reject;
+            img.src = url;
+        });
+    }
+
     function aplicarFiltros() {
         // Detectar qué tabla está visible (cotizaciones o custom)
         const tablaActiva =
@@ -204,41 +222,119 @@ async function mostrarDetalleCotizacion(id) {
                     console.log("Encontrado:", btnPDF);
                     if (btnPDF) {
                         btnPDF.addEventListener("click", async () => {
-                            console.log("Click detectado en botón PDF"); // 👈 DEBUG
+                            console.log("Click detectado en botón PDF");
+
                             const { jsPDF } = window.jspdf;
                             const doc = new jsPDF();
+                            const pageWidth = doc.internal.pageSize.getWidth();
+                            
+                            // CABECERA                       
+                            // ---- Cargar logo del proveedor ----
+                            let logoUrl = null;
+                            let logoBase64 = null;
 
-                            // --- Datos reales del proveedor ---
-                            doc.setFontSize(10);
-                            doc.text(`Proveedor: ${cotizacion.proveedor.razonSocial}`, 10, 10);
-                            doc.text(`CUIT: ${cotizacion.proveedor.cuit || 'N/A'}`, 10, 15);
-
-                            // --- Cliente ---
-                            if (cotizacion.cliente) {
-                                doc.text(`Cliente: ${cotizacion.cliente.nombre}`, 10, 25);
+                            if (cotizacion.proveedor.origenLogo === "img") {
+                                logoUrl = `/spring/img/${cotizacion.proveedor.logoPath}`;
+                            } 
+                            else if (cotizacion.proveedor.origenLogo === "uploads") {
+                                logoUrl = `/spring/uploads/${cotizacion.proveedor.logoPath}`;
                             }
 
-                            // --- Detalle ---
-                            let y = 40;
-                            doc.text("Detalle de cotización:", 10, y);
-                            y += 10;
+                            if (logoUrl) {
+                                console.log("➡️ URL del logo que estoy intentando cargar:", logoUrl);
+                                console.log("Proveedor:", cotizacion.proveedor);
+                                console.log("Origen del logo:", cotizacion.proveedor.origenLogo);
+                                console.log("LogoPath:", cotizacion.proveedor.logoPath);
+                                
+                                try {
+                                    logoBase64 = await loadImageAsBase64(logoUrl);
+                                } catch (err) {
+                                    console.error("Error cargando logo:", err);
+                                }
+                            }
+
+                            // Insertar logo (columna izquierda)
+                            if (logoBase64) {
+                                doc.addImage(logoBase64, "PNG", 10, 10, 40, 20);
+                            }
+
+                            doc.setFontSize(12);
+                            doc.setFont("helvetica", "bold");
+                            const columnaDerechaX = pageWidth - 80;
+                            
+                            // Proveedor (ESQUINA SUPERIOR DERECHA)
+                            const proveedorText = `Proveedor: ${cotizacion.proveedor.razonSocial}\nCUIT: ${cotizacion.proveedor.cuit || 'N/A'}\n${cotizacion.proveedor.sitioWeb || 'N/A'}`;
+
+                            const proveedorX = pageWidth - doc.getTextWidth("Proveedor: " + cotizacion.proveedor.razonSocial) - 10;
+                            doc.text(proveedorText, columnaDerechaX, 15);
+
+                            // Cliente y Cotización en 2 columnas
+                            doc.setFontSize(11);
+                            doc.setFont("helvetica", "normal");
+
+                            // Columna izquierda CLIENTE
+                            let y = 35;
+                            doc.text(`Cliente: ${cotizacion.cliente?.nombre || "N/A"}`, 10, y);
+                            doc.text(`Teléfono: ${cotizacion.cliente?.telefono || "N/A"}`, 10, y + 7);
+
+                            // Columna derecha COTIZACION + FECHA
+                            const fechaActual = new Date().toLocaleString();
+                            const datosDerecha =
+                                `Cotización #${cotizacion.id}\nFecha: ${fechaActual}`;
+
+                            const derechaX = pageWidth - doc.getTextWidth("Cotización #" + cotizacion.id) - 20;
+                            doc.text(datosDerecha, columnaDerechaX, y);
+
+                            // Línea separadora CABECERA-CUERPO
+                            doc.line(10, y + 15, pageWidth - 10, y + 15);
+
+                            // CUERPO
+                            y += 30;
+                            doc.setFont("helvetica", "bold");
+                            doc.setFontSize(13);
+                            doc.text("Detalles de la cotización", 10, y);
+                            y += 6;
+
+                            doc.setFont("helvetica", "normal");
+                            doc.setFontSize(11);
+
+                            // Encabezado de tabla
+                            doc.text("Producto", 10, y);
+                            doc.text("Cant.", pageWidth / 2 - 10, y);
+                            doc.text("Monto", pageWidth - 40, y);
+
+                            y += 5;
+                            doc.line(10, y, pageWidth - 10, y);
+                            y += 7;
+
+                            // Items
                             cotizacion.items.forEach(item => {
-                                doc.text(
-                                    `${item.producto.nombre} - Cant: ${item.cantidad} x $${item.precioUnitario.toFixed(2)}`,
-                                    10,
-                                    y
-                                );
+                                const subtotal = item.cantidad * item.precioUnitario;
+
+                                doc.text(item.producto.nombre, 10, y);
+                                doc.text(String(item.cantidad), pageWidth / 2 - 10, y);
+                                doc.text(`$${subtotal.toFixed(2)}`, pageWidth - 40, y);
                                 y += 8;
                             });
 
-                            // --- Total ---
-                            doc.setFontSize(12);
-                            doc.text(`TOTAL: $${cotizacion.montoTotal.toFixed(2)}`, 10, y + 10);
+                            // Línea separadora CUERPO-PIE
+                            doc.line(10, y, pageWidth - 10, y);
+                            y += 15;
 
+                            // PIE
+                            doc.setFont("helvetica", "bold");
+                            doc.setFontSize(16);
+
+                            const totalText = `TOTAL: $${cotizacion.montoTotal.toFixed(2)}`;
+                            const totalX = pageWidth - doc.getTextWidth(totalText) - 10;
+
+                            doc.text(totalText, totalX, y);
+
+                            // Guardar PDF
                             doc.save(`cotizacion_${cotizacion.id}.pdf`);
                         });
                     }
-                }, 200); // <-- pequeña espera para asegurar que el botón está en el DOM
+                }, 200);
             }
         });
 
