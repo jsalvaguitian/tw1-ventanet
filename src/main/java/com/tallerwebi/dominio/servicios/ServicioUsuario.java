@@ -16,6 +16,7 @@ import com.tallerwebi.dominio.excepcion.CuitInvalido;
 import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
+import com.tallerwebi.presentacion.dto.UsuarioAdminDTO;
 
 public interface ServicioUsuario {
 
@@ -40,4 +41,5 @@ public interface ServicioUsuario {
 
         void eliminarUsuario(Usuario usuario);
 
+        List<UsuarioAdminDTO> obtenerUsuariosParaAdmin();
 }

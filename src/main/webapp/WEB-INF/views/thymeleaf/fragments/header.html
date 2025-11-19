@@ -53,10 +53,7 @@
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="cuentaDropdown">
                         <li>
-                            <a class="dropdown-item"
-                              th:href="${usuarioLogueado.rol == 'PROVEEDOR'} ? @{/proveedor/dashboard-proveedor} : @{/cliente/dashboard}">
-                                Dashboard
-                            </a>
+                            <a class="dropdown-item" th:href="@{${usuarioLogueado.rol == 'PROVEEDOR' ? '/proveedor/dashboard-proveedor' : (usuarioLogueado.rol == 'ADMIN' ? '/admin/dashboard-admin' : '/cliente/dashboard')}}">Dashboard</a>
                         </li>
                         <li>
                           <a class="dropdown-item" th:href="@{/usuarios/perfil-usuario}">Perfil</a>
