@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversación Licitación #[[${licitacion != null}?${licitacion.id}:'-']]</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        .chat-container {max-width: 960px; margin: 0 auto;}
+        .mensaje {padding: .6rem .9rem; border-radius: .75rem; margin-bottom:.5rem; position:relative;}
+        .mensaje.cliente {background:#e7f3ff; align-self:flex-start;}
+        .mensaje.proveedor {background:#f5e7ff; align-self:flex-end;}
+        .mensaje small {display:block; font-size:.65rem; margin-top:.35rem; opacity:.7;}
+        .chat-stream {display:flex; flex-direction:column;}
+        .form-chat textarea {resize:vertical;}
+        .badge-leido {position:absolute; top:4px; right:8px; font-size:.55rem;}
+        #sendingOverlay {position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:3000;}
+        #sendingOverlay .box {background:#ffffff; padding:1.25rem 1.75rem; border-radius:.75rem; box-shadow:0 8px 28px rgba(0,0,0,.25); display:flex; align-items:center; gap:.75rem;}
+        #sendingOverlay .spinner-border {width:1.75rem; height:1.75rem;}
+        #sendingOverlay.show {display:flex;}
+    </style>
+</head>
+<body>
+    <div class="sidebar d-none d-md-block" id="sidebar">
+        <a th:href="@{/}" class="noStyleLinks"><h2>Ventanet</h2></a>
+        <ul>
+            <li class="active"><i class="bi bi-chat-dots"></i>Licitación Mensajes</li>
+            <li><a th:href="@{/cliente/dashboard}" class="noStyleLinks"><i class="bi bi-house"></i>Dashboard</a></li>
+        </ul>
+    </div>
+    <div class="main" id="mainContent">
+        <h3 class="mb-3">Conversación de Licitación <span th:text="${licitacion.id}"></span></h3>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:unless="${error}" class="chat-container">
+            <div class="mb-3 p-2 bg-light rounded">
+                <strong>Cliente:</strong> <span th:text="${licitacion.cliente.nombre}"></span>
+                &mdash; <strong>Proveedor:</strong> <span th:text="${licitacion.proveedor.razonSocial}"></span>
+            </div>
+            <div class="chat-stream" id="chatStream">
+                <div th:each="c : ${comentarios}" th:class="${c.cliente != null} ? 'mensaje cliente' : 'mensaje proveedor'" th:id="${c.id}">
+                    <div th:text="${c.mensaje}"></div>
+                    <small>
+                        <span th:text="${c.fechaCreacionFormatted} + ' hs'"></span>
+                        &middot;
+                        <span th:text="${c.cliente != null ? licitacion.cliente.nombre : licitacion.proveedor.razonSocial}"></span>
+                    </small>
+                    <span class="badge bg-success badge-leido" th:if="${(usuarioSesion != null && usuarioSesion.rol == 'CLIENTE' && c.leidoPorCliente) || (usuarioSesion != null && usuarioSesion.rol == 'PROVEEDOR' && c.leidoPorProveedor)}">Leído</span>
+                </div>
+                <div id="ultimo"></div>
+            </div>
+            <form class="form-chat mt-3" th:action="@{'/licitacion/' + ${licitacion.id} + '/mensajes'}" method="post" id="formEnviarComentario">
+                <div class="mb-2">
+                    <textarea name="mensaje" class="form-control" rows="3" placeholder="Escribí tu mensaje" required></textarea>
+                </div>
+                <button class="btn btn-primary" id="btnEnviar">Enviar</button>
+                <a th:if="${usuarioSesion != null && usuarioSesion.rol == 'CLIENTE'}" th:href="@{/cliente/dashboard}" class="btn btn-secondary">Volver</a>
+                <a th:if="${usuarioSesion != null && usuarioSesion.rol == 'PROVEEDOR'}" th:href="@{/proveedor/dashboard-proveedor}" class="btn btn-secondary">Volver</a>
+                <div th:if="${param.error}" class="alert alert-warning mt-2" th:text="${param.error}"></div>
+            </form>
+        </div>
+    </div>
+    <div id="sendingOverlay" aria-hidden="true" aria-live="assertive" aria-label="Enviando mensaje">
+        <div class="box">
+            <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
+            <div>
+                <strong>Enviando mensaje</strong><br>
+                <small>No cierres la página</small>
+            </div>
+        </div>
+    </div>
+    <script>
+        const ultimo = document.getElementById('ultimo');
+        if (ultimo) {
+            ultimo.scrollIntoView({behavior:'smooth'});
+        }
+        const form = document.getElementById('formEnviarComentario');
+        const overlay = document.getElementById('sendingOverlay');
+        const btnEnviar = document.getElementById('btnEnviar');
+        if(form && overlay && btnEnviar){
+            form.addEventListener('submit', function(){
+                overlay.classList.add('show');
+                overlay.setAttribute('aria-hidden','false');
+                btnEnviar.disabled = true;
+                btnEnviar.innerText = 'Enviando…';
+            });
+        }
+    </script>
+</body>
+</html>
