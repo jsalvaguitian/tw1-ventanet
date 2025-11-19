@@ -100,49 +100,43 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function aplicarFiltros() {
-        // Detectar qué tabla está visible (cotizaciones o custom)
+        // Detectar tabla activa
         const tablaActiva =
-            document.querySelector("#tablaCotizaciones")?.offsetParent !== null
-                ? "#tablaCotizaciones"
-                : "#tablaLicitaciones";
+            document.querySelector('#tablaCotizaciones')?.offsetParent !== null
+                ? '#tablaCotizaciones'
+                : '#tablaLicitaciones';
 
         const filas = document.querySelectorAll(`${tablaActiva} tbody tr`);
-        // Contadores dinámicos (sin aplicar filtro de estado para distribución)
-        let countTotal = 0;
-        let countPendiente = 0;
-        let countAprobada = 0;
-        let countRechazado = 0;
-        let countCompletada = 0;
+        const esCustom = tablaActiva === '#tablaLicitaciones';
 
-    const visiblesFinal = []; // filas que pasan TODOS los filtros incluyendo estado (para narrowing)
+        // Definir índices según tabla
+        const idxProveedor = esCustom ? 2 : 1;
+        const idxMonto = esCustom ? 3 : 2; // nueva columna monto en custom
+        const idxEstado = esCustom ? 4 : 3;
+        const idxFechaCreacion = esCustom ? 5 : 4;
+        const idxFechaExpiracion = esCustom ? 6 : 5;
 
-    filas.forEach(row => {
-            // Buscar índice de columna de estado y fecha (depende de la tabla)
-            const esCustom = tablaActiva === "#tablaLicitaciones";
-            const idxEstado = esCustom ? 3 : 3;
-            // Fecha de CREACIÓN fija en índice 4 para ambas tablas
-            const idxFechaCreacion = esCustom ? 4 : 4;
-            // Índice proveedor (difiere entre tablas)
-            const idxProveedor = esCustom ? 2 : 1;
+        // Contadores (distribución sin filtro estado)
+        let countTotal = 0, countPendiente = 0, countAprobada = 0, countRechazado = 0, countCompletada = 0;
+        const visiblesFinal = [];
 
-            const estado = row.children[idxEstado].textContent.trim().toUpperCase();
+        filas.forEach(row => {
+            const estado = row.children[idxEstado]?.textContent.trim().toUpperCase();
+            const proveedorStr = normalizarProveedor(row.children[idxProveedor]?.textContent);
             const textoFila = row.textContent.toLowerCase();
             const fechaStrCreacion = row.children[idxFechaCreacion]?.textContent.trim();
-            // Índice expiración: misma posición (5) en ambas tablas
-            const idxFechaExpiracion = esCustom ? 5 : 5;
             const fechaStrExp = row.children[idxFechaExpiracion]?.textContent.trim();
-            const proveedorStr = normalizarProveedor(row.children[idxProveedor]?.textContent);
 
-            // Primero evaluamos los filtros que NO son de estado para poder calcular distribución por estado.
+            // Búsqueda global
             const coincideBusqueda = textoFila.includes(searchText);
-            let coincideFecha = true;
-            // Proveedor solo se filtra en tabla de cotizaciones
-            let coincideProveedor = tablaActiva === '#tablaCotizaciones' ? (!proveedorFilterValue || proveedorStr === proveedorFilterValue) : true;
-            // Filtro de monto solo aplica a tabla cotizaciones. Columna monto total index 2
+
+            // Proveedor
+            const coincideProveedor = (!proveedorFilterValue || proveedorStr === proveedorFilterValue);
+
+            // Monto (aplica a ambas tablas ahora que custom tiene columna monto)
             let coincideMonto = true;
-            if (tablaActiva === '#tablaCotizaciones' && (montoMinVal !== null || montoMaxVal !== null)) {
-                // Tomamos siempre el valor ARS original y adaptamos el umbral si está en modo USD
-                const montoCell = row.children[2];
+            if ((montoMinVal !== null || montoMaxVal !== null)) {
+                const montoCell = row.children[idxMonto];
                 const arsRaw = montoCell?.getAttribute('data-precio-ars');
                 const numeroArs = arsRaw ? parseFloat(arsRaw) : NaN;
                 const isUSD = document.getElementById('toggleDolar')?.checked;
@@ -155,21 +149,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
-            // Lógica de fechas de creación manual: si existen sobreescriben preset
+            // Fechas creación
+            let coincideFechaCreacion = true;
             if (fechaCreacionDesde || fechaCreacionHasta) {
                 const fecha = parseFecha(fechaStrCreacion);
                 if (fecha) {
-                    if (fechaCreacionDesde && fecha < fechaCreacionDesde) coincideFecha = false;
-                    if (fechaCreacionHasta && fecha > fechaCreacionHasta) coincideFecha = false;
-                } else { coincideFecha = false; }
+                    if (fechaCreacionDesde && fecha < fechaCreacionDesde) coincideFechaCreacion = false;
+                    if (fechaCreacionHasta && fecha > fechaCreacionHasta) coincideFechaCreacion = false;
+                } else { coincideFechaCreacion = false; }
             } else if (dateRange && dateRange.inicio) {
                 const fecha = parseFecha(fechaStrCreacion);
                 if (fecha) {
-                    coincideFecha = fecha >= dateRange.inicio && (!dateRange.fin || fecha <= dateRange.fin);
-                } else { coincideFecha = false; }
+                    coincideFechaCreacion = fecha >= dateRange.inicio && (!dateRange.fin || fecha <= dateRange.fin);
+                } else { coincideFechaCreacion = false; }
             }
 
-            // Filtro de expiración independiente
+            // Fechas expiración
             let coincideFechaExp = true;
             if (fechaExpDesde || fechaExpHasta) {
                 const fExp = parseFecha(fechaStrExp);
@@ -179,9 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 } else { coincideFechaExp = false; }
             }
 
-            const pasaNoEstado = (coincideBusqueda && coincideFecha && coincideFechaExp && coincideProveedor && coincideMonto);
-
-            // Actualizar distribución si pasa filtros NO estado
+            const pasaNoEstado = (coincideBusqueda && coincideProveedor && coincideMonto && coincideFechaCreacion && coincideFechaExp);
             if (pasaNoEstado) {
                 countTotal++;
                 switch (estado) {
@@ -192,14 +185,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
-            // Estado se aplica solo para visibilidad final
-            const coincideEstado = currentFilter === "TODOS" || estado === currentFilter;
-            const visible = (pasaNoEstado && coincideEstado);
-            row.style.display = visible ? "" : "none";
+            const coincideEstado = currentFilter === 'TODOS' || estado === currentFilter;
+            const visible = pasaNoEstado && coincideEstado;
+            row.style.display = visible ? '' : 'none';
             if (visible) visiblesFinal.push(row);
         });
 
-        // Actualizar indicadores (si existen)
+        // Actualizar indicadores
         const elTotal = document.getElementById('totalEvents');
         const elPend = document.getElementById('pendingEvents');
         const elAprob = document.getElementById('approvedEvents');
@@ -211,11 +203,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (elRech) elRech.textContent = countRechazado;
         if (elComp) elComp.textContent = countCompletada;
 
-        // Narrowing dinámico de opciones (según subset final incluyendo estado activo)
-        if (tablaActiva === '#tablaCotizaciones') {
-            rebuildProveedorOptions(visiblesFinal);
-            rebuildMontosDatalist(visiblesFinal);
-        }
+        // Narrowing dinámico siempre (ambas tablas)
+        rebuildProveedorOptions(visiblesFinal);
+        rebuildMontosDatalist(visiblesFinal);
     }
 
     // Aplicar automáticamente al cambiar el select
@@ -292,17 +282,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function rebuildProveedorOptions(filasVisibles) {
         if (!proveedorSelect) return;
-        // Guardar selección actual normalizada
         const currentSelNorm = normalizarProveedor(proveedorSelect.value);
         const uniqueMap = new Map();
         filasVisibles.forEach(r => {
-            const provCell = r.children[1];
+            // Determinar índice proveedor según tabla origen
+            const parentId = r.closest('table')?.id;
+            const idxProv = parentId === 'tablaLicitaciones' ? 2 : 1;
+            const provCell = r.children[idxProv];
             if (!provCell) return;
             const display = provCell.textContent.trim();
             const key = normalizarProveedor(display);
             if (key && !uniqueMap.has(key)) uniqueMap.set(key, display);
         });
-        // Limpiar conservando la primera opción (Todos)
         while (proveedorSelect.options.length > 1) proveedorSelect.remove(1);
         [...uniqueMap.entries()].sort((a,b)=>a[1].localeCompare(b[1],'es')).forEach(([key, display]) => {
             const opt = document.createElement('option');
@@ -310,7 +301,6 @@ document.addEventListener("DOMContentLoaded", function () {
             opt.textContent = display;
             proveedorSelect.appendChild(opt);
         });
-        // Restaurar selección si todavía existe; sino reset a Todos
         if (currentSelNorm && uniqueMap.has(currentSelNorm)) {
             proveedorSelect.value = currentSelNorm;
         } else {
