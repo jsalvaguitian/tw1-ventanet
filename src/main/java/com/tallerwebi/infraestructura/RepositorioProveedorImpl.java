@@ -133,7 +133,7 @@ public class RepositorioProveedorImpl implements RepositorioProveedor {
     @Override
     public Proveedor obtenerProveedorConMedios(Long id) {
 
-        String hql = "SELECT p FROM Proveedor p JOIN FETCH p.mediosDePago WHERE p.id = :id";
+        String hql = "SELECT p FROM Proveedor p LEFT JOIN FETCH p.mediosDePago WHERE p.id = :id";
         sessionFactory.getCurrentSession()
                 .createQuery(hql, Proveedor.class);
         org.hibernate.query.Query<Proveedor> query = this.sessionFactory.getCurrentSession().createQuery(hql,

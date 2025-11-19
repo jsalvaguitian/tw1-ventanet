@@ -25,4 +25,9 @@ public class ServicioMedioDePagoImpl implements ServicioMedioDePago{
         return mediodePagoRepository.obtenerTodos();
     }
 
+    @Override
+    public MedioDePago obtenerPorId(Long id) {
+        return mediodePagoRepository.buscarPorId(id);
+    }
+
 }

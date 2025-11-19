@@ -348,11 +348,12 @@ public class ControladorProveedor {
     @ResponseBody // Indica a Spring que la respuesta debe ser escrita directamente en el cuerpo (como JSON)
     public ResponseEntity<List<MedioDePago>> obtenerMediosPagoPorProveedor(@PathVariable Long proveedorId) {
         
+        
         // 1. Obtener el proveedor.
         List<MedioDePago> mediosPago = servicioProveedorI.obtenerMediosDePagoDeProveedor(proveedorId);
         
         if (mediosPago == null) {            
-            return ResponseEntity.notFound().build();
+            mediosPago = new ArrayList<>();
         }
         
         return ResponseEntity.ok(mediosPago);

@@ -8,6 +8,7 @@ import com.tallerwebi.dominio.entidades.MedioDePago;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.enums.Rubro;
+import com.tallerwebi.dominio.excepcion.ProveedorNoExistente;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioMedioDePago;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioProveedor;
 
@@ -86,6 +87,9 @@ public class ServicioProveedorImpl implements ServicioProveedorI{
     @Override
     public List<MedioDePago> obtenerMediosDePagoDeProveedor(Long proveedorId) {
         Proveedor proveedor = repositorioProveedor.obtenerProveedorConMedios(proveedorId);
+       if (proveedor == null) {
+            throw new ProveedorNoExistente();
+        }
         return proveedor.getMediosDePago();
     }
 
