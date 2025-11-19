@@ -134,102 +134,125 @@
                     th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard')} ? 'show active' : ''"
                     id="cotizaciones" role="tabpanel">
 
-                    <h3 class="mb-3 mt-4 text-primary">
+                    <h3 class="mb-4 mt-4 text-primary d-flex align-items-center">
                         <i class="fas fa-file-invoice-dollar me-2"></i> Cotizaciones
                     </h3>
 
-                    <div class="filters-line d-flex flex-wrap align-items-end gap-2 mb-3">
-                        <!-- Proveedor -->
-                        <div class="flex-grow-1 flex-basis-180" style="min-width:170px;">
-                            <label class="form-label small mb-1" for="filterProveedor">Proveedor</label>
-                            <select class="form-select" id="filterProveedor">
-                                <option value="">Todos</option>
-                            </select>
-                        </div>
-                        <!-- Monto mínimo -->
-                        <div style="min-width:130px;">
-                            <label class="form-label small mb-1" for="filtroMonto">Monto Min</label>
-                            <input type="number" class="form-control" id="filtroMonto" placeholder="≥" list="listaMontos">
-                        </div>
-                        <!-- Monto máximo -->
-                        <div style="min-width:130px;">
-                            <label class="form-label small mb-1" for="filtroMontoMax">Monto Max</label>
-                            <input type="number" class="form-control" id="filtroMontoMax" placeholder="≤" list="listaMontos">
-                        </div>
-                        <!-- Fecha Creación Desde -->
-                        <div style="min-width:160px;">
-                            <label class="form-label small mb-1" for="filtroFechaCreacionDesde">Creación Desde</label>
-                            <input type="date" class="form-control" id="filtroFechaCreacionDesde" list="listaFechas">
-                        </div>
-                        <!-- Fecha Creación Hasta -->
-                        <div style="min-width:160px;">
-                            <label class="form-label small mb-1" for="filtroFechaCreacionHasta">Creación Hasta</label>
-                            <input type="date" class="form-control" id="filtroFechaCreacionHasta" list="listaFechas">
-                        </div>
-                        <!-- Fecha Expiración Desde -->
-                        <div style="min-width:160px;">
-                            <label class="form-label small mb-1" for="filtroFechaExpiracionDesde">Expiración Desde</label>
-                            <input type="date" class="form-control" id="filtroFechaExpiracionDesde" list="listaFechas">
-                        </div>
-                        <!-- Fecha Expiración Hasta -->
-                        <div style="min-width:160px;">
-                            <label class="form-label small mb-1" for="filtroFechaExpiracionHasta">Expiración Hasta</label>
-                            <input type="date" class="form-control" id="filtroFechaExpiracionHasta" list="listaFechas">
-                        </div>
-                        <!-- Botón limpiar -->
-                        <div class="d-flex gap-2" style="min-width:230px;">
-                            <button type="button" id="btnLimpiarFiltros" class="btn btn-outline-secondary flex-fill">Limpiar</button>
-                            <button type="button" id="btnExportExcel" class="btn btn-outline-success flex-fill" title="Exportar filas visibles a Excel">Exportar</button>
+                    <div class="container-fluid p-0">
+                        <div class="row g-3 align-items-end">
+
+                            <!-- Proveedor -->
+                            <div class="col-12 col-sm-9 col-md-3 col-lg-3">
+                                <label class="form-label small mb-1" for="filterProveedor">Proveedor</label>
+                                <select class="form-select" id="filterProveedor">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+
+                            <!-- Monto mínimo -->
+                            <div class="col-12 col-sm-9 col-md-3 col-lg-3">
+                                <label class="form-label small mb-1" for="filtroMonto">Monto Min</label>
+                                <input type="number" class="form-control" id="filtroMonto" placeholder="≥">
+                            </div>
+
+                            <!-- Monto máximo -->
+                            <div class="col-12 col-sm-9 col-md-3 col-lg-3">
+                                <label class="form-label small mb-1" for="filtroMontoMax">Monto Max</label>
+                                <input type="number" class="form-control" id="filtroMontoMax" placeholder="≤">
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="col-12 col-sm-6 col-md-3 col-lg-3 d-flex gap-2">
+                                <button type="button" id="btnLimpiarFiltros" class="btn btn-outline-secondary w-50"
+                                    aria-label="Limpiar filtros" title="Limpiar filtros">
+                                    <i class="bi bi-funnel-fill"></i>
+                                </button>
+
+                                <button type="button" id="btnExportExcel" class="btn btn-outline-success w-50"
+                                    title="Exportar filas visibles a Excel">
+                                    <i class="bi bi-download"></i>
+                                </button>
+                            </div>
+
+                            <!-- Fecha Creación Desde -->
+                            <div class="col-6 col-md-3 col-lg-3">
+                                <label class="form-label small mb-1" for="filtroFechaCreacionDesde">Creación
+                                    Desde</label>
+                                <input type="date" class="form-control" id="filtroFechaCreacionDesde">
+                            </div>
+
+                            <!-- Fecha Creación Hasta -->
+                            <div class="col-6 col-md-3 col-lg-3">
+                                <label class="form-label small mb-1" for="filtroFechaCreacionHasta">Creación
+                                    Hasta</label>
+                                <input type="date" class="form-control" id="filtroFechaCreacionHasta">
+                            </div>
+
+                            <!-- Fecha Expiración Desde -->
+                            <div class="col-6 col-md-3 col-lg-3">
+                                <label class="form-label small mb-1" for="filtroFechaExpiracionDesde">Expiración
+                                    Desde</label>
+                                <input type="date" class="form-control" id="filtroFechaExpiracionDesde">
+                            </div>
+
+                            <!-- Fecha Expiración Hasta -->
+                            <div class="col-6 col-md-3 col-lg-3">
+                                <label class="form-label small mb-1" for="filtroFechaExpiracionHasta">Expiración
+                                    Hasta</label>
+                                <input type="date" class="form-control" id="filtroFechaExpiracionHasta">
+                            </div>
+
+                            
+
                         </div>
                     </div>
-                </div>
-                <!-- Datalist dinámico de montos únicos -->
-                <datalist id="listaMontos"></datalist>
-                <!-- Datalist dinámico de fechas únicas -->
-                <datalist id="listaFechas"></datalist>
-                <table class="table table-striped mt-4" id="tablaCotizaciones"
-                    th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Proveedor</th>
-                            <th>Monto Total</th>
-                            <th>Estado</th>
-                            <th>Fecha Creación</th>
-                            <th>Fecha Expiración</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="cotizacion : ${cotizaciones}">
-                            <td th:text="${cotizacion.id}"></td>
-                            <td th:text="${cotizacion.proveedor.razonSocial}"></td>
-                            <td class="monto-cotizacion" th:data-precio-ars="${cotizacion.montoTotal}"
-                                th:text="'$' + ${#numbers.formatDecimal(cotizacion.montoTotal, 2, 2)} + ' ARS'">
-                            </td>
-                            <td th:text="${cotizacion.estado}"></td>
-                            <td th:text="${cotizacion.fechaCreacion}"></td>
-                            <td th:text="${cotizacion.fechaExpiracion}"></td>
-                            <td class="d-flex gap-1">
-                                <button type="button" class="btn btn-sm btn-info btn-detalle-cotizacion"
-                                    th:data-id="${cotizacion.id}" title="Ver detalle">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <a class="btn btn-sm btn-secondary position-relative" title="Mensajes"
-                                    th:href="@{'/cotizacion/' + ${cotizacion.id} + '/mensajes'}">
-                                    <i class="fas fa-comments"></i>
-                                    <span
-                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                        th:if="${unreadComentarioCounts != null and unreadComentarioCounts[cotizacion.id] > 0}"
-                                        th:text="${unreadComentarioCounts[cotizacion.id]}"></span>
-                                </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
 
-                <div th:if="${cotizaciones == null or cotizaciones.isEmpty()}" class="text-center text-muted mt-4">
-                    No hay cotizaciones disponibles.
+                    <!-- Datalist dinámico de montos únicos -->
+                    <datalist id="listaMontos"></datalist>
+                    <table class="table table-striped mt-4" id="tablaCotizaciones"
+                        th:if="${cotizaciones != null and !cotizaciones.isEmpty()}">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Proveedor</th>
+                                <th>Monto Total</th>
+                                <th>Estado</th>
+                                <th>Fecha Creación</th>
+                                <th>Fecha Expiración</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="cotizacion : ${cotizaciones}">
+                                <td th:text="${cotizacion.id}"></td>
+                                <td th:text="${cotizacion.proveedor.razonSocial}"></td>
+                                <td class="monto-cotizacion" th:data-precio-ars="${cotizacion.montoTotal}"
+                                    th:text="'$' + ${#numbers.formatDecimal(cotizacion.montoTotal, 2, 2)} + ' ARS'">
+                                </td>
+                                <td th:text="${cotizacion.estado}"></td>
+                                <td th:text="${cotizacion.fechaCreacion}"></td>
+                                <td th:text="${cotizacion.fechaExpiracion}"></td>
+                                <td class="d-flex gap-1">
+                                    <button type="button" class="btn btn-sm btn-info btn-detalle-cotizacion"
+                                        th:data-id="${cotizacion.id}" title="Ver detalle">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <a class="btn btn-sm btn-secondary position-relative" title="Mensajes"
+                                        th:href="@{'/cotizacion/' + ${cotizacion.id} + '/mensajes'}">
+                                        <i class="fas fa-comments"></i>
+                                        <span
+                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                            th:if="${unreadComentarioCounts != null and unreadComentarioCounts[cotizacion.id] > 0}"
+                                            th:text="${unreadComentarioCounts[cotizacion.id]}"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div th:if="${cotizaciones == null or cotizaciones.isEmpty()}" class="text-center text-muted mt-4">
+                        No hay cotizaciones disponibles.
+                    </div>
                 </div>
             </div>
 
@@ -299,7 +322,7 @@
                 </div>
                 <div class="modal-footer">
                     <button id="btnDescargarPDF" class="btn btn-success">
-                    <i class="bi bi-file-earmark-pdf"></i>Descargar PDF</button>
+                        <i class="bi bi-file-earmark-pdf"></i>Descargar PDF</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>

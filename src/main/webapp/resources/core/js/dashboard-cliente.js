@@ -114,7 +114,9 @@ document.addEventListener("DOMContentLoaded", function () {
         let countRechazado = 0;
         let countCompletada = 0;
 
-        filas.forEach(row => {
+    const visiblesFinal = []; // filas que pasan TODOS los filtros incluyendo estado (para narrowing)
+
+    filas.forEach(row => {
             // Buscar índice de columna de estado y fecha (depende de la tabla)
             const esCustom = tablaActiva === "#tablaLicitaciones";
             const idxEstado = esCustom ? 3 : 3;
@@ -139,13 +141,17 @@ document.addEventListener("DOMContentLoaded", function () {
             // Filtro de monto solo aplica a tabla cotizaciones. Columna monto total index 2
             let coincideMonto = true;
             if (tablaActiva === '#tablaCotizaciones' && (montoMinVal !== null || montoMaxVal !== null)) {
-                // Tomamos siempre el valor ARS original para comparar (independiente de si se muestra USD)
+                // Tomamos siempre el valor ARS original y adaptamos el umbral si está en modo USD
                 const montoCell = row.children[2];
                 const arsRaw = montoCell?.getAttribute('data-precio-ars');
                 const numeroArs = arsRaw ? parseFloat(arsRaw) : NaN;
+                const isUSD = document.getElementById('toggleDolar')?.checked;
+                const tasa = window.dolarVentaGlobal || null;
+                const umbralMinArs = (isUSD && tasa && montoMinVal !== null) ? montoMinVal * tasa : montoMinVal;
+                const umbralMaxArs = (isUSD && tasa && montoMaxVal !== null) ? montoMaxVal * tasa : montoMaxVal;
                 if (!isNaN(numeroArs)) {
-                    if (montoMinVal !== null && numeroArs < montoMinVal) coincideMonto = false;
-                    if (montoMaxVal !== null && numeroArs > montoMaxVal) coincideMonto = false;
+                    if (umbralMinArs !== null && numeroArs < umbralMinArs) coincideMonto = false;
+                    if (umbralMaxArs !== null && numeroArs > umbralMaxArs) coincideMonto = false;
                 }
             }
 
@@ -188,7 +194,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Estado se aplica solo para visibilidad final
             const coincideEstado = currentFilter === "TODOS" || estado === currentFilter;
-            row.style.display = (pasaNoEstado && coincideEstado) ? "" : "none";
+            const visible = (pasaNoEstado && coincideEstado);
+            row.style.display = visible ? "" : "none";
+            if (visible) visiblesFinal.push(row);
         });
 
         // Actualizar indicadores (si existen)
@@ -202,6 +210,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (elAprob) elAprob.textContent = countAprobada;
         if (elRech) elRech.textContent = countRechazado;
         if (elComp) elComp.textContent = countCompletada;
+
+        // Narrowing dinámico de opciones (según subset final incluyendo estado activo)
+        if (tablaActiva === '#tablaCotizaciones') {
+            rebuildProveedorOptions(visiblesFinal);
+            rebuildMontosDatalist(visiblesFinal);
+        }
     }
 
     // Aplicar automáticamente al cambiar el select
@@ -239,32 +253,71 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- Populate datalist for montos únicos y placeholders rango ---
-    function populateMontosDatalist() {
+    function rebuildMontosDatalist(filasVisibles) {
         const datalist = document.getElementById('listaMontos');
         if (!datalist) return;
         const montos = [];
-        document.querySelectorAll('#tablaCotizaciones .monto-cotizacion').forEach(c => {
-            const raw = c.getAttribute('data-precio-ars');
-            if (raw) {
-                const num = parseFloat(raw);
-                if (!isNaN(num)) montos.push(num);
-            }
+        filasVisibles.forEach(r => {
+            const cell = r.querySelector('.monto-cotizacion');
+            const raw = cell?.getAttribute('data-precio-ars');
+            if (!raw) return;
+            const num = parseFloat(raw);
+            if (!isNaN(num)) montos.push(num);
         });
         const unicos = [...new Set(montos)].sort((a,b)=>a-b);
-        // Limpiar
         datalist.innerHTML = '';
         unicos.forEach(m => {
             const opt = document.createElement('option');
-            opt.value = m; // valor numérico directo
+            // Si estamos en USD mostrar valor convertido, pero el input numérico seguirá interpretando lo que se ve
+            const isUSD = document.getElementById('toggleDolar')?.checked;
+            const tasa = window.dolarVentaGlobal || null;
+            opt.value = (isUSD && tasa) ? (m / tasa).toFixed(2) : m;
             datalist.appendChild(opt);
         });
-        // Placeholders auto rango
         if (unicos.length) {
-            if (montoMinInput && !montoMinInput.value) montoMinInput.placeholder = '≥ ' + unicos[0];
-            if (montoMaxInput && !montoMaxInput.value) montoMaxInput.placeholder = '≤ ' + unicos[unicos.length-1];
+            const isUSD = document.getElementById('toggleDolar')?.checked;
+            const tasa = window.dolarVentaGlobal || null;
+            const minDisp = unicos[0];
+            const maxDisp = unicos[unicos.length-1];
+            const suf = isUSD ? ' USD' : ' ARS';
+            const fmtMin = isUSD && tasa ? (minDisp / tasa).toFixed(2) : minDisp;
+            const fmtMax = isUSD && tasa ? (maxDisp / tasa).toFixed(2) : maxDisp;
+            if (montoMinInput && !montoMinInput.value) montoMinInput.placeholder = '≥ ' + fmtMin + suf;
+            if (montoMaxInput && !montoMaxInput.value) montoMaxInput.placeholder = '≤ ' + fmtMax + suf;
+        } else {
+            if (montoMinInput && !montoMinInput.value) montoMinInput.placeholder = '≥';
+            if (montoMaxInput && !montoMaxInput.value) montoMaxInput.placeholder = '≤';
         }
     }
-    populateMontosDatalist();
+
+    function rebuildProveedorOptions(filasVisibles) {
+        if (!proveedorSelect) return;
+        // Guardar selección actual normalizada
+        const currentSelNorm = normalizarProveedor(proveedorSelect.value);
+        const uniqueMap = new Map();
+        filasVisibles.forEach(r => {
+            const provCell = r.children[1];
+            if (!provCell) return;
+            const display = provCell.textContent.trim();
+            const key = normalizarProveedor(display);
+            if (key && !uniqueMap.has(key)) uniqueMap.set(key, display);
+        });
+        // Limpiar conservando la primera opción (Todos)
+        while (proveedorSelect.options.length > 1) proveedorSelect.remove(1);
+        [...uniqueMap.entries()].sort((a,b)=>a[1].localeCompare(b[1],'es')).forEach(([key, display]) => {
+            const opt = document.createElement('option');
+            opt.value = key;
+            opt.textContent = display;
+            proveedorSelect.appendChild(opt);
+        });
+        // Restaurar selección si todavía existe; sino reset a Todos
+        if (currentSelNorm && uniqueMap.has(currentSelNorm)) {
+            proveedorSelect.value = currentSelNorm;
+        } else {
+            proveedorSelect.value = '';
+            proveedorFilterValue = '';
+        }
+    }
 
     // Listeners monto min/max
     if (montoMinInput) {
@@ -928,6 +981,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const valorFormateado = Number.isInteger(usd) ? usd.toString() : usd.toFixed(2);
                 celda.textContent = `$${valorFormateado} USD`;
             });
+            window.dolarVentaGlobal = dolarVenta;
         } else {
             // Volver a ARS
             montos.forEach((celda) => {
@@ -935,7 +989,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 celda.textContent = `$${ars.toLocaleString("es-AR")} ARS`;
             });
         }
-        // Reaplicar filtros sin cambiar semántica: los thresholds siguen siendo ARS.
+        // Reaplicar filtros con interpretación adaptada (min/max como USD cuando toggle activo)
         aplicarFiltros();
     });
 });
