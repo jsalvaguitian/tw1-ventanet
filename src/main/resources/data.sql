@@ -135,7 +135,7 @@ INSERT INTO Usuario (
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '1234567890', 'Av. Principal 1', CURRENT_DATE, 'ADMIN', true, 'ACTIVO'),
 
-(2, 'Juan', 'Pérez', 'cliente1', 'gaston.ezequiel.bisogno@gmail.com',
+(2, 'Juan', 'Pérez', 'cliente1', 'juan.perez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '111222333', 'Calle Falsa 123', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
 ----- PROVEEDORES
@@ -14629,3 +14629,37 @@ VALUES
  (82000.00, 8, 10, CURRENT_DATE, CURRENT_DATE, 'uploads/adjuntos/licitacion6.pdf', 'APROBADA', 6); -- 41000 * 2
 
 -- Fin de semillas de licitaciones
+INSERT INTO proveedor_medio_pago (proveedor_id, medio_pago_id) VALUES
+    -- Proveedor 3 (Pedro Gómez)
+    (3, 1),  -- Efectivo
+    (3, 2),  -- Transferencia bancaria
+    (3, 3),  -- Visa crédito 1 cuota
+
+    -- Proveedor 4 (Homero Simpson)
+    (4, 4),  -- Visa crédito 3 cuotas
+    (4, 5),  -- Visa crédito 6 cuotas
+    (4, 6),  -- Visa crédito 12 cuotas
+    (4, 7),  -- Amex crédito 1 cuota
+    (4, 8),  -- Amex crédito 3 cuotas
+
+    -- Proveedor 5 (Pedro Simpson)
+    (5, 11), -- Débito Visa
+    (5, 13), -- MercadoPago
+    (5, 14), -- Pago Fácil
+
+    -- Proveedor 6 (Juan Fulano) → TODOS los medios
+    (6, 1),
+    (6, 2),
+    (6, 3),
+    (6, 4),
+    (6, 5),
+    (6, 6),
+    (6, 7),
+    (6, 8),
+    (6, 9),
+    (6, 10),
+    (6, 11),
+    (6, 12),
+    (6, 13),
+    (6, 14),
+    (6, 15);
