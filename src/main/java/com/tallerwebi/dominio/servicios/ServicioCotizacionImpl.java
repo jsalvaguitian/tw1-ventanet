@@ -209,4 +209,9 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
         }
         return productos;
     }
+
+    @Override
+    public List<Cotizacion> obtenerTodas() {
+        return cotizacionRepository.obtenerTodas();
+    }
 }

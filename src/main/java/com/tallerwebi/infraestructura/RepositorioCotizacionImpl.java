@@ -205,4 +205,11 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
 
     }
 
+    @Override
+    public List<Cotizacion> obtenerTodas() {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery("FROM Cotizacion c", Cotizacion.class);
+        return query.getResultList();
+    }
+
 }

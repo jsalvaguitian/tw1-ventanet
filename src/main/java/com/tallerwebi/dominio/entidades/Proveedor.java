@@ -34,6 +34,14 @@ public class Proveedor extends Usuario {
      */
     private String documento; // Ruta del documento legal del proveedor
 
+    @OneToMany(mappedBy = "proveedor")
+    @JsonIgnore
+    private List<Producto> productos = new ArrayList<>();
+
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
     // @OneToMany(mappedBy = "proveedor")
     // private List<Producto> productos = new ArrayList<Producto>();
 

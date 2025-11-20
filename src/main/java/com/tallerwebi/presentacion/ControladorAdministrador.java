@@ -35,7 +35,30 @@ import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
-import com.tallerwebi.presentacion.dto.UsuarioAdminDTO;;
+import com.tallerwebi.presentacion.dto.UsuarioAdminDTO;
+
+// Para el Excel
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.io.IOException;
+
+// Para graficos
+import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import com.tallerwebi.dominio.entidades.Cotizacion;
+import com.tallerwebi.dominio.enums.Rubro;
+import com.tallerwebi.presentacion.dto.ProductoMasCotizadoDTO;
+import com.tallerwebi.dominio.servicios.ServicioEstadisticas;
+import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 
 @Controller
 @RequestMapping("/admin")
@@ -46,21 +69,21 @@ public class ControladorAdministrador {
     private ServicioClienteI servicioCliente;
     private ServicioUsuario servicioUsuario;
     private ServicioEmail servicioEmail;
+    private ServicioEstadisticas servicioEstadisticas;
+    private ServicioCotizacion servicioCotizacion;
 
     private ServletContext servletContext; // rutas relativas
 
     @Autowired
-    public ControladorAdministrador(ServicioAdministrador servicioAdmin, ServicioProveedorI servicioProveedor,
-            ServicioEmail servicioEmail, ServletContext servletContext, ServicioClienteI servicioCliente,
-            ServicioUsuario servicioUsuario) {
-
+    public ControladorAdministrador(ServicioAdministrador servicioAdmin, ServicioProveedorI servicioProveedor, ServicioEmail servicioEmail, ServletContext servletContext, ServicioClienteI servicioCliente, ServicioUsuario servicioUsuario, ServicioEstadisticas servicioEstadisticas, ServicioCotizacion servicioCotizacion) {
         this.servicioAdmin = servicioAdmin;
         this.servicioProveedor = servicioProveedor;
         this.servicioEmail = servicioEmail;
         this.servletContext = servletContext;// para ver el pdf de afip
         this.servicioCliente = servicioCliente;
         this.servicioUsuario = servicioUsuario;
-
+        this.servicioEstadisticas = servicioEstadisticas;
+        this.servicioCotizacion = servicioCotizacion;
     }
 
     @GetMapping("/dashboard-admin")
@@ -92,6 +115,56 @@ public class ControladorAdministrador {
         } catch (Exception e) {
             modelMap.put("usuariosJson", "[]");
         }
+
+        // --- Cantidad clientes / proveedores ---
+        long totalClientes = servicioCliente.contarClientes();
+        long totalProveedores = servicioProveedor.contarProveedores(null);
+
+        modelMap.put("g_totalClientes", totalClientes);
+        modelMap.put("g_totalProveedores", totalProveedores);
+/* 
+        // --- Top 5 productos más cotizados ---
+        List<ProductoMasCotizadoDTO> topProductos =
+                servicioEstadisticas.obtenerTopProductos(5);
+        modelMap.put("topProductos", new Gson().toJson(topProductos));
+
+        // --- Proveedores con más productos (top 5) ---
+        List<Proveedor> proveedores = servicioProveedor.obtenerTodosLosProveedoresActivos();
+
+        List<Map<String, Object>> topProveedores = proveedores.stream()
+                .sorted((a, b) -> Integer.compare(b.getProductos().size(), a.getProductos().size()))
+                .limit(5)
+                .map(p -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("nombre", p.getNombreMostrable());
+                    map.put("cantidad", p.getProductos().size());
+                    return map;
+                }).collect(Collectors.toList());
+
+        modelMap.put("topProveedores", new Gson().toJson(topProveedores));
+*/
+        // --- Cotizaciones por estado ---
+        List<Cotizacion> cotizaciones = servicioCotizacion.obtenerTodas();
+
+        Map<String, Long> estados = new LinkedHashMap<>();
+        estados.put("Aprobadas", cotizaciones.stream().filter(c -> c.getEstado().equals("APROBADA")).count());
+        estados.put("Pendientes", cotizaciones.stream().filter(c -> c.getEstado().equals("PENDIENTE")).count());
+        estados.put("Rechazadas", cotizaciones.stream().filter(c -> c.getEstado().equals("RECHAZADA")).count());
+
+        modelMap.put("cotizacionesEstado", new Gson().toJson(estados));
+
+        // --- Proveedores por rubro ---
+        List<Rubro> rubros = servicioProveedor.obtenerRubrosActivos();
+
+        List<Map<String, Object>> proveedoresPorRubro = rubros.stream()
+                .map(r -> {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("rubro", r.getDescripcion());
+                    m.put("cantidad", servicioProveedor.obtenerProveedoresPorRubro(r).size());
+                    return m;
+                }).collect(Collectors.toList());
+
+        modelMap.put("proveedoresPorRubro", new Gson().toJson(proveedoresPorRubro));
         return new ModelAndView("dashboard-admin", modelMap);
     }
 
@@ -262,6 +335,51 @@ public class ControladorAdministrador {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @GetMapping("/usuarios/exportar-excel")
+    public void exportarUsuariosExcel(HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=usuarios.xlsx");
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Usuarios");
+
+        CellStyle estiloFecha = workbook.createCellStyle();
+        CreationHelper createHelper = workbook.getCreationHelper();
+        estiloFecha.setDataFormat(createHelper.createDataFormat().getFormat("dd/MM/yyyy HH:mm"));
+
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("ID");
+        header.createCell(1).setCellValue("Nombre");
+        header.createCell(2).setCellValue("Email");
+        header.createCell(3).setCellValue("CUIT");
+        header.createCell(4).setCellValue("Rol");
+        header.createCell(5).setCellValue("Estado");
+        header.createCell(6).setCellValue("Fecha Alta");
+
+        List<UsuarioAdminDTO> usuarios = servicioUsuario.obtenerUsuariosParaAdmin();
+
+        int fila = 1;
+
+        for (UsuarioAdminDTO u : usuarios) {
+            Row row = sheet.createRow(fila++);
+
+            row.createCell(0).setCellValue(u.getId());
+            row.createCell(1).setCellValue(u.getNombreMostrable());
+            row.createCell(2).setCellValue(u.getEmail());
+            row.createCell(3).setCellValue(u.getCuit());
+            row.createCell(4).setCellValue(u.getRol());
+            row.createCell(5).setCellValue(u.getEstado().getDescripcion());
+
+            Cell celdaFecha = row.createCell(6);
+            celdaFecha.setCellValue(u.getFechaCreacion());
+            celdaFecha.setCellStyle(estiloFecha);
+        }
+
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
 
 }

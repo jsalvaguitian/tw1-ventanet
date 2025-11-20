@@ -102,15 +102,13 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
         // hashear contrasenia antes de guardar
         contraseniaHasheada = PasswordUtil.hashear(cliente.getPassword());
         cliente.setPassword(contraseniaHasheada);
+        cliente.setFechaCreacion(java.time.LocalDate.now());
         repositorioUsuario.guardar(cliente);
 
         // Enviar correo con el link de verificación
         servicioEmail.enviarEmailActivacion(cliente);
     }
 
-    /*
-     * 
-     */
     @Override
     public void registrarProveedor(Proveedor proveedor, MultipartFile documento)
             throws UsuarioExistente, CuitInvalido, ContraseniaInvalida, IOException {
@@ -140,9 +138,9 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
 
         String contraseniaHasheada = PasswordUtil.hashear(proveedor.getPassword());
         proveedor.setPassword(contraseniaHasheada);
+        proveedor.setFechaCreacion(java.time.LocalDate.now());
         repositorioUsuario.guardar(proveedor);
         servicioEmail.enviarEmailActivacion(proveedor);
-
     }
 
     private boolean validarContrasenia(String password) {

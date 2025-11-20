@@ -12,6 +12,9 @@
 
   <!-- custom style -->
   <link rel="stylesheet" th:href="@{/css/main.css}" />
+
+  <!-- favicon -->
+  <link rel="icon" type="image/jpeg" th:href="@{/img/favicon2.png}">
 </head>
 
 <body>
@@ -41,37 +44,43 @@
     </div>
   </header>
 
-  <!-- PRODUCTOS -->
+  <!-- RUBROS -->
   <main role="main" class="container my-5">
     <section id="productos">
-      <h2 class="text-center mb-4">Nuestros Productos</h2>
+      <h2 class="text-center mb-4">Explorar Nuestros Rubros</h2>
       <div class="row g-4">
         <div class="col-md-4">
           <div class="card h-100 shadow-sm">
-            <img th:src="@{/img/corrediza.jpg}" class="card-img-top" alt="Ventana Corrediza">
+            <img th:src="@{/img/fijo.jpg}" alt="Aberturas" class="card-img-full">
             <div class="card-body text-center">
-              <h5 class="card-title">Ventana Corrediza</h5>
+              <h5 class="card-title">Aberturas, Puertas y Ventanas</h5>
               <p class="card-text">Optimiza espacios con máxima luminosidad.</p>
-              <a th:href="@{/menu-catalogo}" class="stretched-link"></a>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card h-100 shadow-sm">
-            <img th:src="@{/img/oscilobatiente.jpg}" class="card-img-top" alt="Ventana Oscilobatiente">
-            <div class="card-body text-center">
-              <h5 class="card-title">Oscilobatiente</h5>
               <p class="card-text">Ventilación controlada y segura.</p>
+              <p class="card-text">Diseños minimalistas y elegantes.</p>
               <a th:href="@{/menu-catalogo}" class="stretched-link"></a>
             </div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="card h-100 shadow-sm">
-            <img th:src="@{/img/fijo.jpg}" class="card-img-top" alt="Paño Fijo">
+            <img th:src="@{/img/pisos.jpg}" alt="Pisos" class="card-img-full">
             <div class="card-body text-center">
-              <h5 class="card-title">Paño Fijo</h5>
-              <p class="card-text">Diseño minimalista y elegante.</p>
+              <h5 class="card-title">Pisos y Revestimientos</h5>
+              <p class="card-text">Transforma ambientes, texturas y colores modernos.</p>
+              <p class="card-text">Resistencia superior y fácil mantenimiento.</p>
+              <p class="card-text">Encuentra el acabado ideal para cada estilo de diseño.</p>
+              <a th:href="@{/menu-catalogo}" class="stretched-link"></a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm">
+            <img th:src="@{/img/hierro.jpg}" alt="Hierros" class="card-img-full">
+            <div class="card-body text-center">
+              <h5 class="card-title">Hierros y Estructuras</h5>
+              <p class="card-text">Soluciones robustas con máxima durabilidad.</p>
+              <p class="card-text">Ingeniería aplicada para estructuras seguras.</p>
+              <p class="card-text">Acabados especializados, protección anti-corrosión.</p>
               <a th:href="@{/menu-catalogo}" class="stretched-link"></a>
             </div>
           </div>
@@ -210,37 +219,39 @@
 
   <!-- CONTACTO -->
   <section id="contacto" class="contacto bg-dark text-light py-5">
-    <div class="container">
-      <h2 class="text-center mb-4">Contacto</h2>
+      <div class="container">
+          <h2 class="text-center mb-4">Contacto</h2>
 
-      <div class="row justify-content-center">
-        <div class="col-md-5 mb-4 mb-md-0">
-          <p class="mb-4">Escribinos y nos pondremos en contacto contigo lo antes posible.</p>
           <form th:action="@{/contacto/enviar}" method="post">
-            <div class="mb-3">
-              <label for="nombre" class="form-label">Nombre</label>
-              <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Tu nombre" required>
-            </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" name="email" class="form-control" id="email" placeholder="Tu email" required>
-            </div>
-        </div>
-
-        <div class="col-md-5">
-            <div class="mb-3">
-              <label for="mensaje" class="form-label">Mensaje</label>
-              <textarea name="mensaje" class="form-control" id="mensaje" rows="5" placeholder="Escribe tu mensaje" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Enviar</button>
+              <div class="row justify-content-center">
+                  <div class="col-md-5 mb-4 mb-md-0">
+                      <p class="mb-4">Escribinos y nos pondremos en contacto contigo lo antes posible.</p>
+                      
+                      <div class="mb-3">
+                          <label for="nombre" class="form-label">Nombre</label>
+                          <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Tu nombre" required>
+                      </div>
+                      <div class="mb-3">
+                          <label for="email" class="form-label">Email</label>
+                          <input type="email" name="email" class="form-control" id="email" placeholder="Tu email" required>
+                      </div>
+                  </div> <div class="col-md-5">
+                      <div class="mb-3">
+                          <label for="mensaje" class="form-label">Mensaje</label>
+                          <textarea name="mensaje" class="form-control" id="mensaje" rows="5" placeholder="Escribe tu mensaje" required></textarea>
+                      </div>
+                      <button type="submit" class="btn btn-primary w-100">Enviar</button>
+                  </div> </div>
           </form>
-        </div>
-      </div>
 
-      <div th:if="${param.contacto}" class="alert alert-success text-center mt-4">
-        ¡Tu mensaje fue enviado con éxito! Te responderemos pronto.
+          <div th:if="${param.contacto}" class="alert alert-success text-center mt-4">
+              ¡Tu mensaje fue enviado con éxito! Te responderemos pronto.
+          </div>
+          
+          <div th:if="${param.error}" class="alert alert-danger text-center mt-4">
+              Hubo un error enviando el mensaje. Por favor intenta nuevamente.
+          </div>
       </div>
-    </div>
   </section>
 
   <!-- FOOTER -->
