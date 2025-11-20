@@ -50,46 +50,7 @@ body {
       display: flex;
       flex: 1;
     }
-
-    /* === SIDEBAR === */
-    #sidebar {
-      width: 240px;
-      min-height: 100vh;
-      background-color: #f8f9fa;
-      transition: width 0.3s;
-      border-right: 1px solid #ddd;
-    }
-
-    #sidebar.collapsed {
-      width: 70px;
-    }
-
-    #sidebar .nav-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      white-space: nowrap;
-      font-size: 15px;
-      margin-left: 6px;
-    }
-
-    #sidebar.collapsed .nav-link span {
-      display: none;
-    }
-
-    #sidebar .toggle-btn {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      color: #333;
-      border: none;
-      border-radius: 50%;
-      width: 35px;
-      height: 35px;
-      cursor: pointer;
-      background: transparent;
-    }
-
+    
     /* === MAIN CONTENT === */
     main {
       flex-grow: 1;

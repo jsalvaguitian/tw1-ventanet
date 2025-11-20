@@ -8,51 +8,6 @@ body {
     overflow-x: hidden;
 }
 
-/* ==== SIDEBAR ==== */
-.sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 220px;
-    height: 100vh;
-    background: #0b335b;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    padding-top: 30px;
-    z-index: 1050;
-    transition: left 0.3s;
-    box-shadow: 2px 0px 20px #0b335b;
-}
-
-.sidebar h2 {
-    margin: 0 0 30px 30px;
-    font-size: 22px;
-    letter-spacing: 1px;
-}
-
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar ul li {
-    padding: 15px 30px;
-    cursor: pointer;
-    transition: background 0.2s;
-    display: flex;
-    align-items: center;
-}
-
-.sidebar ul li.active,
-.sidebar ul li:hover {
-    background: #2224aa;
-}
-
-.sidebar ul li i {
-    margin-right: 10px;
-}
-
 .main {
     margin-left: 20px;
     padding: 30px 60px 30px 60px;
