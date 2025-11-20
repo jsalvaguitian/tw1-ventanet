@@ -14,15 +14,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tallerwebi.dominio.entidades.Cliente;
-import com.tallerwebi.dominio.entidades.Cotizacion;
 import com.tallerwebi.dominio.entidades.Licitacion;
 import com.tallerwebi.dominio.entidades.ProductoCustom;
 import com.tallerwebi.dominio.entidades.Proveedor;
-import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.enums.EstadoLicitacion;
 import com.tallerwebi.dominio.enums.Rubro;
-import com.tallerwebi.dominio.excepcion.CotizacionesExistente;
 import com.tallerwebi.dominio.excepcion.LicitacionesExistente;
 import com.tallerwebi.dominio.excepcion.NoHayCotizacionExistente;
 import com.tallerwebi.dominio.servicios.ServicioCloudinary;

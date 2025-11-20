@@ -547,9 +547,7 @@ async function mostrarDetalleCotizacion(id) {
                         <tr style="background-color: #f2f2f2;">
                             <th style="border: 1px solid #ccc; padding: 8px;">Producto</th>
                             <th style="border: 1px solid #ccc; padding: 8px;">Cantidad</th>
-                            <th style="border: 1px solid #ccc; padding: 8px;">Precio Unitario</th>
-                            <th style="border: 1px solid #ccc; padding: 8px;">% Descuento</th>
-                            <th style="border: 1px solid #ccc; padding: 8px;">IVA</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Precio Unitario</th>                            
                             <th style="border: 1px solid #ccc; padding: 8px;">Total</th>
                         </tr>
                     </thead>
