@@ -1,16 +1,12 @@
 package com.tallerwebi.dominio.servicios;
 
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 import com.tallerwebi.dominio.entidades.TipoVentana;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.infraestructura.RepositorioTipoVentanaImpl;
-import com.tallerwebi.presentacion.dto.TipoVentanaDTO;
 
 @Service("servicioTipoVentana")
 @Transactional
@@ -38,6 +34,11 @@ public class ServicioTipoVentanaImpl implements ServicioTipoVentana {
             throw new NoHayProductoExistente();
         }
         return tipoVentanas;
+    }
+
+    @Override
+    public TipoVentana obtener(Long id) {
+       return tipoVentanaRepository.obtener(id);    
     }
 
    

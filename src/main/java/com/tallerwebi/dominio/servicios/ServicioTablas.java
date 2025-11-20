@@ -9,6 +9,7 @@ import com.tallerwebi.dominio.entidades.Localidad;
 import com.tallerwebi.dominio.entidades.MaterialDePerfil;
 import com.tallerwebi.dominio.entidades.Partido;
 import com.tallerwebi.dominio.entidades.Provincia;
+import com.tallerwebi.dominio.entidades.TipoDeVidrio;
 
 public interface ServicioTablas {
     List<Color> obtenerColores();
@@ -18,4 +19,9 @@ public interface ServicioTablas {
     List<Provincia> obtenerProvincias();
     List<Localidad> obtenerLocalidadesPorProvincia(Long provinciaId);
     List<Partido> obtenerPartidosPorLocalidad(Long localidadId);
+    Alto obtenerAltoPorId(Long id);
+    Ancho obtenerAnchoPorId(Long id);
+    MaterialDePerfil obtenerMaterialPorId(Long id);
+    Color obtenerColorPorId(Long id);
+    TipoDeVidrio obtenerTipoDeVidrioPorId(Long id);
 }
