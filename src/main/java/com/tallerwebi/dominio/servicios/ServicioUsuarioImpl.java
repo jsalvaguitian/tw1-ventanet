@@ -23,10 +23,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 @Service("servicioUsuario")
@@ -239,6 +241,16 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
     @Override
     public void eliminarUsuario(Usuario usuario) {
         usuario.setActivo(false);
+    }
+
+    @Override
+    public String obtenerFotoPerfil(Long id, HttpServletRequest request) throws UsuarioInexistenteException {
+        Usuario usuario = buscarPorId(id);
+        if (usuario.getFotoPerfil() != null) {
+            String base64 = Base64.getEncoder().encodeToString(usuario.getFotoPerfil());
+            return "data:image/png;base64," + base64;
+        }
+        return request.getContextPath() + "/img/default-profile.png";
     }
 
     @Override

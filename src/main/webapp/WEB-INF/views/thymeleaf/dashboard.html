@@ -50,8 +50,8 @@
                     <button id="profileToggle" class="d-flex align-items-center bg-transparent border-0 p-0"
                         aria-haspopup="true" aria-expanded="false" aria-controls="profileDropdown"
                         title="Opciones de usuario">
-                        <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop&crop=face"
-                            alt="Cliente" class="profile-img me-2">
+                        <img th:src="${fotoPerfil}" alt="Cliente" class="profile-img me-2">
+                            
                         <div class="profile-info text-start">
                             <h3 class="mb-0 fs-6"><span th:text="${apellidoCliente}"></span>, <span
                                     th:text="${nombreCliente}"></span></h3>

@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,9 +24,11 @@ import com.tallerwebi.dominio.enums.EstadoLicitacion;
 import com.tallerwebi.dominio.excepcion.NoHayCotizacionExistente;
 import com.tallerwebi.dominio.excepcion.NoHayLicitacionesExistentes;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
+import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.servicios.ServicioComentario;
 import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 import com.tallerwebi.dominio.servicios.ServicioLicitacion;
+import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.LicitacionDto;
 import com.tallerwebi.presentacion.dto.ProductoCustomDto;
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
@@ -40,15 +43,17 @@ public class ControladorCliente {
     private final ServicioCotizacion servicioCotizacion;
     private final ServicioComentario servicioComentario;
     private final ServicioLicitacion servicioLicitacion;
+    private final ServicioUsuario servicioUsuario;
 
     // Constructor principal que Spring debe usar para la inyección
     @Autowired
     public ControladorCliente(ServicioCotizacion servicioCotizacion,
             ServicioComentario servicioComentario,
-            ServicioLicitacion servicioLicitacion) {
+            ServicioLicitacion servicioLicitacion, ServicioUsuario servicioUsuario) {
         this.servicioCotizacion = servicioCotizacion;
         this.servicioComentario = servicioComentario;
         this.servicioLicitacion = servicioLicitacion;
+        this.servicioUsuario = servicioUsuario;
     }
 
     // Constructor de compatibilidad con tests antiguos que esperaban
@@ -57,8 +62,9 @@ public class ControladorCliente {
             com.tallerwebi.dominio.servicios.ServicioPresupuesto servicioPresupuesto,
             ServicioCotizacion servicioCotizacion,
             ServicioComentario servicioComentario) {
-        this(servicioCotizacion, servicioComentario, null); // reutiliza el constructor principal, servicioLicitacion no
-                                                            // disponible
+        this(servicioCotizacion, servicioComentario, null, null); // reutiliza el constructor principal,
+                                                                  // servicioLicitacion no
+        // disponible
     }
 
     // Constructor de compatibilidad adicional (tests que pasan sólo
@@ -66,11 +72,11 @@ public class ControladorCliente {
     public ControladorCliente(com.tallerwebi.dominio.servicios.ServicioClienteI servicioClienteI,
             com.tallerwebi.dominio.servicios.ServicioPresupuesto servicioPresupuesto,
             ServicioCotizacion servicioCotizacion) {
-        this(servicioCotizacion, null, null); // servicioComentario y servicioLicitacion opcionales
+        this(servicioCotizacion, null, null, null); // servicioComentario y servicioLicitacion opcionales
     }
 
     @GetMapping("/dashboard")
-    public ModelAndView irDashboard(HttpServletRequest request) {
+    public ModelAndView irDashboard(HttpServletRequest request) throws UsuarioInexistenteException {
         ModelMap datosModelado = new ModelMap();
 
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
@@ -87,9 +93,12 @@ public class ControladorCliente {
         datosModelado.put("apellidoCliente", usuarioSesion.getApellido());
         datosModelado.put("rolCliente", usuarioSesion.getRol());
 
-    try {
-        List<Cotizacion> todasLasCotizaciones = servicioCotizacion
-            .obtenerCotizacionPorIdCliente(usuarioSesion.getId());
+        String base64Image = servicioUsuario.obtenerFotoPerfil(usuarioSesion.getId(), request);
+        datosModelado.put("fotoPerfil", base64Image);
+
+        try {
+            List<Cotizacion> todasLasCotizaciones = servicioCotizacion
+                    .obtenerCotizacionPorIdCliente(usuarioSesion.getId());
 
             if (todasLasCotizaciones == null) {
                 todasLasCotizaciones = new ArrayList<>();
@@ -138,7 +147,8 @@ public class ControladorCliente {
             // Licitaciones y comentarios no leídos (solo si servicioLicitacion disponible)
             if (servicioLicitacion != null) {
                 try {
-                    List<Licitacion> licitacionesCliente = servicioLicitacion.obtenerLicitacionesPorIdCliente(usuarioSesion.getId());
+                    List<Licitacion> licitacionesCliente = servicioLicitacion
+                            .obtenerLicitacionesPorIdCliente(usuarioSesion.getId());
                     Map<Long, Long> unreadLicitacionCounts = new HashMap<>();
                     for (Licitacion l : licitacionesCliente) {
                         if (l.getId() != null && servicioComentario != null) {
@@ -159,7 +169,8 @@ public class ControladorCliente {
             }
 
         } catch (NoHayCotizacionExistente e) {
-            // Caso sin cotizaciones: devolvemos contadores en cero y lista vacía, evitando tipos incorrectos
+            // Caso sin cotizaciones: devolvemos contadores en cero y lista vacía, evitando
+            // tipos incorrectos
             datosModelado.put("cotizaciones", new ArrayList<>());
             datosModelado.put("totalCotizaciones", 0L);
             datosModelado.put("cotizacionesPendientes", 0L);
@@ -173,7 +184,7 @@ public class ControladorCliente {
     }
 
     @GetMapping("/dashboard-custom")
-    public ModelAndView irDashboardCustom(HttpServletRequest request) {
+    public ModelAndView irDashboardCustom(HttpServletRequest request) throws UsuarioInexistenteException {
         ModelMap datosModelado = new ModelMap();
 
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
@@ -188,12 +199,15 @@ public class ControladorCliente {
         datosModelado.put("apellidoCliente", usuarioSesion.getApellido());
         datosModelado.put("rolCliente", usuarioSesion.getRol());
 
+        String base64Image = servicioUsuario.obtenerFotoPerfil(usuarioSesion.getId(), request);
+        datosModelado.put("fotoPerfil", base64Image);
+
         try {
             List<Licitacion> todasLasLicitacionesEntities = servicioLicitacion
                     .obtenerLicitacionesPorIdCliente(usuarioSesion.getId());
 
             List<LicitacionDto> todasLasLicitaciones = todasLasLicitacionesEntities.stream()
-                    .map(this::MapearLicitacionALicitacionDto) 
+                    .map(this::MapearLicitacionALicitacionDto)
                     .collect(Collectors.toList());
 
             if (todasLasLicitaciones == null) {
