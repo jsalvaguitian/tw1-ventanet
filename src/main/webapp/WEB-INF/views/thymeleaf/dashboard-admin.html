@@ -18,7 +18,8 @@
             usuarios: /*[[${usuariosJson}]]*/,
             totalClientes: /*[[${totalClientes}]]*/,
             totalProveedores: /*[[${totalProveedores}]]*/,
-            totalUsuarios: /*[[${totalUsuarios}]]*/
+            totalUsuarios: /*[[${totalUsuarios}]]*/,
+            proveedoresPorRubro: /*[[${proveedoresPorRubro}]]*/
         };
         /*]]>*/
     </script>
@@ -57,12 +58,10 @@
                 </div>
             </div>
         </div>
-
-        <section id="pdf-content" class="dashboard">
-            <section class="dashboard-container">
-                <div id="grafico_usuarios" class="card"></div>
-        </section>
         
+        <a th:href="@{/admin/usuarios/exportar-excel}" class="btn btn-primary">Exportar Excel</a>
+        <button id="btnExportarPDF" class="btn btn-dark">Exportar PDF</button>
+
         <div class="mb-3">
             <input type="text" id="buscarUsuario" class="form-control"
             placeholder="Escribe aqui para buscar por usuario, email, razon social...">
@@ -97,10 +96,14 @@
                 </tbody>
             </table>
         </div>
-    </section>
+        
+        <section id="pdf-content" class="dashboard">
+            <section class="dashboard-container">
+                <div id="grafico_usuarios" class="card" style="min-height: 400px"></div>
+                <div id="proveedores_rubro" class="card" style="min-height: 400px"></div>
+        </section>
 
-        <a th:href="@{/admin/usuarios/exportar-excel}" class="btn btn-primary">Exportar Excel</a>
-        <button id="btnExportarPDF" class="btn btn-dark">Exportar PDF</button>
+    </section>
     </main>
     </div>
 
