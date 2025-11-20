@@ -34,6 +34,7 @@ import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
+import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.servicios.ServicioCloudinary;
 import com.tallerwebi.dominio.servicios.ServicioMarca;
 import com.tallerwebi.dominio.servicios.ServicioPresentacion;
@@ -42,6 +43,7 @@ import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.dominio.servicios.ServicioTablas;
 import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
 import com.tallerwebi.dominio.servicios.ServicioTipoVentana;
+import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 @Controller
@@ -56,12 +58,15 @@ public class ControladorProducto implements ServletContextAware {
     private ServicioCloudinary servicioCloudinary;
     private ServicioTablas servicioTablas;
     private ServicioTipoVentana servicioTipoVentana;
+    @Autowired(required = false)
+    private final ServicioUsuario servicioUsuario;
 
     @Autowired
     public ControladorProducto(ServicioProducto servicioProducto, ServicioTipoProducto servicioTipoProducto,
             ServicioMarca servicioMarca, ServicioPresentacion servicioPresentacion,
             ServicioProveedorI servicioProveedor, ServicioCloudinary servicioCloudinary,
-            ServicioTablas servicioTablas, ServicioTipoVentana servicioTipoVentana) {
+            ServicioTablas servicioTablas, ServicioTipoVentana servicioTipoVentana,
+            ServicioUsuario servicioUsuario) {
         new ArrayList<>();
         this.servicioProducto = servicioProducto;
         this.servicioMarca = servicioMarca;
@@ -71,6 +76,7 @@ public class ControladorProducto implements ServletContextAware {
         this.servicioCloudinary = servicioCloudinary;
         this.servicioTablas = servicioTablas;
         this.servicioTipoVentana = servicioTipoVentana;
+        this.servicioUsuario = servicioUsuario;
     }
 
     public void setServletContext(ServletContext servletContext) {
@@ -78,7 +84,7 @@ public class ControladorProducto implements ServletContextAware {
     }
 
     @RequestMapping(path = "/nuevo-producto", method = RequestMethod.GET)
-    public ModelAndView nuevoProducto(HttpServletRequest request) {
+    public ModelAndView nuevoProducto(HttpServletRequest request) throws UsuarioInexistenteException {
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
         String rol_proveedor = "PROVEEDOR";
 
@@ -88,9 +94,16 @@ public class ControladorProducto implements ServletContextAware {
 
         ModelMap model = new ModelMap();
         Producto producto = new Producto();
+
         model.put("producto", producto);
         Proveedor proveedor = servicioProveedor.obtenerPorIdUsuario(usuarioSesion.getId());
         producto.setProveedor(proveedor);
+
+        if (servicioUsuario != null) {
+            String base64Image = servicioUsuario.obtenerFotoPerfil(usuarioSesion.getId(), request);
+            model.put("fotoPerfil", base64Image);
+        }
+        model.put("mailProveedor", usuarioSesion.getUsername());
         model.put("tiposProducto", servicioTipoProducto.obtener());
         model.put("marcas", servicioMarca.obtener());
         model.put("presentaciones", servicioPresentacion.obtener());
@@ -104,7 +117,7 @@ public class ControladorProducto implements ServletContextAware {
     }
 
     @RequestMapping(path = "/listado", method = RequestMethod.GET)
-    public ModelAndView mostrarProductos(HttpServletRequest request) {
+    public ModelAndView mostrarProductos(HttpServletRequest request) throws UsuarioInexistenteException {
 
         ModelMap modelo = new ModelMap();
 
@@ -119,6 +132,11 @@ public class ControladorProducto implements ServletContextAware {
             Proveedor proveedor = servicioProveedor.obtenerPorIdUsuario(usuarioSesion.getId());
 
             List<Producto> productos = this.servicioProducto.buscarPorProveedorId(proveedor.getId());
+            if (servicioUsuario != null) {
+                String base64Image = servicioUsuario.obtenerFotoPerfil(usuarioSesion.getId(), request);
+                modelo.put("fotoPerfil", base64Image);
+            }
+            modelo.put("mailProveedor", usuarioSesion.getUsername());
             modelo.put("productos", productos);
             if (productos.isEmpty()) {
                 modelo.put("error", "No hay Productos");
@@ -225,10 +243,23 @@ public class ControladorProducto implements ServletContextAware {
     }
 
     @RequestMapping("/editar/{id}")
-    public ModelAndView mostrarFormularioEditarProducto(@PathVariable Long id) {
+    public ModelAndView mostrarFormularioEditarProducto(@PathVariable Long id,HttpServletRequest request) throws UsuarioInexistenteException {
+
+        UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+        String rol_proveedor = "PROVEEDOR";
+
+        if (usuarioSesion == null || !rol_proveedor.equalsIgnoreCase(usuarioSesion.getRol())) {
+            return new ModelAndView("redirect:/login");
+        }
 
         Producto producto = servicioProducto.obtenerPorId(id);
         ModelMap model = new ModelMap();
+
+        if (servicioUsuario != null) {
+            String base64Image = servicioUsuario.obtenerFotoPerfil(usuarioSesion.getId(), request);
+            model.put("fotoPerfil", base64Image);
+        }
+        model.put("mailProveedor", usuarioSesion.getUsername());
         model.put("producto", producto);
         model.put("tiposProducto", servicioTipoProducto.obtener());
         model.put("marcas", servicioMarca.obtener());

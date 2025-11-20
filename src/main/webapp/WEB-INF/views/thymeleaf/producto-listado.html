@@ -24,8 +24,35 @@
         <!-- ===== MAIN CONTENT ===== -->
         <div class="main">
             <div class="container-fluid mt-4">
-                <h1 class="mb-4">Listado de Productos</h1>
+                <div class="header row align-items-center mb-4">
+                <div class="col-12 col-md-8 mb-2 mb-md-0">
+                    <h2 class="mb-4">Listado de Productos</h2>
+                </div>
+                <div class="col-12 col-md-4 d-flex align-items-center justify-content-md-end">
+                    <div class="profile-section position-relative" id="profileMenuContainer">
+                        <button id="profileToggle" class="d-flex align-items-center bg-transparent border-0 p-0"
+                            aria-haspopup="true" aria-expanded="false" aria-controls="profileDropdown"
+                            title="Opciones de usuario">
+                           <img th:src="${fotoPerfil}" alt="Proveedor" class="profile-img me-2">
+                                
+                            <div class="profile-info text-start">
+                                <h3 class="mb-0 fs-6"><span th:text="${mailProveedor}"></span></h3>
+                                <p class="mb-0 text-muted small">PROVEEDOR</p>
+                            </div>
+                            <i class="ms-2 bi bi-caret-down-fill text-light small"></i>
+                        </button>
 
+                        <div id="profileDropdown" class="profile-dropdown shadow" role="menu" aria-hidden="true">
+                            <a class="profile-dropdown-item" th:href="@{/usuarios/perfil-usuario}" role="menuitem">
+                                <i class="bi bi-person-circle me-2"></i> Mi Perfil
+                            </a>
+                            <a class="profile-dropdown-item" th:href="@{/logout}" role="menuitem">
+                                <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
                 <!-- Mensajes -->
                 <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
                 <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
@@ -72,7 +99,7 @@
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
-
+    <script th:src="@{/js/perfil-menu.js}"></script>
     <script>
         function confirmDeletion(element) {
             Swal.fire({

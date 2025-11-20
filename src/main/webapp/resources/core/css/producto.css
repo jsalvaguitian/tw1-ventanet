@@ -1,97 +1,162 @@
 body {
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
 
-    /* === HEADER === */
-    header {
-      height: 60px;
-      background-color: #343a40;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      border-bottom: 1px solid #444;
-      z-index: 1000;
-    }
+/* === HEADER === */
+header {
+  height: 60px;
+  background-color: #343a40;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid #444;
+  z-index: 1000;
+}
 
-    header .navbar-brand {
-      color: white;
-      font-weight: bold;
-      font-size: 1.3rem;
-    }
+header .navbar-brand {
+  color: white;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
 
-    header .navbar-brand:hover {
-      color: #f8f9fa;
-    }
+header .navbar-brand:hover {
+  color: #f8f9fa;
+}
 
-    header .nav-item .nav-link {
-      color: white;
-      position: relative;
-    }
+header .nav-item .nav-link {
+  color: white;
+  position: relative;
+}
 
-    header .badge {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      font-size: 0.6rem;
-      background: red;
-    }
+header .badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.6rem;
+  background: red;
+}
 
-    header .dropdown-menu {
-      min-width: 180px;
-    }
+header .dropdown-menu {
+  min-width: 180px;
+}
 
-    /* === LAYOUT === */
-    .main-container {
-      display: flex;
-      flex: 1;
-    }
-    
-    /* === MAIN CONTENT === */
-    main {
-      flex-grow: 1;
-      padding: 20px;
-      background-color: #f4f6f9;
-    }
+/* === LAYOUT === */
+.main-container {
+  display: flex;
+  flex: 1;
+}
 
-    /* Estilo badge notificaciones */
-    header .badge {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      font-size: 0.6rem;
-      background: red;
-      color: white;
-    }
+/* === MAIN CONTENT === */
+main {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #f4f6f9;
+}
 
-    /* Estilo dropdown de notificaciones */
-    .dropdown-menu li {
-      font-size: 0.9rem;
-    }
+/* Estilo badge notificaciones */
+header .badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.6rem;
+  background: red;
+  color: white;
+}
 
-    .dropdown-item i {
-      font-size: 1.2rem;
-      margin-top: 3px;
-    }
+/* Estilo dropdown de notificaciones */
+.dropdown-menu li {
+  font-size: 0.9rem;
+}
 
-    .dropdown-item span {
-      flex: 1;
-      font-size: 0.85rem;
-    }
+.dropdown-item i {
+  font-size: 1.2rem;
+  margin-top: 3px;
+}
 
-    .dropdown-menu {
-      padding: 0;
-      border-radius: 8px;
-    }
+.dropdown-item span {
+  flex: 1;
+  font-size: 0.85rem;
+}
 
-    .dropdown-menu li.dropdown-item {
-      padding: 10px 15px;
-    }
+.dropdown-menu {
+  padding: 0;
+  border-radius: 8px;
+}
 
-    .dropdown-menu li:hover {
-      background-color: #f8f9fa;
-    }
+.dropdown-menu li.dropdown-item {
+  padding: 10px 15px;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f8f9fa;
+}
+
+
+/* ==== PERFIL DEL USUARIO ==== */
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+}
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-info h3 {
+  color: #0b335b;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.profile-info p {
+  color: #0b335b;
+  font-size: 12px;
+  margin: 0px;
+}
+
+/* ==== DROPDOWN DE PERFIL ==== */
+.profile-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  display: none;
+  /* oculto por defecto */
+  flex-direction: column;
+  min-width: 180px;
+  z-index: 2000;
+}
+
+.profile-dropdown.show {
+  display: flex;
+  /* visible cuando se hace toggle */
+}
+
+.profile-dropdown-item {
+  padding: 10px 15px;
+  color: #0b335b;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+
+.profile-dropdown-item:hover {
+  background: #f2f6ff;
+  color: #2336e7;
+}

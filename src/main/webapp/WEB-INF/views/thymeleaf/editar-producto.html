@@ -20,9 +20,38 @@
     <div th:replace="sidebar :: sidebar"></div>
     <div class="main">
       <div class="form-card">
+        <div class="header row align-items-center mb-4">
+          <div class="col-12 col-md-8 mb-2 mb-md-0">
+            <h2 class="mb-4">Edición de Producto</h2>
+          </div>
+          <div class="col-12 col-md-4 d-flex align-items-center justify-content-md-end">
+            <div class="profile-section position-relative" id="profileMenuContainer">
+              <button id="profileToggle" class="d-flex align-items-center bg-transparent border-0 p-0"
+                aria-haspopup="true" aria-expanded="false" aria-controls="profileDropdown" title="Opciones de usuario">
+                <img th:src="${fotoPerfil}" alt="Proveedor" class="profile-img me-2">
+
+                <div class="profile-info text-start">
+                  <h3 class="mb-0 fs-6"><span th:text="${mailProveedor}"></span></h3>
+                  <p class="mb-0 text-muted small">PROVEEDOR</p>
+                </div>
+                <i class="ms-2 bi bi-caret-down-fill text-light small"></i>
+              </button>
+
+              <div id="profileDropdown" class="profile-dropdown shadow" role="menu" aria-hidden="true">
+                <a class="profile-dropdown-item" th:href="@{/usuarios/perfil-usuario}" role="menuitem">
+                  <i class="bi bi-person-circle me-2"></i> Mi Perfil
+                </a>
+                <a class="profile-dropdown-item" th:href="@{/logout}" role="menuitem">
+                  <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <form action="#" th:action="@{/producto/editar/{id}(id=${producto.id})}" method="POST" th:object="${producto}"
           enctype="multipart/form-data">
-          <h3>Edición de Producto</h3>
+          <!-- <h3>Edición de Producto</h3> -->
 
           <div class="row">
             <div class="col-md-6 mb-3">

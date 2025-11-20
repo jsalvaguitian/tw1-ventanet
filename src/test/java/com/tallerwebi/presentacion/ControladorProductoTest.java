@@ -11,6 +11,7 @@ import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.entidades.TipoProducto;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
+import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.servicios.ServicioCloudinary;
 import com.tallerwebi.dominio.servicios.ServicioMarca;
 import com.tallerwebi.dominio.servicios.ServicioPresentacion;
@@ -19,6 +20,7 @@ import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.dominio.servicios.ServicioTablas;
 import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
 import com.tallerwebi.dominio.servicios.ServicioTipoVentana;
+import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -47,6 +49,7 @@ public class ControladorProductoTest {
     private ServicioCloudinary servicioCloudinary;
     private ServicioTablas servicioTablas;
     private ServicioTipoVentana servicioTipoDeVentana;
+    private ServicioUsuario servicioUsuario;
 
     @BeforeEach
     public void init() {
@@ -58,15 +61,16 @@ public class ControladorProductoTest {
         this.servicioCloudinary = mock(ServicioCloudinary.class);
         this.servicioTablas = mock(ServicioTablas.class);
         this.servicioTipoDeVentana = mock(ServicioTipoVentana.class);
+        this.servicioUsuario = mock(ServicioUsuario.class);
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);
         this.controladorProductos = new ControladorProducto(this.servicioProducto, this.servicioTipoProducto,
                 this.servicioMarca, this.servicioPresentacion, servicioProveedor, this.servicioCloudinary, 
-                this.servicioTablas, this.servicioTipoDeVentana);
+                this.servicioTablas, this.servicioTipoDeVentana, this.servicioUsuario);
     }
 
     @Test
-    public void consultarProductosSinHaberAgregadoNingunoTengoMensajeNoHayProductos() {
+    public void consultarProductosSinHaberAgregadoNingunoTengoMensajeNoHayProductos() throws UsuarioInexistenteException {
         UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
         uSesionDto.setId(3L);
         uSesionDto.setRol("Proveedor");
@@ -92,7 +96,7 @@ public class ControladorProductoTest {
     }
 
     @Test
-    public void dadoQueExistenProductosCuandoLasConsultoSeMuestran3Productos() {
+    public void dadoQueExistenProductosCuandoLasConsultoSeMuestran3Productos() throws UsuarioInexistenteException {
 
         // Peticion de tipo GET
         UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
