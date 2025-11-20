@@ -68,7 +68,8 @@ public class ControladorCotizacion {
     @Autowired
     public ControladorCotizacion(ServicioTipoProducto servicioTipoProducto, ServicioTipoVentana servicioTipoVentana,
             ServicioTablas servicioTablas, ServicioCotizacion servicioCotizacion, ServicioProducto servicioProducto,
-            ServicioUsuario servicioUsuario, ServicioProveedorI servicioProveedor, ServicioMedioDePago servicioMedioDePago) {
+            ServicioUsuario servicioUsuario, ServicioProveedorI servicioProveedor,
+            ServicioMedioDePago servicioMedioDePago) {
         this.servicioCotizacion = servicioCotizacion;
         this.servicioProducto = servicioProducto;
         this.servicioUsuario = servicioUsuario;
@@ -233,7 +234,6 @@ public class ControladorCotizacion {
 
             request.getSession().removeAttribute("cotizaciones");
 
-            
             datosModelado.put("cotizaciones", cotizaciones);
             datosModelado.put("esConfirmacion", false);
 
@@ -241,7 +241,7 @@ public class ControladorCotizacion {
 
         } catch (Exception e) {
             e.printStackTrace();
-            ModelMap datosModelado = new ModelMap();            
+            ModelMap datosModelado = new ModelMap();
             return new ModelAndView("previsualizar-cotizacion", datosModelado);
         }
     }
@@ -279,8 +279,6 @@ public class ControladorCotizacion {
                     continue;
                 }
 
-               
-
                 // 🔹 Crear entidad Cotización
                 Cotizacion cot = new Cotizacion();
                 cot.setCliente((Cliente) cliente);
@@ -290,11 +288,10 @@ public class ControladorCotizacion {
                 cot.setFechaCreacion(LocalDate.now());
                 cot.setFechaExpiracion(LocalDate.now().plusDays(7));
 
-                 MedioDePago medioDePago = servicioMedioDePago.obtenerPorId(dto.getMedioPagoId());
+                MedioDePago medioDePago = servicioMedioDePago.obtenerPorId(dto.getMedioPagoId());
                 if (medioDePago != null) {
                     cot.setMedioDePago(medioDePago);
                 }
-                
 
                 List<CotizacionItem> items = new ArrayList<>();
 

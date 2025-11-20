@@ -26,14 +26,17 @@ import com.tallerwebi.dominio.entidades.Licitacion;
 import com.tallerwebi.dominio.entidades.MedioDePago;
 import com.tallerwebi.dominio.entidades.ProductoCustom;
 import com.tallerwebi.dominio.entidades.Proveedor;
+import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.enums.EstadoLicitacion;
 import com.tallerwebi.dominio.excepcion.NoHayLicitacionesExistentes;
+import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 import com.tallerwebi.dominio.servicios.ServicioLicitacion;
 import com.tallerwebi.dominio.servicios.ServicioMedioDePago;
 import com.tallerwebi.dominio.servicios.ServicioComentario;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
+import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.LicitacionDto;
 import com.tallerwebi.presentacion.dto.MedioDePagoDto;
 import com.tallerwebi.presentacion.dto.ProductoCustomDto;
@@ -56,12 +59,15 @@ public class ControladorProveedor {
     private final ServicioLicitacion servicioLicitacion;
     @Autowired
     private ServicioMedioDePago medioDePagoService;
+    @Autowired(required = false)
+    private final ServicioUsuario servicioUsuario;
 
     // Constructor por defecto requerido por algunos mecanismos de instanciación
     // (Jetty/Spring con múltiples constructores previos)
     public ControladorProveedor() {
         this.servicioLicitacion = null;
         this.medioDePagoService = null;
+        this.servicioUsuario = null;
     }
 
     // Constructor de compatibilidad para tests antiguos que crean manualmente el
@@ -71,6 +77,7 @@ public class ControladorProveedor {
         this.servicioProveedorI = servicioProveedorI;
         this.servicioCotizacion = servicioCotizacion;
         this.medioDePagoService = null;
+        this.servicioUsuario = null;
     }
 
     // Constructor de compatibilidad extendido para tests que incluyen comentario
@@ -81,18 +88,21 @@ public class ControladorProveedor {
         this.servicioCotizacion = servicioCotizacion;
         this.servicioComentario = servicioComentario;
         this.medioDePagoService = null;
+        this.servicioUsuario = null;
     }
 
     public ControladorProveedor(ServicioProveedorI servicioProveedorI, ServicioCotizacion servicioCotizacion,
-            ServicioLicitacion servicioLicitacion, ServicioMedioDePago medioDePagoService) {
+            ServicioLicitacion servicioLicitacion, ServicioMedioDePago medioDePagoService,
+            ServicioUsuario servicioUsuario) {
         this.servicioLicitacion = servicioLicitacion;
         this.servicioProveedorI = servicioProveedorI;
         this.servicioCotizacion = servicioCotizacion;
         this.medioDePagoService = medioDePagoService;
+        this.servicioUsuario = servicioUsuario;
     }
 
     @GetMapping("/dashboard-proveedor")
-    public ModelAndView irDashboard(HttpServletRequest request) {
+    public ModelAndView irDashboard(HttpServletRequest request) throws UsuarioInexistenteException {
         ModelMap datosModelado = new ModelMap();
 
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
@@ -141,11 +151,16 @@ public class ControladorProveedor {
         datosModelado.put("unreadComentarioCounts", unreadCounts);
 
         datosModelado.put("mailProveedor", usuarioSesion.getUsername());
+        if (servicioUsuario != null) {
+            String base64Image = servicioUsuario.obtenerFotoPerfil(usuarioSesion.getId(), request);
+            datosModelado.put("fotoPerfil", base64Image);
+        }
+
         return new ModelAndView("dashboard-proveedor", datosModelado);
     }
 
     @GetMapping("/dashboard-proveedor-custom")
-    public ModelAndView irDashboardCustom(HttpServletRequest request) {
+    public ModelAndView irDashboardCustom(HttpServletRequest request) throws UsuarioInexistenteException {
         ModelMap datosModelado = new ModelMap();
 
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
@@ -159,6 +174,9 @@ public class ControladorProveedor {
         datosModelado.put("nombreCliente", usuarioSesion.getNombre());
         datosModelado.put("apellidoCliente", usuarioSesion.getApellido());
         datosModelado.put("rolCliente", usuarioSesion.getRol());
+
+        String base64Image = servicioUsuario.obtenerFotoPerfil(usuarioSesion.getId(), request);
+        datosModelado.put("fotoPerfil", base64Image);
 
         try {
             List<Licitacion> todasLasLicitacionesEntities = servicioLicitacion
@@ -232,6 +250,58 @@ public class ControladorProveedor {
         return provDTOs;
     }
 
+    @GetMapping("/estadisticas")
+    public ModelAndView mostrarPerfil(HttpServletRequest httpServletRequest) throws UsuarioInexistenteException {
+        UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) httpServletRequest.getSession()
+                .getAttribute("usuarioLogueado");
+
+        ModelMap modelMap = new ModelMap();
+        if (usuarioSesion == null) {
+            return new ModelAndView("redirect:/login", modelMap);
+        }
+
+        Proveedor proveedor = servicioProveedorI.buscarPorId(usuarioSesion.getId());
+
+        Long proveedorId = proveedor.getId();
+
+        Map<String, Long> estadisticas = servicioCotizacion
+                .obtenerEstadisticasCotizacionesDelProveedor(proveedorId);
+
+        Map<String, Object> promedioGeneralComparacion = servicioCotizacion
+                .obtenerEstadisticaComparacionEntreProveedores(proveedorId);
+
+        Map<String, Long> productosMasCotizados = servicioCotizacion.obtenerProductosMasCotizados(proveedorId);
+
+        Map<String, Long> productosMasCotizadosDeTodosLosProveedores = servicioCotizacion
+                .obtenerProductosMasCotizadosDeTodosLosProveedores();
+
+        boolean sinCotizaciones = true;
+        if (estadisticas != null) { // Para mostrar mensaje si no tiene cotizaciones en lugar del grafico
+            for (Long v : estadisticas.values()) { // El nesteo es terrible pero no encontre otra forma
+                if (v != null && v > 0) {
+                    sinCotizaciones = false;
+                    break;
+                }
+            }
+        }
+
+        if (sinCotizaciones) {
+            modelMap.addAttribute("promedioGeneralComparacion", promedioGeneralComparacion);
+            modelMap.addAttribute("productosMasCotizadosDeTodosLosProveedores",
+                    productosMasCotizadosDeTodosLosProveedores);
+            modelMap.addAttribute("graficoVacio", "No tienes cotizaciones para mostrar estadísticas aún.");
+        } else {
+            modelMap.addAttribute("productosMasCotizadosDeTodosLosProveedores",
+                    productosMasCotizadosDeTodosLosProveedores);
+            modelMap.addAttribute("promedioGeneralComparacion", promedioGeneralComparacion);
+            modelMap.addAttribute("productosMasCotizados", productosMasCotizados);
+            modelMap.addAttribute("estadisticas", estadisticas);
+        }
+
+        modelMap.put("usuario", proveedor);
+        return new ModelAndView("estadisticas", modelMap);
+    }
+
     private List<UsuarioProvDTO> convertirProveedoresADtosFiltro(List<Proveedor> proveedores) {
         List<UsuarioProvDTO> usuarioProvDTOs = new ArrayList<>();
 
@@ -298,7 +368,7 @@ public class ControladorProveedor {
     }
 
     @GetMapping("/medios-pago")
-    public ModelAndView mostrarProveedorMedioPago(HttpServletRequest request) {
+    public ModelAndView mostrarProveedorMedioPago(HttpServletRequest request) throws UsuarioInexistenteException {
         ModelMap datosModelado = new ModelMap();
 
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
@@ -327,6 +397,10 @@ public class ControladorProveedor {
                 .map(MedioDePago::getId)
                 .collect(Collectors.toList());
 
+        if (servicioUsuario != null) {
+            String base64Image = servicioUsuario.obtenerFotoPerfil(usuarioSesion.getId(), request);
+            datosModelado.put("fotoPerfil", base64Image);
+        }
         datosModelado.addAttribute("idsMediosProveedor", idsMediosProveedor);
         datosModelado.put("mailProveedor", usuarioSesion.getUsername());
         datosModelado.addAttribute("mediosProveedor", mediosProveedor);
@@ -357,17 +431,17 @@ public class ControladorProveedor {
     }
 
     @GetMapping("/medios-pago/{proveedorId}")
-    @ResponseBody // Indica a Spring que la respuesta debe ser escrita directamente en el cuerpo (como JSON)
+    @ResponseBody // Indica a Spring que la respuesta debe ser escrita directamente en el cuerpo
+                  // (como JSON)
     public ResponseEntity<List<MedioDePago>> obtenerMediosPagoPorProveedor(@PathVariable Long proveedorId) {
-        
-        
+
         // 1. Obtener el proveedor.
         List<MedioDePago> mediosPago = servicioProveedorI.obtenerMediosDePagoDeProveedor(proveedorId);
-        
-        if (mediosPago == null) {            
+
+        if (mediosPago == null) {
             mediosPago = new ArrayList<>();
         }
-        
+
         return ResponseEntity.ok(mediosPago);
     }
 }

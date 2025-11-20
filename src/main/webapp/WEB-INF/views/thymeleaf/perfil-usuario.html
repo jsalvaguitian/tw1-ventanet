@@ -16,23 +16,30 @@
 <body th:fragment="perfil-base(contenidoExtra)">
     <main class="py-5 d-flex flex-column align-items-center">
         <div class="card-perfil shadow-lg p-4 text-center">
-            <div class="card-header bg-transparent border-0">
-                <img th:src="${fotoPerfil}" alt="Foto de perfil" class="foto-perfil mx-auto d-block">
-                <form th:action="@{/usuarios/cambiar-foto}" method="post" enctype="multipart/form-data" class="cambiar-foto">
-                <input type="file" id="input-foto" name="foto" accept="image/*" class="form-control mb-2" hidden>
-                  <label for="input-foto" class="cambiar-foto bg-primary text-white">
-                    <i class="bi bi-camera"></i> <!-- icono del Bootstrap -->
-                </label>
-                </form>
-            </div>
+            <div class="avatar-container">
+    <img th:src="${fotoPerfil}" alt="Foto" class="foto-perfil">
+
+    <form th:action="@{/usuarios/cambiar-foto}" method="post" enctype="multipart/form-data">
+        <input type="file" id="input-foto" name="foto" accept="image/*" hidden>
+        <label for="input-foto" class="btn-avatar">
+            <i class="bi bi-camera"></i>
+        </label>
+    </form>
+</div>
+
             <div class="card-body">
-                <h2 class="profile-username mb-3" th:text="${usuario.username}"></h2>
+                <h2 class="profile-username mb-3"
+                th:if="${usuario.rol == 'CLIENTE'}"
+                th:text="${usuario.nombre + ' ' + usuario.apellido}"></h2>
+
+                <h2 class="profile-username mb-3"
+                th:if="${usuario.rol == 'PROVEEDOR'}"
+                th:text="${usuario.razonSocial}"></h2>
+
                 <div class="profile-info text-start">
                     <div th:replace="${contenidoExtra} ?: ~{}"></div>
-                    <hr>
-                    <h3>Datos personales</h3>
-                    <p th:if="${usuario.rol != 'PROVEEDOR'}"><strong>Nombre:</strong> <span th:text="${usuario.nombre}" accept-charset="UTF-8"></span></p>
-                    <p th:if="${usuario.rol != 'PROVEEDOR'}"><strong>Apellido:</strong> <span th:text="${usuario.apellido}" accept-charset="UTF-8"></span></p>
+                    <hr th:if="${usuario.rol == 'CLIENTE'}">
+                    <h3 th:if="${usuario.rol == 'CLIENTE'}">Datos personales</h3>
                     <p><strong>Email:</strong> <span th:text="${usuario.email}" accept-charset="UTF-8"></span></p>
                     <p><strong>Dirección:</strong> <span th:text="${usuario.direccion}" accept-charset="UTF-8"></span></p>
                     <p><strong>Teléfono:</strong> <span th:text="${usuario.telefono}" accept-charset="UTF-8"></span></p>

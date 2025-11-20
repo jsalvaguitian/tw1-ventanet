@@ -37,7 +37,7 @@ public class ServicioPerfilImpl implements ServicioPerfil {
 
     @Override
     @Transactional
-    public void actualizarPerfil(String nombre, String apellido, String username, String direccion, String telefono,
+    public void actualizarPerfil(String nombre, String apellido, String direccion, String telefono,
             Usuario usuarioActual) throws ValorInvalido {
 
         if (nombre == null || nombre.trim().isEmpty()) {
@@ -54,7 +54,7 @@ public class ServicioPerfilImpl implements ServicioPerfil {
 
         usuarioActual.setNombre(nombre);
         usuarioActual.setApellido(apellido);
-        usuarioActual.setUsername(username);
+
         usuarioActual.setDireccion(direccion);
         usuarioActual.setTelefono(telefono);
         repositorioUsuario.actualizar(usuarioActual);
@@ -63,7 +63,7 @@ public class ServicioPerfilImpl implements ServicioPerfil {
 
     @Override
     @Transactional
-    public void actualizarPerfilProveedor(String nombre, String apellido, String username, String direccion,
+    public void actualizarPerfilProveedor(String nombre, String apellido, String direccion,
             String telefono, String razonSocial, String ubicacion, String sitioWeb, Proveedor proveedorActual)
             throws ValorInvalido {
         if (nombre == null || nombre.trim().isEmpty()) {
@@ -80,7 +80,6 @@ public class ServicioPerfilImpl implements ServicioPerfil {
 
         proveedorActual.setNombre(nombre);
         proveedorActual.setApellido(apellido);
-        proveedorActual.setUsername(username);
         proveedorActual.setDireccion(direccion);
         proveedorActual.setTelefono(telefono);
 
