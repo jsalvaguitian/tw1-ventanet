@@ -16,7 +16,9 @@ import com.tallerwebi.dominio.servicios.ServicioMarca;
 import com.tallerwebi.dominio.servicios.ServicioPresentacion;
 import com.tallerwebi.dominio.servicios.ServicioProducto;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
+import com.tallerwebi.dominio.servicios.ServicioTablas;
 import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
+import com.tallerwebi.dominio.servicios.ServicioTipoVentana;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,6 +45,8 @@ public class ControladorProductoTest {
     private HttpServletRequest requestMock;
     private HttpSession sessionMock;
     private ServicioCloudinary servicioCloudinary;
+    private ServicioTablas servicioTablas;
+    private ServicioTipoVentana servicioTipoDeVentana;
 
     @BeforeEach
     public void init() {
@@ -52,10 +56,13 @@ public class ControladorProductoTest {
         this.servicioPresentacion = mock(ServicioPresentacion.class);
         this.servicioProveedor = mock(ServicioProveedorI.class);
         this.servicioCloudinary = mock(ServicioCloudinary.class);
+        this.servicioTablas = mock(ServicioTablas.class);
+        this.servicioTipoDeVentana = mock(ServicioTipoVentana.class);
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);
         this.controladorProductos = new ControladorProducto(this.servicioProducto, this.servicioTipoProducto,
-                this.servicioMarca, this.servicioPresentacion, servicioProveedor, this.servicioCloudinary);
+                this.servicioMarca, this.servicioPresentacion, servicioProveedor, this.servicioCloudinary, 
+                this.servicioTablas, this.servicioTipoDeVentana);
     }
 
     @Test

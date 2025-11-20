@@ -22,183 +22,129 @@
     <!-- ===== MAIN CONTENT ===== -->
     <div class="main">
       <div class="form-card">
+
         <form action="#" th:action="@{/producto/crear}" method="POST" th:object="${producto}"
           enctype="multipart/form-data">
           <h3>Nuevo Producto</h3>
 
-          <!-- Nombre -->
-          <div class="mb-3">
-            <label for="nombre" class="form-label">Nombre</label>
-            <input th:field="*{nombre}" id="nombre" class="form-control" required />
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input th:field="*{nombre}" id="nombre" class="form-control" required />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="precio" class="form-label">Precio</label>
+              <input th:field="*{precio}" id="precio" type="number" step="0.01" min="0" class="form-control" required />
+            </div>
           </div>
 
-          <!-- Precio -->
-          <div class="mb-3">
-            <label for="precio" class="form-label">Precio</label>
-            <input th:field="*{precio}" id="precio" type="number" step="0.01" min="0" class="form-control" required />
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="stock" class="form-label">Stock</label>
+              <input th:field="*{stock}" id="stock" type="number" min="0" class="form-control" required />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="imagenFile" class="form-label">Imagen del Producto</label>
+              <input id="imagenFile" name="imagenFile" type="file" class="form-control" accept="image/*" />
+            </div>
           </div>
 
-          <!-- Descripción -->
           <div class="mb-3">
             <label for="descripcion" class="form-label">Descripción</label>
             <textarea th:field="*{descripcion}" id="descripcion" class="form-control" rows="3"></textarea>
           </div>
 
-          <!-- Imagen (archivo) -->
-          <div class="mb-3">
-            <label for="imagenFile" class="form-label">Imagen del Producto</label>
-            <input id="imagenFile" name="imagenFile" type="file" class="form-control" accept="image/*" />
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="tipo_producto_id" class="form-label">Tipo de Producto</label>
+              <select th:field="*{tipoProducto.id}" id="tipo_producto_id" class="form-select">
+                <option value="">Seleccione...</option>
+                <option th:each="tipo : ${tiposProducto}" th:value="${tipo.id}" th:text="${tipo.nombre}"></option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="marca_id" class="form-label">Marca</label>
+              <select th:field="*{marca.id}" id="marca_id" class="form-select">
+                <option value="">Seleccione...</option>
+                <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="presentacion_id" class="form-label">Presentación</label>
+              <select th:field="*{presentacion.id}" id="presentacion_id" class="form-select">
+                <option value="">Seleccione...</option>
+                <option th:each="pres : ${presentaciones}" th:value="${pres.id}" th:text="${pres.descripcion}"></option>
+              </select>
+            </div>
           </div>
 
-          <!-- Stock -->
-          <div class="mb-3">
-            <label for="stock" class="form-label">Stock</label>
-            <input th:field="*{stock}" id="stock" type="number" min="0" class="form-control" required />
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="tipo_ventana_id" class="form-label">Tipo de Ventana</label>
+              <select th:field="*{tipoVentana.id}" id="tipo_ventana_id" class="form-select">
+                <option value="">Seleccione...</option>
+                <option value="1">Corrediza</option>
+                <option value="2">Oscilobatiente</option>
+                <option value="3">Paño fijo</option>
+                <option value="4">Abatible</option>
+                <option value="5">Plegable</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="ancho_id" class="form-label">Ancho</label>
+              <select th:field="*{ancho.id}" id="ancho_id" class="form-select">
+                <option value="">Seleccione...</option>
+                <th:block th:each="a : ${anchos}">
+                  <option th:value="${a.id}" th:text="${a.nombre}"></option>
+                </th:block>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="alto_id" class="form-label">Alto</label>
+              <select th:field="*{alto.id}" id="alto_id" class="form-select">
+                <option value="">Seleccione...</option>
+                <th:block th:each="h : ${altos}">
+                  <option th:value="${h.id}" th:text="${h.nombre}"></option>
+                </th:block>
+              </select>
+            </div>
           </div>
 
-          <!-- Tipo de Producto -->
-          <div class="mb-3">
-            <label for="tipo_producto_id" class="form-label">Tipo de Producto</label>
-            <select th:field="*{tipoProducto.id}" id="tipo_producto_id" class="form-select">
-              <option value="">Seleccione...</option>v
-              <option th:each="tipo : ${tiposProducto}" th:value="${tipo.id}" th:text="${tipo.nombre}"></option>
-            </select>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="material_perfil_id" class="form-label">Material de Perfil</label>
+              <select th:field="*{materialDePerfil.id}" id="material_perfil_id" class="form-select">
+                <option value="">Seleccione...</option>
+                <th:block th:each="h : ${materiales}">
+                  <option th:value="${h.id}" th:text="${h.nombre}"></option>
+                </th:block>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="tipo_vidrio_id" class="form-label">Tipo de Vidrio</label>
+              <select th:field="*{tipoDeVidrio.id}" id="tipo_vidrio_id" class="form-select">
+                <option value="">Seleccione...</option>
+                <option value="1">Simple</option>
+                <option value="2">Doble</option>
+                <option value="3">Laminado</option>
+                <option value="4">Templado</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="color_id" class="form-label">Color</label>
+              <select th:field="*{color.id}" id="color_id" class="form-select">
+                <option value="">Seleccione...</option>
+                <th:block th:each="h : ${colores}">
+                  <option th:value="${h.id}" th:text="${h.nombre}"></option>
+                </th:block>
+              </select>
+            </div>
           </div>
 
-          <!-- Marca -->
-          <div class="mb-3">
-            <label for="marca_id" class="form-label">Marca</label>
-            <select th:field="*{marca.id}" id="marca_id" class="form-select">
-              <option value="">Seleccione...</option>
-              <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option>
-            </select>
-          </div>
-
-          <!-- Presentación -->
-          <div class="mb-3">
-            <label for="presentacion_id" class="form-label">Presentación</label>
-            <select th:field="*{presentacion.id}" id="presentacion_id" class="form-select">
-              <option value="">Seleccione...</option>
-              <option th:each="pres : ${presentaciones}" th:value="${pres.id}" th:text="${pres.descripcion}"></option>
-            </select>
-          </div>
-
-          <!-- Tipo de Ventana -->
-          <div class="mb-3">
-            <label for="tipo_ventana_id" class="form-label">Tipo de Ventana</label>
-            <select th:field="*{tipoVentana.id}" id="tipo_ventana_id" class="form-select">
-              <option value="">Seleccione...</option>
-              <option value="1">Corrediza</option>
-              <option value="2">Oscilobatiente</option>
-              <option value="3">Paño fijo</option>
-              <option value="4">Abatible</option>
-              <option value="5">Plegable</option>
-            </select>
-          </div>
-
-          <!-- Ancho -->
-          <div class="mb-3">
-            <label for="ancho_id" class="form-label">Ancho</label>
-            <select th:field="*{ancho.id}" id="ancho_id" class="form-select">
-              <option value="">Seleccione...</option>
-              <option value="1">0.5 m</option>
-              <option value="2">0.6 m</option>
-              <option value="3">0.7 m</option>
-              <option value="4">0.8 m</option>
-              <option value="5">0.9 m</option>
-              <option value="6">1.0 m</option>
-              <option value="7">1.2 m</option>
-              <option value="8">1.3 m</option>
-              <option value="9">1.4 m</option>
-              <option value="10">1.5 m</option>
-              <option value="11">1.6 m</option>
-              <option value="12">1.7 m</option>
-              <option value="13">1.8 m</option>
-              <option value="14">1.9 m</option>
-              <option value="15">2.0 m</option>
-              <option value="16">2.2 m</option>
-              <option value="17">2.3 m</option>
-              <option value="18">2.4 m</option>
-              <option value="19">2.5 m</option>
-              <option value="20">2.6 m</option>
-              <option value="21">2.7 m</option>
-              <option value="19">2.8 m</option>
-              <option value="20">2.9 m</option>
-            </select>
-          </div>
-
-          <!-- Alto -->
-          <div class="mb-3">
-            <label for="alto_id" class="form-label">Alto</label>
-            <select th:field="*{alto.id}" id="alto_id" class="form-select">
-              <option value="">Seleccione...</option>
-              <option value="1">0.5 m</option>
-              <option value="2">0.6 m</option>
-              <option value="3">0.7 m</option>
-              <option value="4">0.8 m</option>
-              <option value="5">0.9 m</option>
-              <option value="6">1.0 m</option>
-              <option value="7">1.2 m</option>
-              <option value="8">1.3 m</option>
-              <option value="9">1.4 m</option>
-              <option value="10">1.5 m</option>
-              <option value="11">1.6 m</option>
-              <option value="12">1.7 m</option>
-              <option value="13">1.8 m</option>
-              <option value="14">1.9 m</option>
-              <option value="15">2.0 m</option>
-              <option value="16">2.2 m</option>
-              <option value="17">2.3 m</option>
-              <option value="18">2.4 m</option>
-              <option value="19">2.5 m</option>
-              <option value="20">2.6 m</option>
-              <option value="21">2.7 m</option>
-              <option value="19">2.8 m</option>
-              <option value="20">2.9 m</option>
-            </select>
-          </div>
-
-          <!-- Material de perfil -->
-          <div class="mb-3">
-            <label for="material_perfil_id" class="form-label">Material de Perfil</label>
-            <select th:field="*{materialDePerfil.id}" id="material_perfil_id" class="form-select">
-              <option value="">Seleccione...</option>
-              <option value="1">Aluminio</option>
-              <option value="2">PVC</option>
-              <option value="3">Madera</option>
-            </select>
-          </div>
-
-          <!-- Tipo de Vidrio -->
-          <div class="mb-3">
-            <label for="tipo_vidrio_id" class="form-label">Tipo de Vidrio</label>
-            <select th:field="*{tipoDeVidrio.id}" id="tipo_vidrio_id" class="form-select">
-              <option value="">Seleccione...</option>
-              <option value="1">Simple</option>
-              <option value="2">Doble</option>
-              <option value="3">Laminado</option>
-              <option value="4">Templado</option>
-            </select>
-          </div>
-
-          <!-- Color -->
-          <div class="mb-3">
-            <label for="color_id" class="form-label">Tipo de Vidrio</label>
-            <select th:field="*{color.id}" id="color_id" class="form-select">
-              <option value="">Seleccione...</option>
-              <option value="1">Blanco</option>
-              <option value="2">Gris</option>
-              <option value="3">Marrón</option>
-              <option value="4">Negro</option>
-            </select>
-          </div>
-
-          <!-- Botones -->
-          <div class="d-flex justify-content-between">
+          <div class="d-flex justify-content-between mt-4">
             <button id="btn-crear" class="btn btn-submit" type="submit" disabled>Crear Producto</button>
           </div>
 
-          <!-- Mensajes de error -->
           <p th:if="${error != null}" class="alert alert-danger mt-3" th:text="'Error: ' + ${error}"></p>
         </form>
       </div>
