@@ -1,0 +1,68 @@
+main {
+min-height: 100vh;
+padding-bottom: 50px;
+}
+
+
+.container-graficos {
+width: 92%;
+max-width: 1300px;
+margin: 40px auto;
+}
+
+
+.dashboard-container {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+gap: 30px;
+margin-top: 25px;
+}
+
+
+.card-grafico {
+background: #ffffff;
+padding: 22px;
+border-radius: 18px;
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+opacity: 0;
+animation: fadeInUp 0.6s ease forwards;
+}
+
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+0% {
+opacity: 0;
+transform: translateY(20px);
+}
+100% {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+
+.card-grafico:hover {
+transform: translateY(-6px);
+box-shadow: 0 8px 26px rgba(0, 0, 0, 0.15);
+}
+
+
+.card-grafico h4 {
+font-weight: 600;
+color: #2336e7;
+}
+
+
+.grafico {
+width: 100%;
+height: 340px; /* tamaño ligeramente mayor */
+transition: height 0.3s ease;
+}
+
+
+/* Responsive mejorado */
+@media (max-width: 768px) {
+.grafico { height: 300px; }
+}

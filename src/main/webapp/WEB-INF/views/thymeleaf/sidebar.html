@@ -49,6 +49,11 @@
                     <i class="bi bi-credit-card"></i><span>Medios de Pago</span>
                 </a>
             </li>
+             <li th:if="${usuarioLogueado.rol == 'PROVEEDOR'}" class="nav-item">
+              <a th:href="@{/proveedor/estadisticas}" class="nav-link">
+                <i class="bi bi-bar-chart"></i><span>Estadisticas</span>
+              </a>
+              </li>
             </ul>
     </aside>
 </div>

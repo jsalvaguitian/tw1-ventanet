@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
@@ -28,33 +29,33 @@ public class ControladorProveedorTest {
     public void init() {
         servicioProveedorI = mock(ServicioProveedorI.class);
         servicioCotizacion = mock(ServicioCotizacion.class);
-        controladorProveedor= new ControladorProveedor(servicioProveedorI,servicioCotizacion);
+        controladorProveedor = new ControladorProveedor(servicioProveedorI, servicioCotizacion);
         requestMock = mock(HttpServletRequest.class);
-        sessionMock= mock(HttpSession.class);
+        sessionMock = mock(HttpSession.class);
     }
 
     @Test
-    public void queSeMuestreElDashboardDelProveedorCuandoSeLoguea(){
+    public void queSeMuestreElDashboardDelProveedorCuandoSeLoguea() throws UsuarioInexistenteException {
         String vistaEsperada = "dashboard-proveedor";
 
-        //Simular request que tiene sesion
+        // Simular request que tiene sesion
         when(requestMock.getSession()).thenReturn(sessionMock);
 
-        //creo un usuario proveedor
+        // creo un usuario proveedor
         UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
         uSesionDto.setRol("Proveedor");
         uSesionDto.setUsername("proveedor@empresa.com");
 
-        //tengo q simular sesion con usuario logueado
+        // tengo q simular sesion con usuario logueado
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
         /**************************** */
 
-        //Ejecucion
+        // Ejecucion
 
         ModelAndView modelAndView = controladorProveedor.irDashboard(requestMock);
         String vistaObtenida = modelAndView.getViewName();
 
-        assertThat(vistaObtenida,equalTo(vistaEsperada));
+        assertThat(vistaObtenida, equalTo(vistaEsperada));
         assertThat(modelAndView.getModel().get("mailProveedor"), equalTo(uSesionDto.getUsername()));
     }
 
