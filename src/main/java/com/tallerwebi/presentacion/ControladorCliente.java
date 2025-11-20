@@ -325,6 +325,7 @@ public class ControladorCliente {
                 MapearProductoCustomAProductoCustomDto(licitacion.getProductoCustom()));
         dto.setFechaCreacion(licitacion.getFechaCreacion());
         dto.setFechaExpiracion(licitacion.getFechaExpiracion());
+        dto.setMontoTotal(licitacion.getMontoTotal());
         return dto;
     }
 }

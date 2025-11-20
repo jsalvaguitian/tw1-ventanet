@@ -51,7 +51,7 @@
                         aria-haspopup="true" aria-expanded="false" aria-controls="profileDropdown"
                         title="Opciones de usuario">
                         <img th:src="${fotoPerfil}" alt="Cliente" class="profile-img me-2">
-                            
+
                         <div class="profile-info text-start">
                             <h3 class="mb-0 fs-6"><span th:text="${apellidoCliente}"></span>, <span
                                     th:text="${nombreCliente}"></span></h3>
@@ -277,8 +277,12 @@
                                 th:text="${licitacion.productoCustom != null ? licitacion.productoCustom.descripcion : '—'}">
                             </td>
                             <td th:text="${licitacion.proveedor.razonSocial}"></td>
-                            <td class="monto-cotizacion" th:data-precio-ars="${licitacion.montoTotal}"
-                                th:text="'$' + ${#numbers.formatDecimal(licitacion.montoTotal, 2, 2)} + ' ARS'"></td>
+                            <!-- <td class="monto-cotizacion" th:data-precio-ars="${licitacion.montoTotal}"
+                                th:text="'$' + ${#numbers.formatDecimal(licitacion.montoTotal, 2, 2)} + ' ARS'"></td> -->
+                            <td class="monto-cotizacion" th:data-precio-ars="${licitacion.montoTotal}" th:text="${licitacion.montoTotal != null} 
+        ? ('$' + ${#numbers.formatDecimal(licitacion.montoTotal, 2, 2)} + ' ARS') 
+        : ('$0.00 ARS')">
+                            </td>
                             <td th:text="${licitacion.estado}"></td>
                             <td th:text="${licitacion.fechaCreacion}"></td>
                             <td th:text="${licitacion.fechaExpiracion}"></td>
@@ -290,7 +294,8 @@
                                 <a class="btn btn-sm btn-secondary position-relative" title="Mensajes"
                                     th:href="@{'/licitacion/' + ${licitacion.id} + '/mensajes'}">
                                     <i class="fas fa-comments"></i>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                                         th:if="${unreadLicitacionCounts != null and unreadLicitacionCounts[licitacion.id] > 0}"
                                         th:text="${unreadLicitacionCounts[licitacion.id]}"></span>
                                 </a>
