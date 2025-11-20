@@ -1,49 +1,59 @@
-<!-- fragments/sidebar.html -->
-<div th:fragment="sidebar">
-  <aside id="sidebar" class="d-flex flex-column position-relative"> 
-
-    <ul class="nav flex-column mt-4">
-
-      <!-- Dashboard -->
-      <li class="nav-item">
-        <a th:href="@{/proveedor/dashboard-proveedor}" class="nav-link">
-          <i class="bi bi-house"></i><span>Dashboard</span>
+<div th:fragment="sidebar" class="sidebar">
+    <aside id="sidebar" class="d-flex flex-column position-relative"> 
+        <a th:href="@{/}" class="noStyleLinks">
+            <h2>Ventanet</h2>
         </a>
-      </li>
+        <ul class="nav flex-column mt-4">
 
-      <!-- Materiales con submenú -->
-      <li class="nav-item">
-        <a class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-          href="#submenuMateriales" role="button" aria-expanded="false" aria-controls="submenuMateriales">
-          <span><i class="bi bi-journal-text me-2"></i>Materiales</span>
-          <i class="bi bi-chevron-down"></i>
-        </a>
-
-        <div class="collapse ps-4" id="submenuMateriales">
-          <ul class="nav flex-column">
             <li class="nav-item">
-              <a th:href="@{/producto/nuevo-producto}" class="nav-link">Alta manual</a>
+                <a th:href="@{/proveedor/dashboard-proveedor}" 
+                   class="nav-link"
+                   th:classappend="${#httpServletRequest.requestURI.endsWith('/dashboard-proveedor')} ? 'active' : ''">
+                    <i class="bi bi-house"></i><span>Dashboard</span>
+                </a>
             </li>
+
             <li class="nav-item">
-              <a th:href="@{/producto/listado}" class="nav-link">Listado de materiales</a>
+                <a class="nav-link d-flex justify-content-between align-items-center" 
+                   data-bs-toggle="collapse"
+                   href="#submenuMateriales" 
+                   role="button" 
+                   aria-expanded="false" 
+                   aria-controls="submenuMateriales"
+                   th:classappend="${#httpServletRequest.requestURI.startsWith('/producto/')} ? 'active-parent' : ''"> <span><i class="bi bi-journal-text me-2"></i>Materiales</span>
+                    <i class="bi bi-chevron-down"></i>
+                </a>
+
+                <div class="collapse ps-4" 
+                     id="submenuMateriales"
+                     th:classappend="${#httpServletRequest.requestURI.startsWith('/producto/')} ? 'show' : ''">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a th:href="@{/producto/nuevo-producto}" 
+                               class="nav-link"
+                               th:classappend="${#httpServletRequest.requestURI.endsWith('/nuevo-producto')} ? 'active' : ''">Alta manual</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/producto/listado}" 
+                               class="nav-link"
+                               th:classappend="${#httpServletRequest.requestURI.endsWith('/listado')} ? 'active' : ''">Listado de materiales</a>
+                        </li>
+                    </ul>
+                </div>
             </li>
-          </ul>
-        </div>
-      </li>
 
-      <li class="nav-item">
-        <a th:href="@{/proveedor/medios-pago}" class="nav-link">
-          <i class="bi bi-credit-card"></i><span>Medios de Pago</span>
-        </a>
-      </li>
-
-      <!-- Más secciones (opcional) -->
-      <!-- <li class="nav-item">
-        <a th:href="@{/reportes}" class="nav-link">
-          <i class="bi bi-graph-up"></i><span>Reportes</span>
-        </a>
-      </li> -->
-
-    </ul>
-  </aside>
+            <li class="nav-item">
+                <a th:href="@{/proveedor/medios-pago}" 
+                   class="nav-link"
+                   th:classappend="${#httpServletRequest.requestURI.endsWith('/medios-pago')} ? 'active' : ''">
+                    <i class="bi bi-credit-card"></i><span>Medios de Pago</span>
+                </a>
+            </li>
+             <li th:if="${usuarioLogueado.rol == 'PROVEEDOR'}" class="nav-item">
+              <a th:href="@{/proveedor/estadisticas}" class="nav-link">
+                <i class="bi bi-bar-chart"></i><span>Estadisticas</span>
+              </a>
+              </li>
+            </ul>
+    </aside>
 </div>

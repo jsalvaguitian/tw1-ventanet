@@ -29,16 +29,21 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.tallerwebi.dominio.entidades.Color;
 import com.tallerwebi.dominio.entidades.Producto;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.excepcion.ProductoExistente;
+import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.servicios.ServicioCloudinary;
 import com.tallerwebi.dominio.servicios.ServicioMarca;
 import com.tallerwebi.dominio.servicios.ServicioPresentacion;
 import com.tallerwebi.dominio.servicios.ServicioProducto;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
+import com.tallerwebi.dominio.servicios.ServicioTablas;
 import com.tallerwebi.dominio.servicios.ServicioTipoProducto;
+import com.tallerwebi.dominio.servicios.ServicioTipoVentana;
+import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 @Controller
@@ -51,11 +56,17 @@ public class ControladorProducto implements ServletContextAware {
     private final ServicioPresentacion servicioPresentacion;
     private final ServicioProveedorI servicioProveedor;
     private ServicioCloudinary servicioCloudinary;
+    private ServicioTablas servicioTablas;
+    private ServicioTipoVentana servicioTipoVentana;
+    @Autowired(required = false)
+    private final ServicioUsuario servicioUsuario;
 
     @Autowired
     public ControladorProducto(ServicioProducto servicioProducto, ServicioTipoProducto servicioTipoProducto,
             ServicioMarca servicioMarca, ServicioPresentacion servicioPresentacion,
-            ServicioProveedorI servicioProveedor, ServicioCloudinary servicioCloudinary) {
+            ServicioProveedorI servicioProveedor, ServicioCloudinary servicioCloudinary,
+            ServicioTablas servicioTablas, ServicioTipoVentana servicioTipoVentana,
+            ServicioUsuario servicioUsuario) {
         new ArrayList<>();
         this.servicioProducto = servicioProducto;
         this.servicioMarca = servicioMarca;
@@ -63,6 +74,9 @@ public class ControladorProducto implements ServletContextAware {
         this.servicioPresentacion = servicioPresentacion;
         this.servicioProveedor = servicioProveedor;
         this.servicioCloudinary = servicioCloudinary;
+        this.servicioTablas = servicioTablas;
+        this.servicioTipoVentana = servicioTipoVentana;
+        this.servicioUsuario = servicioUsuario;
     }
 
     public void setServletContext(ServletContext servletContext) {
@@ -70,7 +84,7 @@ public class ControladorProducto implements ServletContextAware {
     }
 
     @RequestMapping(path = "/nuevo-producto", method = RequestMethod.GET)
-    public ModelAndView nuevoProducto(HttpServletRequest request) {
+    public ModelAndView nuevoProducto(HttpServletRequest request) throws UsuarioInexistenteException {
         UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
         String rol_proveedor = "PROVEEDOR";
 
@@ -80,18 +94,30 @@ public class ControladorProducto implements ServletContextAware {
 
         ModelMap model = new ModelMap();
         Producto producto = new Producto();
+
         model.put("producto", producto);
         Proveedor proveedor = servicioProveedor.obtenerPorIdUsuario(usuarioSesion.getId());
         producto.setProveedor(proveedor);
+
+        if (servicioUsuario != null) {
+            String base64Image = servicioUsuario.obtenerFotoPerfil(usuarioSesion.getId(), request);
+            model.put("fotoPerfil", base64Image);
+        }
+        model.put("mailProveedor", usuarioSesion.getUsername());
         model.put("tiposProducto", servicioTipoProducto.obtener());
         model.put("marcas", servicioMarca.obtener());
         model.put("presentaciones", servicioPresentacion.obtener());
+        model.addAttribute("tiposProducto", servicioTipoProducto.obtener());
+        model.addAttribute("colores", servicioTablas.obtenerColores());
+        model.addAttribute("materiales", servicioTablas.obtenerMateriales());
+        model.addAttribute("altos", servicioTablas.obtenerAltos());
+        model.addAttribute("anchos", servicioTablas.obtenerAnchos());
 
         return new ModelAndView("nuevo-producto", model);
     }
 
     @RequestMapping(path = "/listado", method = RequestMethod.GET)
-    public ModelAndView mostrarProductos(HttpServletRequest request) {
+    public ModelAndView mostrarProductos(HttpServletRequest request) throws UsuarioInexistenteException {
 
         ModelMap modelo = new ModelMap();
 
@@ -106,6 +132,11 @@ public class ControladorProducto implements ServletContextAware {
             Proveedor proveedor = servicioProveedor.obtenerPorIdUsuario(usuarioSesion.getId());
 
             List<Producto> productos = this.servicioProducto.buscarPorProveedorId(proveedor.getId());
+            if (servicioUsuario != null) {
+                String base64Image = servicioUsuario.obtenerFotoPerfil(usuarioSesion.getId(), request);
+                modelo.put("fotoPerfil", base64Image);
+            }
+            modelo.put("mailProveedor", usuarioSesion.getUsername());
             modelo.put("productos", productos);
             if (productos.isEmpty()) {
                 modelo.put("error", "No hay Productos");
@@ -148,6 +179,58 @@ public class ControladorProducto implements ServletContextAware {
                 producto.setImgCloudinaryID((String) resultado.get("public_id"));
                 // antes imagen cargada en un directorio
             }
+
+            if (producto.getColor() != null && producto.getColor().getId() != null && producto.getColor().getId() > 0) {
+                producto.setColor(this.servicioTablas.obtenerColorPorId(producto.getColor().getId()));
+            } else {
+                producto.setColor(null);
+            }
+            // Ancho
+            if (producto.getAncho() != null && producto.getAncho().getId() != null) {
+                producto.setAncho(this.servicioTablas.obtenerAnchoPorId(producto.getAncho().getId()));
+            } else {
+                producto.setAncho(null);
+            }
+
+            if (producto.getAlto() != null && producto.getAlto().getId() != null) {
+                producto.setAlto(this.servicioTablas.obtenerAltoPorId(producto.getAlto().getId()));
+            } else {
+                producto.setAlto(null);
+            }
+
+            // Tipo Producto
+            if (producto.getTipoProducto() != null && producto.getTipoProducto().getId() != null) {
+                producto.setTipoProducto(servicioTipoProducto.obtenerPorId(producto.getTipoProducto().getId()));
+            } else {
+                producto.setTipoProducto(null);
+            }
+
+            // Marca
+            if (producto.getMarca() != null && producto.getMarca().getId() != null) {
+                producto.setMarca(servicioMarca.obtenerPorId(producto.getMarca().getId()));
+            }
+
+            if (producto.getMaterialDePerfil() != null && producto.getMaterialDePerfil().getId() != null) {
+                producto.setMaterialDePerfil(
+                        servicioTablas.obtenerMaterialPorId(producto.getMaterialDePerfil().getId()));
+            } else {
+                producto.setMaterialDePerfil(null);
+            }
+
+            // Tipo vidrio
+            if (producto.getTipoDeVidrio() != null && producto.getTipoDeVidrio().getId() != null) {
+                producto.setTipoDeVidrio(servicioTablas.obtenerTipoDeVidrioPorId(producto.getTipoDeVidrio().getId()));
+            } else {
+                producto.setTipoDeVidrio(null);
+            }
+
+            // Tipo ventana
+            if (producto.getTipoVentana() != null && producto.getTipoVentana().getId() != null) {
+                producto.setTipoVentana(servicioTipoVentana.obtener(producto.getTipoVentana().getId()));
+            } else {
+                producto.setTipoVentana(null);
+            }
+
             servicioProducto.crearProducto(producto);
         } catch (ProductoExistente e) {
             model.put("error", "El producto ya existe");
@@ -160,14 +243,32 @@ public class ControladorProducto implements ServletContextAware {
     }
 
     @RequestMapping("/editar/{id}")
-    public ModelAndView mostrarFormularioEditarProducto(@PathVariable Long id) {
+    public ModelAndView mostrarFormularioEditarProducto(@PathVariable Long id,HttpServletRequest request) throws UsuarioInexistenteException {
+
+        UsuarioSesionDto usuarioSesion = (UsuarioSesionDto) request.getSession().getAttribute("usuarioLogueado");
+        String rol_proveedor = "PROVEEDOR";
+
+        if (usuarioSesion == null || !rol_proveedor.equalsIgnoreCase(usuarioSesion.getRol())) {
+            return new ModelAndView("redirect:/login");
+        }
 
         Producto producto = servicioProducto.obtenerPorId(id);
         ModelMap model = new ModelMap();
+
+        if (servicioUsuario != null) {
+            String base64Image = servicioUsuario.obtenerFotoPerfil(usuarioSesion.getId(), request);
+            model.put("fotoPerfil", base64Image);
+        }
+        model.put("mailProveedor", usuarioSesion.getUsername());
         model.put("producto", producto);
         model.put("tiposProducto", servicioTipoProducto.obtener());
         model.put("marcas", servicioMarca.obtener());
         model.put("presentaciones", servicioPresentacion.obtener());
+        model.addAttribute("tiposProducto", servicioTipoProducto.obtener());
+        model.addAttribute("colores", servicioTablas.obtenerColores());
+        model.addAttribute("materiales", servicioTablas.obtenerMateriales());
+        model.addAttribute("altos", servicioTablas.obtenerAltos());
+        model.addAttribute("anchos", servicioTablas.obtenerAnchos());
 
         return new ModelAndView("editar-producto", model);
     }
@@ -208,6 +309,57 @@ public class ControladorProducto implements ServletContextAware {
             } else {
                 producto.setImagenUrl(productoActual.getImagenUrl());
                 producto.setImgCloudinaryID(productoActual.getImgCloudinaryID());
+            }
+
+            if (producto.getColor() != null && producto.getColor().getId() != null && producto.getColor().getId() > 0) {
+                producto.setColor(this.servicioTablas.obtenerColorPorId(producto.getColor().getId()));
+            } else {
+                producto.setColor(null);
+            }
+            // Ancho
+            if (producto.getAncho() != null && producto.getAncho().getId() != null) {
+                producto.setAncho(this.servicioTablas.obtenerAnchoPorId(producto.getAncho().getId()));
+            } else {
+                producto.setAncho(null);
+            }
+
+            if (producto.getAlto() != null && producto.getAlto().getId() != null) {
+                producto.setAlto(this.servicioTablas.obtenerAltoPorId(producto.getAlto().getId()));
+            } else {
+                producto.setAlto(null);
+            }
+
+            // Tipo Producto
+            if (producto.getTipoProducto() != null && producto.getTipoProducto().getId() != null) {
+                producto.setTipoProducto(servicioTipoProducto.obtenerPorId(producto.getTipoProducto().getId()));
+            } else {
+                producto.setTipoProducto(null);
+            }
+
+            // Marca
+            if (producto.getMarca() != null && producto.getMarca().getId() != null) {
+                producto.setMarca(servicioMarca.obtenerPorId(producto.getMarca().getId()));
+            }
+
+            if (producto.getMaterialDePerfil() != null && producto.getMaterialDePerfil().getId() != null) {
+                producto.setMaterialDePerfil(
+                        servicioTablas.obtenerMaterialPorId(producto.getMaterialDePerfil().getId()));
+            } else {
+                producto.setMaterialDePerfil(null);
+            }
+
+            // Tipo vidrio
+            if (producto.getTipoDeVidrio() != null && producto.getTipoDeVidrio().getId() != null) {
+                producto.setTipoDeVidrio(servicioTablas.obtenerTipoDeVidrioPorId(producto.getTipoDeVidrio().getId()));
+            } else {
+                producto.setTipoDeVidrio(null);
+            }
+
+            // Tipo ventana
+            if (producto.getTipoVentana() != null && producto.getTipoVentana().getId() != null) {
+                producto.setTipoVentana(servicioTipoVentana.obtener(producto.getTipoVentana().getId()));
+            } else {
+                producto.setTipoVentana(null);
             }
 
             servicioProducto.actualizar(producto);

@@ -6,26 +6,26 @@
     <title>Medios de Pago</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <link rel="stylesheet" th:href="@{/css/medio-pago.css}" />
+    <link rel="stylesheet" th:href="@{/css/dashboard-proveedor.css}" />
 </head>
 
 <body>
-    <div class="d-flex" style="min-height: 100vh;">
+    <div style="min-height: 100vh;">
         <div th:replace="sidebar :: sidebar"></div>
 
         <div class="main" id="mainContent">
             <div class="header row align-items-center mb-4">
-                 <div class="col-12 col-md-8 mb-2 mb-md-0">
-                     <h2 class="mb-4"><i class="bi bi-credit-card"></i> Medios de Pago</h2>
+                <div class="col-12 col-md-8 mb-2 mb-md-0">
+                    <h2 class="mb-4"><i class="bi bi-credit-card"></i> Medios de Pago</h2>
                 </div>
                 <div class="col-12 col-md-4 d-flex align-items-center justify-content-md-end">
                     <div class="profile-section position-relative" id="profileMenuContainer">
                         <button id="profileToggle" class="d-flex align-items-center bg-transparent border-0 p-0"
                             aria-haspopup="true" aria-expanded="false" aria-controls="profileDropdown"
                             title="Opciones de usuario">
-                            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop&crop=face"
-                                alt="Proveedor" class="profile-img me-2">
+                           <img th:src="${fotoPerfil}" alt="Proveedor" class="profile-img me-2">
+                                
                             <div class="profile-info text-start">
                                 <h3 class="mb-0 fs-6"><span th:text="${mailProveedor}"></span></h3>
                                 <p class="mb-0 text-muted small">PROVEEDOR</p>
@@ -47,8 +47,8 @@
 
 
 
-           
-            <div class="row">
+
+            <div class="row g-4">
                 <!-- ============================
              LISTADO DE MEDIOS DISPONIBLES
              ============================ -->
@@ -142,26 +142,26 @@
 
     <script>
 
-      
-     
-      function toggleMedio(id) {
 
-    const item = document.getElementById("medio-" + id);
 
-    if (item.classList.contains("seleccionado")) {
-        // Deseleccionar
-        item.classList.remove("seleccionado");
-        seleccionados.delete(id); // 🔥 IMPORTANTE
-        quitarDelPanel(id);
-    } else {
-        // Seleccionar
-        item.classList.add("seleccionado");
-        seleccionados.add(id); 
-        agregarAlPanel(id);
-    }
+        function toggleMedio(id) {
 
-    actualizarHidden(); 
-}
+            const item = document.getElementById("medio-" + id);
+
+            if (item.classList.contains("seleccionado")) {
+                // Deseleccionar
+                item.classList.remove("seleccionado");
+                seleccionados.delete(id); // 🔥 IMPORTANTE
+                quitarDelPanel(id);
+            } else {
+                // Seleccionar
+                item.classList.add("seleccionado");
+                seleccionados.add(id);
+                agregarAlPanel(id);
+            }
+
+            actualizarHidden();
+        }
 
         function agregarAlPanel(id) {
 

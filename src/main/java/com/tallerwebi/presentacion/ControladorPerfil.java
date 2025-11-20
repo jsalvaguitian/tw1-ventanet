@@ -64,41 +64,6 @@ public class ControladorPerfil {
         // Rama proveedor
         if (usuarioCompleto instanceof Proveedor) {
             Proveedor proveedor = (Proveedor) usuarioCompleto;
-            Long proveedorId = proveedor.getId();
-
-            Map<String, Long> estadisticas = servicioCotizacion
-                    .obtenerEstadisticasCotizacionesDelProveedor(proveedorId);
-
-            Map<String, Object> promedioGeneralComparacion = servicioCotizacion
-                    .obtenerEstadisticaComparacionEntreProveedores(proveedorId);
-
-            Map<String, Long> productosMasCotizados = servicioCotizacion.obtenerProductosMasCotizados(proveedorId);
-
-            Map<String, Long> productosMasCotizadosDeTodosLosProveedores = servicioCotizacion
-                    .obtenerProductosMasCotizadosDeTodosLosProveedores();
-
-            boolean sinCotizaciones = true;
-            if (estadisticas != null) { // Para mostrar mensaje si no tiene cotizaciones en lugar del grafico
-                for (Long v : estadisticas.values()) { // El nesteo es terrible pero no encontre otra forma
-                    if (v != null && v > 0) {
-                        sinCotizaciones = false;
-                        break;
-                    }
-                }
-            }
-
-            if (sinCotizaciones) {
-                modelMap.addAttribute("promedioGeneralComparacion", promedioGeneralComparacion);
-                modelMap.addAttribute("productosMasCotizadosDeTodosLosProveedores",
-                        productosMasCotizadosDeTodosLosProveedores);
-                modelMap.addAttribute("graficoVacio", "No tienes cotizaciones para mostrar estadísticas aún.");
-            } else {
-                modelMap.addAttribute("productosMasCotizadosDeTodosLosProveedores",
-                        productosMasCotizadosDeTodosLosProveedores);
-                modelMap.addAttribute("promedioGeneralComparacion", promedioGeneralComparacion);
-                modelMap.addAttribute("productosMasCotizados", productosMasCotizados);
-                modelMap.addAttribute("estadisticas", estadisticas);
-            }
 
             modelMap.put("usuario", usuarioCompleto);
             return new ModelAndView("perfil-proveedor", modelMap);
@@ -171,7 +136,6 @@ public class ControladorPerfil {
     @PostMapping("/editar")
     public ModelAndView actualizarPerfil(@RequestParam String nombre,
             @RequestParam String apellido,
-            @RequestParam String nombreUsuario,
             @RequestParam(required = false) String telefono,
             @RequestParam(required = false) String direccion,
             @RequestParam(required = false) String razonSocial,
@@ -191,7 +155,7 @@ public class ControladorPerfil {
             try {
                 Proveedor proveedor = (Proveedor) usuarioActual;
                 servicioPerfil.actualizarPerfilProveedor(nombre, apellido,
-                        nombreUsuario, direccion, telefono, razonSocial, ubicacion, sitioWeb,
+                        direccion, telefono, razonSocial, ubicacion, sitioWeb,
                         proveedor);
             } catch (ValorInvalido e) {
                 ModelMap model = new ModelMap();
@@ -202,7 +166,7 @@ public class ControladorPerfil {
         } else {
             try {
                 servicioPerfil.actualizarPerfil(nombre, apellido,
-                        nombreUsuario, direccion, telefono,
+                        direccion, telefono,
                         usuarioActual);
             } catch (ValorInvalido e) {
                 ModelMap model = new ModelMap();
