@@ -35,7 +35,7 @@ import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.dominio.servicios.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
-import com.tallerwebi.presentacion.dto.UsuarioAdminDTO;;
+import com.tallerwebi.presentacion.dto.UsuarioAdminDTO;
 
 // Para el Excel
 import org.apache.poi.ss.usermodel.Workbook;

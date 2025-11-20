@@ -210,37 +210,39 @@
 
   <!-- CONTACTO -->
   <section id="contacto" class="contacto bg-dark text-light py-5">
-    <div class="container">
-      <h2 class="text-center mb-4">Contacto</h2>
+      <div class="container">
+          <h2 class="text-center mb-4">Contacto</h2>
 
-      <div class="row justify-content-center">
-        <div class="col-md-5 mb-4 mb-md-0">
-          <p class="mb-4">Escribinos y nos pondremos en contacto contigo lo antes posible.</p>
           <form th:action="@{/contacto/enviar}" method="post">
-            <div class="mb-3">
-              <label for="nombre" class="form-label">Nombre</label>
-              <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Tu nombre" required>
-            </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" name="email" class="form-control" id="email" placeholder="Tu email" required>
-            </div>
-        </div>
-
-        <div class="col-md-5">
-            <div class="mb-3">
-              <label for="mensaje" class="form-label">Mensaje</label>
-              <textarea name="mensaje" class="form-control" id="mensaje" rows="5" placeholder="Escribe tu mensaje" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Enviar</button>
+              <div class="row justify-content-center">
+                  <div class="col-md-5 mb-4 mb-md-0">
+                      <p class="mb-4">Escribinos y nos pondremos en contacto contigo lo antes posible.</p>
+                      
+                      <div class="mb-3">
+                          <label for="nombre" class="form-label">Nombre</label>
+                          <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Tu nombre" required>
+                      </div>
+                      <div class="mb-3">
+                          <label for="email" class="form-label">Email</label>
+                          <input type="email" name="email" class="form-control" id="email" placeholder="Tu email" required>
+                      </div>
+                  </div> <div class="col-md-5">
+                      <div class="mb-3">
+                          <label for="mensaje" class="form-label">Mensaje</label>
+                          <textarea name="mensaje" class="form-control" id="mensaje" rows="5" placeholder="Escribe tu mensaje" required></textarea>
+                      </div>
+                      <button type="submit" class="btn btn-primary w-100">Enviar</button>
+                  </div> </div>
           </form>
-        </div>
-      </div>
 
-      <div th:if="${param.contacto}" class="alert alert-success text-center mt-4">
-        ¡Tu mensaje fue enviado con éxito! Te responderemos pronto.
+          <div th:if="${param.contacto}" class="alert alert-success text-center mt-4">
+              ¡Tu mensaje fue enviado con éxito! Te responderemos pronto.
+          </div>
+          
+          <div th:if="${param.error}" class="alert alert-danger text-center mt-4">
+              Hubo un error enviando el mensaje. Por favor intenta nuevamente.
+          </div>
       </div>
-    </div>
   </section>
 
   <!-- FOOTER -->
