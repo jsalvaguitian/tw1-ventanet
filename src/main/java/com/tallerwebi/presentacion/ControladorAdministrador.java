@@ -37,6 +37,17 @@ import com.tallerwebi.presentacion.dto.UsuarioProvDTO;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 import com.tallerwebi.presentacion.dto.UsuarioAdminDTO;;
 
+// Para el Excel
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.io.IOException;
+
+
 @Controller
 @RequestMapping("/admin")
 public class ControladorAdministrador {
@@ -262,6 +273,51 @@ public class ControladorAdministrador {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @GetMapping("/usuarios/exportar-excel")
+    public void exportarUsuariosExcel(HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=usuarios.xlsx");
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Usuarios");
+
+        CellStyle estiloFecha = workbook.createCellStyle();
+        CreationHelper createHelper = workbook.getCreationHelper();
+        estiloFecha.setDataFormat(createHelper.createDataFormat().getFormat("dd/MM/yyyy HH:mm"));
+
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("ID");
+        header.createCell(1).setCellValue("Nombre");
+        header.createCell(2).setCellValue("Email");
+        header.createCell(3).setCellValue("CUIT");
+        header.createCell(4).setCellValue("Rol");
+        header.createCell(5).setCellValue("Estado");
+        header.createCell(6).setCellValue("Fecha Alta");
+
+        List<UsuarioAdminDTO> usuarios = servicioUsuario.obtenerUsuariosParaAdmin();
+
+        int fila = 1;
+
+        for (UsuarioAdminDTO u : usuarios) {
+            Row row = sheet.createRow(fila++);
+
+            row.createCell(0).setCellValue(u.getId());
+            row.createCell(1).setCellValue(u.getNombreMostrable());
+            row.createCell(2).setCellValue(u.getEmail());
+            row.createCell(3).setCellValue(u.getCuit());
+            row.createCell(4).setCellValue(u.getRol());
+            row.createCell(5).setCellValue(u.getEstado().getDescripcion());
+
+            Cell celdaFecha = row.createCell(6);
+            celdaFecha.setCellValue(u.getFechaCreacion());
+            celdaFecha.setCellStyle(estiloFecha);
+        }
+
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
 
 }
