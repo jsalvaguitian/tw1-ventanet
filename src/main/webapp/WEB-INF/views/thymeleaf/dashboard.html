@@ -277,8 +277,6 @@
                                 th:text="${licitacion.productoCustom != null ? licitacion.productoCustom.descripcion : '—'}">
                             </td>
                             <td th:text="${licitacion.proveedor.razonSocial}"></td>
-                            <!-- <td class="monto-cotizacion" th:data-precio-ars="${licitacion.montoTotal}"
-                                th:text="'$' + ${#numbers.formatDecimal(licitacion.montoTotal, 2, 2)} + ' ARS'"></td> -->
                             <td class="monto-cotizacion" th:data-precio-ars="${licitacion.montoTotal}" th:text="${licitacion.montoTotal != null} 
         ? ('$' + ${#numbers.formatDecimal(licitacion.montoTotal, 2, 2)} + ' ARS') 
         : ('$0.00 ARS')">
