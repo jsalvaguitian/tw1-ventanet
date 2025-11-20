@@ -7,6 +7,9 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
 import javax.persistence.CascadeType;
@@ -31,6 +34,14 @@ public class Proveedor extends Usuario {
      */
     private String documento; // Ruta del documento legal del proveedor
 
+    @OneToMany(mappedBy = "proveedor")
+    @JsonIgnore
+    private List<Producto> productos = new ArrayList<>();
+
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
     // @OneToMany(mappedBy = "proveedor")
     // private List<Producto> productos = new ArrayList<Producto>();
 
@@ -43,11 +54,11 @@ public class Proveedor extends Usuario {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Cotizacion> cotizaciones = new ArrayList<>();
-    /*
-     * @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval =
-     * true)
-     * private List<Cotizacion> cotizaciones = new ArrayList<>();
-     */
+
+    @ManyToMany
+    @JoinTable(name = "proveedor_medio_pago", joinColumns = @JoinColumn(name = "proveedor_id"), inverseJoinColumns = @JoinColumn(name = "medio_pago_id"))
+    @JsonIgnore
+    private List<MedioDePago> mediosDePago = new ArrayList<>();
 
     public Proveedor() {
         super();
@@ -159,22 +170,8 @@ public class Proveedor extends Usuario {
         this.logoPath = logoPath;
     }
 
-    /*
-     * public List<Cotizacion> getCotizaciones() {
-     * return cotizaciones;
-     * }
-     * 
-     * public void setCotizaciones(List<Cotizacion> cotizaciones) {
-     * this.cotizaciones = cotizaciones;
-     * }
-     */
-
-    // public List<Producto> getProductos() {
-    // return productos;
-    // }
-
-    // public void setProductos(List<Producto> productos) {
-    // this.productos = productos;
-    // }
+    public List<MedioDePago> getMediosDePago() {
+        return mediosDePago;
+    }
 
 }

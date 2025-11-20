@@ -27,10 +27,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
               <li>
-                <a class="dropdown-item"
-                   th:href="${usuarioLogueado.rol == 'PROVEEDOR'} ? @{/proveedor/dashboard-proveedor} : @{/cliente/dashboard}">
-                  Dashboard
-                </a>
+                <a class="dropdown-item" th:href="@{${usuarioLogueado.rol == 'PROVEEDOR' ? '/proveedor/dashboard-proveedor' : (usuarioLogueado.rol == 'ADMIN' ? '/admin/dashboard-admin' : '/cliente/dashboard')}}">Dashboard</a>
               </li>
               <li><a class="dropdown-item" th:href="@{/usuarios/perfil-usuario}">Editar perfil</a></li>
               <li><a class="dropdown-item" th:href="@{/logout}">Cerrar sesión</a></li>

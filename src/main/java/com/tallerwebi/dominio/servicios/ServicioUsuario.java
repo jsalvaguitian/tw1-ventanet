@@ -3,6 +3,8 @@ package com.tallerwebi.dominio.servicios;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tallerwebi.dominio.entidades.Cliente;
@@ -16,6 +18,7 @@ import com.tallerwebi.dominio.excepcion.CuitInvalido;
 import com.tallerwebi.dominio.excepcion.EmailInvalido;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
+import com.tallerwebi.presentacion.dto.UsuarioAdminDTO;
 
 public interface ServicioUsuario {
 
@@ -40,4 +43,7 @@ public interface ServicioUsuario {
 
         void eliminarUsuario(Usuario usuario);
 
+        List<UsuarioAdminDTO> obtenerUsuariosParaAdmin();
+
+        String obtenerFotoPerfil(Long id, HttpServletRequest request) throws UsuarioInexistenteException;
 }

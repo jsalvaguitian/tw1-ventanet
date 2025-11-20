@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.tallerwebi.dominio.excepcion.NoHayCotizacionExistente;
+import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.servicios.ServicioClienteI;
 import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
@@ -28,30 +29,30 @@ public class ControladorClienteTest {
     public void init() {
         servicioClienteI = mock(ServicioClienteI.class);
         servicioCotizacion = mock(ServicioCotizacion.class);
-        controladorCliente = new ControladorCliente(servicioClienteI, null,servicioCotizacion);
+        controladorCliente = new ControladorCliente(servicioClienteI, null, servicioCotizacion);
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);
     }
 
-
     // @Test
     // public void queSeMuestreElDashboardDelClienteCuandoSeLoguea() {
-    //     String vistaEsperada = "dashboard";
-    //     when(requestMock.getSession()).thenReturn(sessionMock);
-    //     UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
-    //     uSesionDto.setRol("CLIENTE");
-    //     uSesionDto.setUsername("cliente@unlam.edu.ar");
+    // String vistaEsperada = "dashboard";
+    // when(requestMock.getSession()).thenReturn(sessionMock);
+    // UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
+    // uSesionDto.setRol("CLIENTE");
+    // uSesionDto.setUsername("cliente@unlam.edu.ar");
 
-    //     when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
-    //     ModelAndView modelAndView = controladorCliente.irDashboard(requestMock);
-    //     String vistaObtenida = modelAndView.getViewName();
+    // when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
+    // ModelAndView modelAndView = controladorCliente.irDashboard(requestMock);
+    // String vistaObtenida = modelAndView.getViewName();
 
-    //     assertThat(vistaObtenida, equalTo(vistaEsperada));
-    //     assertThat(modelAndView.getModel().get("mailCliente"), equalTo(uSesionDto.getUsername()));
+    // assertThat(vistaObtenida, equalTo(vistaEsperada));
+    // assertThat(modelAndView.getModel().get("mailCliente"),
+    // equalTo(uSesionDto.getUsername()));
     // }
 
     @Test
-    public void queRedirijaAlLoginSiNoEstaLogueado() throws NoHayCotizacionExistente {
+    public void queRedirijaAlLoginSiNoEstaLogueado() throws NoHayCotizacionExistente, UsuarioInexistenteException {
         when(requestMock.getSession()).thenReturn(sessionMock);
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(null);
         ModelAndView modelAndView = controladorCliente.irDashboard(requestMock);
@@ -59,7 +60,7 @@ public class ControladorClienteTest {
     }
 
     @Test
-    public void queRedirijaAlLoginSiElRolNoEsCliente() throws NoHayCotizacionExistente {
+    public void queRedirijaAlLoginSiElRolNoEsCliente() throws NoHayCotizacionExistente, UsuarioInexistenteException {
         when(requestMock.getSession()).thenReturn(sessionMock);
         UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
         uSesionDto.setRol("PROVEEDOR");
@@ -71,16 +72,14 @@ public class ControladorClienteTest {
 
     // @Test
     // public void queRedirijaAlLoginSiElEmailEsNulo() {
-    //     when(requestMock.getSession()).thenReturn(sessionMock);
-    //     UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
-    //     uSesionDto.setRol("CLIENTE");
-    //     uSesionDto.setUsername(null);
-    //     when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
-    //     ModelAndView modelAndView = controladorCliente.irDashboard(requestMock);
-    //     assertThat(modelAndView.getModel().get("mailCliente"), equalTo(null));
-    //     assertThat(modelAndView.getViewName(), equalTo("dashboard"));
+    // when(requestMock.getSession()).thenReturn(sessionMock);
+    // UsuarioSesionDto uSesionDto = new UsuarioSesionDto();
+    // uSesionDto.setRol("CLIENTE");
+    // uSesionDto.setUsername(null);
+    // when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(uSesionDto);
+    // ModelAndView modelAndView = controladorCliente.irDashboard(requestMock);
+    // assertThat(modelAndView.getModel().get("mailCliente"), equalTo(null));
+    // assertThat(modelAndView.getViewName(), equalTo("dashboard"));
     // }
-
-
 
 }

@@ -33,8 +33,14 @@ public abstract class Usuario {
     private String password;
     private String telefono;
     private String direccion;
+
+    @Column(nullable = false)
     private LocalDate fechaCreacion;
 
+    public Usuario() {
+        this.fechaCreacion = LocalDate.now();
+    }
+    
     @Lob
     private byte[] fotoPerfil = null;
 

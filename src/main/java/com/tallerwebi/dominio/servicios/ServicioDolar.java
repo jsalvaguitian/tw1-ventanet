@@ -45,7 +45,7 @@ public class ServicioDolar {
                 System.out.println("[ServicioDolar] Actualizado: compra $" + compra + " | venta $" + venta);
             }
         } catch (Exception e) {
-            System.err.println("[ServicioDolar] Error al actualizar: " + e.getMessage());
+            System.err.println("[ServicioDolar] Error al actualizar: " + e.getMessage());            
         }
     }
 

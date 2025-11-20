@@ -41,6 +41,10 @@ public class Cotizacion {
     @Enumerated(EnumType.STRING)
     private EstadoCotizacion estado;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "medio_pago_id", nullable = true)
+    private MedioDePago medioDePago;
+
     public void eliminarItem(CotizacionItem item) {
         this.items.remove(item);
         item.setCotizacion(null);
@@ -132,4 +136,14 @@ public class Cotizacion {
     public void setEstado(EstadoCotizacion estado) {
         this.estado = estado;
     }
+
+    public MedioDePago getMedioDePago() {
+        return medioDePago;
+    }
+
+    public void setMedioDePago(MedioDePago medioDePago) {
+        this.medioDePago = medioDePago;
+    }
+
+    
 }

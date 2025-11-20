@@ -119,19 +119,259 @@ window.getEstadoHTML = getEstadoHTML;
 
 function mostrarDetalleCotizacion(id) {
     const url = '/spring/cotizacion/detalle/' + id;
-    fetch(url).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    // fetch(url).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    //     .then(cotizacion => {
+    //         const estadoHTML = getEstadoHTML(cotizacion.estado);
+    //         let botones = '';
+    //         if (cotizacion.estado === 'PENDIENTE') {
+    //             botones = `<div style=\"margin-top:20px;text-align:center;\">\n          <button class=\"btn btn-success me-3\" onclick=\"manejarAccionCotizacion(${cotizacion.id},'APROBADA')\">Aceptar</button>\n          <button class=\"btn btn-danger\" onclick=\"manejarAccionCotizacion(${cotizacion.id},'RECHAZADO')\">Rechazar</button>\n        </div>`;
+    //         }
+    //         let html = `<p><strong>Cliente:</strong> ${cotizacion.cliente.nombre} ${cotizacion.cliente.apellido}</p>\n      <p><strong>Estado:</strong> ${estadoHTML}</p>\n      <p><strong>Monto Total:</strong> $${cotizacion.montoTotal.toFixed(2)}</p>\n      <h5 style=\"margin-top:20px;\">Items de la Cotización</h5>\n      <table class=\"table table-bordered table-sm\"><thead><tr><th>Producto</th><th>Cantidad</th><th>P. Unitario</th><th>Subtotal</th></tr></thead><tbody>`;
+    //         cotizacion.items.forEach(it => { const sub = it.cantidad * it.precioUnitario; html += `<tr><td>${it.producto.nombre}</td><td>${it.cantidad}</td><td>$${it.precioUnitario.toFixed(2)}</td><td>$${sub.toFixed(2)}</td></tr>`; });
+    //         html += `</tbody></table>${botones}`;
+    //         Swal.fire({ title: `Detalle de Cotización #${id}`, html: html, icon: 'info', width: '80%', confirmButtonText: 'Cerrar' });
+    //     })
+    //     .catch(e => { console.error('Error detalle cotización', e); Swal.fire('Error', 'No se pudo cargar el detalle: ' + e.message, 'error'); });
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
         .then(cotizacion => {
             const estadoHTML = getEstadoHTML(cotizacion.estado);
-            let botones = '';
+            let botonesAccion = '';
+
             if (cotizacion.estado === 'PENDIENTE') {
-                botones = `<div style=\"margin-top:20px;text-align:center;\">\n          <button class=\"btn btn-success me-3\" onclick=\"manejarAccionCotizacion(${cotizacion.id},'APROBADA')\">Aceptar</button>\n          <button class=\"btn btn-danger\" onclick=\"manejarAccionCotizacion(${cotizacion.id},'RECHAZADO')\">Rechazar</button>\n        </div>`;
+                botonesAccion = `
+                    <div style="margin-top: 25px; text-align: center;">
+                     <button class=\"btn btn-success me-3\" onclick=\"manejarAccionCotizacion(${cotizacion.id},'APROBADA')\">Aceptar</button>\n
+                        <button class="btn btn-danger" 
+                                onclick="manejarAccionCotizacion(${cotizacion.id}, 'RECHAZADO')">
+                            ❌ Rechazar
+                        </button>
+                    </div>
+                `;
             }
-            let html = `<p><strong>Cliente:</strong> ${cotizacion.cliente.nombre} ${cotizacion.cliente.apellido}</p>\n      <p><strong>Estado:</strong> ${estadoHTML}</p>\n      <p><strong>Monto Total:</strong> $${cotizacion.montoTotal.toFixed(2)}</p>\n      <h5 style=\"margin-top:20px;\">Items de la Cotización</h5>\n      <table class=\"table table-bordered table-sm\"><thead><tr><th>Producto</th><th>Cantidad</th><th>P. Unitario</th><th>Subtotal</th></tr></thead><tbody>`;
-            cotizacion.items.forEach(it => { const sub = it.cantidad * it.precioUnitario; html += `<tr><td>${it.producto.nombre}</td><td>${it.cantidad}</td><td>$${it.precioUnitario.toFixed(2)}</td><td>$${sub.toFixed(2)}</td></tr>`; });
-            html += `</tbody></table>${botones}`;
-            Swal.fire({ title: `Detalle de Cotización #${id}`, html: html, icon: 'info', width: '80%', confirmButtonText: 'Cerrar' });
-        })
-        .catch(e => { console.error('Error detalle cotización', e); Swal.fire('Error', 'No se pudo cargar el detalle: ' + e.message, 'error'); });
+            if (cotizacion.estado === 'APROBADA') {
+                botonesAccion = `
+                    <div style="margin-top: 25px; text-align: center;">
+                     <button class=\"btn btn-success me-3\" onclick=\"manejarAccionCotizacion(${cotizacion.id},'COMPLETADA')\">Completar</button>\n                        
+                    </div>
+                `;
+            }
+
+
+            let medioDePagoHTML = '';
+            if (cotizacion.medioDePago) {
+                const mp = cotizacion.medioDePago;
+                let cuotas = '';
+                if (mp.tipo === 'CREDITO') {
+                    cuotas = mp.cantidad_cuotas ? `(${mp.cantidad_cuotas} cuotas)` : '';
+                }
+
+                const detalleMP = `${mp.nombre} ${cuotas}`;
+
+                medioDePagoHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <p style="margin: 0; font-size: 14px; text-align: right;">
+                            <strong>Medio de Pago:</strong> ${detalleMP}
+                        </p>
+                        ${mp.imagen ? `<img src="/spring/img/${mp.imagen}" alt="${mp.nombre}" style="width: 30px; height: auto; border-radius: 5px;">` : ''}
+                    </div>
+                `;
+            }
+
+            if (cotizacion.estado === 'APROBADA' || cotizacion.estado === 'COMPLETADA') {
+                botonesAccion = `
+                <div style="margin-top: 20px; text-align: center;">
+                    <button id="btnDescargarPDF" class="btn btn-success">
+                        <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
+                    </button>
+                </div>
+            `;
+            }
+
+            // Generar contenido HTML del detalle
+            let htmlContent = `
+            <div style="font-family: Arial, sans-serif; color:#333; text-align:left;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #ccc; padding-bottom: 10px; margin-bottom: 10px;">
+                    <div style="width: 48%;">
+                        <h4 style="margin: 0; color: #003366;">${cotizacion.proveedor?.razonSocial || 'Proveedor desconocido'}</h4>
+                        <p style="margin: 2px 0;">${cotizacion.proveedor?.direccion || ''}</p>
+                        <p style="margin: 2px 0;">Tel: ${cotizacion.proveedor?.telefono || '-'}</p>
+                        <p style="margin: 2px 0;">Email: ${cotizacion.proveedor?.email || '-'}</p>
+                        <p style="margin: 2px 0;">CUIT: ${cotizacion.proveedor?.cuit || '-'}</p>
+                    </div>
+                    <div style="width: 48%; text-align: right;">
+                        <h5 style="margin: 0 0 5px;">Cliente</h5>
+                        <p style="margin: 2px 0;"><strong>${cotizacion.cliente?.nombre || 'Cliente desconocido'} ${cotizacion.cliente?.apellido || 'Cliente desconocido'}  </strong></p>
+                        <p style="margin: 2px 0;">Tel: ${cotizacion.cliente?.telefono || '-'}</p>
+                        <p style="margin: 2px 0;">Email: ${cotizacion.cliente?.email || '-'}</p>
+                        <p style="margin: 2px 0;">Fecha: ${new Date(cotizacion.fechaCreacion).toLocaleDateString()}</p>
+                    </div>
+                </div>
+
+                    <!-- Estado -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">
+                        <p style="margin: 0;"><strong>Estado:</strong> ${estadoHTML}</p>
+                        ${medioDePagoHTML}
+                    </div>
+
+                <h5 style="margin-top: 20px; color:#003366;">Detalle de la Cotización</h5>
+                <table style="width:100%; border-collapse: collapse; font-size: 14px; margin-top:5px;">
+                    <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="border: 1px solid #ccc; padding: 8px;">Producto</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Cantidad</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Precio Unitario</th>                            
+                            <th style="border: 1px solid #ccc; padding: 8px;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+            cotizacion.items.forEach(item => {
+                const subtotal = item.cantidad * item.precioUnitario;
+                htmlContent += `
+                <tr>
+                    <td>${item.producto.nombre}</td>
+                    <td>${item.cantidad}</td>
+                    <td>$${item.precioUnitario.toFixed(2)}</td>
+                    <td>$${subtotal.toFixed(2)}</td>
+                </tr>
+            `;
+            });
+
+            htmlContent += `</tbody></table>`;
+            htmlContent += botonesAccion;
+
+            // Mostrar SweetAlert con el detalle
+            Swal.fire({
+                title: `Detalle de Cotización #${id}`,
+                html: htmlContent,
+                icon: 'info',
+                width: '80%',
+                showConfirmButton: true,
+                confirmButtonText: 'Cerrar',
+                didOpen: (popup) => {
+                    setTimeout(() => {                        
+                        const btnPDF = popup.querySelector("#btnDescargarPDF");                        
+                        if (btnPDF) {
+                            btnPDF.addEventListener("click", async () => {                                
+
+                                const { jsPDF } = window.jspdf;
+                                const doc = new jsPDF();
+                                const pageWidth = doc.internal.pageSize.getWidth();
+
+                                // CABECERA                       
+                                // ---- Cargar logo del proveedor ----
+                                let logoUrl = null;
+                                let logoBase64 = null;
+
+                                if (cotizacion.proveedor.origenLogo === "img") {
+                                    logoUrl = `/spring/img/${cotizacion.proveedor.logoPath}`;
+                                }
+                                else if (cotizacion.proveedor.origenLogo === "uploads") {
+                                    logoUrl = `/spring/uploads/${cotizacion.proveedor.logoPath}`;
+                                }
+
+                                if (logoUrl) {                                    
+                                    try {
+                                        logoBase64 = await loadImageAsBase64(logoUrl);
+                                    } catch (err) {
+                                        console.error("Error cargando logo:", err);
+                                    }
+                                }
+
+                                // Insertar logo (columna izquierda)
+                                if (logoBase64) {
+                                    doc.addImage(logoBase64, "PNG", 10, 10, 40, 20);
+                                }
+
+                                doc.setFontSize(12);
+                                doc.setFont("helvetica", "bold");
+                                const columnaDerechaX = pageWidth - 80;
+
+                                // Proveedor (ESQUINA SUPERIOR DERECHA)
+                                const proveedorText = `Proveedor: ${cotizacion.proveedor.razonSocial}\nCUIT: ${cotizacion.proveedor.cuit || 'N/A'}\n${cotizacion.proveedor.sitioWeb || 'N/A'}`;
+
+                                const proveedorX = pageWidth - doc.getTextWidth("Proveedor: " + cotizacion.proveedor.razonSocial) - 10;
+                                doc.text(proveedorText, columnaDerechaX, 15);
+
+                                // Cliente y Cotización en 2 columnas
+                                doc.setFontSize(11);
+                                doc.setFont("helvetica", "normal");
+
+                                // Columna izquierda CLIENTE
+                                let y = 35;
+                                doc.text(`Cliente: ${cotizacion.cliente?.nombre || "N/A"}`, 10, y);
+                                doc.text(`Teléfono: ${cotizacion.cliente?.telefono || "N/A"}`, 10, y + 7);
+
+                                // Columna derecha COTIZACION + FECHA
+                                const fechaActual = new Date().toLocaleString();
+                                const datosDerecha =
+                                    `Cotización #${cotizacion.id}\nFecha: ${fechaActual}`;
+
+                                const derechaX = pageWidth - doc.getTextWidth("Cotización #" + cotizacion.id) - 20;
+                                doc.text(datosDerecha, columnaDerechaX, y);
+
+                                // Línea separadora CABECERA-CUERPO
+                                doc.line(10, y + 15, pageWidth - 10, y + 15);
+
+                                // CUERPO
+                                y += 30;
+                                doc.setFont("helvetica", "bold");
+                                doc.setFontSize(13);
+                                doc.text("Detalles de la cotización", 10, y);
+                                y += 6;
+
+                                doc.setFont("helvetica", "normal");
+                                doc.setFontSize(11);
+
+                                // Encabezado de tabla
+                                doc.text("Producto", 10, y);
+                                doc.text("Cant.", pageWidth / 2 - 10, y);
+                                doc.text("Monto", pageWidth - 40, y);
+
+                                y += 5;
+                                doc.line(10, y, pageWidth - 10, y);
+                                y += 7;
+
+                                // Items
+                                cotizacion.items.forEach(item => {
+                                    const subtotal = item.cantidad * item.precioUnitario;
+
+                                    doc.text(item.producto.nombre, 10, y);
+                                    doc.text(String(item.cantidad), pageWidth / 2 - 10, y);
+                                    doc.text(`$${subtotal.toFixed(2)}`, pageWidth - 40, y);
+                                    y += 8;
+                                });
+
+                                // Línea separadora CUERPO-PIE
+                                doc.line(10, y, pageWidth - 10, y);
+                                y += 15;
+
+                                // PIE
+                                doc.setFont("helvetica", "bold");
+                                doc.setFontSize(16);
+
+                                const totalText = `TOTAL: $${cotizacion.montoTotal.toFixed(2)}`;
+                                const totalX = pageWidth - doc.getTextWidth(totalText) - 10;
+
+                                doc.text(totalText, totalX, y);
+
+                                // Guardar PDF
+                                doc.save(`cotizacion_${cotizacion.id}.pdf`);
+                            });
+                        }
+                    }, 200);
+                }
+            });
+
+        }).catch(error => {
+            console.error("Error al cargar el detalle:", error);
+            Swal.fire('Error', 'No se pudo cargar el detalle de la cotización: ' + error.message, 'error');
+        });
 }
 
 function mostrarDetalleLicitacion(id) {
@@ -168,8 +408,9 @@ function getEstadoHTML(estado) {
     return `<span class="${className}">${estado}</span>`;
 }
 
-function manejarAccionCotizacion(id, accion) { Swal.close(); Swal.fire({ title: `¿Confirmar ${accion}?`, text: `¿Estás seguro de ${accion} la cotización #${id}?`, icon: 'warning', showCancelButton: true, confirmButtonText: `Sí, ${accion}`, cancelButtonText: 'Cancelar' }).then(res => { if (res.isConfirmed) { fetch(`/spring/cotizacion/${id}/cambiar-estado/${accion}`, { method: 'POST' }).then(r => { if (!r.ok) throw new Error('Error estado ' + r.status); Swal.fire('Éxito', `Cotización #${id} -> ${accion}`, 'success').then(() => location.reload()); }).catch(e => Swal.fire('Error', e.message, 'error')); } }); }
-function manejarAccionLicitacion(id, accion) { Swal.close(); Swal.fire({ title: `¿Confirmar ${accion}?`, text: `¿Pasar a estado ${accion} la Cotización a medida #${id}?`, icon: 'warning', showCancelButton: true, confirmButtonText: `Sí, ${accion}`, cancelButtonText: 'Cancelar' }).then(r => { if (r.isConfirmed) { fetch(`/spring/licitacion/${id}/cambiar-estado/${accion}`, { method: 'POST' }).then(resp => { if (!resp.ok) throw new Error('Error estado ' + resp.status); Swal.fire('Éxito', `Cotización a medida #${id} -> ${accion}`, 'success').then(() => location.reload()); }).catch(e => Swal.fire('Error', e.message, 'error')); } }); }
+
+function manejarAccionCotizacion(id, accion) { Swal.close(); Swal.fire({ title: `¿Confirmar pasar a estado ${accion}?`, text: `¿Estás seguro de pasar a estado ${accion} la cotización #${id}?`, icon: 'warning', showCancelButton: true, confirmButtonText: `Sí, ${accion}`, cancelButtonText: 'Cancelar' }).then(res => { if (res.isConfirmed) { fetch(`/spring/cotizacion/${id}/cambiar-estado/${accion}`, { method: 'POST' }).then(r => { if (!r.ok) throw new Error('Error estado ' + r.status); Swal.fire('Éxito', `Cotización #${id} -> ${accion}`, 'success').then(() => location.reload()); }).catch(e => Swal.fire('Error', e.message, 'error')); } }); }
+function manejarAccionLicitacion(id, accion) { Swal.close(); Swal.fire({ title: `¿Confirmar pasar a estado ${accion}?`, text: `¿Pasar a estado ${accion} la Cotización a medida #${id}?`, icon: 'warning', showCancelButton: true, confirmButtonText: `Sí, ${accion}`, cancelButtonText: 'Cancelar' }).then(r => { if (r.isConfirmed) { fetch(`/spring/licitacion/${id}/cambiar-estado/${accion}`, { method: 'POST' }).then(resp => { if (!resp.ok) throw new Error('Error estado ' + resp.status); Swal.fire('Éxito', `Cotización a medida #${id} -> ${accion}`, 'success').then(() => location.reload()); }).catch(e => Swal.fire('Error', e.message, 'error')); } }); }
 function actualizarLicitacion(id, nuevoEstado, nuevoPrecio) { fetch(`/spring/licitacion/${id}/cambiar-estado`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nuevoEstado, precioUnitario: nuevoPrecio }) }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); }).then(() => Swal.fire('Éxito', `Licitación #${id} -> ${nuevoEstado}`, 'success').then(() => location.reload())).catch(e => Swal.fire('Error', e.message, 'error')); }
 
 // (Duplicate blocks removed for clarity.)

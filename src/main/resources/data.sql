@@ -34,8 +34,6 @@ INSERT INTO TipoVentana (id, nombre, tipo_producto_id) VALUES
     (9, 'Plegable', 1),
     (10, 'De Chapa', 3),
     (11, 'Aislante', 3);
-    
-
 
 -- Ancho
 INSERT INTO Ancho (id, nombre) VALUES
@@ -109,6 +107,23 @@ INSERT INTO Color (id, nombre) VALUES
     (3, 'Marrón'),
     (4, 'Negro');     
 
+INSERT INTO MedioDePago (id, nombre, cantidad_cuotas, imagen, tipo) VALUES
+(1,'Efectivo', 1, 'efectivo.png', 'EFECTIVO'),
+(2,'Transferencia bancaria', 1, 'transferencia.png', 'TRANSFERENCIA'),
+(3,'Tarjeta de Credito Visa', 1, 'visa.png', 'CREDITO'),
+(4,'Tarjeta de Credito Visa', 3, 'visa.png', 'CREDITO'),
+(5,'Tarjeta de Credito Visa', 6, 'visa.png', 'CREDITO'),
+(6,'Tarjeta de Credito Visa', 12, 'visa.png', 'CREDITO'),
+(7,'Tarjeta de Credito American Express', 1, 'american.png', 'CREDITO'),
+(8,'Tarjeta de Credito American Express', 3, 'american.png', 'CREDITO'),
+(9,'Tarjeta de Credito American Express', 6, 'american.png', 'CREDITO'),
+(10,'Tarjeta de Credito American Express', 12, 'american.png', 'CREDITO'),
+(11,'Tarjeta de Debito Visa', 1, 'visa.png', 'DEBITO'),
+(12,'Tarjeta de Debito American Express', 1, 'american.png', 'DEBITO'),
+(13,'MercadoPago', 1, 'mp_vertical.png', 'TRANSFERENCIA'),
+(14,'Pago Facil', 1, 'pagofacil.png', 'TRANSFERENCIA'),
+(15,'Rapipago', 1, 'rapipago.png', 'TRANSFERENCIA');
+
 -- ===============================================
 -- USUARIOS BASE
 -- ===============================================
@@ -120,7 +135,7 @@ INSERT INTO Usuario (
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '1234567890', 'Av. Principal 1', CURRENT_DATE, 'ADMIN', true, 'ACTIVO'),
 
-(2, 'Juan', 'Pérez', 'cliente1', 'gaston.ezequiel.bisogno@gmail.com',
+(2, 'Juan', 'Pérez', 'cliente1', 'juan.perez@email.com',
  '$2a$10$9rO6fX2qRUcVOYB7R7/B/uFvI6NoRp1L7wUcFHunCqTD0s9gJ5wKq',
  '111222333', 'Calle Falsa 123', CURRENT_DATE, 'CLIENTE', true, 'ACTIVO'),
 ----- PROVEEDORES
@@ -408,24 +423,24 @@ INSERT INTO Producto (
 
 
 -- COTIZACIONES DE PRUEBA
-INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
-VALUES (1, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 10 DAY), 2, 3, 95000.00, 'PENDIENTE');
+INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado, medio_pago_id)
+VALUES (1, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 10 DAY), 2, 3, 95000.00, 'PENDIENTE', 1);
 
-INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
-VALUES (2, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 10 DAY), 2, 3, 37000.00, 'APROBADA');
+INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado, medio_pago_id)
+VALUES (2, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 10 DAY), 2, 3, 37000.00, 'APROBADA', 2);
 
-INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
-VALUES (3, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY), 2, 3, 37000.00, 'PENDIENTE');
+INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado, medio_pago_id)
+VALUES (3, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY), 2, 3, 37000.00, 'PENDIENTE', 3);
 
-INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
-VALUES (4, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY), 2, 3, 52000.00, 'COMPLETADA');
+INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado, medio_pago_id)
+VALUES (4, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 7 DAY), 2, 3, 52000.00, 'COMPLETADA', 4);
 
-INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
-VALUES (5, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 5 DAY), 7, 3, 80000.00, 'PENDIENTE');
+INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado, medio_pago_id)
+VALUES (5, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 5 DAY), 7, 3, 80000.00, 'PENDIENTE', 2);
 
 -- Cotización 6: Cliente 8 - Aprobada
-INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado)
-VALUES (6, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 10 DAY), 8, 3, 102000.00, 'APROBADA');
+INSERT INTO Cotizacion (id, fecha_creacion, fecha_expiracion, cliente_id, proveedor_id, monto_total, estado, medio_pago_id)
+VALUES (6, CURRENT_DATE, DATE_ADD(CURRENT_DATE, INTERVAL 10 DAY), 8, 3, 102000.00, 'APROBADA', 5);
 
 -- ITEMS DE LA COTIZACIÓN 1
 INSERT INTO CotizacionItem (id, cotizacion_id, producto_id, cantidad, precioUnitario)
@@ -14614,3 +14629,37 @@ VALUES
  (82000.00, 8, 10, CURRENT_DATE, CURRENT_DATE, 'uploads/adjuntos/licitacion6.pdf', 'APROBADA', 6); -- 41000 * 2
 
 -- Fin de semillas de licitaciones
+INSERT INTO proveedor_medio_pago (proveedor_id, medio_pago_id) VALUES
+    -- Proveedor 3 (Pedro Gómez)
+    (3, 1),  -- Efectivo
+    (3, 2),  -- Transferencia bancaria
+    (3, 3),  -- Visa crédito 1 cuota
+
+    -- Proveedor 4 (Homero Simpson)
+    (4, 4),  -- Visa crédito 3 cuotas
+    (4, 5),  -- Visa crédito 6 cuotas
+    (4, 6),  -- Visa crédito 12 cuotas
+    (4, 7),  -- Amex crédito 1 cuota
+    (4, 8),  -- Amex crédito 3 cuotas
+
+    -- Proveedor 5 (Pedro Simpson)
+    (5, 11), -- Débito Visa
+    (5, 13), -- MercadoPago
+    (5, 14), -- Pago Fácil
+
+    -- Proveedor 6 (Juan Fulano) → TODOS los medios
+    (6, 1),
+    (6, 2),
+    (6, 3),
+    (6, 4),
+    (6, 5),
+    (6, 6),
+    (6, 7),
+    (6, 8),
+    (6, 9),
+    (6, 10),
+    (6, 11),
+    (6, 12),
+    (6, 13),
+    (6, 14),
+    (6, 15);

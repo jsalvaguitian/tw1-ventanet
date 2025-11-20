@@ -9,13 +9,11 @@ import java.util.Map;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.excepcion.CotizacionesExistente;
 import com.tallerwebi.dominio.excepcion.NoHayCotizacionExistente;
-import com.tallerwebi.dominio.excepcion.NoHayProductoExistente;
 import com.tallerwebi.dominio.repositorios_interfaces.*;
 import com.tallerwebi.infraestructura.*;
 import com.tallerwebi.dominio.entidades.*;
@@ -210,5 +208,10 @@ public class ServicioCotizacionImpl implements ServicioCotizacion {
             productos.put(nombre, cantidad);
         }
         return productos;
+    }
+
+    @Override
+    public List<Cotizacion> obtenerTodas() {
+        return cotizacionRepository.obtenerTodas();
     }
 }

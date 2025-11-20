@@ -1,5 +1,6 @@
 package com.tallerwebi.dominio.servicios;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -37,7 +38,7 @@ public class ServicioLicitacionImpl implements ServicioLicitacion {
         servicioNotificacion.notificar(licitacion.getCliente(), texto, "/spring/cliente/dashboard-custom",
                 "LICITACION_ESTADO", licitacion.getId());
 
-        String textoProveedor = "El Cliente " + licitacion.getCliente().getNombre() + " inicio la licitacion #"
+        String textoProveedor = "Has recivido una nueva licitacion, #"
                 + licitacion.getId();
         servicioNotificacion.notificar(licitacion.getProveedor(), textoProveedor,
                 "/spring/proveedor/dashboard-proveedor-custom",
@@ -81,6 +82,9 @@ public class ServicioLicitacionImpl implements ServicioLicitacion {
         productoCustom.setPrecio(precioUnitario);
         productoCustomRepository.actualizar(productoCustom);
         licitacion.setProductoCustom(productoCustom);
+        int cantidad = productoCustom.getCantidad();
+        Double nuevoMontoTotal = precioUnitario * cantidad;
+        licitacion.setMontoTotal(nuevoMontoTotal);
         licitacionRepository.actualizarEstado(licitacion);
 
         String texto = "El proveedor " + licitacion.getProveedor().getRazonSocial() + " respondió tu liquidación #"
