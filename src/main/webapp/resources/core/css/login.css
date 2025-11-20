@@ -34,7 +34,12 @@ body {
 
 .logo { display: inline-flex; align-items: center; text-decoration: none; }
 .logo svg { display: block; border-radius: 50%; }
-.brand { margin-left: 10px; color: #6a42f4; font-weight: 700; font-size: 1rem; }
+.brand { margin-left: 10px; color: #6a42f4; font-weight: 700; font-size: 1rem;}
+
+.navbar-brand {
+    text-decoration: none !important;
+}
+
 
 /* MAIN */
 main { flex: 1; display: flex; justify-content: center; align-items: center; }
