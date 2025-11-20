@@ -263,6 +263,9 @@ public class ControladorProveedor {
         Proveedor proveedor = servicioProveedorI.buscarPorId(usuarioSesion.getId());
 
         Long proveedorId = proveedor.getId();
+        modelMap.put("mailProveedor", usuarioSesion.getUsername());
+        String base64Image = servicioUsuario.obtenerFotoPerfil(usuarioSesion.getId(), httpServletRequest);
+        modelMap.put("fotoPerfil", base64Image);
 
         Map<String, Long> estadisticas = servicioCotizacion
                 .obtenerEstadisticasCotizacionesDelProveedor(proveedorId);

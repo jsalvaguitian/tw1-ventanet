@@ -54,7 +54,6 @@ header .dropdown-menu {
 /* === MAIN CONTENT === */
 main {
   flex-grow: 1;
-  padding: 20px;
   background-color: #f4f6f9;
 }
 
