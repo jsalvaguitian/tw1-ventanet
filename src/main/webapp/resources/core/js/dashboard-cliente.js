@@ -3,82 +3,239 @@ document.addEventListener("DOMContentLoaded", function () {
     const rows = document.querySelectorAll("#tablaCotizaciones tbody tr");
     const searchInput = document.querySelector(".form-control[placeholder^='Buscar']");
     const dateFilter = document.getElementById("dateFilter");
+    // Botón opcional (puede no existir). El filtrado se aplica automáticamente al cambiar el select.
     const applyFilterBtn = document.getElementById("applyFilter");
+    // Select proveedor (nuevo id unificado filterProveedor o id antiguo filtroProveedor)
+    const proveedorSelect = document.getElementById('filterProveedor') || document.getElementById('filtroProveedor');
 
     let currentFilter = "TODOS"; // Filtro de estado actual
     let searchText = "";
     let dateRange = null;
+    let proveedorFilterValue = ""; // Valor seleccionado de proveedor (normalizado)
+    const montoMinInput = document.getElementById('filtroMonto');
+    const montoMaxInput = document.getElementById('filtroMontoMax');
+    let montoMinVal = null; // number | null
+    let montoMaxVal = null; // number | null
+    // Inputs fechas manuales
+    const fechaCreacionDesdeInput = document.getElementById('filtroFechaCreacionDesde');
+    const fechaCreacionHastaInput = document.getElementById('filtroFechaCreacionHasta');
+    const fechaExpDesdeInput = document.getElementById('filtroFechaExpiracionDesde');
+    const fechaExpHastaInput = document.getElementById('filtroFechaExpiracionHasta');
+    let fechaCreacionDesde = null;
+    let fechaCreacionHasta = null;
+    let fechaExpDesde = null;
+    let fechaExpHasta = null;
+
+    // Normaliza nombre para comparación (trim + lower + colapsar espacios)
+    function normalizarProveedor(nombre) {
+        return (nombre || "").trim().replace(/\s+/g,' ').toLowerCase();
+    }
+
+    function populateProveedorSelect() {
+        if (!proveedorSelect) return;
+        // Recolectar valores únicos de ambas tablas
+        const mapaDisplay = new Map(); // clave normalizada -> display original (primera aparición)
+        const recolectar = (selectorTabla, idxCol) => {
+            document.querySelectorAll(`${selectorTabla} tbody tr`).forEach(r => {
+                const vRaw = r.children[idxCol]?.textContent; if (!vRaw) return;
+                const key = normalizarProveedor(vRaw);
+                if (key && !mapaDisplay.has(key)) mapaDisplay.set(key, vRaw.trim());
+            });
+        };
+        recolectar('#tablaCotizaciones', 1); // Proveedor columna 1
+        recolectar('#tablaLicitaciones', 2); // Proveedor columna 2 en licitaciones
+
+        // Limpiar opciones existentes salvo placeholder
+        while (proveedorSelect.options.length > 1) proveedorSelect.remove(1);
+        // Ordenar por display usando locale es
+        [...mapaDisplay.entries()].sort((a,b)=>a[1].localeCompare(b[1],'es')).forEach(([key, display]) => {
+            const opt = document.createElement('option');
+            opt.value = key; // guardamos normalizado
+            opt.textContent = display; // mostramos formato original
+            proveedorSelect.appendChild(opt);
+        });
+    }
+
+    function endOfDay(d) {
+        const dt = new Date(d);
+        dt.setHours(23,59,59,999);
+        return dt;
+    }
 
     function obtenerRangoFechas(valor) {
         const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0);
+        hoy.setHours(0, 0, 0, 0); // normalizar inicio de hoy
         let inicio = null;
-        let fin = new Date(hoy);
+        let fin = endOfDay(hoy); // por defecto fin es hoy completo
 
         switch (valor) {
             case "today":
-                inicio = new Date(hoy);
+                inicio = new Date(hoy); // hoy 00:00
+                fin = endOfDay(hoy);     // hoy 23:59:59
                 break;
             case "yesterday":
                 inicio = new Date(hoy);
-                inicio.setDate(inicio.getDate() - 1);
-                fin = new Date(inicio);
+                inicio.setDate(inicio.getDate() - 1); // ayer 00:00
+                fin = endOfDay(inicio);               // ayer 23:59:59
                 break;
             case "last7":
                 inicio = new Date(hoy);
-                inicio.setDate(inicio.getDate() - 7);
+                inicio.setDate(inicio.getDate() - 7); // hace 7 días
+                fin = endOfDay(hoy);                  // hasta hoy completo
                 break;
             case "last30":
                 inicio = new Date(hoy);
                 inicio.setDate(inicio.getDate() - 30);
+                fin = endOfDay(hoy);
                 break;
             case "month":
-                inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+                inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1); // primer día del mes
+                fin = endOfDay(hoy);
                 break;
             default:
-                inicio = null; // Todos
+                inicio = null; // sin filtro de fechas
+                fin = null;
         }
         return { inicio, fin };
     }
 
-    function aplicarFiltros() {
-        // Detectar qué tabla está visible (cotizaciones o custom)
-        const tablaActiva =
-            document.querySelector("#tablaCotizaciones")?.offsetParent !== null
-                ? "#tablaCotizaciones"
-                : "#tablaLicitaciones";
-
-        const filas = document.querySelectorAll(`${tablaActiva} tbody tr`);
-        filas.forEach(row => {
-            // Buscar índice de columna de estado y fecha (depende de la tabla)
-            const esCustom = tablaActiva === "#tablaLicitaciones";
-            const idxEstado = esCustom ? 3 : 3;
-            const idxFecha = esCustom ? 4 : 4;
-
-            const estado = row.children[idxEstado].textContent.trim().toUpperCase();
-            const textoFila = row.textContent.toLowerCase();
-            const fechaStr = row.children[idxFecha].textContent.trim();
-
-            const coincideEstado = currentFilter === "TODOS" || estado === currentFilter;
-            const coincideBusqueda = textoFila.includes(searchText);
-            let coincideFecha = true;
-
-            if (dateRange && dateRange.inicio) {
-                const fecha = new Date(fechaStr);
-                fecha.setHours(0, 0, 0, 0);
-                coincideFecha = fecha >= dateRange.inicio && fecha <= dateRange.fin;
-            }
-
-            // Mostrar/ocultar fila según todos los criterios
-            row.style.display = coincideEstado && coincideBusqueda && coincideFecha ? "" : "none";
+// funcion para cargar img en el pdf
+    function loadImageAsBase64(url) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = "Anonymous"; // por si acaso
+            img.onload = function () {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL("image/png"));
+            };
+            img.onerror = reject;
+            img.src = url;
         });
     }
 
-    applyFilterBtn.addEventListener("click", () => {
-        const valor = dateFilter.value;
-        dateRange = obtenerRangoFechas(valor);
+    function aplicarFiltros() {
+        // Detectar tabla activa
+        const tablaActiva =
+            document.querySelector('#tablaCotizaciones')?.offsetParent !== null
+                ? '#tablaCotizaciones'
+                : '#tablaLicitaciones';
+
+        const filas = document.querySelectorAll(`${tablaActiva} tbody tr`);
+        const esCustom = tablaActiva === '#tablaLicitaciones';
+
+        // Definir índices según tabla
+        const idxProveedor = esCustom ? 2 : 1;
+        const idxMonto = esCustom ? 3 : 2; // nueva columna monto en custom
+        const idxEstado = esCustom ? 4 : 3;
+        const idxFechaCreacion = esCustom ? 5 : 4;
+        const idxFechaExpiracion = esCustom ? 6 : 5;
+
+        // Contadores (distribución sin filtro estado)
+        let countTotal = 0, countPendiente = 0, countAprobada = 0, countRechazado = 0, countCompletada = 0;
+        const visiblesFinal = [];
+
+        filas.forEach(row => {
+            const estado = row.children[idxEstado]?.textContent.trim().toUpperCase();
+            const proveedorStr = normalizarProveedor(row.children[idxProveedor]?.textContent);
+            const textoFila = row.textContent.toLowerCase();
+            const fechaStrCreacion = row.children[idxFechaCreacion]?.textContent.trim();
+            const fechaStrExp = row.children[idxFechaExpiracion]?.textContent.trim();
+
+            // Búsqueda global
+            const coincideBusqueda = textoFila.includes(searchText);
+
+            // Proveedor
+            const coincideProveedor = (!proveedorFilterValue || proveedorStr === proveedorFilterValue);
+
+            // Monto (aplica a ambas tablas ahora que custom tiene columna monto)
+            let coincideMonto = true;
+            if ((montoMinVal !== null || montoMaxVal !== null)) {
+                const montoCell = row.children[idxMonto];
+                const arsRaw = montoCell?.getAttribute('data-precio-ars');
+                const numeroArs = arsRaw ? parseFloat(arsRaw) : NaN;
+                const isUSD = document.getElementById('toggleDolar')?.checked;
+                const tasa = window.dolarVentaGlobal || null;
+                const umbralMinArs = (isUSD && tasa && montoMinVal !== null) ? montoMinVal * tasa : montoMinVal;
+                const umbralMaxArs = (isUSD && tasa && montoMaxVal !== null) ? montoMaxVal * tasa : montoMaxVal;
+                if (!isNaN(numeroArs)) {
+                    if (umbralMinArs !== null && numeroArs < umbralMinArs) coincideMonto = false;
+                    if (umbralMaxArs !== null && numeroArs > umbralMaxArs) coincideMonto = false;
+                }
+            }
+
+            // Fechas creación
+            let coincideFechaCreacion = true;
+            if (fechaCreacionDesde || fechaCreacionHasta) {
+                const fecha = parseFecha(fechaStrCreacion);
+                if (fecha) {
+                    if (fechaCreacionDesde && fecha < fechaCreacionDesde) coincideFechaCreacion = false;
+                    if (fechaCreacionHasta && fecha > fechaCreacionHasta) coincideFechaCreacion = false;
+                } else { coincideFechaCreacion = false; }
+            } else if (dateRange && dateRange.inicio) {
+                const fecha = parseFecha(fechaStrCreacion);
+                if (fecha) {
+                    coincideFechaCreacion = fecha >= dateRange.inicio && (!dateRange.fin || fecha <= dateRange.fin);
+                } else { coincideFechaCreacion = false; }
+            }
+
+            // Fechas expiración
+            let coincideFechaExp = true;
+            if (fechaExpDesde || fechaExpHasta) {
+                const fExp = parseFecha(fechaStrExp);
+                if (fExp) {
+                    if (fechaExpDesde && fExp < fechaExpDesde) coincideFechaExp = false;
+                    if (fechaExpHasta && fExp > fechaExpHasta) coincideFechaExp = false;
+                } else { coincideFechaExp = false; }
+            }
+
+            const pasaNoEstado = (coincideBusqueda && coincideProveedor && coincideMonto && coincideFechaCreacion && coincideFechaExp);
+            if (pasaNoEstado) {
+                countTotal++;
+                switch (estado) {
+                    case 'PENDIENTE': countPendiente++; break;
+                    case 'APROBADA': countAprobada++; break;
+                    case 'RECHAZADO': countRechazado++; break;
+                    case 'COMPLETADA': countCompletada++; break;
+                }
+            }
+
+            const coincideEstado = currentFilter === 'TODOS' || estado === currentFilter;
+            const visible = pasaNoEstado && coincideEstado;
+            row.style.display = visible ? '' : 'none';
+            if (visible) visiblesFinal.push(row);
+        });
+
+        // Actualizar indicadores
+        const elTotal = document.getElementById('totalEvents');
+        const elPend = document.getElementById('pendingEvents');
+        const elAprob = document.getElementById('approvedEvents');
+        const elRech = document.getElementById('rejectedEvents');
+        const elComp = document.getElementById('completedEvents');
+        if (elTotal) elTotal.textContent = countTotal;
+        if (elPend) elPend.textContent = countPendiente;
+        if (elAprob) elAprob.textContent = countAprobada;
+        if (elRech) elRech.textContent = countRechazado;
+        if (elComp) elComp.textContent = countCompletada;
+
+        // Narrowing dinámico siempre (ambas tablas)
+        rebuildProveedorOptions(visiblesFinal);
+        rebuildMontosDatalist(visiblesFinal);
+    }
+
+    // Aplicar automáticamente al cambiar el select
+    if (dateFilter) {
+        dateFilter.addEventListener("change", () => {
+            dateRange = obtenerRangoFechas(dateFilter.value);
+            aplicarFiltros();
+        });
+        // Filtro inicial al cargar (si no es "all")
+        dateRange = obtenerRangoFechas(dateFilter.value);
         aplicarFiltros();
-    });
+    }
 
     // Filtro de estado
     stats.forEach(stat => {
@@ -94,6 +251,187 @@ document.addEventListener("DOMContentLoaded", function () {
         searchText = e.target.value.toLowerCase();
         aplicarFiltros();
     });
+
+    if (proveedorSelect) {
+        populateProveedorSelect();
+        proveedorSelect.addEventListener('change', () => {
+            proveedorFilterValue = normalizarProveedor(proveedorSelect.value);
+            aplicarFiltros();
+        });
+    }
+
+    // --- Populate datalist for montos únicos y placeholders rango ---
+    function rebuildMontosDatalist(filasVisibles) {
+        const datalist = document.getElementById('listaMontos');
+        if (!datalist) return;
+        const montos = [];
+        filasVisibles.forEach(r => {
+            const cell = r.querySelector('.monto-cotizacion');
+            const raw = cell?.getAttribute('data-precio-ars');
+            if (!raw) return;
+            const num = parseFloat(raw);
+            if (!isNaN(num)) montos.push(num);
+        });
+        const unicos = [...new Set(montos)].sort((a,b)=>a-b);
+        datalist.innerHTML = '';
+        unicos.forEach(m => {
+            const opt = document.createElement('option');
+            // Si estamos en USD mostrar valor convertido, pero el input numérico seguirá interpretando lo que se ve
+            const isUSD = document.getElementById('toggleDolar')?.checked;
+            const tasa = window.dolarVentaGlobal || null;
+            opt.value = (isUSD && tasa) ? (m / tasa).toFixed(2) : m;
+            datalist.appendChild(opt);
+        });
+        if (unicos.length) {
+            const isUSD = document.getElementById('toggleDolar')?.checked;
+            const tasa = window.dolarVentaGlobal || null;
+            const minDisp = unicos[0];
+            const maxDisp = unicos[unicos.length-1];
+            const suf = isUSD ? ' USD' : ' ARS';
+            const fmtMin = isUSD && tasa ? (minDisp / tasa).toFixed(2) : minDisp;
+            const fmtMax = isUSD && tasa ? (maxDisp / tasa).toFixed(2) : maxDisp;
+            if (montoMinInput && !montoMinInput.value) montoMinInput.placeholder = '≥ ' + fmtMin + suf;
+            if (montoMaxInput && !montoMaxInput.value) montoMaxInput.placeholder = '≤ ' + fmtMax + suf;
+        } else {
+            if (montoMinInput && !montoMinInput.value) montoMinInput.placeholder = '≥';
+            if (montoMaxInput && !montoMaxInput.value) montoMaxInput.placeholder = '≤';
+        }
+    }
+
+    function rebuildProveedorOptions(filasVisibles) {
+        if (!proveedorSelect) return;
+        const currentSelNorm = normalizarProveedor(proveedorSelect.value);
+        const uniqueMap = new Map();
+        filasVisibles.forEach(r => {
+            // Determinar índice proveedor según tabla origen
+            const parentId = r.closest('table')?.id;
+            const idxProv = parentId === 'tablaLicitaciones' ? 2 : 1;
+            const provCell = r.children[idxProv];
+            if (!provCell) return;
+            const display = provCell.textContent.trim();
+            const key = normalizarProveedor(display);
+            if (key && !uniqueMap.has(key)) uniqueMap.set(key, display);
+        });
+        while (proveedorSelect.options.length > 1) proveedorSelect.remove(1);
+        [...uniqueMap.entries()].sort((a,b)=>a[1].localeCompare(b[1],'es')).forEach(([key, display]) => {
+            const opt = document.createElement('option');
+            opt.value = key;
+            opt.textContent = display;
+            proveedorSelect.appendChild(opt);
+        });
+        if (currentSelNorm && uniqueMap.has(currentSelNorm)) {
+            proveedorSelect.value = currentSelNorm;
+        } else {
+            proveedorSelect.value = '';
+            proveedorFilterValue = '';
+        }
+    }
+
+    // Listeners monto min/max
+    if (montoMinInput) {
+        montoMinInput.addEventListener('input', () => {
+            const v = montoMinInput.value.trim();
+            montoMinVal = v === '' ? null : parseFloat(v);
+            aplicarFiltros();
+        });
+    }
+    if (montoMaxInput) {
+        montoMaxInput.addEventListener('input', () => {
+            const v = montoMaxInput.value.trim();
+            montoMaxVal = v === '' ? null : parseFloat(v);
+            aplicarFiltros();
+        });
+    }
+
+    // Listeners fechas manuales creación
+    const parseInputDate = (val) => {
+        if (!val) return null;
+        // val formato yyyy-MM-dd -> crear fecha local sin desfase
+        const m = val.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        return m ? new Date(+m[1], +m[2]-1, +m[3]) : null;
+    };
+
+    function actualizarFechasYFiltrar() {
+        fechaCreacionDesde = parseInputDate(fechaCreacionDesdeInput?.value);
+        fechaCreacionHasta = parseInputDate(fechaCreacionHastaInput?.value);
+        fechaExpDesde = parseInputDate(fechaExpDesdeInput?.value);
+        fechaExpHasta = parseInputDate(fechaExpHastaInput?.value);
+        aplicarFiltros();
+    }
+
+    [fechaCreacionDesdeInput, fechaCreacionHastaInput, fechaExpDesdeInput, fechaExpHastaInput].forEach(inp => {
+        if (inp) inp.addEventListener('change', actualizarFechasYFiltrar);
+    });
+
+    // Botón limpiar filtros
+    const btnLimpiar = document.getElementById('btnLimpiarFiltros');
+    if (btnLimpiar) {
+        btnLimpiar.addEventListener('click', () => {
+            // Reset valores
+            proveedorSelect && (proveedorSelect.value = '');
+            proveedorFilterValue = '';
+            montoMinInput && (montoMinInput.value = ''); montoMinVal = null;
+            montoMaxInput && (montoMaxInput.value = ''); montoMaxVal = null;
+            fechaCreacionDesdeInput && (fechaCreacionDesdeInput.value = ''); fechaCreacionDesde = null;
+            fechaCreacionHastaInput && (fechaCreacionHastaInput.value = ''); fechaCreacionHasta = null;
+            fechaExpDesdeInput && (fechaExpDesdeInput.value = ''); fechaExpDesde = null;
+            fechaExpHastaInput && (fechaExpHastaInput.value = ''); fechaExpHasta = null;
+            // Si hay preset, reseteamos a 'all'
+            if (dateFilter) { dateFilter.value = 'all'; dateRange = obtenerRangoFechas('all'); }
+            aplicarFiltros();
+        });
+    }
+
+    // Exportar a CSV (compatible Excel)
+    const btnExport = document.getElementById('btnExportExcel');
+    if (btnExport) {
+        btnExport.addEventListener('click', () => {
+            // Detectar tabla activa igual que en aplicarFiltros
+            const tablaActiva =
+                document.querySelector('#tablaCotizaciones')?.offsetParent !== null
+                    ? '#tablaCotizaciones'
+                    : '#tablaLicitaciones';
+            const tabla = document.querySelector(tablaActiva);
+            if (!tabla) return;
+
+            const filasVisibles = Array.from(tabla.querySelectorAll('tbody tr'))
+                .filter(tr => tr.style.display !== 'none');
+            if (!filasVisibles.length) {
+                Swal.fire('Sin datos', 'No hay filas visibles para exportar.', 'info');
+                return;
+            }
+            // Headers (excluir última columna Acciones)
+            const headers = Array.from(tabla.querySelectorAll('thead th'))
+                .map(th => th.textContent.trim())
+                .filter(h => h.toLowerCase() !== 'acciones');
+
+            const rowsCsv = [headers];
+            filasVisibles.forEach(tr => {
+                const celdas = Array.from(tr.children).slice(0, headers.length); // excluir acciones
+                const vals = celdas.map(td => {
+                    let txt = td.textContent.trim();
+                    // Escapar comillas
+                    if (txt.includes('"')) txt = txt.replace(/"/g,'""');
+                    // Envolver si contiene separadores
+                    if (/[;,\n]/.test(txt)) txt = '"' + txt + '"';
+                    return txt;
+                });
+                rowsCsv.push(vals);
+            });
+            const sep = ';'; // Excel latino suele abrir bien con ;
+            const csvContent = '\uFEFF' + rowsCsv.map(r => r.join(sep)).join('\n');
+            const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const fechaStamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+            a.download = (tablaActiva === '#tablaCotizaciones' ? 'cotizaciones' : 'cotizaciones_custom') + '_' + fechaStamp + '.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    }
 
     document.addEventListener('click', function (e) {
         // Verifica si el clic ocurrió en el botón o dentro de su icono
@@ -127,26 +465,49 @@ window.getEstadoHTML = getEstadoHTML;
 async function mostrarDetalleCotizacion(id) {
     const url = '/spring/cotizacion/detalle/' + id;
 
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const cotizacion = await response.json();
-        const estadoHTML = getEstadoHTML(cotizacion.estado);
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(cotizacion => {
+            const estadoHTML = getEstadoHTML(cotizacion.estado);
+            let botonesAccion = '';
 
-        let botonesAccion = '';
-        if (cotizacion.estado === 'PENDIENTE') {
-            botonesAccion = `
-                <div style="margin-top: 25px; text-align: center;">
-                    <button class="btn btn-danger" 
-                            onclick="manejarAccionCotizacion(${cotizacion.id}, 'RECHAZADO')">
-                        ❌ Rechazar
-                    </button>
-                </div>
-            `;
-        }
+            if (cotizacion.estado === 'PENDIENTE') {
+                botonesAccion = `
+                    <div style="margin-top: 25px; text-align: center;">
+                        <button class="btn btn-danger" 
+                                onclick="manejarAccionCotizacion(${cotizacion.id}, 'RECHAZADO')">
+                            ❌ Rechazar
+                        </button>
+                    </div>
+                `;
+            }
+
+            
+            let medioDePagoHTML = '';
+            if (cotizacion.medioDePago) {
+                const mp = cotizacion.medioDePago;
+                let cuotas = '';
+                if(mp.tipo === 'CREDITO') {
+                    cuotas = mp.cantidad_cuotas ? `(${mp.cantidad_cuotas} cuotas)` : '';
+                }
+                
+                const detalleMP = `${mp.nombre} ${cuotas}`;
+                
+                medioDePagoHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <p style="margin: 0; font-size: 14px; text-align: right;">
+                            <strong>Medio de Pago:</strong> ${detalleMP}
+                        </p>
+                        ${mp.imagen ? `<img src="/spring/img/${mp.imagen}" alt="${mp.nombre}" style="width: 30px; height: auto; border-radius: 5px;">` : ''}
+                    </div>
+                `;
+            }
 
         if (cotizacion.estado === 'APROBADA' || cotizacion.estado === 'COMPLETADA') {
-            botonesAccion += `
+            botonesAccion = `
                 <div style="margin-top: 20px; text-align: center;">
                     <button id="btnDescargarPDF" class="btn btn-success">
                         <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
@@ -155,11 +516,7 @@ async function mostrarDetalleCotizacion(id) {
             `;
         }
 
-        // --- Cálculo de totales con IVA ---
-        const subtotal = cotizacion.montoTotal / 1.21;
-        const iva = cotizacion.montoTotal - subtotal;
-
-        // --- Encabezado y tabla de productos ---
+        // Generar contenido HTML del detalle
         let htmlContent = `
             <div style="font-family: Arial, sans-serif; color:#333; text-align:left;">
                 <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #ccc; padding-bottom: 10px; margin-bottom: 10px;">
@@ -178,7 +535,11 @@ async function mostrarDetalleCotizacion(id) {
                     </div>
                 </div>
 
-                <p><strong>Estado:</strong> ${estadoHTML}</p>
+                    <!-- Estado -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">
+                        <p style="margin: 0;"><strong>Estado:</strong> ${estadoHTML}</p>
+                        ${medioDePagoHTML}
+                    </div>
 
                 <h5 style="margin-top: 20px; color:#003366;">Detalle de la Cotización</h5>
                 <table style="width:100%; border-collapse: collapse; font-size: 14px; margin-top:5px;">
@@ -186,96 +547,152 @@ async function mostrarDetalleCotizacion(id) {
                         <tr style="background-color: #f2f2f2;">
                             <th style="border: 1px solid #ccc; padding: 8px;">Producto</th>
                             <th style="border: 1px solid #ccc; padding: 8px;">Cantidad</th>
-                            <th style="border: 1px solid #ccc; padding: 8px;">Precio Unitario</th>
-                            <th style="border: 1px solid #ccc; padding: 8px;">% Descuento</th>
-                            <th style="border: 1px solid #ccc; padding: 8px;">IVA</th>
+                            <th style="border: 1px solid #ccc; padding: 8px;">Precio Unitario</th>                            
                             <th style="border: 1px solid #ccc; padding: 8px;">Total</th>
                         </tr>
                     </thead>
                     <tbody>
         `;
 
-        cotizacion.items?.forEach(item => {
-            const totalItem = item.cantidad * item.precioUnitario;
+        cotizacion.items.forEach(item => {
+            const subtotal = item.cantidad * item.precioUnitario;
             htmlContent += `
                 <tr>
-                    <td style="border: 1px solid #ccc; padding: 8px;">${item.producto?.nombre || '-'}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">${item.cantidad}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">$${item.precioUnitario.toFixed(2)}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">${item.descuento ? item.descuento + '%' : '0%'}</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">21%</td>
-                    <td style="border: 1px solid #ccc; padding: 8px;">$${totalItem.toFixed(2)}</td>
+                    <td>${item.producto.nombre}</td>
+                    <td>${item.cantidad}</td>
+                    <td>$${item.precioUnitario.toFixed(2)}</td>
+                    <td>$${subtotal.toFixed(2)}</td>
                 </tr>
             `;
         });
 
-        htmlContent += `
-                    </tbody>
-                </table>
-                <div style="margin-top: 20px; text-align: right;">
-                    <p><strong>Base imponible:</strong> $${subtotal.toFixed(2)}</p>
-                    <p><strong>IVA (21%):</strong> $${iva.toFixed(2)}</p>
-                    <p style="font-size:16px;"><strong>Total:</strong> $${cotizacion.montoTotal.toFixed(2)}</p>
-                </div>
+        htmlContent += `</tbody></table>`;
+        htmlContent += botonesAccion;
 
-                ${botonesAccion}
-
-                <p style="margin-top:20px; font-style:italic;">
-                    Para los detalles del envío, por favor comunicarse con el proveedor mediante mensajería correspondiente.
-                </p>
-            </div>
-        `;
-
-        // --- Mostrar SweetAlert ---
+        // Mostrar SweetAlert con el detalle
         Swal.fire({
-            title: `Cotización #${id}`,
+            title: `Detalle de Cotización #${id}`,
             html: htmlContent,
             icon: 'info',
-            width: '75%',
+            width: '80%',
             showConfirmButton: true,
             confirmButtonText: 'Cerrar',
             didOpen: (popup) => {
                 setTimeout(() => {
+                    console.log("Buscando botón PDF...");
                     const btnPDF = popup.querySelector("#btnDescargarPDF");
+                    console.log("Encontrado:", btnPDF);
                     if (btnPDF) {
                         btnPDF.addEventListener("click", async () => {
+                            console.log("Click detectado en botón PDF");
+
                             const { jsPDF } = window.jspdf;
                             const doc = new jsPDF();
+                            const pageWidth = doc.internal.pageSize.getWidth();
+                            
+                            // CABECERA                       
+                            // ---- Cargar logo del proveedor ----
+                            let logoUrl = null;
+                            let logoBase64 = null;
 
-                            // --- Cabecera ---
-                            doc.setFontSize(10);
-                            doc.text(`Proveedor: ${cotizacion.proveedor.razonSocial}`, 10, 10);
-                            doc.text(`CUIT: ${cotizacion.proveedor.cuit || 'N/A'}`, 10, 15);
-                            doc.text(`Dirección: ${cotizacion.proveedor.direccion || '-'}`, 10, 20);
-                            doc.text(`Teléfono: ${cotizacion.proveedor.telefono || '-'}`, 10, 25);
-
-                            // --- Cliente ---
-                            if (cotizacion.cliente) {
-                                doc.text(`Cliente: ${cotizacion.cliente.nombre}`, 10, 35);
-                                doc.text(`Teléfono: ${cotizacion.cliente.telefono || '-'}`, 10, 40);
-                                doc.text(`Fecha: ${new Date(cotizacion.fechaCreacion).toLocaleDateString()}`, 10, 45);
+                            if (cotizacion.proveedor.origenLogo === "img") {
+                                logoUrl = `/spring/img/${cotizacion.proveedor.logoPath}`;
+                            } 
+                            else if (cotizacion.proveedor.origenLogo === "uploads") {
+                                logoUrl = `/spring/uploads/${cotizacion.proveedor.logoPath}`;
                             }
 
-                            // --- Línea separatoria ---
-                            doc.line(10, 50, 200, 50);
+                            if (logoUrl) {
+                                console.log("➡️ URL del logo que estoy intentando cargar:", logoUrl);
+                                console.log("Proveedor:", cotizacion.proveedor);
+                                console.log("Origen del logo:", cotizacion.proveedor.origenLogo);
+                                console.log("LogoPath:", cotizacion.proveedor.logoPath);
+                                
+                                try {
+                                    logoBase64 = await loadImageAsBase64(logoUrl);
+                                } catch (err) {
+                                    console.error("Error cargando logo:", err);
+                                }
+                            }
 
-                            // --- Productos ---
-                            let y = 55;
-                            cotizacion.items?.forEach(item => {
-                                const totalItem = item.cantidad * item.precioUnitario;
-                                doc.text(`${item.producto?.nombre} - Cant: ${item.cantidad} x $${item.precioUnitario.toFixed(2)}`, 10, y);
+                            // Insertar logo (columna izquierda)
+                            if (logoBase64) {
+                                doc.addImage(logoBase64, "PNG", 10, 10, 40, 20);
+                            }
+
+                            doc.setFontSize(12);
+                            doc.setFont("helvetica", "bold");
+                            const columnaDerechaX = pageWidth - 80;
+                            
+                            // Proveedor (ESQUINA SUPERIOR DERECHA)
+                            const proveedorText = `Proveedor: ${cotizacion.proveedor.razonSocial}\nCUIT: ${cotizacion.proveedor.cuit || 'N/A'}\n${cotizacion.proveedor.sitioWeb || 'N/A'}`;
+
+                            const proveedorX = pageWidth - doc.getTextWidth("Proveedor: " + cotizacion.proveedor.razonSocial) - 10;
+                            doc.text(proveedorText, columnaDerechaX, 15);
+
+                            // Cliente y Cotización en 2 columnas
+                            doc.setFontSize(11);
+                            doc.setFont("helvetica", "normal");
+
+                            // Columna izquierda CLIENTE
+                            let y = 35;
+                            doc.text(`Cliente: ${cotizacion.cliente?.nombre || "N/A"}`, 10, y);
+                            doc.text(`Teléfono: ${cotizacion.cliente?.telefono || "N/A"}`, 10, y + 7);
+
+                            // Columna derecha COTIZACION + FECHA
+                            const fechaActual = new Date().toLocaleString();
+                            const datosDerecha =
+                                `Cotización #${cotizacion.id}\nFecha: ${fechaActual}`;
+
+                            const derechaX = pageWidth - doc.getTextWidth("Cotización #" + cotizacion.id) - 20;
+                            doc.text(datosDerecha, columnaDerechaX, y);
+
+                            // Línea separadora CABECERA-CUERPO
+                            doc.line(10, y + 15, pageWidth - 10, y + 15);
+
+                            // CUERPO
+                            y += 30;
+                            doc.setFont("helvetica", "bold");
+                            doc.setFontSize(13);
+                            doc.text("Detalles de la cotización", 10, y);
+                            y += 6;
+
+                            doc.setFont("helvetica", "normal");
+                            doc.setFontSize(11);
+
+                            // Encabezado de tabla
+                            doc.text("Producto", 10, y);
+                            doc.text("Cant.", pageWidth / 2 - 10, y);
+                            doc.text("Monto", pageWidth - 40, y);
+
+                            y += 5;
+                            doc.line(10, y, pageWidth - 10, y);
+                            y += 7;
+
+                            // Items
+                            cotizacion.items.forEach(item => {
+                                const subtotal = item.cantidad * item.precioUnitario;
+
+                                doc.text(item.producto.nombre, 10, y);
+                                doc.text(String(item.cantidad), pageWidth / 2 - 10, y);
+                                doc.text(`$${subtotal.toFixed(2)}`, pageWidth - 40, y);
                                 y += 8;
                             });
 
-                            // --- Mensaje de envío ---
-                            y += 10;
-                            doc.text("Para los detalles del envío, por favor comunicarse con el proveedor mediante mensajería correspondiente.", 10, y);
-
-                            // --- Total ---
+                            // Línea separadora CUERPO-PIE
+                            doc.line(10, y, pageWidth - 10, y);
                             y += 15;
-                            doc.setFontSize(12);
-                            doc.text(`TOTAL: $${cotizacion.montoTotal.toFixed(2)}`, 150, y);
 
+                            // PIE
+                            doc.setFont("helvetica", "bold");
+                            doc.setFontSize(16);
+
+                            const totalText = `TOTAL: $${cotizacion.montoTotal.toFixed(2)}`;
+                            const totalX = pageWidth - doc.getTextWidth(totalText) - 10;
+
+                            doc.text(totalText, totalX, y);
+
+                            // Guardar PDF
                             doc.save(`cotizacion_${cotizacion.id}.pdf`);
                         });
                     }
@@ -283,10 +700,10 @@ async function mostrarDetalleCotizacion(id) {
             }
         });
 
-    } catch (error) {
+    }).catch (error => {
         console.error("Error al cargar el detalle:", error);
         Swal.fire('Error', 'No se pudo cargar el detalle de la cotización: ' + error.message, 'error');
-    }
+    });
 }
 
 function mostrarDetalleLicitacion(id) {
@@ -646,12 +1063,12 @@ document.addEventListener("DOMContentLoaded", () => {
             // Convertir a USD
             montos.forEach((celda) => {
                 const ars = parseFloat(celda.dataset.precioArs);
+                if (isNaN(ars) || !dolarVenta) return;
                 const usd = ars / dolarVenta;
-                const valorFormateado =
-                    Number.isInteger(usd) ? usd.toString() : usd.toFixed(2);
-
+                const valorFormateado = Number.isInteger(usd) ? usd.toString() : usd.toFixed(2);
                 celda.textContent = `$${valorFormateado} USD`;
             });
+            window.dolarVentaGlobal = dolarVenta;
         } else {
             // Volver a ARS
             montos.forEach((celda) => {
@@ -659,5 +1076,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 celda.textContent = `$${ars.toLocaleString("es-AR")} ARS`;
             });
         }
+        // Reaplicar filtros con interpretación adaptada (min/max como USD cuando toggle activo)
+        aplicarFiltros();
     });
 });
+
+// --- Parsing robusto de fecha (solo día) ---
+// Acepta formatos: AAAA-MM-DD (local), AAAA-MM-DDTHH:mm[:ss], AAAA-MM-DD HH:mm[:ss], dd/MM/yyyy
+// IMPORTANTE: No usar new Date("YYYY-MM-DD") porque interpreta UTC y resta horas cambiando el día en zonas GMT-3.
+function parseFecha(txt) {
+    if (!txt) return null;
+    let base = txt.trim();
+
+    // Formato latino dd/MM/yyyy
+    let mLat = base.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (mLat) return new Date(+mLat[3], +mLat[2]-1, +mLat[1]);
+
+    // ISO sólo fecha AAAA-MM-DD (crear fecha local sin desfase)
+    let mIsoOnly = base.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (mIsoOnly) return new Date(+mIsoOnly[1], +mIsoOnly[2]-1, +mIsoOnly[3]);
+
+    // ISO con hora -> normalizar quitando tiempo (se interpreta en local)
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(base) || /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(base)) {
+        if (base.includes(' ') && !base.includes('T')) base = base.replace(' ', 'T');
+        const d = new Date(base);
+        if (!isNaN(d)) return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+    return null;
+}

@@ -2,13 +2,13 @@ package com.tallerwebi.infraestructura;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.tallerwebi.dominio.entidades.Cotizacion;
-import com.tallerwebi.dominio.entidades.CotizacionItem;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioCotizacion;
 
 @Repository("repositorioCotizacion")
@@ -31,10 +31,15 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
                         "JOIN FETCH c.proveedor " +
                         "LEFT JOIN FETCH c.items i " +
                         "LEFT JOIN FETCH i.producto " +
+                        "LEFT JOIN FETCH c.medioDePago " +                        
                         "WHERE c.id = :id",
                 Cotizacion.class);
         query.setParameter("id", id);
-        return query.uniqueResult();
+        Cotizacion c = query.uniqueResult();
+
+    
+        Hibernate.initialize(c.getProveedor().getMediosDePago());
+        return c;
     }
 
     @Override
@@ -198,6 +203,13 @@ public class RepositorioCotizacionImpl implements RepositorioCotizacion {
                 Object[].class);
         return query.getResultList();
 
+    }
+
+    @Override
+    public List<Cotizacion> obtenerTodas() {
+        var session = sessionFactory.getCurrentSession();
+        var query = session.createQuery("FROM Cotizacion c", Cotizacion.class);
+        return query.getResultList();
     }
 
 }

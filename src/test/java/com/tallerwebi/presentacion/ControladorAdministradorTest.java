@@ -25,6 +25,8 @@ import com.tallerwebi.dominio.servicios.ServicioClienteI;
 import com.tallerwebi.dominio.servicios.ServicioEmail;
 import com.tallerwebi.dominio.servicios.ServicioProveedorI;
 import com.tallerwebi.dominio.servicios.ServicioUsuario;
+import com.tallerwebi.dominio.servicios.ServicioEstadisticas;
+import com.tallerwebi.dominio.servicios.ServicioCotizacion;
 import com.tallerwebi.presentacion.dto.UsuarioSesionDto;
 
 public class ControladorAdministradorTest {
@@ -38,6 +40,8 @@ public class ControladorAdministradorTest {
     private HttpSession sessionMock;
     private ServletContext servletContext;
     private ServicioClienteI servicioCliente;
+    private ServicioEstadisticas servicioEstadisticas;
+    private ServicioCotizacion servicioCotizacion;
 
     @BeforeEach
     public void setUp() {
@@ -47,8 +51,10 @@ public class ControladorAdministradorTest {
         servletContext = mock(ServletContext.class);
         servicioCliente = mock(ServicioClienteI.class);
         servicioUsuario = mock(ServicioUsuario.class);
+        servicioEstadisticas = mock(ServicioEstadisticas.class);
+        servicioCotizacion = mock(ServicioCotizacion.class);
 
-        controladorAdmin = new ControladorAdministrador(servicioAdmin, servicioProveedor, servicioEmail,servletContext, servicioCliente, servicioUsuario);
+        controladorAdmin = new ControladorAdministrador(servicioAdmin, servicioProveedor, servicioEmail,servletContext, servicioCliente, servicioUsuario, servicioEstadisticas, servicioCotizacion);
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);
     }

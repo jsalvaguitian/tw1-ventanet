@@ -14,15 +14,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tallerwebi.dominio.entidades.Cliente;
-import com.tallerwebi.dominio.entidades.Cotizacion;
 import com.tallerwebi.dominio.entidades.Licitacion;
 import com.tallerwebi.dominio.entidades.ProductoCustom;
 import com.tallerwebi.dominio.entidades.Proveedor;
-import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.enums.EstadoCotizacion;
 import com.tallerwebi.dominio.enums.EstadoLicitacion;
 import com.tallerwebi.dominio.enums.Rubro;
-import com.tallerwebi.dominio.excepcion.CotizacionesExistente;
 import com.tallerwebi.dominio.excepcion.LicitacionesExistente;
 import com.tallerwebi.dominio.excepcion.NoHayCotizacionExistente;
 import com.tallerwebi.dominio.servicios.ServicioCloudinary;
@@ -122,7 +118,7 @@ public class ControladorLicitacion {
         Cliente cliente = new Cliente();
         cliente.setId(usuarioSesion.getId());
 
-        ModelAndView mav = new ModelAndView("licitacion"); // 👈 vuelve a la misma vista
+        ModelAndView mav = new ModelAndView("licitacion"); // vuelve a la misma vista
 
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -183,7 +179,7 @@ public class ControladorLicitacion {
                 servicioLicitacion.crear(lic);
             }
 
-            // ✅ mensaje de éxito
+            // mensaje de éxito
             mav.addObject("productoCustom", dto.getProductoCustom());
             mav.addObject("successMessage", "¡Licitación creada con éxito!");
 
@@ -235,7 +231,7 @@ public class ControladorLicitacion {
                 }
             }
         }
-        
+
         EstadoLicitacion estado = EstadoLicitacion.valueOf(nuevoEstado);
 
         servicioLicitacion.actualizarEstado(id, estado);
@@ -251,7 +247,8 @@ public class ControladorLicitacion {
 
     @PostMapping("/{id}/cambiar-estado")
     @ResponseBody
-    public ModelAndView cambiarEstadoCotizacionYValor(@PathVariable Long id, @RequestBody ActualizacionLicitacionDto dto,
+    public ModelAndView cambiarEstadoCotizacionYValor(@PathVariable Long id,
+            @RequestBody ActualizacionLicitacionDto dto,
             HttpServletRequest request)
             throws LicitacionesExistente {
 
@@ -273,7 +270,7 @@ public class ControladorLicitacion {
                 }
             }
         }
-        
+
         EstadoLicitacion estado = EstadoLicitacion.valueOf(dto.getNuevoEstado());
 
         servicioLicitacion.actualizarEstadoYPrecioUnitario(id, estado, dto.getPrecioUnitario());

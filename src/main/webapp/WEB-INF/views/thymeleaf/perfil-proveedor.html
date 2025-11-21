@@ -8,6 +8,9 @@
 
     <link rel="stylesheet" th:href="@{/css/perfil-usuario.css}">
     <link rel="stylesheet" th:href="@{/css/main.css}" />
+    
+    <!-- favicon -->
+    <link rel="icon" type="image/jpeg" th:href="@{/img/favicon2.png}">
     <title>Perfil de Proveedor</title>
 </head>
 <div th:replace="fragments/header :: header"></div>
@@ -17,7 +20,6 @@
     <div th:fragment="contenido-extra">
         <hr>
         <h3>Información del proveedor</h3>
-        <p><strong>Razón Social: </strong><span th:text="${usuario.razonSocial}"></span></p>
         <p><strong>CUIT: </strong><span th:text="${usuario.cuit}"></span></p>
         <p><strong>Rubro: </strong><span th:text="${usuario.rubro}"></span></p>
         <p><strong>Sitio Web: </strong><a th:href="${usuario.sitioWeb}" th:text="${usuario.sitioWeb}"></a></p>
@@ -26,49 +28,8 @@
 </div>
 
 
-<article>
-    <div class="container-graficos">
-        <h2 class="text-center font-weight-bold mb-2">Estadisticas</h2>
-        <hr>
-        <div class="dashboard-container">
-            <div class="card-grafico">
-                <h4 class="text-center mb-2">Estado de cotizaciones</h4>
-                <div class="grafico" th:if="${estadisticas != null}" id="grafico_cotizaciones"></div>
-                <p class="text-info mt-3" th:if="${graficoVacio}" th:text="${graficoVacio}"></p>
-            </div>
-            <div class="dashboard-container">
-                <div class="card-grafico mb-2">
-                    <h4 class="text-center mb-2">Comparacion general</h4>
-                    <div class="grafico" th:if="${promedioGeneralComparacion != null}" id="grafico_comparacion"></div>
-                </div>
-            </div>
-            <div class="dashboard-container">
-                <div class="card-grafico">
-                    <h4 class="text-center mb-2">Tus productos más cotizados</h4>
-                    <div class="grafico" th:if="${estadisticas != null}" id="grafico_productos"></div>
-                    <p class="text-info mt-3" th:if="${graficoVacio}" th:text="${graficoVacio}"></p>
-                </div>
-            </div>
-            <div class="dashboard-container">
-                <div class="card-grafico">
-                    <h4 class="text-center mb-2">Productos más cotizados de Ventanet</h4>
-                    <div class="grafico" id="grafico_todos_productos_mas_cotizados"></div>
-                </div>
-            </div>
-        </div>
-    </div> 
-</article>
-</body>
-<script th:inline="javascript">
-    window.estadisticasData = /*[[${estadisticas}]]*/ {};
-</script>
-<script th:inline="javascript">
-    window.promedioData = /*[[${promedioGeneralComparacion}]]*/ {};
-</script>
-<script th:inline="javascript">
-    window.productosMasCotizadosData = /*[[${productosMasCotizados}]]*/ {};
-    window.productosMasCotizadosDeTodosLosProveedoresData = /*[[${productosMasCotizadosDeTodosLosProveedores}]]*/ {};
-</script>
-<script src="https://www.gstatic.com/charts/loader.js"></script>
+
+
 <script type="module" th:src="@{/js/perfil.js}"></script>
+</body>
 </html>

@@ -11,6 +11,10 @@
 
     <!-- custom style -->
     <link rel="stylesheet" th:href="@{/css/main.css}" />
+    
+    <!-- favicon -->
+    <link rel="icon" type="image/jpeg" th:href="@{/img/favicon2.png}">
+
     <style>
         /* Solo estilos propios del formulario */
         .container {
@@ -103,8 +107,16 @@
                 <input type="password" id="confirmarPassword" name="confirmarPassword" class="form-control"
                     placeholder="Confirmar contraseña" required />
 
+                <!-- Aceptar términos -->
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" id="aceptarTerminos" required>
+                    <label class="form-check-label" for="aceptarTerminos">
+                        Acepto los <a href="#" data-bs-toggle="modal" data-bs-target="#modalTerminos">Términos y Condiciones</a>
+                    </label>
+                </div>
+
                 <!-- Botón -->
-                <button type="submit" class="btn btn-primary">Registrarme</button>
+                <button type="submit" id="btnRegistrarme" class="btn btn-primary">Registrarme</button>
 
                 <!-- Enlace para login -->
                 <p class="register-text">¿Ya tenés cuenta? <a th:href="@{/login}">Ingresar &gt;</a></p>
@@ -115,7 +127,68 @@
         </div>
     </main>
 
+    <!-- Modal -->
+    <div class="modal fade" id="modalTerminos" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Términos y Condiciones</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <div class="modal-body">
+            <p>1. Estos términos y condiciones generales de uso y política de privacidad (en adelante y en conjunto los "Términos y Condiciones") constituyen el acuerdo que regirá el uso, alcance y vigencia del sitio VENTANET, disponible en https://ventanet.com.ar (en adelante, el "PORTAL" o "PÁGINA WEB"), de titularidad de VENTANET S.A. (en adelante, "VENTANET").</p>
+
+            <p>2. Para acceder y utilizar los contenidos de la PÁGINA WEB y en particular ejercer sus funciones como usuario registrado, Usted deberá aceptar plena, voluntaria y expresamente estos Términos y Condiciones.</p>
+
+            <p>3. El acceso y uso de los servicios del PORTAL debe efectuarse de conformidad con los presentes Términos y Condiciones. En consecuencia, quien acceda o utilice el PORTAL, sus servicios o contenido (en adelante, el USUARIO), debe leer atentamente los Términos y Condiciones previo a acceder a la PÁGINA WEB y aceptarlos en caso de estar de acuerdo con los mismos. El acceso y uso del PORTAL es voluntario y gratuito. Si Usted no está de acuerdo con estos Términos y Condiciones no deberá utilizar el PORTAL ni registrarse en el mismo.</p>
+
+            <p>4. El USUARIO se considerará como USUARIO registrado cuando complete sus datos en el formulario cargado al efecto en la PÁGINA WEB y acepte los presentes Términos y Condiciones y las Políticas de Privacidad que regulan el tratamiento de sus datos personales. En cualquier caso, para revestir la condición de USUARIO, en cualquier variante, Ud. deberá tener 18 años o más.</p>
+
+            <p>5. El USUARIO se compromete a utilizar los servicios y contenidos del PORTAL sin contravenir la legislación vigente, la buena fe y el orden público. La violación de estos Términos y Condiciones o de cualquiera de las condiciones particulares de uso del PORTAL, o la comisión de actos por parte del USUARIO que a criterio de VENTANET constituyan conductas abusivas, lesivas o ilícitas, generará el derecho de VENTANET a denegar de manera inmediata el acceso al PORTAL y/o a bloquear la cuenta y por consecuente la prestación del servicio al USUARIO en falta.</p>
+
+            <p>6. Queda prohibido todo uso del PORTAL con fines ilícitos que perjudiquen o puedan dañar la utilización y normal funcionamiento del mismo.</p>
+        </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
     <!-- Boostrap core js -->
     <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const form = document.querySelector("form");
+        const boton = document.getElementById("btnRegistrarme");
+
+        function validarFormulario() {
+            const campos = form.querySelectorAll("input[required]");
+            let todosCompletos = true;
+
+            campos.forEach(campo => {
+                if (campo.type === "checkbox") {
+                    if (!campo.checked) todosCompletos = false;
+                } else {
+                    if (!campo.value.trim()) todosCompletos = false;
+                }
+            });
+
+            boton.disabled = !todosCompletos;
+        }
+
+        const camposRequeridos = form.querySelectorAll("input[required]");
+        camposRequeridos.forEach(campo => {
+            campo.addEventListener("input", validarFormulario);
+            campo.addEventListener("change", validarFormulario);
+        });
+
+        validarFormulario();
+    });
+    </script>
+
 </body>
 </html>

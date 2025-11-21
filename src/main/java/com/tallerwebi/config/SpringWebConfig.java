@@ -20,10 +20,10 @@ import org.thymeleaf.templatemode.TemplateMode;
 @EnableWebMvc
 @Configuration
 @PropertySource("classpath:email.properties")
-@ComponentScan({"com.tallerwebi.presentacion",
-                "com.tallerwebi.dominio",
-                "com.tallerwebi.infraestructura",
-                "com.tallerwebi.config" })
+@ComponentScan({ "com.tallerwebi.presentacion",
+        "com.tallerwebi.dominio",
+        "com.tallerwebi.infraestructura",
+        "com.tallerwebi.config" })
 public class SpringWebConfig implements WebMvcConfigurer {
 
     // Spring + Thymeleaf need this
@@ -81,6 +81,8 @@ public class SpringWebConfig implements WebMvcConfigurer {
     public ThymeleafViewResolver viewResolver() {
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
         viewResolver.setTemplateEngine(templateEngine());
+        viewResolver.setCharacterEncoding("UTF-8"); 
+        viewResolver.setContentType("text/html; charset=UTF-8");
         return viewResolver;
     }
 

@@ -13,6 +13,8 @@ import com.tallerwebi.dominio.entidades.Localidad;
 import com.tallerwebi.dominio.entidades.MaterialDePerfil;
 import com.tallerwebi.dominio.entidades.Partido;
 import com.tallerwebi.dominio.entidades.Provincia;
+import com.tallerwebi.dominio.entidades.TipoDeVidrio;
+import com.tallerwebi.dominio.repositorios_interfaces.RepositorioTipoDeVidrio;
 import com.tallerwebi.infraestructura.RepositorioAltoImpl;
 import com.tallerwebi.infraestructura.RepositorioAnchoImpl;
 import com.tallerwebi.infraestructura.RepositorioColorImpl;
@@ -31,11 +33,12 @@ public class ServicioTablasImpl implements ServicioTablas {
     private final RepositorioProvinciaImpl provinciaRepository;
     private final RepositorioLocalidadImpl localidadRepository;
     private final RepositorioPartidoImpl partidoRepository;
+    private final RepositorioTipoDeVidrio tipoVidrioRepository;
 
     public ServicioTablasImpl(RepositorioColorImpl colorRepository, RepositorioMaterialImpl materialRepository,
             RepositorioAltoImpl altoRepository, RepositorioAnchoImpl anchoRepository,
             RepositorioProvinciaImpl provinciaRepository, RepositorioLocalidadImpl localidadRepository,
-            RepositorioPartidoImpl partidoRepository) {
+            RepositorioPartidoImpl partidoRepository, RepositorioTipoDeVidrio tipoVidrioRepository) {
         this.colorRepository = colorRepository;
         this.materialRepository = materialRepository;
         this.altoRepository = altoRepository;
@@ -43,6 +46,7 @@ public class ServicioTablasImpl implements ServicioTablas {
         this.provinciaRepository = provinciaRepository;
         this.localidadRepository = localidadRepository;
         this.partidoRepository = partidoRepository;
+        this.tipoVidrioRepository = tipoVidrioRepository;
     }
 
     @Override
@@ -78,5 +82,30 @@ public class ServicioTablasImpl implements ServicioTablas {
     @Override
     public List<Partido> obtenerPartidosPorLocalidad(Long localidadId) {
         return this.partidoRepository.obtenerPorIdDeLocalidad(localidadId);
+    }
+
+    @Override
+    public Alto obtenerAltoPorId(Long id) {
+        return this.altoRepository.obtener(id);
+    }
+
+    @Override
+    public Ancho obtenerAnchoPorId(Long id) {
+        return this.anchoRepository.obtener(id);
+    }
+
+    @Override
+    public MaterialDePerfil obtenerMaterialPorId(Long id) {
+        return this.materialRepository.obtener(id);    
+    }
+
+    @Override
+    public Color obtenerColorPorId(Long id) {
+        return this.colorRepository.obtener(id);
+    }
+
+    @Override
+    public TipoDeVidrio obtenerTipoDeVidrioPorId(Long id) {
+        return this.tipoVidrioRepository.buscarPorId(id);
     }
 }

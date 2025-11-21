@@ -2,6 +2,7 @@ package com.tallerwebi.dominio.servicios;
 
 import java.util.List;
 
+import com.tallerwebi.dominio.entidades.MedioDePago;
 import com.tallerwebi.dominio.entidades.Proveedor;
 import com.tallerwebi.dominio.enums.EstadoUsuario;
 import com.tallerwebi.dominio.enums.Rubro;
@@ -18,4 +19,6 @@ public interface ServicioProveedorI {
     List<Rubro> obtenerRubrosActivos();
     List<Proveedor> obtenerProveedoresPorRubro(Rubro rubro);
     List<Proveedor>obtenerProveedoresPorEstadoActivoInactivo(Boolean estado);
+    List<MedioDePago> obtenerMediosDePagoDeProveedor(Long proveedorId);
+    void actualizarMediosPago(Long proveedorId, List<Long> medioIds);
 }

@@ -1,0 +1,272 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #d5e3f1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.main {
+    margin-left: 20px;
+    padding: 30px 60px 30px 60px;
+    min-width: 0;
+    transition: margin-left 0.3s;
+}
+
+/* .medio-item {
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+    cursor: pointer;
+} */
+
+.medio-item:hover {
+    background: #f7f7f7;
+}
+
+.medio-seleccionado {
+    border: 2px solid #0d6efd;
+    background: #e8f0ff; 
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0;
+}
+
+.icono-medio {
+    width: 45px;
+    height: auto;
+}
+
+.grupo-tipo {
+    border-left: 4px solid #0d6efd;
+    padding-left: 12px;
+    margin-bottom: 18px;
+}
+
+.medio-item {
+    border-radius: 12px;
+    padding: 14px;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.medio-item.seleccionado {
+    background-color: #dff5e1;
+    border: 2px solid #28a745;
+    box-shadow: 0 0 6px rgba(40,167,69,0.5);
+}
+
+.icono-check {
+    width: 18px;
+    height: 18px;
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+/* ==== PERFIL DEL USUARIO ==== */
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+}
+
+.profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-info h3 {
+    color: #0b335b;
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.profile-info p {
+    color: #0b335b;
+    font-size: 12px;
+    margin: 0px;
+}
+
+/* ==== DROPDOWN DE PERFIL ==== */
+.profile-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    display: none; /* oculto por defecto */
+    flex-direction: column;
+    min-width: 180px;
+    z-index: 2000;
+}
+
+.profile-dropdown.show {
+    display: flex; /* visible cuando se hace toggle */
+}
+
+.profile-dropdown-item {
+    padding: 10px 15px;
+    color: #0b335b;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.profile-dropdown-item:hover {
+    background: #f2f6ff;
+    color: #2336e7;
+}
+
+/* ==== HEADER ==== */
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0b335b;
+  color: white;
+  padding: 10px 20px;
+  border-bottom: 1px solid #001f3f;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.site-header .brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+.site-header .nav {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+
+.site-header .nav-item {
+  margin-left: 15px;
+}
+
+.site-header .nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.site-header .nav-link:hover {
+  color: #ffd700;
+}
+
+/* ==== DROPDOWNS ==== */
+header .badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 0.6rem;
+    background: red;
+    color: white;
+}
+
+.dropdown-menu {
+    padding: 0;
+    border-radius: 8px;
+}
+
+.dropdown-menu li {
+    font-size: 0.9rem;
+}
+
+.dropdown-item i {
+    font-size: 1.2rem;
+    margin-top: 3px;
+}
+
+.dropdown-item span {
+    flex: 1;
+    font-size: 0.85rem;
+}
+
+.dropdown-menu li.dropdown-item {
+    padding: 10px 15px;
+}
+
+.dropdown-menu li:hover {
+    background-color: #f8f9fa;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(5px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+
+@media (max-width: 900px) {
+    .main {
+        padding: 20px 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        left: -220px;
+    }
+
+    .sidebar.show {
+        left: 0;
+    }
+
+    .main {
+        margin-left: 0;
+    }
+
+    .hamburger {
+        display: inline-block !important;
+        position: static;
+        margin-left: auto;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 14px;
+        font-size: 22px;
+        cursor: pointer;
+        z-index: 1300;
+    }
+
+    #dropdownMenu {
+        display: none;
+        position: fixed !important;
+        top: 56px !important;
+        left: 0 !important;
+        width: 100vw !important;
+        z-index: 2000 !important;
+    }
+}
+
+/* ==== BOTÓN HAMBURGUESA ==== */
+.hamburger {
+    display: none;
+    top: 20px;
+    left: 20px;
+    z-index: 1100;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 22px;
+    cursor: pointer;
+}

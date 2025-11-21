@@ -18,20 +18,28 @@ body {
 
 /* HEADER */
 .site-header {
-  width: 100%;
-  border-bottom: 1px solid #f0edf8;
-  background: #fff;
+    width: 100%;
+    border-bottom: 1px solid #f0edf8;
+    background: #fff;
+    padding: 10px 0;
 }
+
 .header-inner {
-  width: 90%;
-  margin: 0 auto;
-  padding: 16px 18px;
-  display: flex;
-  align-items: center;
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Logo a la izquierda, nav a la derecha */
 }
+
 .logo { display: inline-flex; align-items: center; text-decoration: none; }
 .logo svg { display: block; border-radius: 50%; }
-.brand { margin-left: 10px; color: #6a42f4; font-weight: 700; font-size: 1rem; }
+.brand { margin-left: 10px; color: #6a42f4; font-weight: 700; font-size: 1rem;}
+
+.navbar-brand {
+    text-decoration: none !important;
+}
+
 
 /* MAIN */
 main { flex: 1; display: flex; justify-content: center; align-items: center; }

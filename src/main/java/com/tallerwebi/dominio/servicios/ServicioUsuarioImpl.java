@@ -15,6 +15,7 @@ import com.tallerwebi.dominio.excepcion.UsuarioInexistenteException;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioProveedor;
 import com.tallerwebi.dominio.repositorios_interfaces.RepositorioUsuario;
 import com.tallerwebi.dominio.utils.PasswordUtil;
+import com.tallerwebi.presentacion.dto.UsuarioAdminDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,9 +23,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 @Service("servicioUsuario")
@@ -98,15 +102,13 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
         // hashear contrasenia antes de guardar
         contraseniaHasheada = PasswordUtil.hashear(cliente.getPassword());
         cliente.setPassword(contraseniaHasheada);
+        cliente.setFechaCreacion(java.time.LocalDate.now());
         repositorioUsuario.guardar(cliente);
 
         // Enviar correo con el link de verificación
         servicioEmail.enviarEmailActivacion(cliente);
     }
 
-    /*
-     * 
-     */
     @Override
     public void registrarProveedor(Proveedor proveedor, MultipartFile documento)
             throws UsuarioExistente, CuitInvalido, ContraseniaInvalida, IOException {
@@ -136,9 +138,9 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
 
         String contraseniaHasheada = PasswordUtil.hashear(proveedor.getPassword());
         proveedor.setPassword(contraseniaHasheada);
+        proveedor.setFechaCreacion(java.time.LocalDate.now());
         repositorioUsuario.guardar(proveedor);
         servicioEmail.enviarEmailActivacion(proveedor);
-
     }
 
     private boolean validarContrasenia(String password) {
@@ -237,6 +239,52 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
     @Override
     public void eliminarUsuario(Usuario usuario) {
         usuario.setActivo(false);
+    }
+
+    @Override
+    public String obtenerFotoPerfil(Long id, HttpServletRequest request) throws UsuarioInexistenteException {
+        Usuario usuario = buscarPorId(id);
+        if (usuario.getFotoPerfil() != null) {
+            String base64 = Base64.getEncoder().encodeToString(usuario.getFotoPerfil());
+            return "data:image/png;base64," + base64;
+        }
+        return request.getContextPath() + "/img/default-profile.png";
+    }
+
+    @Override
+    public List<UsuarioAdminDTO> obtenerUsuariosParaAdmin() {
+
+        List<Usuario> usuarios = this.obtenerTodosLosUsuarios();
+
+        return usuarios.stream().map(usuario -> {
+            UsuarioAdminDTO dto = new UsuarioAdminDTO();
+            dto.setId(usuario.getId());
+            dto.setNombre(usuario.getNombre());
+            dto.setApellido(usuario.getApellido());
+            dto.setEmail(usuario.getEmail());
+            dto.setUsername(usuario.getUsername());
+            dto.setTelefono(usuario.getTelefono());
+            dto.setDireccion(usuario.getDireccion());
+            dto.setFechaCreacion(usuario.getFechaCreacion());
+            dto.setRol(usuario.getRol());
+            dto.setActivo(usuario.getActivo());
+            dto.setEstado(usuario.getEstado());
+            dto.setFotoPerfil(usuario.getFotoPerfil());
+            dto.setNombreMostrable(usuario.getNombreMostrable());
+
+            // para proveedores
+            if (usuario instanceof Proveedor) {
+                Proveedor p = (Proveedor) usuario;
+
+                dto.setCuit(p.getCuit());
+                dto.setRubro(p.getRubro());
+                dto.setDocumento(p.getDocumento());
+                dto.setRazonSocial(p.getRazonSocial());
+                dto.setUbicacion(p.getUbicacion());
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
     }
 
 }

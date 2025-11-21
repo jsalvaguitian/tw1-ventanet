@@ -8,6 +8,11 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
 }
+.noStyleLinks {
+    text-decoration: none;
+    color: white;
+}
+
 
 /* ==== SIDEBAR ==== */
 .sidebar {
@@ -16,47 +21,79 @@ body {
     top: 0;
     width: 220px;
     height: 100vh;
-    background: #0b335b;
+    background: #0b335b; /* Fondo azul oscuro */
     color: #fff;
-    display: flex;
-    flex-direction: column;
     padding-top: 30px;
     z-index: 1050;
     transition: left 0.3s;
     box-shadow: 2px 0px 20px #0b335b;
 }
 
+/* Título Ventanet */
 .sidebar h2 {
-    margin: 0 0 30px 30px;
+    margin: 0 0 30px 20px; /* Reducido a 20px para alineación */
     font-size: 22px;
     letter-spacing: 1px;
 }
 
-.sidebar ul {
-    list-style: none;
-    padding: 0;
+/* Estilo para los enlaces de navegación */
+.sidebar .nav-item {
+    /* Quitamos el padding del <li> y lo ponemos en el <a> */
 }
 
-.sidebar ul li {
-    padding: 15px 30px;
-    cursor: pointer;
-    transition: background 0.2s;
-    display: flex;
-    align-items: center;
+.sidebar .nav-link {
+    /* 1. Reducir el padding para que no estén tan distanciados */
+    padding: 10px 20px; 
+    
+    /* 2. Resaltar las letras (ya son blancas por defecto, pero especificamos color para asegurar) */
+    color: #fff;
+    font-size: 1rem;
+    
+    /* 3. Asegurar la transición para hover */
+    transition: background 0.2s, color 0.2s;
 }
 
-.sidebar ul li.active,
-.sidebar ul li:hover {
-    background: #2224aa;
+/* Efecto Hover y Estilo Seleccionado (Active) */
+.sidebar .nav-link:hover {
+    background: #175496; /* Azul intermedio para el hover */
+    color: #fff;
 }
 
-.sidebar ul li i {
+/* 4. Estilo Seleccionado (activo) */
+.sidebar .nav-link.active {
+    background: #0087ff; /* Azul brillante para el elemento activo */
+    color: #fff;
+    font-weight: bold;
+    border-left: 5px solid #ffcc00; /* Barra amarilla a la izquierda */
+    padding-left: 15px; /* Compensa la barra */
+}
+
+/* Iconos */
+.sidebar .nav-link i {
     margin-right: 10px;
+}
+
+/* Submenú (Colapso) */
+/* 5. Arreglar el espaciado del desplegable */
+.sidebar .collapse .nav-item .nav-link {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    /* Oscurecer el fondo del submenú para distinguirlo */
+    background-color: #08284b; 
+}
+
+.sidebar .collapse .nav-item .nav-link.active {
+    background: #0087ff;
+    border-left: 5px solid #ffcc00;
+}
+
+.sidebar .collapse .nav-item .nav-link:hover {
+    background: #175496;
 }
 
 /* ==== MAIN CONTENT ==== */
 .main {
-    margin-left: 20px;
+    margin-left: 220px;
     padding: 30px 60px 30px 60px;
     min-width: 0;
     transition: margin-left 0.3s;

@@ -9,14 +9,22 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="stylesheet" th:href="@{/css/login.css}">
+    
+    <!-- favicon -->
+    <link rel="icon" type="image/jpeg" th:href="@{/img/favicon2.png}">
 </head>
 
 <body>
     <!-- HEADER -->
     <header class="site-header">
         <div class="header-inner">
-            <a th:href="@{/}" class="logo">
-                <span class="brand">VENTANET</span>
+            <a class="navbar-brand d-flex align-items-center" href="/spring/home">
+                <img th:src="@{/img/favicon.jpeg}"
+                    alt="V" 
+                    style="height: 40px;">
+                <span class="brand-text" style="font-size: 1.25rem; font-weight: bold; color: #0D0D0D; vertical-align: super;">
+                entanet
+                </span>
             </a>
         </div>
     </header>

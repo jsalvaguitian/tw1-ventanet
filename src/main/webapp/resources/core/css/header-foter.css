@@ -80,9 +80,9 @@ body {
 }
 
 /* Mostrar menú al pasar o hacer hover */
-.nav-item.dropdown:hover .dropdown-menu {
+/*.nav-item.dropdown:hover .dropdown-menu {
   display: block;
-}
+}*/
 
 /* Estilo de los ítems */
 .dropdown-item {

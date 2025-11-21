@@ -5,7 +5,8 @@
     <title>Previsualización de Cotización</title>
     <link rel="stylesheet" href="/spring/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link th:href="@{/css/dashboard.css}" rel="stylesheet">    
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet"> 
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">   
 </head>
 
 <body class="container mt-4">
@@ -23,13 +24,13 @@
     <div class="sidebar" id="sidebar">
         <a th:href="@{/}" class="noStyleLinks"><h2>Ventanet</h2></a>
         <ul>
-            <li class="active"><a href="presupuesto.html"><i class="bi bi-card-list"></i>Presupuesto</a></li>
+            <li class="active"><a href="presupuesto.html" class="noStyleLinks"><i class="bi bi-card-list"></i>Presupuesto</a></li>
             <li><a th:href="@{/cliente/dashboard}" class="noStyleLinks"><i class="bi bi-house"></i>Dashboard</a></li>
         </ul>
     </div>
 
     <div class="main" id="mainContent">
-        <div class="container my-5">           
+        <div class="container my-5">
 
             <h2 class="text-center mb-4">Previsualización de Cotizaciones</h2>
             <div class="info-box">
@@ -65,9 +66,20 @@
                     data-proveedor-nombre=${cotizacion.proveedor.razonSocial},
                 data-cliente-id=${cotizacion.cliente.id}">
 
-                        <div class="d-flex align-items-center mb-2">
-                            <input type="checkbox" class="form-check-input me-2 seleccionar-cotizacion">
-                            <h4 th:text="'Proveedor: ' + ${cotizacion.proveedor.razonSocial}" class="m-0"></h4>
+                        <input type="hidden" th:name="'cotizaciones[' + ${cotizacionStat.index} + '].medioDePago.id'"
+                            th:id="'medio-pago-id-' + ${cotizacion.proveedor.id}" th:value="${cotizacion.medioDePago?.id ?: ''}"
+                            class="medio-pago-input">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center">
+                                <input type="checkbox" class="form-check-input me-2 seleccionar-cotizacion">
+                                <h4 th:text="'Proveedor: ' + ${cotizacion.proveedor.razonSocial}" class="m-0"></h4>
+                            </div>
+
+                            <button th:if="${esConfirmacion == null or esConfirmacion == false}" type="button" class="btn btn-sm btn-primary" onclick="abrirPopupMediosPago(this)"
+                                th:attr="data-id=${cotizacion.id}, data-proveedor-id=${cotizacion.proveedor.id}">
+                                💳 Método de Pago
+                            </button>
                         </div>
 
                         <table class="table table-bordered table-striped align-middle">
@@ -110,84 +122,14 @@
                 <input type="hidden" name="cotizacionesJson" id="cotizacionesJson">
 
                 <div class="text-center mt-4" th:if="${esConfirmacion == null or esConfirmacion == false}">
-                    <button type="submit" class="btn btn-success px-4">Confirmar y Enviar Cotización</button>
+                    <button type="submit" id="btnConfirmar" class="btn btn-success px-4" disabled>Confirmar y Enviar Cotización</button>
                 </div>
             </form>
         </div>
-    </div>    
-
-    <script>
-        // Recalcular subtotal y total cuando cambia la cantidad
-        $(document).on('input', '.cantidad', function () {
-            const row = $(this).closest('tr');
-            const precio = parseFloat(row.find('.precio-unitario').text());
-            const cantidad = parseInt($(this).val()) || 0;
-            const subtotal = precio * cantidad;
-            row.find('.subtotal').text(subtotal.toFixed(2));
-
-            // Recalcular el total de la tabla
-            const tabla = row.closest('table');
-            let total = 0;
-            tabla.find('.subtotal').each(function () {
-                total += parseFloat($(this).text()) || 0;
-            });
-            tabla.find('.total-cotizacion').text(total.toFixed(2));
-        });
-
-        
-        $(document).on('change', '.seleccionar-cotizacion', function () {
-            const container = $(this).closest('.cotizacion-container');
-            container.toggleClass('selected', this.checked);
-        });
-
-        // Antes de enviar el formulario, generar un JSON con todas las cotizaciones
-        $('#formCotizaciones').on('submit', function (e) {
-            const cotizaciones = [];
-
-            $('#cotizaciones-lista .cotizacion-container').each(function () {
-                const cotizacionDiv = $(this);
-                const cotizacionId = cotizacionDiv.data('id');
-                const proveedorId = cotizacionDiv.data('proveedor-id');
-                const clienteId = cotizacionDiv.data('cliente-id');
-                const seleccionada = cotizacionDiv.find('.seleccionar-cotizacion').is(':checked');
-
-                const items = [];
-                cotizacionDiv.find('tbody tr').each(function () {
-                    const row = $(this);
-                    const idProducto = row.find('.producto-id').val();                     
-                    const cantidad = parseInt(row.find('.cantidad').val());                    
-
-                    items.push({
-                        idProducto,                        
-                        cantidad                        
-                    });
-                });
-
-                const montoTotal = parseFloat(cotizacionDiv.find('.total-cotizacion').text());
-
-                cotizaciones.push({
-                    id: cotizacionId,
-                    proveedorId,
-                    clienteId,
-                    seleccionada,
-                    montoTotal,
-                    items
-                });
-            });
-
-            // Asignar el JSON al campo oculto
-            $('#cotizacionesJson').val(JSON.stringify(cotizaciones));
-        });
-    </script>
-
-
-
-
-
-
-
-
-
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" th:src="@{/js/previsualizar-cotizacion.js}"></script>
+   
 </body>
 
 </html>
